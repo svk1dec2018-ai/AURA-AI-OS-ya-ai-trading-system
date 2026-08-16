@@ -9,13 +9,13 @@ from aura.domain.models import Fill, PortfolioSnapshot, Side
 @dataclass(slots=True)
 class Position:
     symbol: str
-    quantity: Decimal = Decimal("0")  # signed: long > 0, short < 0
-    average_price: Decimal = Decimal("0")
-    realized_pnl: Decimal = Decimal("0")
+    quantity: Decimal = Decimal(0)  # signed: long > 0, short < 0
+    average_price: Decimal = Decimal(0)
+    realized_pnl: Decimal = Decimal(0)
 
     def unrealized_pnl(self, mark: Decimal) -> Decimal:
         if self.quantity == 0:
-            return Decimal("0")
+            return Decimal(0)
         return self.quantity * (mark - self.average_price)
 
 
@@ -26,8 +26,8 @@ class PortfolioLedger:
         self.starting_cash = starting_cash
         self.cash = starting_cash
         self.positions: dict[str, Position] = {}
-        self.realized_pnl = Decimal("0")
-        self.fees_paid = Decimal("0")
+        self.realized_pnl = Decimal(0)
+        self.fees_paid = Decimal(0)
         self._applied_fills: set[str] = set()
         self.peak_equity = starting_cash
 
@@ -40,7 +40,7 @@ class PortfolioLedger:
         signed_delta = fill.quantity if fill.side == Side.BUY else -fill.quantity
         old_qty = position.quantity
         old_avg = position.average_price
-        realized = Decimal("0")
+        realized = Decimal(0)
 
         # Cash accounting works for long and short trades: buys consume cash, sells add cash.
         self.cash -= signed_delta * fill.price
@@ -63,12 +63,10 @@ class PortfolioLedger:
             new_qty = old_qty + signed_delta
             position.quantity = new_qty
             if new_qty == 0:
-                position.average_price = Decimal("0")
+                position.average_price = Decimal(0)
             elif (old_qty > 0 and new_qty > 0) or (old_qty < 0 and new_qty < 0):
-                # Partial reduction; remaining inventory keeps its historical basis.
                 position.average_price = old_avg
             else:
-                # Position crossed through zero; excess opens a new position at this fill price.
                 position.average_price = fill.price
 
         position.realized_pnl += realized
@@ -77,9 +75,9 @@ class PortfolioLedger:
         return True
 
     def snapshot(self, marks: dict[str, Decimal]) -> PortfolioSnapshot:
-        market_value = Decimal("0")
-        gross = Decimal("0")
-        unrealized = Decimal("0")
+        market_value = Decimal(0)
+        gross = Decimal(0)
+        unrealized = Decimal(0)
 
         for symbol, position in self.positions.items():
             if position.quantity == 0:
@@ -96,9 +94,9 @@ class PortfolioLedger:
         if equity > self.peak_equity:
             self.peak_equity = equity
         drawdown = (
-            (self.peak_equity - equity) / self.peak_equity * Decimal("100")
+            (self.peak_equity - equity) / self.peak_equity * Decimal(100)
             if self.peak_equity > 0
-            else Decimal("0")
+            else Decimal(0)
         )
 
         return PortfolioSnapshot(
