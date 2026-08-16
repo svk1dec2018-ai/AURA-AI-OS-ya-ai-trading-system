@@ -26,7 +26,7 @@ def test_order_is_resized_to_notional_limit() -> None:
     assert decision.approved_quantity == Decimal(2)
 
 
-def test_kill_switch_blocks_all_orders() -> None:
+def test_kill_switch_blocks_new_risk() -> None:
     engine = RiskEngine(RiskLimits())
     engine.engage_kill_switch("operator")
     order = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1))
@@ -35,7 +35,38 @@ def test_kill_switch_blocks_all_orders() -> None:
     assert "kill switch" in decision.reason
 
 
-def test_drawdown_gate_blocks_order() -> None:
+def test_kill_switch_still_allows_position_reduction() -> None:
+    engine = RiskEngine(RiskLimits())
+    engine.engage_kill_switch("operator")
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.SELL, quantity=Decimal(1))
+    decision = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(gross="200"),
+        Decimal(10000),
+        current_position_quantity=Decimal(2),
+    )
+    assert decision.approved
+    assert decision.approved_quantity == Decimal(1)
+    assert "risk-reducing" in decision.reason
+
+
+def test_short_disabled_allows_close_but_blocks_flip_short() -> None:
+    engine = RiskEngine(RiskLimits(allow_short=False))
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.SELL, quantity=Decimal(3))
+    decision = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(gross="100"),
+        Decimal(10000),
+        current_position_quantity=Decimal(1),
+    )
+    assert decision.approved
+    assert decision.approved_quantity == Decimal(1)
+    assert "short opening blocked" in decision.reason
+
+
+def test_drawdown_gate_blocks_new_risk() -> None:
     engine = RiskEngine(RiskLimits(max_drawdown_pct=Decimal(10)))
     order = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1))
     decision = engine.evaluate(
@@ -45,3 +76,17 @@ def test_drawdown_gate_blocks_order() -> None:
         Decimal(10000),
     )
     assert not decision.approved
+
+
+def test_drawdown_gate_allows_flattening() -> None:
+    engine = RiskEngine(RiskLimits(max_drawdown_pct=Decimal(10)))
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.SELL, quantity=Decimal(2))
+    decision = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(gross="200", drawdown="15"),
+        Decimal(10000),
+        current_position_quantity=Decimal(2),
+    )
+    assert decision.approved
+    assert decision.approved_quantity == Decimal(2)
