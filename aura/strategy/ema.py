@@ -12,11 +12,11 @@ def _ema(values: Sequence[Decimal], period: int) -> Decimal:
         raise ValueError("period must be positive")
     if len(values) < period:
         raise ValueError("not enough values for EMA")
-    seed = sum(values[:period], Decimal("0")) / Decimal(period)
-    alpha = Decimal("2") / Decimal(period + 1)
+    seed = sum(values[:period], Decimal(0)) / Decimal(period)
+    alpha = Decimal(2) / Decimal(period + 1)
     value = seed
     for price in values[period:]:
-        value = alpha * price + (Decimal("1") - alpha) * value
+        value = alpha * price + (Decimal(1) - alpha) * value
     return value
 
 
