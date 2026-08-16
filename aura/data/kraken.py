@@ -3,10 +3,12 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
+from typing import ClassVar
 
 import websockets
+from websockets.exceptions import WebSocketException
 
 from aura.domain.models import NormalizedCandle
 
@@ -16,8 +18,7 @@ class KrakenFeedError(RuntimeError):
 
 
 def _parse_rfc3339(value: str) -> datetime:
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
-    return parsed.astimezone(timezone.utc)
+    return datetime.fromisoformat(value).astimezone(UTC)
 
 
 class KrakenSpotOhlcFeed:
@@ -27,8 +28,10 @@ class KrakenSpotOhlcFeed:
     after a later interval is observed, guaranteeing closed-candle semantics.
     """
 
-    endpoint = "wss://ws.kraken.com/v2"
-    _allowed_intervals = {1, 5, 15, 30, 60, 240, 1440, 10080, 21600}
+    endpoint: ClassVar[str] = "wss://ws.kraken.com/v2"
+    _allowed_intervals: ClassVar[frozenset[int]] = frozenset(
+        {1, 5, 15, 30, 60, 240, 1440, 10080, 21600}
+    )
 
     def __init__(self, symbols: list[str], interval_minutes: int = 1) -> None:
         if not symbols:
@@ -51,15 +54,11 @@ class KrakenSpotOhlcFeed:
                     yield candle
             except asyncio.CancelledError:
                 raise
-            except Exception as exc:
+            except (OSError, TimeoutError, WebSocketException, KrakenFeedError):
                 if self._stopped:
                     return
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 30.0)
-                last_error = exc
-                if backoff >= 30.0 and isinstance(last_error, KrakenFeedError):
-                    # Continue retrying, but preserve a bounded reconnect rate.
-                    pass
 
     async def _stream_connection(self) -> AsyncIterator[NormalizedCandle]:
         latest: dict[str, NormalizedCandle] = {}
