@@ -22,10 +22,12 @@ class BacktestResult:
 
 
 class BacktestEngine:
-    """Event-driven backtester that reuses the exact DecisionPipeline.
+    """Event-driven single-series backtester using the shared DecisionPipeline.
 
     Signals are computed after a candle is closed. Approved market orders are
     filled at the next candle's open, avoiding same-close lookahead execution.
+    Multi-asset portfolio replay belongs in a dedicated portfolio event runner
+    so missing marks cannot silently corrupt equity or exposure accounting.
     """
 
     def __init__(
@@ -49,6 +51,8 @@ class BacktestEngine:
             raise ValueError("candles cannot be empty")
         if any(not candle.closed for candle in candles):
             raise ValueError("backtest accepts only closed candles")
+        if len({candle.symbol for candle in candles}) != 1:
+            raise ValueError("BacktestEngine accepts one symbol; use a portfolio event runner")
 
         history: list[NormalizedCandle] = []
         pending: OrderRequest | None = None
@@ -89,6 +93,8 @@ class BacktestEngine:
             marks = {candle.symbol: candle.close}
             snapshot = self.ledger.snapshot(marks)
             max_drawdown = max(max_drawdown, snapshot.drawdown_pct)
+            position = self.ledger.positions.get(candle.symbol)
+            current_position_quantity = position.quantity if position is not None else Decimal(0)
 
             result: DecisionResult | None = self.pipeline.evaluate_closed_candle(
                 history=history,
@@ -96,6 +102,7 @@ class BacktestEngine:
                 day_start_equity=day_start_equity,
                 venue=candle.venue,
                 requested_quantity=self.requested_quantity,
+                current_position_quantity=current_position_quantity,
             )
             if result is None:
                 continue
