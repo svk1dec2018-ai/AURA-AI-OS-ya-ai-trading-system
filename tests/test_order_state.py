@@ -7,7 +7,7 @@ from aura.execution.state import OrderState, OverfillError
 
 
 def test_partial_fill_is_idempotent_and_computes_vwap() -> None:
-    request = OrderRequest(symbol="BTC/USD", venue="TEST", side=Side.BUY, quantity=Decimal("2"))
+    request = OrderRequest(symbol="BTC/USD", venue="TEST", side=Side.BUY, quantity=Decimal(2))
     state = OrderState(request)
     state.submit()
 
@@ -17,7 +17,7 @@ def test_partial_fill_is_idempotent_and_computes_vwap() -> None:
         symbol=request.symbol,
         side=Side.BUY,
         quantity=Decimal("0.5"),
-        price=Decimal("100"),
+        price=Decimal(100),
     )
     second = Fill(
         fill_id="f2",
@@ -25,7 +25,7 @@ def test_partial_fill_is_idempotent_and_computes_vwap() -> None:
         symbol=request.symbol,
         side=Side.BUY,
         quantity=Decimal("1.5"),
-        price=Decimal("110"),
+        price=Decimal(110),
     )
 
     assert state.apply_fill(first) is True
@@ -37,7 +37,7 @@ def test_partial_fill_is_idempotent_and_computes_vwap() -> None:
 
 
 def test_overfill_is_rejected() -> None:
-    request = OrderRequest(symbol="BTC/USD", venue="TEST", side=Side.BUY, quantity=Decimal("1"))
+    request = OrderRequest(symbol="BTC/USD", venue="TEST", side=Side.BUY, quantity=Decimal(1))
     state = OrderState(request)
     state.submit()
     fill = Fill(
@@ -46,7 +46,7 @@ def test_overfill_is_rejected() -> None:
         symbol=request.symbol,
         side=Side.BUY,
         quantity=Decimal("1.1"),
-        price=Decimal("100"),
+        price=Decimal(100),
     )
     with pytest.raises(OverfillError):
         state.apply_fill(fill)
