@@ -17,18 +17,17 @@ def normalize_candle(
     timeframe: str,
     open_time: datetime,
     close_time: datetime,
-    open_price: str | int | float | Decimal,
-    high_price: str | int | float | Decimal,
-    low_price: str | int | float | Decimal,
-    close_price: str | int | float | Decimal,
-    volume: str | int | float | Decimal = "0",
+    open_price: str | float | Decimal,
+    high_price: str | float | Decimal,
+    low_price: str | float | Decimal,
+    close_price: str | float | Decimal,
+    volume: str | float | Decimal = "0",
     closed: bool = True,
 ) -> NormalizedCandle:
     """Convert venue-specific primitive values into AURA's canonical candle model."""
 
-    def dec(value: str | int | float | Decimal) -> Decimal:
+    def dec(value: str | float | Decimal) -> Decimal:
         try:
-            # str(float) avoids carrying the binary float representation into Decimal.
             return Decimal(str(value))
         except (InvalidOperation, ValueError) as exc:
             raise CandleNormalizationError(f"invalid decimal value: {value!r}") from exc
