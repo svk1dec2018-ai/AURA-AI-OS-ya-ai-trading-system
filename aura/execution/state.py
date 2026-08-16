@@ -37,8 +37,8 @@ _ALLOWED_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
 class OrderState:
     request: OrderRequest
     status: OrderStatus = OrderStatus.CREATED
-    filled_quantity: Decimal = Decimal("0")
-    average_fill_price: Decimal = Decimal("0")
+    filled_quantity: Decimal = Decimal(0)
+    average_fill_price: Decimal = Decimal(0)
     fill_ids: set[str] = field(default_factory=set)
 
     @property
