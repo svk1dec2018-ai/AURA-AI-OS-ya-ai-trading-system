@@ -38,6 +38,7 @@ class DecisionPipeline:
         day_start_equity: Decimal,
         venue: str,
         requested_quantity: Decimal,
+        current_position_quantity: Decimal = Decimal(0),
     ) -> DecisionResult | None:
         if not history or not history[-1].closed:
             return None
@@ -58,6 +59,7 @@ class DecisionPipeline:
             reference_price=signal.reference_price,
             portfolio=portfolio,
             day_start_equity=day_start_equity,
+            current_position_quantity=current_position_quantity,
         )
         if not decision.approved:
             return DecisionResult(signal=signal, risk=decision, order=None)
