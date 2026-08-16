@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from aura.backtest.engine import BacktestEngine
@@ -10,14 +10,36 @@ from aura.strategy.ema import EmaCrossStrategy
 
 def build_demo_candles() -> list[NormalizedCandle]:
     closes = [
-        100, 99, 98, 97, 96, 95, 96, 97, 99, 101, 103, 105,
-        104, 102, 100, 98, 96, 95, 97, 100, 103, 106, 108, 110,
+        100,
+        99,
+        98,
+        97,
+        96,
+        95,
+        96,
+        97,
+        99,
+        101,
+        103,
+        105,
+        104,
+        102,
+        100,
+        98,
+        96,
+        95,
+        97,
+        100,
+        103,
+        106,
+        108,
+        110,
     ]
-    start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+    start = datetime(2026, 1, 1, tzinfo=UTC)
     candles: list[NormalizedCandle] = []
-    previous = Decimal(str(closes[0]))
+    previous = Decimal(closes[0])
     for index, value in enumerate(closes):
-        close = Decimal(str(value))
+        close = Decimal(value)
         open_price = previous
         candles.append(
             NormalizedCandle(
@@ -30,7 +52,7 @@ def build_demo_candles() -> list[NormalizedCandle]:
                 high=max(open_price, close),
                 low=min(open_price, close),
                 close=close,
-                volume=Decimal("100"),
+                volume=Decimal(100),
                 closed=True,
             )
         )
@@ -42,18 +64,18 @@ def main() -> None:
     strategy = EmaCrossStrategy(fast=3, slow=5)
     risk = RiskEngine(
         RiskLimits(
-            max_order_notional_pct=Decimal("5"),
-            max_gross_exposure_pct=Decimal("50"),
-            max_drawdown_pct=Decimal("10"),
-            max_daily_loss_pct=Decimal("4"),
+            max_order_notional_pct=Decimal(5),
+            max_gross_exposure_pct=Decimal(50),
+            max_drawdown_pct=Decimal(10),
+            max_daily_loss_pct=Decimal(4),
         )
     )
     pipeline = DecisionPipeline(strategy, risk)
     engine = BacktestEngine(
         pipeline=pipeline,
-        starting_cash=Decimal("10000"),
-        requested_quantity=Decimal("1"),
-        fee_bps=Decimal("5"),
+        starting_cash=Decimal(10000),
+        requested_quantity=Decimal(1),
+        fee_bps=Decimal(5),
     )
     result = engine.run(build_demo_candles())
     print(result)
