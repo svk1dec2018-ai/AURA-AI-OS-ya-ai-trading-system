@@ -91,8 +91,7 @@ class PortfolioLedger:
             unrealized += position.unrealized_pnl(mark)
 
         equity = self.cash + market_value
-        if equity > self.peak_equity:
-            self.peak_equity = equity
+        self.peak_equity = max(self.peak_equity, equity)
         drawdown = (
             (self.peak_equity - equity) / self.peak_equity * Decimal(100)
             if self.peak_equity > 0
