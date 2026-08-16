@@ -33,7 +33,7 @@ class BacktestEngine:
         pipeline: DecisionPipeline,
         starting_cash: Decimal,
         requested_quantity: Decimal,
-        fee_bps: Decimal = Decimal("0"),
+        fee_bps: Decimal = Decimal(0),
     ) -> None:
         if requested_quantity <= 0:
             raise ValueError("requested_quantity must be positive")
@@ -55,7 +55,7 @@ class BacktestEngine:
         orders = 0
         fills = 0
         rejected = 0
-        max_drawdown = Decimal("0")
+        max_drawdown = Decimal(0)
         day_start_equity = self.ledger.starting_cash
         last_date = candles[0].open_time.date()
 
@@ -69,7 +69,7 @@ class BacktestEngine:
                 state = OrderState(pending)
                 state.submit()
                 notional = pending.quantity * candle.open
-                fee = notional * self.fee_bps / Decimal("10000")
+                fee = notional * self.fee_bps / Decimal(10000)
                 fill = Fill(
                     fill_id=f"bt:{pending.order_id}:{candle.open_time.isoformat()}",
                     order_id=pending.order_id,
