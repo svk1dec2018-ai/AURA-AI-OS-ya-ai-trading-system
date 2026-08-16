@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
 from uuid import uuid4
@@ -52,7 +52,7 @@ class NormalizedCandle(BaseModel):
     high: Decimal
     low: Decimal
     close: Decimal
-    volume: Decimal = Decimal("0")
+    volume: Decimal = Decimal(0)
     closed: bool = True
 
     @field_validator("open_time", "close_time")
@@ -63,7 +63,7 @@ class NormalizedCandle(BaseModel):
         return value
 
     @model_validator(mode="after")
-    def validate_ohlc(self) -> "NormalizedCandle":
+    def validate_ohlc(self) -> NormalizedCandle:
         if self.close_time <= self.open_time:
             raise ValueError("close_time must be after open_time")
         if min(self.open, self.high, self.low, self.close) <= 0:
@@ -85,7 +85,7 @@ class StrategySignal(BaseModel):
     intent: SignalIntent
     confidence: float = Field(ge=0.0, le=1.0)
     reference_price: Decimal
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     reason: str = ""
 
 
@@ -102,10 +102,10 @@ class OrderRequest(BaseModel):
     limit_price: Decimal | None = None
     stop_price: Decimal | None = None
     time_in_force: TimeInForce = TimeInForce.GTC
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @model_validator(mode="after")
-    def validate_prices(self) -> "OrderRequest":
+    def validate_prices(self) -> OrderRequest:
         if self.order_type == OrderType.LIMIT and self.limit_price is None:
             raise ValueError("limit order requires limit_price")
         if self.order_type == OrderType.STOP and self.stop_price is None:
@@ -122,8 +122,8 @@ class Fill(BaseModel):
     side: Side
     quantity: Decimal = Field(gt=0)
     price: Decimal = Field(gt=0)
-    fee: Decimal = Field(default=Decimal("0"), ge=0)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    fee: Decimal = Field(default=Decimal(0), ge=0)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
 class RiskDecision(BaseModel):
@@ -132,7 +132,7 @@ class RiskDecision(BaseModel):
     approved: bool
     reason: str
     requested_quantity: Decimal
-    approved_quantity: Decimal = Decimal("0")
+    approved_quantity: Decimal = Decimal(0)
 
 
 class PortfolioSnapshot(BaseModel):
