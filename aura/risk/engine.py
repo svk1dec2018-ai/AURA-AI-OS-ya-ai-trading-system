@@ -19,6 +19,9 @@ class RiskEngine:
     """Independent pre-trade risk gate.
 
     Strategy/agent code cannot bypass this class in the shared decision pipeline.
+    Risk-reducing orders are distinguished from orders that add new exposure so
+    that a kill switch or loss gate can still permit flattening without allowing
+    a strategy to increase risk.
     """
 
     def __init__(self, limits: RiskLimits) -> None:
@@ -34,43 +37,97 @@ class RiskEngine:
         self.kill_switch = False
         self.kill_switch_reason = ""
 
+    @staticmethod
+    def _closing_capacity(
+        side: Side,
+        requested: Decimal,
+        current_position_quantity: Decimal,
+    ) -> Decimal:
+        if current_position_quantity > 0 and side == Side.SELL:
+            return min(requested, current_position_quantity)
+        if current_position_quantity < 0 and side == Side.BUY:
+            return min(requested, abs(current_position_quantity))
+        return Decimal(0)
+
+    @staticmethod
+    def _decision(
+        *,
+        requested: Decimal,
+        approved: Decimal,
+        reason: str,
+    ) -> RiskDecision:
+        return RiskDecision(
+            approved=approved > 0,
+            reason=reason,
+            requested_quantity=requested,
+            approved_quantity=max(Decimal(0), approved),
+        )
+
     def evaluate(
         self,
         order: OrderRequest,
         reference_price: Decimal,
         portfolio: PortfolioSnapshot,
         day_start_equity: Decimal,
+        current_position_quantity: Decimal = Decimal(0),
     ) -> RiskDecision:
         requested = order.quantity
-        if self.kill_switch:
-            return RiskDecision(
-                approved=False,
-                reason=f"kill switch engaged: {self.kill_switch_reason}",
-                requested_quantity=requested,
-            )
         if reference_price <= 0:
-            return RiskDecision(
-                approved=False,
+            return self._decision(
+                requested=requested,
+                approved=Decimal(0),
                 reason="invalid reference price",
-                requested_quantity=requested,
             )
+
+        closing_qty = self._closing_capacity(order.side, requested, current_position_quantity)
+        opening_requested = requested - closing_qty
+
+        # A pure reduction/flatten never adds gross exposure and must remain
+        # available during protective gates. Broker/exchange validity is handled
+        # by the execution adapter, not by this portfolio-risk decision.
+        if opening_requested <= 0:
+            return self._decision(
+                requested=requested,
+                approved=requested,
+                reason="approved risk-reducing order",
+            )
+
+        if self.kill_switch:
+            return self._decision(
+                requested=requested,
+                approved=closing_qty,
+                reason=(
+                    "kill switch: only risk-reducing quantity approved"
+                    if closing_qty > 0
+                    else f"kill switch engaged: {self.kill_switch_reason}"
+                ),
+            )
+
         if portfolio.equity <= 0:
-            return RiskDecision(
-                approved=False,
-                reason="portfolio equity is non-positive",
-                requested_quantity=requested,
+            return self._decision(
+                requested=requested,
+                approved=closing_qty,
+                reason="portfolio equity is non-positive; new exposure blocked",
             )
+
+        # If a sell closes a long and then crosses zero, only the excess is a
+        # new short. Disallow that excess when the portfolio policy forbids shorts.
         if not self.limits.allow_short and order.side == Side.SELL:
-            return RiskDecision(
-                approved=False,
-                reason="short selling disabled by risk policy",
-                requested_quantity=requested,
+            return self._decision(
+                requested=requested,
+                approved=closing_qty,
+                reason=(
+                    "short opening blocked; closing quantity approved"
+                    if closing_qty > 0
+                    else "short selling disabled by risk policy"
+                ),
             )
+
         if portfolio.drawdown_pct >= self.limits.max_drawdown_pct:
-            return RiskDecision(
-                approved=False,
-                reason="maximum drawdown threshold reached",
-                requested_quantity=requested,
+            return self._decision(
+                requested=requested,
+                approved=closing_qty,
+                reason="maximum drawdown reached; only risk reduction approved",
             )
 
         if day_start_equity > 0:
@@ -79,42 +136,40 @@ class RiskEngine:
                 (day_start_equity - portfolio.equity) / day_start_equity * Decimal(100),
             )
             if daily_loss_pct >= self.limits.max_daily_loss_pct:
-                return RiskDecision(
-                    approved=False,
-                    reason="maximum daily loss threshold reached",
-                    requested_quantity=requested,
+                return self._decision(
+                    requested=requested,
+                    approved=closing_qty,
+                    reason="maximum daily loss reached; only risk reduction approved",
                 )
 
-        order_notional = order.quantity * reference_price
         max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal(100)
-        if order_notional > max_order_notional:
-            approved_qty = max_order_notional / reference_price
-            if approved_qty <= 0:
-                return RiskDecision(
-                    approved=False,
-                    reason="order exceeds maximum order notional",
-                    requested_quantity=requested,
-                )
-        else:
-            approved_qty = requested
+        max_opening_by_order = max_order_notional / reference_price
+        approved_opening = min(opening_requested, max_opening_by_order)
 
-        projected_gross = portfolio.gross_exposure + approved_qty * reference_price
+        # Closing exposure creates capacity before any same-order position flip.
+        gross_after_close = max(
+            Decimal(0),
+            portfolio.gross_exposure - closing_qty * reference_price,
+        )
         max_gross = portfolio.equity * self.limits.max_gross_exposure_pct / Decimal(100)
-        if projected_gross > max_gross:
-            remaining_notional = max(Decimal(0), max_gross - portfolio.gross_exposure)
-            approved_qty = min(approved_qty, remaining_notional / reference_price)
+        gross_capacity = max(Decimal(0), max_gross - gross_after_close)
+        approved_opening = min(approved_opening, gross_capacity / reference_price)
 
+        approved_qty = closing_qty + max(Decimal(0), approved_opening)
         if approved_qty <= 0:
-            return RiskDecision(
-                approved=False,
+            return self._decision(
+                requested=requested,
+                approved=Decimal(0),
                 reason="no exposure capacity remains",
-                requested_quantity=requested,
             )
 
-        reason = "approved" if approved_qty == requested else "approved with risk sizing reduction"
-        return RiskDecision(
-            approved=True,
+        reason = (
+            "approved"
+            if approved_qty == requested
+            else "approved with risk sizing reduction"
+        )
+        return self._decision(
+            requested=requested,
+            approved=approved_qty,
             reason=reason,
-            requested_quantity=requested,
-            approved_quantity=approved_qty,
         )
