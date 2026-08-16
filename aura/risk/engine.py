@@ -8,10 +8,10 @@ from aura.domain.models import OrderRequest, PortfolioSnapshot, RiskDecision, Si
 
 @dataclass(slots=True, frozen=True)
 class RiskLimits:
-    max_order_notional_pct: Decimal = Decimal("2")
-    max_gross_exposure_pct: Decimal = Decimal("100")
-    max_drawdown_pct: Decimal = Decimal("10")
-    max_daily_loss_pct: Decimal = Decimal("4")
+    max_order_notional_pct: Decimal = Decimal(2)
+    max_gross_exposure_pct: Decimal = Decimal(100)
+    max_drawdown_pct: Decimal = Decimal(10)
+    max_daily_loss_pct: Decimal = Decimal(4)
     allow_short: bool = True
 
 
@@ -75,8 +75,8 @@ class RiskEngine:
 
         if day_start_equity > 0:
             daily_loss_pct = max(
-                Decimal("0"),
-                (day_start_equity - portfolio.equity) / day_start_equity * Decimal("100"),
+                Decimal(0),
+                (day_start_equity - portfolio.equity) / day_start_equity * Decimal(100),
             )
             if daily_loss_pct >= self.limits.max_daily_loss_pct:
                 return RiskDecision(
@@ -86,7 +86,7 @@ class RiskEngine:
                 )
 
         order_notional = order.quantity * reference_price
-        max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal("100")
+        max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal(100)
         if order_notional > max_order_notional:
             approved_qty = max_order_notional / reference_price
             if approved_qty <= 0:
@@ -99,9 +99,9 @@ class RiskEngine:
             approved_qty = requested
 
         projected_gross = portfolio.gross_exposure + approved_qty * reference_price
-        max_gross = portfolio.equity * self.limits.max_gross_exposure_pct / Decimal("100")
+        max_gross = portfolio.equity * self.limits.max_gross_exposure_pct / Decimal(100)
         if projected_gross > max_gross:
-            remaining_notional = max(Decimal("0"), max_gross - portfolio.gross_exposure)
+            remaining_notional = max(Decimal(0), max_gross - portfolio.gross_exposure)
             approved_qty = min(approved_qty, remaining_notional / reference_price)
 
         if approved_qty <= 0:
