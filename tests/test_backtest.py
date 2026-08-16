@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
 from aura.backtest.engine import BacktestEngine
@@ -28,7 +28,7 @@ class OneShotLong(Strategy):
 
 
 def candle(i: int, open_price: str, close_price: str) -> NormalizedCandle:
-    start = datetime(2026, 1, 1, tzinfo=timezone.utc) + timedelta(minutes=i)
+    start = datetime(2026, 1, 1, tzinfo=UTC) + timedelta(minutes=i)
     op = Decimal(open_price)
     cp = Decimal(close_price)
     return NormalizedCandle(
@@ -41,7 +41,7 @@ def candle(i: int, open_price: str, close_price: str) -> NormalizedCandle:
         high=max(op, cp),
         low=min(op, cp),
         close=cp,
-        volume=Decimal("1"),
+        volume=Decimal(1),
         closed=True,
     )
 
@@ -49,15 +49,15 @@ def candle(i: int, open_price: str, close_price: str) -> NormalizedCandle:
 def test_signal_on_close_fills_next_bar_open() -> None:
     risk = RiskEngine(
         RiskLimits(
-            max_order_notional_pct=Decimal("100"),
-            max_gross_exposure_pct=Decimal("100"),
+            max_order_notional_pct=Decimal(100),
+            max_gross_exposure_pct=Decimal(100),
         )
     )
     pipeline = DecisionPipeline(OneShotLong(), risk)
     engine = BacktestEngine(
         pipeline=pipeline,
-        starting_cash=Decimal("10000"),
-        requested_quantity=Decimal("1"),
+        starting_cash=Decimal(10000),
+        requested_quantity=Decimal(1),
     )
     result = engine.run(
         [
@@ -70,5 +70,5 @@ def test_signal_on_close_fills_next_bar_open() -> None:
     assert result.orders == 1
     assert result.fills == 1
     position = engine.ledger.positions["X"]
-    assert position.average_price == Decimal("120")
-    assert result.ending_equity == Decimal("10005")
+    assert position.average_price == Decimal(120)
+    assert result.ending_equity == Decimal(10005)
