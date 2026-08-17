@@ -6,6 +6,7 @@ from decimal import Decimal
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.core.pipeline import DecisionPipeline, DecisionResult
+from aura.data.quality import CandleQualityGate, DataQualityReport
 from aura.domain.models import PortfolioSnapshot, SignalIntent, StrategySignal
 
 
@@ -14,10 +15,11 @@ class MultiAgentDecisionOutcome:
     round: AgentRound
     memo: CEODecisionMemo
     governed_result: DecisionResult | None
+    data_quality_report: DataQualityReport | None = None
 
 
 class MultiAgentDecisionService:
-    """Concurrent specialists -> CEO memo -> shared independent risk path."""
+    """Data quality -> concurrent specialists -> CEO -> independent risk path."""
 
     strategy_id = "aura.multi_agent.ceo.v1"
 
@@ -27,10 +29,12 @@ class MultiAgentDecisionService:
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
         decision_pipeline: DecisionPipeline,
+        data_quality_gate: CandleQualityGate | None = None,
     ) -> None:
         self.orchestrator = orchestrator
         self.ceo = ceo
         self.decision_pipeline = decision_pipeline
+        self.data_quality_gate = data_quality_gate
 
     async def evaluate(
         self,
@@ -42,6 +46,40 @@ class MultiAgentDecisionService:
         requested_quantity: Decimal,
         current_position_quantity: Decimal = Decimal(0),
     ) -> MultiAgentDecisionOutcome:
+        quality_report: DataQualityReport | None = None
+        if self.data_quality_gate is not None:
+            quality_report = self.data_quality_gate.assess(
+                context.candles,
+                decision_time=context.created_at,
+            )
+            if not quality_report.safe_for_decision:
+                round_result = AgentRound(
+                    correlation_id=context.correlation_id,
+                    evidence=(),
+                    failures=(),
+                    started_at=context.created_at,
+                    completed_at=context.created_at,
+                )
+                issue_names = ", ".join(issue.issue_type.value for issue in quality_report.issues)
+                memo = CEODecisionMemo(
+                    correlation_id=context.correlation_id,
+                    intent=SignalIntent.FLAT,
+                    confidence=0.0,
+                    supporting_agents=(),
+                    opposing_agents=(),
+                    abstaining_agents=(),
+                    risk_flags=("market_data_quality_block",),
+                    rationale=f"market data quality gate blocked intelligence round: {issue_names}",
+                    quorum_met=False,
+                    generated_at=context.created_at,
+                )
+                return MultiAgentDecisionOutcome(
+                    round=round_result,
+                    memo=memo,
+                    governed_result=None,
+                    data_quality_report=quality_report,
+                )
+
         round_result = await self.orchestrator.run_round(context)
         memo = self.ceo.synthesize(round_result)
         if not memo.quorum_met or memo.intent == SignalIntent.FLAT:
@@ -49,6 +87,7 @@ class MultiAgentDecisionService:
                 round=round_result,
                 memo=memo,
                 governed_result=None,
+                data_quality_report=quality_report,
             )
 
         signal = StrategySignal(
@@ -72,4 +111,5 @@ class MultiAgentDecisionService:
             round=round_result,
             memo=memo,
             governed_result=governed,
+            data_quality_report=quality_report,
         )
