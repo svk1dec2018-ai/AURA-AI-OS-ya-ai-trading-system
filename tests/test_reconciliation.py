@@ -9,9 +9,11 @@ from aura.execution.reconciliation import (
     BrokerPositionSnapshot,
     ReconciliationEngine,
     ReconciliationIssueType,
+    ReconciliationSupervisor,
 )
 from aura.persistence.recovery import FinancialEventJournal, recover_financial_state
 from aura.persistence.wal import JsonlWriteAheadLog
+from aura.risk.engine import RiskEngine, RiskLimits
 
 
 def _recovered_with_partial_fill(tmp_path: Path):
@@ -122,3 +124,37 @@ def test_position_mismatch_freezes_new_risk(tmp_path: Path) -> None:
         issue.issue_type == ReconciliationIssueType.POSITION_QUANTITY_MISMATCH
         for issue in report.issues
     )
+
+
+def test_supervisor_engages_kill_switch_and_never_auto_resets(tmp_path: Path) -> None:
+    recovered, _ = _recovered_with_partial_fill(tmp_path)
+    engine = ReconciliationEngine()
+    bad_report = engine.compare(
+        recovered,
+        broker_orders=[],
+        broker_positions=[BrokerPositionSnapshot(symbol="X", quantity=Decimal(1))],
+    )
+    risk = RiskEngine(RiskLimits())
+    supervisor = ReconciliationSupervisor()
+
+    assert supervisor.enforce(bad_report, risk)
+    assert risk.kill_switch
+    assert "reconciliation divergence" in risk.kill_switch_reason
+
+    clean_report = engine.compare(
+        recovered,
+        broker_orders=[
+            BrokerOrderSnapshot(
+                broker_order_id="b-1",
+                client_order_id="client-1",
+                symbol="X",
+                side=Side.BUY,
+                quantity=Decimal(2),
+                filled_quantity=Decimal(1),
+                status=OrderStatus.PARTIALLY_FILLED,
+            )
+        ],
+        broker_positions=[BrokerPositionSnapshot(symbol="X", quantity=Decimal(1))],
+    )
+    assert not supervisor.enforce(clean_report, risk)
+    assert risk.kill_switch
