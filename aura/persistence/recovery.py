@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict
 from aura.domain.models import Fill, OrderRequest, OrderStatus
 from aura.execution.state import InvalidOrderTransition, OrderState, OverfillError
 from aura.persistence.wal import JsonlWriteAheadLog, WalEvent
+from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.portfolio.ledger import PortfolioLedger
 
 
@@ -34,13 +35,7 @@ class KillSwitchPayload(BaseModel):
 
 
 class FinancialEventJournal:
-    """Typed financial event facade over AURA's append-only WAL.
-
-    The journal records intent/state transitions before the corresponding
-    in-memory mutation is considered durable. Recovery consumes the same event
-    vocabulary, so live and restarted processes rebuild financial state from
-    one deterministic source of truth.
-    """
+    """Typed financial event facade over AURA's append-only WAL."""
 
     def __init__(self, wal: JsonlWriteAheadLog) -> None:
         self.wal = wal
@@ -54,23 +49,17 @@ class FinancialEventJournal:
 
     def record_order_submitted(self, order_id: str, *, correlation_id: str) -> WalEvent:
         return self._record_order_transition(
-            FinancialEventType.ORDER_SUBMITTED,
-            order_id,
-            correlation_id,
+            FinancialEventType.ORDER_SUBMITTED, order_id, correlation_id
         )
 
     def record_order_cancelled(self, order_id: str, *, correlation_id: str) -> WalEvent:
         return self._record_order_transition(
-            FinancialEventType.ORDER_CANCELLED,
-            order_id,
-            correlation_id,
+            FinancialEventType.ORDER_CANCELLED, order_id, correlation_id
         )
 
     def record_order_rejected(self, order_id: str, *, correlation_id: str) -> WalEvent:
         return self._record_order_transition(
-            FinancialEventType.ORDER_REJECTED,
-            order_id,
-            correlation_id,
+            FinancialEventType.ORDER_REJECTED, order_id, correlation_id
         )
 
     def _record_order_transition(
@@ -122,15 +111,20 @@ class RecoveredFinancialState:
     @property
     def open_orders(self) -> dict[str, OrderState]:
         terminal = {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
-        return {order_id: state for order_id, state in self.orders.items() if state.status not in terminal}
+        return {
+            order_id: state
+            for order_id, state in self.orders.items()
+            if state.status not in terminal
+        }
 
 
 def recover_financial_state(
     wal: JsonlWriteAheadLog,
     *,
     starting_cash: Decimal,
+    instrument_specs: dict[str, InstrumentLedgerSpec] | None = None,
 ) -> RecoveredFinancialState:
-    ledger = PortfolioLedger(starting_cash)
+    ledger = PortfolioLedger(starting_cash, instrument_specs=instrument_specs)
     orders: dict[str, OrderState] = {}
     kill_switch = False
     kill_switch_reason = ""
@@ -151,16 +145,12 @@ def recover_financial_state(
                 if order.order_id in orders:
                     raise RecoveryError(f"duplicate order creation: {order.order_id}")
                 orders[order.order_id] = OrderState(order)
-
             elif event_type == FinancialEventType.ORDER_SUBMITTED:
                 _order_state(orders, event).submit()
-
             elif event_type == FinancialEventType.ORDER_CANCELLED:
                 _order_state(orders, event).cancel()
-
             elif event_type == FinancialEventType.ORDER_REJECTED:
                 _order_state(orders, event).reject()
-
             elif event_type == FinancialEventType.FILL_APPLIED:
                 fill = Fill.model_validate(_required(event.payload, "fill"))
                 state = orders.get(fill.order_id)
@@ -174,16 +164,13 @@ def recover_financial_state(
                     )
                 if state_applied:
                     unique_fills += 1
-
             elif event_type == FinancialEventType.KILL_SWITCH_ENGAGED:
                 payload = KillSwitchPayload.model_validate(event.payload)
                 kill_switch = True
                 kill_switch_reason = payload.reason or "restored kill switch"
-
             elif event_type == FinancialEventType.KILL_SWITCH_RESET:
                 kill_switch = False
                 kill_switch_reason = ""
-
         except RecoveryError:
             raise
         except (InvalidOrderTransition, OverfillError, ValueError, KeyError, TypeError) as exc:
