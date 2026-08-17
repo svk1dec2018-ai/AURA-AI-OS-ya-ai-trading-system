@@ -95,7 +95,7 @@ def _firewall() -> KnowledgeFirewall:
 
 
 @pytest.mark.asyncio
-async def test_default_team_runs_all_nine_roles_in_one_concurrent_round() -> None:
+async def test_default_team_runs_all_ten_roles_in_one_concurrent_round() -> None:
     candles = _decision_candles()
     observed_at = candles[-1].close_time
     context = AgentContext(
@@ -142,7 +142,7 @@ async def test_default_team_runs_all_nine_roles_in_one_concurrent_round() -> Non
     round_result = await team.orchestrator.run_round(context)
 
     assert round_result.failures == ()
-    assert len(round_result.evidence) == 9
+    assert len(round_result.evidence) == 10
     assert {item.role for item in round_result.evidence} == set(AgentRole)
 
     memo = team.ceo.synthesize(round_result)
@@ -154,6 +154,7 @@ async def test_default_team_runs_all_nine_roles_in_one_concurrent_round() -> Non
     assert "deterministic:htf_bias:v1" in memo.supporting_agents
     assert "knowledge:macro_sentiment:v1" in memo.supporting_agents
     assert "deterministic:cross_market:v1" in memo.supporting_agents
+    assert "ensemble:forecast:v1" in memo.abstaining_agents
     assert "deterministic:regime:v1" in memo.abstaining_agents
     assert "deterministic:options_volatility:v1" in memo.abstaining_agents
     assert "deterministic:execution_quality:v1" in memo.abstaining_agents
