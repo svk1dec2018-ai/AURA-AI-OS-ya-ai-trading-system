@@ -127,9 +127,7 @@ class ModelRegistry:
             return False
         if model.reliability_score < requirement.min_reliability:
             return False
-        if model.calibration_score < requirement.min_calibration:
-            return False
-        return True
+        return model.calibration_score >= requirement.min_calibration
 
     @staticmethod
     def _score(model: ModelDescriptor, requirement: ModelRequirement) -> float:
