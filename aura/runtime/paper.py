@@ -19,7 +19,6 @@ from aura.persistence.recovery import FinancialEventJournal, recover_financial_s
 from aura.portfolio.ledger import PortfolioLedger
 from aura.risk.engine import RiskEngine
 
-
 ContextMetadataProvider = Callable[
     [NormalizedCandle, tuple[NormalizedCandle, ...]],
     dict[str, Any],
