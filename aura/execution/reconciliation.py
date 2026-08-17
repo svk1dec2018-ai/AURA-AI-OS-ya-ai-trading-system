@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from aura.domain.models import OrderStatus, Side
 from aura.persistence.recovery import RecoveredFinancialState
+from aura.risk.engine import RiskEngine
 
 
 class ReconciliationSeverity(str, Enum):
@@ -176,3 +177,25 @@ class ReconciliationEngine:
             broker_open_orders=len(broker_open),
             compared_positions=len(symbols),
         )
+
+
+class ReconciliationSupervisor:
+    """Enforce reconciliation safety by freezing new risk on critical divergence.
+
+    A clean report never auto-resets an existing kill switch. Recovery from a
+    reconciliation incident must be explicit so an unrelated/manual risk freeze
+    cannot be cleared accidentally.
+    """
+
+    def enforce(self, report: ReconciliationReport, risk_engine: RiskEngine) -> bool:
+        if not report.should_freeze_new_orders:
+            return False
+
+        critical = [
+            issue for issue in report.issues if issue.severity == ReconciliationSeverity.CRITICAL
+        ]
+        summary = "; ".join(f"{issue.issue_type.value}:{issue.key}" for issue in critical[:3])
+        if len(critical) > 3:
+            summary = f"{summary}; +{len(critical) - 3} more"
+        risk_engine.engage_kill_switch(f"reconciliation divergence: {summary}")
+        return True
