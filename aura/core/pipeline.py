@@ -25,7 +25,7 @@ class DecisionResult:
 
 
 class DecisionPipeline:
-    """The shared strategy -> risk -> order path for backtest and live runtimes."""
+    """Shared signal -> risk -> order path for backtest, agents and live runtimes."""
 
     def __init__(self, strategy: Strategy, risk_engine: RiskEngine) -> None:
         self.strategy = strategy
@@ -44,7 +44,34 @@ class DecisionPipeline:
             return None
 
         signal = self.strategy.on_closed_candle(history)
-        if signal is None or signal.intent == SignalIntent.FLAT:
+        if signal is None:
+            return None
+        return self.evaluate_signal(
+            signal=signal,
+            portfolio=portfolio,
+            day_start_equity=day_start_equity,
+            venue=venue,
+            requested_quantity=requested_quantity,
+            current_position_quantity=current_position_quantity,
+        )
+
+    def evaluate_signal(
+        self,
+        *,
+        signal: StrategySignal,
+        portfolio: PortfolioSnapshot,
+        day_start_equity: Decimal,
+        venue: str,
+        requested_quantity: Decimal,
+        current_position_quantity: Decimal = Decimal(0),
+    ) -> DecisionResult | None:
+        """Evaluate any governed signal through the exact same independent risk gate.
+
+        Multi-agent CEO output must be converted to a StrategySignal and enter
+        here. No agent-specific order path exists, preventing an AI layer from
+        bypassing the portfolio/risk authority used by conventional strategies.
+        """
+        if signal.intent == SignalIntent.FLAT:
             return None
 
         side = Side.BUY if signal.intent == SignalIntent.LONG else Side.SELL
