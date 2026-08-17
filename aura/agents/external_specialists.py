@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -21,7 +22,7 @@ class OptionsVolatilitySnapshot(BaseModel):
 
     source_id: str = Field(min_length=1)
     underlying_symbol: str = Field(min_length=1)
-    observed_at: object
+    observed_at: datetime
     implied_volatility: float = Field(ge=0.0)
     iv_percentile: float = Field(ge=0.0, le=100.0)
     put_call_oi_ratio: float = Field(ge=0.0)
@@ -30,11 +31,7 @@ class OptionsVolatilitySnapshot(BaseModel):
 
     @field_validator("observed_at")
     @classmethod
-    def validate_observed_at(cls, value: object) -> object:
-        from datetime import datetime
-
-        if not isinstance(value, datetime):
-            raise ValueError("observed_at must be a datetime")
+    def observed_at_must_be_timezone_aware(cls, value: datetime) -> datetime:
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("options observed_at must be timezone-aware")
         return value
@@ -45,7 +42,7 @@ class CrossMarketObservation(BaseModel):
 
     source_id: str = Field(min_length=1)
     related_symbol: str = Field(min_length=1)
-    observed_at: object
+    observed_at: datetime
     intent: SignalIntent
     confidence: float = Field(ge=0.0, le=1.0)
     trust_score: float = Field(default=1.0, ge=0.0, le=1.0)
@@ -53,11 +50,7 @@ class CrossMarketObservation(BaseModel):
 
     @field_validator("observed_at")
     @classmethod
-    def validate_observed_at(cls, value: object) -> object:
-        from datetime import datetime
-
-        if not isinstance(value, datetime):
-            raise ValueError("observed_at must be a datetime")
+    def observed_at_must_be_timezone_aware(cls, value: datetime) -> datetime:
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("cross-market observed_at must be timezone-aware")
         return value
@@ -71,6 +64,35 @@ def _ema(values: list[Decimal], period: int) -> Decimal:
     for item in values[period:]:
         value = alpha * item + (Decimal(1) - alpha) * value
     return value
+
+
+def _abstain(
+    *,
+    agent_id: str,
+    role: AgentRole,
+    context: AgentContext,
+    thesis: str,
+    flag: str,
+    source_type: EvidenceSourceType,
+    source_id: str,
+) -> AgentEvidence:
+    return AgentEvidence(
+        agent_id=agent_id,
+        role=role,
+        intent=SignalIntent.FLAT,
+        confidence=0.0,
+        thesis=thesis,
+        risk_flags=(flag,),
+        sources=(
+            EvidenceSource(
+                source_id=source_id,
+                source_type=source_type,
+                observed_at=context.candles[-1].close_time,
+                trust_score=1.0,
+            ),
+        ),
+        generated_at=context.created_at,
+    )
 
 
 class HigherTimeframeBiasSpecialist(SpecialistAgent):
@@ -135,26 +157,18 @@ class HigherTimeframeBiasSpecialist(SpecialistAgent):
                 "fast_ema": str(fast),
                 "slow_ema": str(slow),
             },
-            generated_at=context.candles[-1].close_time,
+            generated_at=context.created_at,
         )
 
     def _abstain(self, context: AgentContext, thesis: str, flag: str) -> AgentEvidence:
-        return AgentEvidence(
+        return _abstain(
             agent_id=self.agent_id,
             role=self.role,
-            intent=SignalIntent.FLAT,
-            confidence=0.0,
+            context=context,
             thesis=thesis,
-            risk_flags=(flag,),
-            sources=(
-                EvidenceSource(
-                    source_id=f"market:{context.symbol}:htf:missing-or-invalid",
-                    source_type=EvidenceSourceType.MARKET_DATA,
-                    observed_at=context.candles[-1].close_time,
-                    trust_score=1.0,
-                ),
-            ),
-            generated_at=context.candles[-1].close_time,
+            flag=flag,
+            source_type=EvidenceSourceType.MARKET_DATA,
+            source_id=f"market:{context.symbol}:htf:missing-or-invalid",
         )
 
 
@@ -171,8 +185,7 @@ class OptionsVolatilitySpecialist(SpecialistAgent):
         snapshot = OptionsVolatilitySnapshot.model_validate(raw)
         if snapshot.underlying_symbol != context.symbol:
             return self._abstain(context, "options underlying symbol mismatch", "options_symbol_mismatch")
-        observed_at = snapshot.observed_at
-        if observed_at > context.created_at:
+        if snapshot.observed_at > context.created_at:
             return self._abstain(context, "options snapshot is from the future", "options_future_data")
 
         flags: list[str] = []
@@ -201,7 +214,7 @@ class OptionsVolatilitySpecialist(SpecialistAgent):
                 EvidenceSource(
                     source_id=snapshot.source_id,
                     source_type=EvidenceSourceType.DERIVATIVES,
-                    observed_at=observed_at,
+                    observed_at=snapshot.observed_at,
                     trust_score=snapshot.trust_score,
                 ),
             ),
@@ -211,26 +224,18 @@ class OptionsVolatilitySpecialist(SpecialistAgent):
                 "put_call_oi_ratio": snapshot.put_call_oi_ratio,
                 "put_call_volume_ratio": snapshot.put_call_volume_ratio,
             },
-            generated_at=context.candles[-1].close_time,
+            generated_at=context.created_at,
         )
 
     def _abstain(self, context: AgentContext, thesis: str, flag: str) -> AgentEvidence:
-        return AgentEvidence(
+        return _abstain(
             agent_id=self.agent_id,
             role=self.role,
-            intent=SignalIntent.FLAT,
-            confidence=0.0,
+            context=context,
             thesis=thesis,
-            risk_flags=(flag,),
-            sources=(
-                EvidenceSource(
-                    source_id=f"derivatives:{context.symbol}:missing-or-invalid",
-                    source_type=EvidenceSourceType.DERIVATIVES,
-                    observed_at=context.candles[-1].close_time,
-                    trust_score=1.0,
-                ),
-            ),
-            generated_at=context.candles[-1].close_time,
+            flag=flag,
+            source_type=EvidenceSourceType.DERIVATIVES,
+            source_id=f"derivatives:{context.symbol}:missing-or-invalid",
         )
 
 
@@ -292,26 +297,18 @@ class CrossMarketSpecialist(SpecialistAgent):
                 "short_score": short_score,
                 "related_symbols": [item.related_symbol for item in observations],
             },
-            generated_at=context.candles[-1].close_time,
+            generated_at=context.created_at,
         )
 
     def _abstain(self, context: AgentContext, thesis: str, flag: str) -> AgentEvidence:
-        return AgentEvidence(
+        return _abstain(
             agent_id=self.agent_id,
             role=self.role,
-            intent=SignalIntent.FLAT,
-            confidence=0.0,
+            context=context,
             thesis=thesis,
-            risk_flags=(flag,),
-            sources=(
-                EvidenceSource(
-                    source_id=f"cross-market:{context.symbol}:missing-or-invalid",
-                    source_type=EvidenceSourceType.MARKET_DATA,
-                    observed_at=context.candles[-1].close_time,
-                    trust_score=1.0,
-                ),
-            ),
-            generated_at=context.candles[-1].close_time,
+            flag=flag,
+            source_type=EvidenceSourceType.MARKET_DATA,
+            source_id=f"cross-market:{context.symbol}:missing-or-invalid",
         )
 
 
@@ -378,24 +375,16 @@ class KnowledgeMacroSentimentSpecialist(SpecialistAgent):
                 for item in claim_items
             ),
             features={"knowledge_items": [item.item_id for item in claim_items]},
-            generated_at=context.candles[-1].close_time,
+            generated_at=context.created_at,
         )
 
     def _abstain(self, context: AgentContext, thesis: str, flag: str) -> AgentEvidence:
-        return AgentEvidence(
+        return _abstain(
             agent_id=self.agent_id,
             role=self.role,
-            intent=SignalIntent.FLAT,
-            confidence=0.0,
+            context=context,
             thesis=thesis,
-            risk_flags=(flag,),
-            sources=(
-                EvidenceSource(
-                    source_id="knowledge-firewall:abstention",
-                    source_type=EvidenceSourceType.RESEARCH,
-                    observed_at=context.candles[-1].close_time,
-                    trust_score=1.0,
-                ),
-            ),
-            generated_at=context.candles[-1].close_time,
+            flag=flag,
+            source_type=EvidenceSourceType.RESEARCH,
+            source_id="knowledge-firewall:abstention",
         )
