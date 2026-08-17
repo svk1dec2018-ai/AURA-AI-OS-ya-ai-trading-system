@@ -1,11 +1,10 @@
-from collections import namedtuple
+import collections
 from decimal import Decimal
 
 from aura.data.mt5_contracts import MT5UniverseDiscovery
 from aura.markets.universe import AssetClass, VenueFamily
 
-
-Symbol = namedtuple(
+Symbol = collections.namedtuple(
     "Symbol",
     [
         "name",
@@ -88,8 +87,8 @@ def test_mt5_contract_metadata_preserves_broker_quantity_rules() -> None:
         for instrument in MT5UniverseDiscovery(FakeMT5()).discover()
         if instrument.canonical_symbol == "XAUUSD"
     )
-    assert xau.contract_size == Decimal("100")
+    assert xau.contract_size == Decimal(100)
     assert xau.tick_size == Decimal("0.01")
     assert xau.min_quantity == Decimal("0.01")
     assert xau.quantity_step == Decimal("0.01")
-    assert xau.max_quantity == Decimal("200")
+    assert xau.max_quantity == Decimal(200)
