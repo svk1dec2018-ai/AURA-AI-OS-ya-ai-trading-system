@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 import os
+import threading
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
@@ -44,92 +45,104 @@ def load_mt5_demo_credentials_from_env() -> MT5DemoCredentials:
 
 
 class OfficialMT5Gateway:
-    """Guarded wrapper around MetaQuotes' official `MetaTrader5` Python package.
+    """Serialized, fail-closed wrapper around MetaQuotes' MetaTrader5 package.
 
-    The package is imported only on the terminal host, keeping Linux CI portable.
-    Trading, margin and profit calls are unavailable until `connect_demo` verifies
-    the account as DEMO. This prevents an accidentally configured real terminal
-    from being reached by AURA's demo/evolution runtime.
+    MetaTrader terminal calls are guarded by one re-entrant lock so data polling,
+    reconciliation and demo execution workers cannot concurrently mutate/use the
+    platform bridge. Trading calls remain unavailable until `connect_demo` proves
+    the account is DEMO.
     """
 
     def __init__(self, module: Any | None = None) -> None:
         self._mt5 = module
         self._demo_verified = False
+        self._lock = threading.RLock()
 
     @property
     def module(self) -> Any:
-        if self._mt5 is None:
-            try:
-                self._mt5 = importlib.import_module("MetaTrader5")
-            except ModuleNotFoundError as exc:
-                raise RuntimeError(
-                    "MetaTrader5 package is required on the Windows/MT5 terminal host"
-                ) from exc
-        return self._mt5
+        with self._lock:
+            if self._mt5 is None:
+                try:
+                    self._mt5 = importlib.import_module("MetaTrader5")
+                except ModuleNotFoundError as exc:
+                    raise RuntimeError(
+                        "MetaTrader5 package is required on the Windows/MT5 terminal host"
+                    ) from exc
+            return self._mt5
 
     @property
     def demo_verified(self) -> bool:
-        return self._demo_verified
+        with self._lock:
+            return self._demo_verified
 
     def connect_demo(self, credentials: MT5DemoCredentials) -> MT5AccountState:
-        mt5 = self.module
-        if credentials.terminal_path:
-            ok = mt5.initialize(
-                credentials.terminal_path,
-                login=credentials.login,
-                password=credentials.password,
-                server=credentials.server,
+        with self._lock:
+            mt5 = self.module
+            if credentials.terminal_path:
+                ok = mt5.initialize(
+                    credentials.terminal_path,
+                    login=credentials.login,
+                    password=credentials.password,
+                    server=credentials.server,
+                )
+            else:
+                ok = mt5.initialize(
+                    login=credentials.login,
+                    password=credentials.password,
+                    server=credentials.server,
+                )
+            if not ok:
+                raise RuntimeError(f"MT5 initialize failed: {mt5.last_error()}")
+            info = mt5.account_info()
+            if info is None:
+                mt5.shutdown()
+                raise RuntimeError(f"MT5 account_info failed: {mt5.last_error()}")
+            try:
+                DemoExecutionGuard.assert_mt5_demo_account(info)
+            except Exception:
+                mt5.shutdown()
+                raise
+            self._demo_verified = True
+            source = info._asdict() if hasattr(info, "_asdict") else info if isinstance(info, dict) else vars(info)
+            margin_level = source.get("margin_level")
+            return MT5AccountState(
+                login=int(source["login"]),
+                server=str(source["server"]),
+                currency=str(source["currency"]),
+                balance=Decimal(str(source["balance"])),
+                equity=Decimal(str(source["equity"])),
+                margin=Decimal(str(source["margin"])),
+                margin_free=Decimal(str(source["margin_free"])),
+                margin_level=(
+                    Decimal(str(margin_level)) if margin_level is not None else None
+                ),
             )
-        else:
-            ok = mt5.initialize(
-                login=credentials.login,
-                password=credentials.password,
-                server=credentials.server,
-            )
-        if not ok:
-            raise RuntimeError(f"MT5 initialize failed: {mt5.last_error()}")
-        info = mt5.account_info()
-        if info is None:
-            mt5.shutdown()
-            raise RuntimeError(f"MT5 account_info failed: {mt5.last_error()}")
-        try:
-            DemoExecutionGuard.assert_mt5_demo_account(info)
-        except Exception:
-            mt5.shutdown()
-            raise
-        self._demo_verified = True
-        source = info._asdict() if hasattr(info, "_asdict") else vars(info)
-        margin_level = source.get("margin_level")
-        return MT5AccountState(
-            login=int(source["login"]),
-            server=str(source["server"]),
-            currency=str(source["currency"]),
-            balance=Decimal(str(source["balance"])),
-            equity=Decimal(str(source["equity"])),
-            margin=Decimal(str(source["margin"])),
-            margin_free=Decimal(str(source["margin_free"])),
-            margin_level=Decimal(str(margin_level)) if margin_level is not None else None,
-        )
 
     def initialize(self) -> bool:
-        return bool(self.module.initialize())
+        with self._lock:
+            return bool(self.module.initialize())
 
     def shutdown(self) -> None:
-        if self._mt5 is not None:
-            self._mt5.shutdown()
-        self._demo_verified = False
+        with self._lock:
+            if self._mt5 is not None:
+                self._mt5.shutdown()
+            self._demo_verified = False
 
     def symbols_get(self) -> tuple[Any, ...] | None:
-        return self.module.symbols_get()
+        with self._lock:
+            return self.module.symbols_get()
 
     def symbol_info(self, symbol: str) -> Any | None:
-        return self.module.symbol_info(symbol)
+        with self._lock:
+            return self.module.symbol_info(symbol)
 
     def symbol_info_tick(self, symbol: str) -> Any | None:
-        return self.module.symbol_info_tick(symbol)
+        with self._lock:
+            return self.module.symbol_info_tick(symbol)
 
     def symbol_select(self, symbol: str, enable: bool = True) -> bool:
-        return bool(self.module.symbol_select(symbol, enable))
+        with self._lock:
+            return bool(self.module.symbol_select(symbol, enable))
 
     def copy_rates_from_pos(
         self,
@@ -138,22 +151,28 @@ class OfficialMT5Gateway:
         start_pos: int,
         count: int,
     ) -> Any:
-        return self.module.copy_rates_from_pos(symbol, timeframe, start_pos, count)
+        with self._lock:
+            return self.module.copy_rates_from_pos(symbol, timeframe, start_pos, count)
 
     def orders_get(self, **kwargs: Any) -> tuple[Any, ...] | None:
-        return self.module.orders_get(**kwargs)
+        with self._lock:
+            return self.module.orders_get(**kwargs)
 
     def positions_get(self, **kwargs: Any) -> tuple[Any, ...] | None:
-        return self.module.positions_get(**kwargs)
+        with self._lock:
+            return self.module.positions_get(**kwargs)
 
     def history_deals_get(self, *args: Any, **kwargs: Any) -> tuple[Any, ...] | None:
-        return self.module.history_deals_get(*args, **kwargs)
+        with self._lock:
+            return self.module.history_deals_get(*args, **kwargs)
 
     def account_info(self) -> Any | None:
-        return self.module.account_info()
+        with self._lock:
+            return self.module.account_info()
 
     def terminal_info(self) -> Any | None:
-        return self.module.terminal_info()
+        with self._lock:
+            return self.module.terminal_info()
 
     def order_calc_margin(
         self,
@@ -162,8 +181,9 @@ class OfficialMT5Gateway:
         volume: float,
         price: float,
     ) -> float | None:
-        self._require_demo_verified()
-        return self.module.order_calc_margin(action, symbol, volume, price)
+        with self._lock:
+            self._require_demo_verified()
+            return self.module.order_calc_margin(action, symbol, volume, price)
 
     def order_calc_profit(
         self,
@@ -173,28 +193,33 @@ class OfficialMT5Gateway:
         price_open: float,
         price_close: float,
     ) -> float | None:
-        self._require_demo_verified()
-        return self.module.order_calc_profit(
-            action,
-            symbol,
-            volume,
-            price_open,
-            price_close,
-        )
+        with self._lock:
+            self._require_demo_verified()
+            return self.module.order_calc_profit(
+                action,
+                symbol,
+                volume,
+                price_open,
+                price_close,
+            )
 
     def order_check(self, request: dict[str, Any]) -> Any:
-        self._require_demo_verified()
-        return self.module.order_check(request)
+        with self._lock:
+            self._require_demo_verified()
+            return self.module.order_check(request)
 
     def order_send(self, request: dict[str, Any]) -> Any:
-        self._require_demo_verified()
-        return self.module.order_send(request)
+        with self._lock:
+            self._require_demo_verified()
+            return self.module.order_send(request)
 
     def last_error(self) -> Any:
-        return self.module.last_error()
+        with self._lock:
+            return self.module.last_error()
 
     def constant(self, name: str) -> int:
-        return int(getattr(self.module, name))
+        with self._lock:
+            return int(getattr(self.module, name))
 
     def discover_universe(self):
         return MT5UniverseDiscovery(self).discover()
@@ -212,6 +237,7 @@ _TIMEFRAME_CONSTANTS = {
     "1h": "TIMEFRAME_H1",
     "4h": "TIMEFRAME_H4",
     "1d": "TIMEFRAME_D1",
+    "1w": "TIMEFRAME_W1",
 }
 
 _TIMEFRAME_DURATION = {
@@ -222,6 +248,7 @@ _TIMEFRAME_DURATION = {
     "1h": timedelta(hours=1),
     "4h": timedelta(hours=4),
     "1d": timedelta(days=1),
+    "1w": timedelta(weeks=1),
 }
 
 
