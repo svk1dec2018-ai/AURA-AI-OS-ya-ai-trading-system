@@ -11,6 +11,7 @@ from aura.backtest.engine import BacktestEngine, BacktestResult
 from aura.core.pipeline import DecisionPipeline
 from aura.domain.models import NormalizedCandle
 from aura.evolution.core import CandidateEvaluation, PerformanceSlice, StrategyGenome
+from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.research.robustness import WalkForwardPlan, bootstrap_monte_carlo
 from aura.risk.engine import RiskEngine
 from aura.strategy.base import Strategy
@@ -48,6 +49,7 @@ class CausalBacktestEvolutionEvaluator:
         monte_carlo_block_size: int = 5,
         monte_carlo_seed: int = 0,
         paper_provider: PaperPerformanceProvider | None = None,
+        instrument_specs: dict[str, InstrumentLedgerSpec] | None = None,
     ) -> None:
         if not candles:
             raise ValueError("evolution evaluator requires candles")
@@ -69,6 +71,7 @@ class CausalBacktestEvolutionEvaluator:
         self.monte_carlo_block_size = monte_carlo_block_size
         self.monte_carlo_seed = monte_carlo_seed
         self.paper_provider = paper_provider
+        self.instrument_specs = dict(instrument_specs or {})
 
     async def evaluate(self, genome: StrategyGenome) -> CandidateEvaluation:
         return await asyncio.to_thread(self._evaluate_sync, genome)
@@ -160,6 +163,7 @@ class CausalBacktestEvolutionEvaluator:
             requested_quantity=self.requested_quantity,
             fee_bps=self.fee_bps,
             slippage_bps=self.slippage_bps,
+            instrument_specs=self.instrument_specs,
         ).run(candles, signal_start_index=signal_start_index)
 
 
