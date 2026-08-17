@@ -24,6 +24,7 @@ BatchMetadataProvider = Callable[
     [NormalizedCandle, tuple[NormalizedCandle, ...]],
     dict[str, Any],
 ]
+RequestedQuantityProvider = Callable[[str], Decimal]
 
 _HTF_MAP = {
     "1m": "5m",
@@ -69,6 +70,7 @@ class MultiMarketPaperCoordinator:
         starting_cash: Decimal,
         default_requested_quantity: Decimal,
         requested_quantities: dict[str, Decimal] | None = None,
+        requested_quantity_provider: RequestedQuantityProvider | None = None,
         max_history_bars: int = 5000,
         metadata_provider: BatchMetadataProvider | None = None,
         decision_timeframes: frozenset[str] | None = None,
@@ -95,6 +97,7 @@ class MultiMarketPaperCoordinator:
         self.starting_cash = starting_cash
         self.default_requested_quantity = default_requested_quantity
         self.requested_quantities = dict(requested_quantities or {})
+        self.requested_quantity_provider = requested_quantity_provider
         self.max_history_bars = max_history_bars
         self.metadata_provider = metadata_provider
         self.decision_timeframes = decision_timeframes
@@ -209,17 +212,28 @@ class MultiMarketPaperCoordinator:
                 context=candidate.context,
                 round_result=candidate.round,
                 memo=candidate.memo,
+                deliberation=candidate.deliberation,
             )
 
         current_positions = {
             symbol: position.quantity for symbol, position in self.ledger.positions.items()
         }
+        quantities = dict(self.requested_quantities)
+        if self.requested_quantity_provider is not None:
+            for candidate in scan.opportunities:
+                quantity = self.requested_quantity_provider(candidate.context.symbol)
+                if quantity <= 0:
+                    raise ValueError(
+                        f"requested quantity provider returned non-positive value for "
+                        f"{candidate.context.symbol}"
+                    )
+                quantities.setdefault(candidate.context.correlation_id, quantity)
         allocation = self.allocator.allocate(
             scan,
             portfolio=portfolio,
             day_start_equity=self.day_start_equity,
             default_requested_quantity=self.default_requested_quantity,
-            requested_quantities=self.requested_quantities,
+            requested_quantities=quantities,
             current_positions=current_positions,
         )
 
