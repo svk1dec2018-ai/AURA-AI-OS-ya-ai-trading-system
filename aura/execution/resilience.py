@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from enum import Enum
+from time import monotonic
 from typing import TypeVar
 
 
@@ -74,7 +74,7 @@ class CircuitBreaker:
         *,
         failure_threshold: int = 3,
         recovery_timeout_seconds: float = 30.0,
-        clock: Callable[[], float] = time.monotonic,
+        clock: Callable[[], float] = monotonic,
     ) -> None:
         if failure_threshold < 1:
             raise ValueError("failure_threshold must be at least 1")
