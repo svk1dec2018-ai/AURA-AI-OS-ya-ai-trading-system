@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 
+from aura.agents.deliberation import AdversarialDeliberationEngine, DeliberationMemo
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
@@ -17,6 +18,7 @@ class ScanCandidate:
     memo: CEODecisionMemo
     data_quality: DataQualityReport | None
     agent_policy: AgentPolicyDecision | None = None
+    deliberation: DeliberationMemo | None = None
 
     @property
     def actionable(self) -> bool:
@@ -39,10 +41,10 @@ class MarketScanResult:
 class MultiMarketIntelligenceScanner:
     """Scan symbols/timeframes concurrently without granting execution authority.
 
-    Each context runs a full specialist round concurrently. The scanner only
-    produces/ranks CEO memos. Portfolio sizing and order permission happen later
-    in a central risk coordinator, preventing concurrent agents from reserving
-    the same capital multiple times.
+    Every healthy round is explicitly adversarially reviewed before CEO synthesis.
+    The deliberation is a concise auditable bull/bear/counterfactual artifact, not
+    hidden chain-of-thought. Portfolio sizing/order permission still happen later
+    in the single central financial-risk coordinator.
     """
 
     def __init__(
@@ -52,6 +54,7 @@ class MultiMarketIntelligenceScanner:
         ceo: CEOAggregator,
         data_quality_gate: CandleQualityGate | None = None,
         agent_risk_policy: AgentRiskPolicy | None = None,
+        deliberation_engine: AdversarialDeliberationEngine | None = None,
         max_concurrent_contexts: int = 20,
     ) -> None:
         if max_concurrent_contexts <= 0:
@@ -60,6 +63,7 @@ class MultiMarketIntelligenceScanner:
         self.ceo = ceo
         self.data_quality_gate = data_quality_gate
         self.agent_risk_policy = agent_risk_policy
+        self.deliberation_engine = deliberation_engine or AdversarialDeliberationEngine()
         self.max_concurrent_contexts = max_concurrent_contexts
 
     async def scan(self, contexts: list[AgentContext] | tuple[AgentContext, ...]) -> MarketScanResult:
@@ -128,9 +132,11 @@ class MultiMarketIntelligenceScanner:
                     memo=blocked_memo,
                     data_quality=quality_report,
                     agent_policy=policy_decision,
+                    deliberation=None,
                 )
 
         round_result = await self.orchestrator.run_round(context)
+        deliberation = self.deliberation_engine.deliberate(round_result)
         memo = self.ceo.synthesize(round_result)
         policy_decision = (
             self.agent_risk_policy.evaluate(round_result=round_result, memo=memo)
@@ -143,4 +149,5 @@ class MultiMarketIntelligenceScanner:
             memo=memo,
             data_quality=quality_report,
             agent_policy=policy_decision,
+            deliberation=deliberation,
         )
