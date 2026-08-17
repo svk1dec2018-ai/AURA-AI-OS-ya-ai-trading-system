@@ -47,8 +47,9 @@ class OfficialMT5Gateway:
     """Guarded wrapper around MetaQuotes' official `MetaTrader5` Python package.
 
     The package is imported only on the terminal host, keeping Linux CI portable.
-    Any order_check/order_send call is blocked until the connected account has
-    been verified as an MT5 DEMO account.
+    Trading, margin and profit calls are unavailable until `connect_demo` verifies
+    the account as DEMO. This prevents an accidentally configured real terminal
+    from being reached by AURA's demo/evolution runtime.
     """
 
     def __init__(self, module: Any | None = None) -> None:
@@ -65,6 +66,10 @@ class OfficialMT5Gateway:
                     "MetaTrader5 package is required on the Windows/MT5 terminal host"
                 ) from exc
         return self._mt5
+
+    @property
+    def demo_verified(self) -> bool:
+        return self._demo_verified
 
     def connect_demo(self, credentials: MT5DemoCredentials) -> MT5AccountState:
         mt5 = self.module
@@ -123,6 +128,9 @@ class OfficialMT5Gateway:
     def symbol_info_tick(self, symbol: str) -> Any | None:
         return self.module.symbol_info_tick(symbol)
 
+    def symbol_select(self, symbol: str, enable: bool = True) -> bool:
+        return bool(self.module.symbol_select(symbol, enable))
+
     def copy_rates_from_pos(
         self,
         symbol: str,
@@ -138,8 +146,41 @@ class OfficialMT5Gateway:
     def positions_get(self, **kwargs: Any) -> tuple[Any, ...] | None:
         return self.module.positions_get(**kwargs)
 
+    def history_deals_get(self, *args: Any, **kwargs: Any) -> tuple[Any, ...] | None:
+        return self.module.history_deals_get(*args, **kwargs)
+
     def account_info(self) -> Any | None:
         return self.module.account_info()
+
+    def terminal_info(self) -> Any | None:
+        return self.module.terminal_info()
+
+    def order_calc_margin(
+        self,
+        action: int,
+        symbol: str,
+        volume: float,
+        price: float,
+    ) -> float | None:
+        self._require_demo_verified()
+        return self.module.order_calc_margin(action, symbol, volume, price)
+
+    def order_calc_profit(
+        self,
+        action: int,
+        symbol: str,
+        volume: float,
+        price_open: float,
+        price_close: float,
+    ) -> float | None:
+        self._require_demo_verified()
+        return self.module.order_calc_profit(
+            action,
+            symbol,
+            volume,
+            price_open,
+            price_close,
+        )
 
     def order_check(self, request: dict[str, Any]) -> Any:
         self._require_demo_verified()
@@ -221,6 +262,9 @@ class MT5DemoClosedCandleSource:
         candles: list[NormalizedCandle] = []
         for row in rows:
             open_time = datetime.fromtimestamp(int(_field(row, "time")), tz=UTC)
+            real_volume = Decimal(str(_field(row, "real_volume", fallback=0)))
+            tick_volume = Decimal(str(_field(row, "tick_volume", fallback=0)))
+            volume = real_volume if real_volume > 0 else tick_volume
             candles.append(
                 NormalizedCandle(
                     symbol=symbol,
@@ -232,9 +276,7 @@ class MT5DemoClosedCandleSource:
                     high=Decimal(str(_field(row, "high"))),
                     low=Decimal(str(_field(row, "low"))),
                     close=Decimal(str(_field(row, "close"))),
-                    volume=Decimal(
-                        str(_field(row, "real_volume", fallback=_field(row, "tick_volume")))
-                    ),
+                    volume=volume,
                     closed=True,
                 )
             )
