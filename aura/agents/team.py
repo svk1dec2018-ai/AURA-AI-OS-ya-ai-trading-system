@@ -34,19 +34,20 @@ def build_default_agent_team(
     knowledge_firewall: KnowledgeFirewall,
     *,
     extra_agents: tuple[SpecialistAgent, ...] = (),
+    execution_quality_specialist: SpecialistAgent | None = None,
     timeout_seconds: float = 10.0,
     min_directional_margin: float = 0.15,
     risk_policy: AgentRiskPolicy | None = None,
 ) -> AuraAgentTeam:
     """Build AURA's default concurrent specialist team and evidence policy.
 
-    `extra_agents` is the extension point for provider-backed AI models. They run
-    in the same round as deterministic specialists, but neither they nor the CEO
-    receive broker/risk authority. The returned evidence policy is part of the
-    team contract and should be evaluated before any CEO candidate reaches the
-    independent financial RiskEngine.
+    `extra_agents` is the extension point for provider-backed AI models. A venue
+    may inject an execution-quality specialist with calibrated liquidity inputs,
+    while the default remains strict. Neither specialists nor CEO receive broker
+    or RiskEngine mutation authority.
     """
 
+    execution_agent = execution_quality_specialist or ExecutionQualitySpecialist()
     base_agents: tuple[SpecialistAgent, ...] = (
         HigherTimeframeBiasSpecialist(),
         SmcIctStructureSpecialist(),
@@ -57,7 +58,7 @@ def build_default_agent_team(
         KnowledgeMacroSentimentSpecialist(knowledge_firewall),
         CrossMarketSpecialist(),
         RegimeSpecialist(),
-        ExecutionQualitySpecialist(),
+        execution_agent,
     )
     agents = (*base_agents, *extra_agents)
     orchestrator = MultiAgentOrchestrator(list(agents), timeout_seconds=timeout_seconds)
