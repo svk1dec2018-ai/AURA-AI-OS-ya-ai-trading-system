@@ -20,7 +20,6 @@ from aura.risk.engine import RiskEngine
 from aura.runtime.allocation import PortfolioAllocationResult, PortfolioRiskCoordinator
 from aura.runtime.scanner import MarketScanResult, MultiMarketIntelligenceScanner
 
-
 BatchMetadataProvider = Callable[
     [NormalizedCandle, tuple[NormalizedCandle, ...]],
     dict[str, Any],
