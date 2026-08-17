@@ -60,7 +60,7 @@ def parse_dhan_option_chain(
     except (KeyError, TypeError) as exc:
         raise ValueError("Dhan option-chain response missing data.oc") from exc
     if not isinstance(option_chain, dict):
-        raise ValueError("Dhan option-chain data.oc must be an object")
+        raise TypeError("Dhan option-chain data.oc must be an object")
 
     contracts: list[DhanOptionContract] = []
     for strike_text, sides in option_chain.items():
@@ -69,13 +69,13 @@ def parse_dhan_option_chain(
         except Exception as exc:
             raise ValueError(f"invalid Dhan option-chain strike: {strike_text}") from exc
         if not isinstance(sides, dict):
-            raise ValueError(f"Dhan option-chain strike {strike_text} must contain side objects")
+            raise TypeError(f"Dhan option-chain strike {strike_text} must contain side objects")
         for source_side, option_type in (("ce", "CE"), ("pe", "PE")):
             raw = sides.get(source_side)
             if raw is None:
                 continue
             if not isinstance(raw, dict):
-                raise ValueError(f"Dhan option side {source_side} at {strike_text} must be an object")
+                raise TypeError(f"Dhan option side {source_side} at {strike_text} must be an object")
             contracts.append(
                 DhanOptionContract(
                     underlying=underlying,
