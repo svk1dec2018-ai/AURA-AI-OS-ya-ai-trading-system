@@ -7,7 +7,6 @@ from enum import Enum
 from time import monotonic
 from typing import TypeVar
 
-
 T = TypeVar("T")
 
 
