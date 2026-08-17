@@ -15,7 +15,6 @@ from aura.data.dhan_v2 import (
 )
 from aura.data.live_plane import DataDomain
 
-
 HEADER = struct.Struct("<BHBI")
 
 
