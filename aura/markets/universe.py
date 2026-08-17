@@ -162,7 +162,7 @@ class UniversalMarketUniverse:
                 item.venue_family.value,
                 item.asset_class.value,
                 item.canonical_symbol,
-                item.expiry or datetime.max.replace(tzinfo=None),
+                item.expiry.isoformat() if item.expiry is not None else "",
                 item.strike or Decimal(0),
                 item.option_type.value if item.option_type is not None else "",
             )
