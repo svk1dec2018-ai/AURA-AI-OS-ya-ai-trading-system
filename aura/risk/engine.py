@@ -18,24 +18,25 @@ class RiskLimits:
 
 
 class RiskEngine:
-    """Independent pre-trade risk gate.
-
-    Strategy/agent code cannot bypass this class in the shared decision pipeline.
-    Risk-reducing orders are distinguished from orders that add new exposure so
-    that a kill switch or loss gate can still permit flattening without allowing
-    a strategy to increase risk.
-    """
+    """Independent pre-trade risk gate with contract-aware notional sizing."""
 
     def __init__(
         self,
         limits: RiskLimits,
         *,
         overlays: tuple[PreTradeRiskOverlay, ...] = (),
+        notional_multipliers: dict[str, Decimal] | None = None,
     ) -> None:
         self.limits = limits
         self.overlays = overlays
+        self.notional_multipliers = dict(notional_multipliers or {})
+        if any(value <= 0 for value in self.notional_multipliers.values()):
+            raise ValueError("risk notional multipliers must be positive")
         self.kill_switch = False
         self.kill_switch_reason = ""
+
+    def notional_multiplier(self, symbol: str) -> Decimal:
+        return self.notional_multipliers.get(symbol, Decimal(1))
 
     def engage_kill_switch(self, reason: str) -> None:
         self.kill_switch = True
@@ -87,12 +88,10 @@ class RiskEngine:
                 reason="invalid reference price",
             )
 
+        unit_notional = reference_price * self.notional_multiplier(order.symbol)
         closing_qty = self._closing_capacity(order.side, requested, current_position_quantity)
         opening_requested = requested - closing_qty
 
-        # A pure reduction/flatten never adds gross exposure and must remain
-        # available during protective gates. Broker/exchange validity is handled
-        # by the execution adapter, not by this portfolio-risk decision.
         if opening_requested <= 0:
             return self._decision(
                 requested=requested,
@@ -118,8 +117,6 @@ class RiskEngine:
                 reason="portfolio equity is non-positive; new exposure blocked",
             )
 
-        # If a sell closes a long and then crosses zero, only the excess is a
-        # new short. Disallow that excess when the portfolio policy forbids shorts.
         if not self.limits.allow_short and order.side == Side.SELL:
             return self._decision(
                 requested=requested,
@@ -165,28 +162,26 @@ class RiskEngine:
                 )
 
         max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal(100)
-        max_opening_by_order = max_order_notional / reference_price
-        approved_opening = min(opening_requested, max_opening_by_order)
+        approved_opening = min(opening_requested, max_order_notional / unit_notional)
 
-        # Closing exposure creates capacity before any same-order position flip.
         gross_after_close = max(
             Decimal(0),
-            portfolio.gross_exposure - closing_qty * reference_price,
+            portfolio.gross_exposure - closing_qty * unit_notional,
         )
         max_gross = portfolio.equity * self.limits.max_gross_exposure_pct / Decimal(100)
         gross_capacity = max(Decimal(0), max_gross - gross_after_close)
-        approved_opening = min(approved_opening, gross_capacity / reference_price)
+        approved_opening = min(approved_opening, gross_capacity / unit_notional)
 
         current_symbol_value = abs(portfolio.position_values.get(order.symbol, Decimal(0)))
         symbol_value_after_close = max(
             Decimal(0),
-            current_symbol_value - closing_qty * reference_price,
+            current_symbol_value - closing_qty * unit_notional,
         )
         max_symbol_value = (
             portfolio.equity * self.limits.max_symbol_exposure_pct / Decimal(100)
         )
         symbol_capacity = max(Decimal(0), max_symbol_value - symbol_value_after_close)
-        approved_opening = min(approved_opening, symbol_capacity / reference_price)
+        approved_opening = min(approved_opening, symbol_capacity / unit_notional)
 
         approved_qty = closing_qty + max(Decimal(0), approved_opening)
         if approved_qty <= 0:
