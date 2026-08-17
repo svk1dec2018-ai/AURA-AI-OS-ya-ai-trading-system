@@ -330,7 +330,7 @@ class PopulationEvolution:
         value = self._rng.uniform(spec.low, spec.high)
         return _quantize(value, spec)
 
-    def _mutate(self, spec: GeneSpec, value: int | float | str) -> int | float | str:
+    def _mutate(self, spec: GeneSpec, value: float | str) -> int | float | str:
         if spec.kind == GeneKind.CATEGORICAL:
             choices = [item for item in spec.choices if item != value]
             return self._rng.choice(choices or list(spec.choices))
@@ -339,7 +339,7 @@ class PopulationEvolution:
         mutated = float(value) + self._rng.gauss(0.0, span * spec.mutation_scale)
         mutated = min(max(mutated, spec.low), spec.high)
         if spec.kind == GeneKind.INTEGER:
-            return int(round(mutated))
+            return round(mutated)
         return _quantize(mutated, spec)
 
 
