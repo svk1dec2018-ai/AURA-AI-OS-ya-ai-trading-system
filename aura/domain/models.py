@@ -146,3 +146,4 @@ class PortfolioSnapshot(BaseModel):
     unrealized_pnl: Decimal
     peak_equity: Decimal
     drawdown_pct: Decimal
+    position_values: dict[str, Decimal] = Field(default_factory=dict)
