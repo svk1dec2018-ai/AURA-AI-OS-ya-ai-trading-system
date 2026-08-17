@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from collections import namedtuple
-from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
