@@ -95,11 +95,20 @@ def _portfolio() -> PortfolioSnapshot:
     )
 
 
-def _agents(*, spread_flag: bool = False, fail_htf: bool = False) -> list[SpecialistAgent]:
+def _agents(
+    *,
+    spread_flag: bool = False,
+    fail_htf: bool = False,
+    technical_warmup: bool = False,
+) -> list[SpecialistAgent]:
     return [
         PolicyAgent(agent_id="htf", role=AgentRole.HTF_BIAS, fail=fail_htf),
         PolicyAgent(agent_id="smc", role=AgentRole.SMC_ICT),
-        PolicyAgent(agent_id="technical", role=AgentRole.TECHNICAL),
+        PolicyAgent(
+            agent_id="technical",
+            role=AgentRole.TECHNICAL,
+            risk_flags=("technical_warmup",) if technical_warmup else (),
+        ),
         PolicyAgent(agent_id="volume", role=AgentRole.VOLUME_VWAP),
         PolicyAgent(agent_id="regime", role=AgentRole.REGIME),
         PolicyAgent(
@@ -174,4 +183,21 @@ async def test_required_specialist_failure_blocks_candidate() -> None:
     assert not outcome.agent_policy_decision.allowed
     assert AgentRole.HTF_BIAS in outcome.agent_policy_decision.missing_required_roles
     assert AgentRole.HTF_BIAS in outcome.agent_policy_decision.failed_required_roles
+    assert outcome.governed_result is None
+
+
+@pytest.mark.asyncio
+async def test_required_role_warmup_packet_is_present_but_unavailable_and_blocks() -> None:
+    outcome = await _service(_agents(technical_warmup=True)).evaluate(
+        context=_context(),
+        portfolio=_portfolio(),
+        day_start_equity=Decimal(10000),
+        venue="TEST",
+        requested_quantity=Decimal(1),
+    )
+
+    assert outcome.agent_policy_decision is not None
+    assert not outcome.agent_policy_decision.allowed
+    assert outcome.agent_policy_decision.missing_required_roles == ()
+    assert AgentRole.TECHNICAL in outcome.agent_policy_decision.unavailable_required_roles
     assert outcome.governed_result is None
