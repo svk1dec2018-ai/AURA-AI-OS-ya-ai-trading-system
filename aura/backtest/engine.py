@@ -6,6 +6,7 @@ from decimal import Decimal
 from aura.core.pipeline import DecisionPipeline, DecisionResult
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, Side
 from aura.execution.state import OrderState
+from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.portfolio.ledger import PortfolioLedger
 
 
@@ -39,13 +40,14 @@ class BacktestEngine:
         requested_quantity: Decimal,
         fee_bps: Decimal = Decimal(0),
         slippage_bps: Decimal = Decimal(0),
+        instrument_specs: dict[str, InstrumentLedgerSpec] | None = None,
     ) -> None:
         if requested_quantity <= 0:
             raise ValueError("requested_quantity must be positive")
         if fee_bps < 0 or slippage_bps < 0:
             raise ValueError("fee/slippage bps cannot be negative")
         self.pipeline = pipeline
-        self.ledger = PortfolioLedger(starting_cash)
+        self.ledger = PortfolioLedger(starting_cash, instrument_specs=instrument_specs)
         self.requested_quantity = requested_quantity
         self.fee_bps = fee_bps
         self.slippage_bps = slippage_bps
@@ -86,7 +88,8 @@ class BacktestEngine:
                 state = OrderState(pending)
                 state.submit()
                 fill_price = self._apply_slippage(candle.open, pending.side)
-                notional = pending.quantity * fill_price
+                spec = self.ledger.instrument_spec(pending.symbol)
+                notional = pending.quantity * fill_price * spec.contract_multiplier
                 fee = notional * self.fee_bps / Decimal(10000)
                 fill = Fill(
                     fill_id=f"bt:{pending.order_id}:{candle.open_time.isoformat()}",
