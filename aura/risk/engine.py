@@ -5,6 +5,7 @@ from decimal import Decimal
 
 from aura.domain.models import OrderRequest, PortfolioSnapshot, RiskDecision, Side
 from aura.risk.overlays import PreTradeRiskOverlay
+from aura.risk.quantity import QuantityRule
 
 
 @dataclass(slots=True, frozen=True)
@@ -18,7 +19,7 @@ class RiskLimits:
 
 
 class RiskEngine:
-    """Independent pre-trade risk gate with contract-aware notional sizing."""
+    """Independent pre-trade risk gate with contract and broker-grid sizing."""
 
     def __init__(
         self,
@@ -26,10 +27,12 @@ class RiskEngine:
         *,
         overlays: tuple[PreTradeRiskOverlay, ...] = (),
         notional_multipliers: dict[str, Decimal] | None = None,
+        quantity_rules: dict[str, QuantityRule] | None = None,
     ) -> None:
         self.limits = limits
         self.overlays = overlays
         self.notional_multipliers = dict(notional_multipliers or {})
+        self.quantity_rules = dict(quantity_rules or {})
         if any(value <= 0 for value in self.notional_multipliers.values()):
             raise ValueError("risk notional multipliers must be positive")
         self.kill_switch = False
@@ -71,6 +74,19 @@ class RiskEngine:
             requested_quantity=requested,
             approved_quantity=max(Decimal(0), approved),
         )
+
+    def _normalize_opening_quantity(
+        self,
+        symbol: str,
+        *,
+        closing_qty: Decimal,
+        total_approved_qty: Decimal,
+    ) -> Decimal:
+        opening_qty = max(Decimal(0), total_approved_qty - closing_qty)
+        rule = self.quantity_rules.get(symbol)
+        if rule is None or opening_qty <= 0:
+            return closing_qty + opening_qty
+        return closing_qty + rule.normalize_down(opening_qty)
 
     def evaluate(
         self,
@@ -183,12 +199,17 @@ class RiskEngine:
         symbol_capacity = max(Decimal(0), max_symbol_value - symbol_value_after_close)
         approved_opening = min(approved_opening, symbol_capacity / unit_notional)
 
-        approved_qty = closing_qty + max(Decimal(0), approved_opening)
+        economically_approved = closing_qty + max(Decimal(0), approved_opening)
+        approved_qty = self._normalize_opening_quantity(
+            order.symbol,
+            closing_qty=closing_qty,
+            total_approved_qty=economically_approved,
+        )
         if approved_qty <= 0:
             return self._decision(
                 requested=requested,
                 approved=Decimal(0),
-                reason="no exposure capacity remains",
+                reason="risk capacity is below broker minimum quantity",
             )
 
         reason = "approved" if approved_qty == requested else "approved with risk sizing reduction"
