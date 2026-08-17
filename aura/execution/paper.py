@@ -22,24 +22,29 @@ class PaperExecutionConfig:
 
 
 class PaperBroker(BrokerAdapter):
-    """Deterministic paper broker implementing the same broker contract as live adapters.
-
-    Orders are accepted independently of market data and become eligible on the
-    next matching closed candle supplied to `on_candle`. Market orders fill at
-    next-bar open plus configured adverse slippage. Limit/stop orders use candle
-    OHLC without intra-bar lookahead beyond their trigger condition.
-    """
+    """Deterministic paper broker using contract-aware fees and adverse slippage."""
 
     name = "AURA_PAPER"
 
-    def __init__(self, config: PaperExecutionConfig | None = None) -> None:
+    def __init__(
+        self,
+        config: PaperExecutionConfig | None = None,
+        *,
+        contract_multipliers: dict[str, Decimal] | None = None,
+    ) -> None:
         self.config = config or PaperExecutionConfig()
+        self.contract_multipliers = dict(contract_multipliers or {})
+        if any(value <= 0 for value in self.contract_multipliers.values()):
+            raise ValueError("paper broker contract multipliers must be positive")
         self._connected = False
         self._orders: dict[str, OrderState] = {}
         self._broker_ids_by_client_id: dict[str, str] = {}
         self._client_ids_by_broker_id: dict[str, str] = {}
         self._fill_queue: asyncio.Queue[Fill] = asyncio.Queue()
         self._positions: dict[str, Decimal] = {}
+
+    def contract_multiplier(self, symbol: str) -> Decimal:
+        return self.contract_multipliers.get(symbol, Decimal(1))
 
     async def connect(self) -> None:
         self._connected = True
@@ -79,7 +84,6 @@ class PaperBroker(BrokerAdapter):
             yield fill
 
     async def on_candle(self, candle: NormalizedCandle) -> tuple[Fill, ...]:
-        """Advance paper execution using one closed candle."""
         self._require_connected()
         if not candle.closed:
             raise ValueError("paper broker accepts only closed candles")
@@ -90,13 +94,12 @@ class PaperBroker(BrokerAdapter):
                 continue
             if state.status not in {OrderStatus.SUBMITTED, OrderStatus.PARTIALLY_FILLED}:
                 continue
-
             fill_price = self._eligible_fill_price(state.request, candle)
             if fill_price is None:
                 continue
             fill_price = self._apply_slippage(fill_price, state.request.side)
             quantity = state.remaining_quantity
-            notional = quantity * fill_price
+            notional = quantity * fill_price * self.contract_multiplier(state.request.symbol)
             fee = notional * self.config.fee_bps / Decimal(10000)
             fill = Fill(
                 fill_id=f"paper-fill-{uuid4()}",
@@ -113,7 +116,6 @@ class PaperBroker(BrokerAdapter):
             self._positions[fill.symbol] = self._positions.get(fill.symbol, Decimal(0)) + signed
             await self._fill_queue.put(fill)
             produced.append(fill)
-
         return tuple(produced)
 
     def open_order_snapshots(self) -> list[BrokerOrderSnapshot]:
@@ -149,7 +151,6 @@ class PaperBroker(BrokerAdapter):
     ) -> Decimal | None:
         if order.order_type == OrderType.MARKET:
             return candle.open
-
         if order.order_type == OrderType.LIMIT:
             if order.limit_price is None:
                 raise ValueError("limit order missing limit_price")
@@ -158,7 +159,6 @@ class PaperBroker(BrokerAdapter):
             if order.side == Side.SELL and candle.high >= order.limit_price:
                 return max(candle.open, order.limit_price)
             return None
-
         if order.order_type == OrderType.STOP:
             if order.stop_price is None:
                 raise ValueError("stop order missing stop_price")
@@ -167,7 +167,6 @@ class PaperBroker(BrokerAdapter):
             if order.side == Side.SELL and candle.low <= order.stop_price:
                 return min(candle.open, order.stop_price)
             return None
-
         raise ValueError(f"unsupported paper order type: {order.order_type}")
 
     def _apply_slippage(self, price: Decimal, side: Side) -> Decimal:
