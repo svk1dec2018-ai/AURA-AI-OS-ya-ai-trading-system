@@ -75,37 +75,44 @@ class ExperimentManifest(BaseModel):
     ) -> ExperimentManifest:
         if not datasets:
             raise ValueError("experiment requires at least one dataset")
-        payload = {
-            "experiment_id": experiment_id,
-            "strategy_id": strategy_id,
-            "strategy_version": strategy_version,
-            "strategy_content_hash": strategy_content_hash,
-            "datasets": [dataset.model_dump(mode="json") for dataset in datasets],
-            "configuration": configuration,
-            "execution_assumptions": execution_assumptions,
-            "code_revision": code_revision,
-            "created_at": created_at.isoformat(),
-        }
-        return cls(
-            **payload,
+        payload = _payload(
+            experiment_id=experiment_id,
+            strategy_id=strategy_id,
+            strategy_version=strategy_version,
+            strategy_content_hash=strategy_content_hash,
             datasets=datasets,
+            configuration=configuration,
+            execution_assumptions=execution_assumptions,
+            code_revision=code_revision,
+            created_at=created_at,
+        )
+        return cls(
+            experiment_id=experiment_id,
+            strategy_id=strategy_id,
+            strategy_version=strategy_version,
+            strategy_content_hash=strategy_content_hash,
+            datasets=datasets,
+            configuration=dict(configuration),
+            execution_assumptions=dict(execution_assumptions),
+            code_revision=code_revision,
             created_at=created_at,
             manifest_hash=_hash(payload),
         )
 
     def verify(self) -> bool:
-        payload = {
-            "experiment_id": self.experiment_id,
-            "strategy_id": self.strategy_id,
-            "strategy_version": self.strategy_version,
-            "strategy_content_hash": self.strategy_content_hash,
-            "datasets": [dataset.model_dump(mode="json") for dataset in self.datasets],
-            "configuration": self.configuration,
-            "execution_assumptions": self.execution_assumptions,
-            "code_revision": self.code_revision,
-            "created_at": self.created_at.isoformat(),
-        }
-        return self.manifest_hash == _hash(payload)
+        return self.manifest_hash == _hash(
+            _payload(
+                experiment_id=self.experiment_id,
+                strategy_id=self.strategy_id,
+                strategy_version=self.strategy_version,
+                strategy_content_hash=self.strategy_content_hash,
+                datasets=self.datasets,
+                configuration=self.configuration,
+                execution_assumptions=self.execution_assumptions,
+                code_revision=self.code_revision,
+                created_at=self.created_at,
+            )
+        )
 
 
 class ResearchArtifact(BaseModel):
@@ -118,6 +125,31 @@ class ResearchArtifact(BaseModel):
 
     def belongs_to(self, manifest: ExperimentManifest) -> bool:
         return manifest.verify() and self.experiment_manifest_hash == manifest.manifest_hash
+
+
+def _payload(
+    *,
+    experiment_id: str,
+    strategy_id: str,
+    strategy_version: str,
+    strategy_content_hash: str,
+    datasets: tuple[DatasetArtifact, ...],
+    configuration: dict[str, Any],
+    execution_assumptions: dict[str, Any],
+    code_revision: str,
+    created_at: datetime,
+) -> dict[str, Any]:
+    return {
+        "experiment_id": experiment_id,
+        "strategy_id": strategy_id,
+        "strategy_version": strategy_version,
+        "strategy_content_hash": strategy_content_hash,
+        "datasets": [dataset.model_dump(mode="json") for dataset in datasets],
+        "configuration": configuration,
+        "execution_assumptions": execution_assumptions,
+        "code_revision": code_revision,
+        "created_at": created_at.isoformat(),
+    }
 
 
 def _hash(payload: dict[str, Any]) -> str:
