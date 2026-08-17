@@ -33,8 +33,9 @@ class PortfolioRiskCoordinator:
     """Serialize ranked opportunities through one portfolio risk/reservation authority.
 
     Intelligence scans may run concurrently, but approved yet-unfilled orders
-    reserve gross exposure here before the next candidate is evaluated. This
-    prevents concurrent opportunities from each assuming the same free capital.
+    reserve gross exposure here before the next candidate is evaluated. Contract
+    multipliers come from the same RiskEngine used for pre-trade sizing, so CFDs,
+    futures and options cannot reserve only their quoted-price notional by mistake.
     """
 
     strategy_id = "aura.multi_market.ceo.v1"
@@ -96,7 +97,12 @@ class PortfolioRiskCoordinator:
                 current_position_quantity=positions.get(candidate.context.symbol, Decimal(0)),
             )
             if decision is not None and decision.order is not None:
-                reserved_gross += decision.order.quantity * signal.reference_price
+                multiplier = self.decision_pipeline.risk_engine.notional_multiplier(
+                    decision.order.symbol
+                )
+                reserved_gross += (
+                    decision.order.quantity * signal.reference_price * multiplier
+                )
             allocations.append(
                 CandidateAllocation(
                     candidate=candidate,
