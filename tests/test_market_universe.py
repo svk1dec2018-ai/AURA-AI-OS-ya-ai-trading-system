@@ -43,12 +43,12 @@ def test_exness_and_indian_derivatives_coexist_in_one_canonical_universe() -> No
             currency="INR",
             underlying="NIFTY",
             expiry=datetime(2026, 8, 27, 15, 30, tzinfo=UTC),
-            strike=Decimal("25000"),
+            strike=Decimal(25000),
             option_type=OptionType.CALL,
-            lot_size=Decimal("75"),
+            lot_size=Decimal(75),
             tick_size=Decimal("0.05"),
-            min_quantity=Decimal("75"),
-            quantity_step=Decimal("75"),
+            min_quantity=Decimal(75),
+            quantity_step=Decimal(75),
         )
     )
 
