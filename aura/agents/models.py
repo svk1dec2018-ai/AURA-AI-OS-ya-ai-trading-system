@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from aura.domain.models import NormalizedCandle, SignalIntent
 
@@ -70,7 +70,22 @@ class AgentContext(BaseModel):
         symbols = {candle.symbol for candle in candles}
         if len(symbols) != 1:
             raise ValueError("agent context candles must refer to one canonical symbol")
+        timeframes = {candle.timeframe for candle in candles}
+        if len(timeframes) != 1:
+            raise ValueError("agent context candle series must use one decision timeframe")
         return candles
+
+    @model_validator(mode="after")
+    def validate_point_in_time_context(self) -> AgentContext:
+        if self.created_at.tzinfo is None or self.created_at.utcoffset() is None:
+            raise ValueError("agent context created_at must be timezone-aware")
+        if any(candle.symbol != self.symbol for candle in self.candles):
+            raise ValueError("agent context symbol does not match candle symbol")
+        if any(candle.timeframe != self.decision_timeframe for candle in self.candles):
+            raise ValueError("agent decision_timeframe does not match candle timeframe")
+        if any(candle.close_time > self.created_at for candle in self.candles):
+            raise ValueError("agent context contains candle data from the future")
+        return self
 
 
 class AgentEvidence(BaseModel):
@@ -97,6 +112,14 @@ class AgentEvidence(BaseModel):
         if any(not source.point_in_time_safe for source in sources):
             raise ValueError("non-point-in-time-safe evidence is forbidden in decisions")
         return sources
+
+    @model_validator(mode="after")
+    def sources_cannot_arrive_after_generation(self) -> AgentEvidence:
+        if self.generated_at.tzinfo is None or self.generated_at.utcoffset() is None:
+            raise ValueError("agent evidence generated_at must be timezone-aware")
+        if any(source.observed_at > self.generated_at for source in self.sources):
+            raise ValueError("agent evidence cites a source observed after the decision evidence")
+        return self
 
 
 class AgentFailure(BaseModel):
