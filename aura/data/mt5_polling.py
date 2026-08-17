@@ -5,7 +5,10 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from aura.data.mt5_demo import MT5DemoClosedCandleSource, OfficialMT5Gateway
+from aura.data.mt5_demo import (
+    MT5DemoClosedCandleSource,
+    OfficialMT5Gateway,
+)
 from aura.domain.models import NormalizedCandle
 
 
