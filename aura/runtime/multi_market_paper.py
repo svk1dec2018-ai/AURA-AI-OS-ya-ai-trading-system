@@ -74,6 +74,10 @@ class MultiMarketPaperCoordinator:
             raise ValueError("default_requested_quantity must be positive")
         if max_history_bars <= 0:
             raise ValueError("max_history_bars must be positive")
+        if allocator.decision_pipeline.risk_engine is not risk_engine:
+            raise ValueError(
+                "paper allocator and reconciliation supervisor must share one RiskEngine"
+            )
         self.scanner = scanner
         self.allocator = allocator
         self.broker = broker
