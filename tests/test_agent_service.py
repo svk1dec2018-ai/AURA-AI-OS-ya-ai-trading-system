@@ -10,6 +10,7 @@ from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.providers import ProviderAnalysis, ProviderBackedSpecialist, ReasoningProvider
 from aura.agents.service import MultiAgentDecisionService
 from aura.core.pipeline import DecisionPipeline
+from aura.data.quality import CandleQualityGate, DataQualityIssueType, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, PortfolioSnapshot, SignalIntent
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.strategy.ema import EmaCrossStrategy
@@ -37,7 +38,7 @@ class StaticProvider(ReasoningProvider):
         )
 
 
-def _context() -> AgentContext:
+def _context(*, created_at: datetime | None = None) -> AgentContext:
     start = datetime(2026, 1, 1, tzinfo=UTC)
     candle = NormalizedCandle(
         symbol="X",
@@ -57,6 +58,7 @@ def _context() -> AgentContext:
         symbol="X",
         decision_timeframe="5m",
         candles=(candle,),
+        created_at=created_at or datetime.now(UTC),
     )
 
 
@@ -73,7 +75,11 @@ def _portfolio() -> PortfolioSnapshot:
     )
 
 
-def _service(risk: RiskEngine) -> MultiAgentDecisionService:
+def _service(
+    risk: RiskEngine,
+    *,
+    data_quality_gate: CandleQualityGate | None = None,
+) -> MultiAgentDecisionService:
     agents = [
         ProviderBackedSpecialist(
             provider=StaticProvider("provider-a", "model-a", SignalIntent.LONG),
@@ -93,6 +99,7 @@ def _service(risk: RiskEngine) -> MultiAgentDecisionService:
         orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
         ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
         decision_pipeline=pipeline,
+        data_quality_gate=data_quality_gate,
     )
 
 
@@ -137,3 +144,31 @@ async def test_kill_switch_blocks_multi_agent_order_even_when_ceo_is_directional
     assert not outcome.governed_result.risk.approved
     assert outcome.governed_result.order is None
     assert "kill switch" in outcome.governed_result.risk.reason
+
+
+@pytest.mark.asyncio
+async def test_stale_market_data_blocks_agents_before_ceo_round() -> None:
+    gate = CandleQualityGate(
+        DataQualityPolicy(
+            expected_interval=timedelta(minutes=5),
+            max_staleness=timedelta(minutes=2),
+        )
+    )
+    outcome = await _service(RiskEngine(RiskLimits()), data_quality_gate=gate).evaluate(
+        context=_context(created_at=datetime(2026, 1, 1, 0, 20, tzinfo=UTC)),
+        portfolio=_portfolio(),
+        day_start_equity=Decimal(10000),
+        venue="TEST",
+        requested_quantity=Decimal(1),
+    )
+
+    assert outcome.data_quality_report is not None
+    assert not outcome.data_quality_report.safe_for_decision
+    assert any(
+        issue.issue_type == DataQualityIssueType.STALE
+        for issue in outcome.data_quality_report.issues
+    )
+    assert outcome.round.evidence == ()
+    assert outcome.memo.intent == SignalIntent.FLAT
+    assert outcome.memo.risk_flags == ("market_data_quality_block",)
+    assert outcome.governed_result is None
