@@ -22,8 +22,6 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -e ".[dev]"
-      - name: Dhan import diagnostic
-        run: ruff check --select I001 --fix --diff tests/test_dhan_v2.py || true
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests
