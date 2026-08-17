@@ -20,6 +20,7 @@ from aura.evolution.core import (
     StrategyGenome,
 )
 from aura.evolution.evaluator import CausalBacktestEvolutionEvaluator
+from aura.portfolio.instruments import AccountingMode, InstrumentLedgerSpec
 from aura.research.robustness import WalkForwardPlan
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.runtime.evolution_supervisor import DemoEvolutionPolicy, DemoEvolutionSupervisor
@@ -49,18 +50,6 @@ def _strategy(genome: StrategyGenome) -> EmaCrossStrategy:
     return EmaCrossStrategy(fast=fast, slow=fast + gap)
 
 
-def _risk() -> RiskEngine:
-    return RiskEngine(
-        RiskLimits(
-            max_order_notional_pct=Decimal(5),
-            max_gross_exposure_pct=Decimal(25),
-            max_symbol_exposure_pct=Decimal(15),
-            max_drawdown_pct=Decimal(10),
-            max_daily_loss_pct=Decimal(4),
-        )
-    )
-
-
 async def main() -> None:
     args = _args()
     if args.bars < 1000:
@@ -70,8 +59,15 @@ async def main() -> None:
     account = gateway.connect_demo(load_mt5_demo_credentials_from_env())
     try:
         universe = gateway.discover_universe()
-        tradable = {item.venue_symbol for item in universe if item.tradable}
-        if args.symbol not in tradable:
+        selected = next(
+            (
+                item
+                for item in universe
+                if item.venue_symbol == args.symbol and item.tradable
+            ),
+            None,
+        )
+        if selected is None:
             raise RuntimeError(
                 f"{args.symbol} is not a tradable symbol in this MT5 demo account; "
                 "use the exact broker symbol/suffix"
@@ -84,12 +80,32 @@ async def main() -> None:
     finally:
         gateway.shutdown()
 
+    multiplier = selected.contract_size
+    instrument_specs = {
+        args.symbol: InstrumentLedgerSpec(
+            accounting=AccountingMode.DERIVATIVE,
+            contract_multiplier=multiplier,
+        )
+    }
+
+    def risk_factory() -> RiskEngine:
+        return RiskEngine(
+            RiskLimits(
+                max_order_notional_pct=Decimal(5),
+                max_gross_exposure_pct=Decimal(25),
+                max_symbol_exposure_pct=Decimal(15),
+                max_drawdown_pct=Decimal(10),
+                max_daily_loss_pct=Decimal(4),
+            ),
+            notional_multipliers={args.symbol: multiplier},
+        )
+
     train = max(500, args.bars // 3)
     test = max(100, args.bars // 12)
     evaluator = CausalBacktestEvolutionEvaluator(
         candles=candles,
         strategy_factory=_strategy,
-        risk_engine_factory=_risk,
+        risk_engine_factory=risk_factory,
         walk_forward_plan=WalkForwardPlan(train_size=train, test_size=test, step_size=test),
         starting_cash=Decimal(args.cash),
         requested_quantity=Decimal(args.quantity),
@@ -97,6 +113,7 @@ async def main() -> None:
         slippage_bps=Decimal(args.slippage_bps),
         monte_carlo_paths=1000,
         monte_carlo_block_size=5,
+        instrument_specs=instrument_specs,
     )
     fitness = FitnessPolicy(
         min_walk_forward_folds=3,
@@ -129,6 +146,10 @@ async def main() -> None:
 
     last = result.generations[-1]
     print(f"MT5 DEMO verified: login={account.login} server={account.server}")
+    print(
+        f"Contract metadata: {args.symbol} contract_size={multiplier} "
+        f"min_quantity={selected.min_quantity} step={selected.quantity_step}"
+    )
     print(f"Closed candles: {len(candles)} {args.symbol}/{args.timeframe}")
     print(f"Generations evaluated: {len(result.generations)}")
     print(f"Best research genome: {last.best_genome_id} score={last.best_score:.4f}")
