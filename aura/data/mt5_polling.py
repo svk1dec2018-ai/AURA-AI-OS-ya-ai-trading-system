@@ -22,12 +22,22 @@ _DEFAULT_POLL_SECONDS = {
     "1h": 120.0,
     "4h": 300.0,
     "1d": 600.0,
+    "1w": 3600.0,
 }
 
 
 @dataclass(slots=True, frozen=True)
 class MT5PollingPolicy:
-    timeframes: tuple[str, ...] = ("1m", "5m", "15m", "30m", "1h", "4h", "1d")
+    timeframes: tuple[str, ...] = (
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "4h",
+        "1d",
+        "1w",
+    )
     seed_bars: int = 250
     catchup_bars: int = 3
     idle_sleep_seconds: float = 1.0
