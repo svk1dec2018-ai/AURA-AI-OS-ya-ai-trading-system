@@ -1,5 +1,5 @@
-from datetime import UTC, datetime, timedelta
 import struct
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
