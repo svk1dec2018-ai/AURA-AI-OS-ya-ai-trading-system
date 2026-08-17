@@ -55,7 +55,7 @@ def test_combined_stream_closed_kline_emits_normalized_closed_candle() -> None:
                 "o": "0.0010",
                 "c": "0.0020",
                 "h": "0.0025",
-                "l": "0.0015",
+                "l": "0.0008",
                 "v": "1000",
                 "n": 100,
                 "x": True,
@@ -73,6 +73,7 @@ def test_combined_stream_closed_kline_emits_normalized_closed_candle() -> None:
     assert parsed.closed_candle.close == Decimal("0.0020")
     assert parsed.closed_candle.closed
     assert parsed.events[0].domain == DataDomain.CANDLE
+    assert parsed.events[0].sequence is None
 
 
 def test_open_kline_is_observable_but_not_decision_candle() -> None:
@@ -103,6 +104,7 @@ def test_open_kline_is_observable_but_not_decision_candle() -> None:
     parsed = parse_binance_spot_message(raw, received_at=_received(event_ms))
     assert parsed.closed_candle is None
     assert parsed.events[0].payload["closed"] is False
+    assert parsed.events[0].sequence is None
 
 
 def test_book_ticker_maps_best_bid_ask_with_update_sequence() -> None:
