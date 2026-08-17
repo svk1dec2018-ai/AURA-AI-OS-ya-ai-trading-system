@@ -16,6 +16,7 @@ class AgentPolicyDecision(BaseModel):
     hard_block_flags: tuple[str, ...] = ()
     missing_required_roles: tuple[AgentRole, ...] = ()
     failed_required_roles: tuple[AgentRole, ...] = ()
+    unavailable_required_roles: tuple[AgentRole, ...] = ()
 
 
 @dataclass(slots=True, frozen=True)
@@ -35,6 +36,20 @@ class AgentRiskPolicy:
             AgentRole.TECHNICAL,
             AgentRole.VOLUME_VWAP,
             AgentRole.REGIME,
+        }
+    )
+    unavailable_evidence_flags: frozenset[str] = frozenset(
+        {
+            "htf_missing",
+            "htf_warmup",
+            "htf_open_candle",
+            "htf_symbol_mismatch",
+            "htf_future_data",
+            "structure_warmup",
+            "technical_warmup",
+            "volume_warmup",
+            "missing_volume",
+            "regime_warmup",
         }
     )
     hard_block_flags: frozenset[str] = frozenset(
@@ -67,6 +82,14 @@ class AgentRiskPolicy:
         missing_required = tuple(sorted(self.required_roles - evidence_roles, key=lambda role: role.value))
         failed_required = tuple(sorted(self.required_roles & failed_roles, key=lambda role: role.value))
 
+        unavailable_roles = {
+            item.role
+            for item in round_result.evidence
+            if item.role in self.required_roles
+            and set(item.risk_flags) & self.unavailable_evidence_flags
+        }
+        unavailable_required = tuple(sorted(unavailable_roles, key=lambda role: role.value))
+
         observed_flags = {flag for item in round_result.evidence for flag in item.risk_flags}
         observed_flags.update(memo.risk_flags)
         blocked_flags = tuple(sorted(observed_flags & self.hard_block_flags))
@@ -81,6 +104,11 @@ class AgentRiskPolicy:
             reasons.append(
                 "required specialist failures: "
                 + ", ".join(role.value for role in failed_required)
+            )
+        if unavailable_required:
+            reasons.append(
+                "required specialist evidence unavailable: "
+                + ", ".join(role.value for role in unavailable_required)
             )
         if blocked_flags:
             reasons.append("hard-block evidence flags: " + ", ".join(blocked_flags))
@@ -98,4 +126,5 @@ class AgentRiskPolicy:
             hard_block_flags=blocked_flags,
             missing_required_roles=missing_required,
             failed_required_roles=failed_required,
+            unavailable_required_roles=unavailable_required,
         )
