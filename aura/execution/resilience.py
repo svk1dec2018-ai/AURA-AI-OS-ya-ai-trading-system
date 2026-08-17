@@ -90,7 +90,8 @@ class CircuitBreaker:
 
     def acquire(self) -> None:
         if self.state == CircuitState.OPEN:
-            assert self._opened_at is not None
+            if self._opened_at is None:
+                raise CircuitOpenError("connector circuit is open without recovery timestamp")
             if self._clock() - self._opened_at < self.recovery_timeout_seconds:
                 raise CircuitOpenError("connector circuit is open")
             self.state = CircuitState.HALF_OPEN
@@ -123,3 +124,50 @@ class CircuitBreaker:
         if self._opened_at is None:
             return False
         return self._clock() - self._opened_at >= self.recovery_timeout_seconds
+
+
+class ResilientCallExecutor:
+    """Apply connector circuit breaking and retry policy without duplicate-order risk.
+
+    Calls marked non-idempotent get exactly one network attempt. This is the
+    safe default for order submission when a timeout could mean the broker
+    accepted the request but the acknowledgement was lost. Broker adapters may
+    mark a call idempotent only when their client-order-id semantics are proven.
+    """
+
+    def __init__(
+        self,
+        *,
+        breaker: CircuitBreaker,
+        retry_policy: RetryPolicy | None = None,
+        retry_on: tuple[type[Exception], ...] = (TimeoutError, ConnectionError),
+    ) -> None:
+        self.breaker = breaker
+        self.retry_policy = retry_policy or RetryPolicy()
+        self.retry_on = retry_on
+
+    async def execute(
+        self,
+        operation: Callable[[], Awaitable[T]],
+        *,
+        idempotent: bool,
+    ) -> T:
+        self.breaker.acquire()
+        try:
+            if idempotent:
+                result = await retry_async(
+                    operation,
+                    policy=self.retry_policy,
+                    retry_on=self.retry_on,
+                )
+            else:
+                result = await operation()
+        except self.retry_on:
+            self.breaker.record_failure()
+            raise
+        except Exception:
+            self.breaker.record_failure()
+            raise
+        else:
+            self.breaker.record_success()
+            return result
