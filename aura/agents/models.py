@@ -14,6 +14,7 @@ class AgentRole(str, Enum):
     SMC_ICT = "smc_ict"
     TECHNICAL = "technical"
     VOLUME_VWAP = "volume_vwap"
+    FORECAST = "forecast"
     OPTIONS_VOLATILITY = "options_volatility"
     MACRO_SENTIMENT = "macro_sentiment"
     CROSS_MARKET = "cross_market"
