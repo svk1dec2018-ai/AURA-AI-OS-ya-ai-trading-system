@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from aura.domain.models import OrderRequest, PortfolioSnapshot, RiskDecision, Side
+from aura.risk.overlays import PreTradeRiskOverlay
 
 
 @dataclass(slots=True, frozen=True)
 class RiskLimits:
     max_order_notional_pct: Decimal = Decimal(2)
     max_gross_exposure_pct: Decimal = Decimal(100)
+    max_symbol_exposure_pct: Decimal = Decimal(100)
     max_drawdown_pct: Decimal = Decimal(10)
     max_daily_loss_pct: Decimal = Decimal(4)
     allow_short: bool = True
@@ -24,8 +26,14 @@ class RiskEngine:
     a strategy to increase risk.
     """
 
-    def __init__(self, limits: RiskLimits) -> None:
+    def __init__(
+        self,
+        limits: RiskLimits,
+        *,
+        overlays: tuple[PreTradeRiskOverlay, ...] = (),
+    ) -> None:
         self.limits = limits
+        self.overlays = overlays
         self.kill_switch = False
         self.kill_switch_reason = ""
 
@@ -142,6 +150,20 @@ class RiskEngine:
                     reason="maximum daily loss reached; only risk reduction approved",
                 )
 
+        for overlay in self.overlays:
+            overlay_decision = overlay.evaluate(
+                order=order,
+                reference_price=reference_price,
+                portfolio=portfolio,
+                current_position_quantity=current_position_quantity,
+            )
+            if not overlay_decision.allow_new_risk:
+                return self._decision(
+                    requested=requested,
+                    approved=closing_qty,
+                    reason=f"risk overlay blocked new exposure: {overlay_decision.reason}",
+                )
+
         max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal(100)
         max_opening_by_order = max_order_notional / reference_price
         approved_opening = min(opening_requested, max_opening_by_order)
@@ -155,6 +177,17 @@ class RiskEngine:
         gross_capacity = max(Decimal(0), max_gross - gross_after_close)
         approved_opening = min(approved_opening, gross_capacity / reference_price)
 
+        current_symbol_value = abs(portfolio.position_values.get(order.symbol, Decimal(0)))
+        symbol_value_after_close = max(
+            Decimal(0),
+            current_symbol_value - closing_qty * reference_price,
+        )
+        max_symbol_value = (
+            portfolio.equity * self.limits.max_symbol_exposure_pct / Decimal(100)
+        )
+        symbol_capacity = max(Decimal(0), max_symbol_value - symbol_value_after_close)
+        approved_opening = min(approved_opening, symbol_capacity / reference_price)
+
         approved_qty = closing_qty + max(Decimal(0), approved_opening)
         if approved_qty <= 0:
             return self._decision(
@@ -163,11 +196,7 @@ class RiskEngine:
                 reason="no exposure capacity remains",
             )
 
-        reason = (
-            "approved"
-            if approved_qty == requested
-            else "approved with risk sizing reduction"
-        )
+        reason = "approved" if approved_qty == requested else "approved with risk sizing reduction"
         return self._decision(
             requested=requested,
             approved=approved_qty,
