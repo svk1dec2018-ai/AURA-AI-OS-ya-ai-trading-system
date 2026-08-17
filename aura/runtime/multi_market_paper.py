@@ -221,6 +221,7 @@ class MultiMarketPaperCoordinator:
         recovered = recover_financial_state(
             self.financial_journal.wal,
             starting_cash=self.starting_cash,
+            instrument_specs=self.ledger.instrument_specs,
         )
         report = ReconciliationEngine().compare(
             recovered,
