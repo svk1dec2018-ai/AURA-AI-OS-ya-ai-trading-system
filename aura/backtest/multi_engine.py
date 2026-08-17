@@ -50,6 +50,9 @@ class MultiSymbolBacktestEngine:
             raise ValueError("pipelines and requested_quantities must have identical symbols")
         if any(quantity <= 0 for quantity in requested_quantities.values()):
             raise ValueError("all requested quantities must be positive")
+        risk_engine_ids = {id(pipeline.risk_engine) for pipeline in pipelines.values()}
+        if len(risk_engine_ids) != 1:
+            raise ValueError("all multi-symbol pipelines must share one RiskEngine instance")
         self.pipelines = dict(pipelines)
         self.requested_quantities = dict(requested_quantities)
         self.ledger = PortfolioLedger(starting_cash)
