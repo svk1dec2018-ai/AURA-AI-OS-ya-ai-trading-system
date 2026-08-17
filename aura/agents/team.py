@@ -10,6 +10,7 @@ from aura.agents.external_specialists import (
     KnowledgeMacroSentimentSpecialist,
     OptionsVolatilitySpecialist,
 )
+from aura.agents.forecast_specialist import ForecastEnsembleSpecialist
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.specialists import (
@@ -51,6 +52,7 @@ def build_default_agent_team(
         SmcIctStructureSpecialist(),
         TechnicalSpecialist(),
         VolumeVwapSpecialist(),
+        ForecastEnsembleSpecialist(),
         OptionsVolatilitySpecialist(),
         KnowledgeMacroSentimentSpecialist(knowledge_firewall),
         CrossMarketSpecialist(),
@@ -60,8 +62,8 @@ def build_default_agent_team(
     agents = (*base_agents, *extra_agents)
     orchestrator = MultiAgentOrchestrator(list(agents), timeout_seconds=timeout_seconds)
     ceo = CEOAggregator(
-        min_agents=5,
-        min_distinct_roles=5,
+        min_agents=6,
+        min_distinct_roles=6,
         min_directional_margin=min_directional_margin,
     )
     return AuraAgentTeam(
