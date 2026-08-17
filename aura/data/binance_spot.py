@@ -118,7 +118,6 @@ def parse_binance_spot_message(
             )
         )
 
-    # bookTicker does not include `e`; identify it by its documented fields.
     if {"u", "s", "b", "B", "a", "A"}.issubset(raw):
         symbol = str(raw["s"])
         update_id = int(raw["u"])
@@ -224,13 +223,10 @@ def _parse_kline(
         observed_at=event_time,
         received_at=received_at,
         payload=payload,
-        sequence=int(kline["L"]),
     )
     if not bool(kline["x"]):
         return BinanceParsedMessage(events=(event,), closed_candle=None)
 
-    # Binance close time is the final millisecond in the interval. Preserve its
-    # exact documented event boundary rather than rounding into the next bar.
     candle = NormalizedCandle(
         symbol=symbol,
         venue="BINANCE_SPOT",
