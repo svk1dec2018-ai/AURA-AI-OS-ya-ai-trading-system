@@ -11,7 +11,7 @@ from aura.agents.models import (
     EvidenceSource,
     EvidenceSourceType,
 )
-from aura.domain.models import NormalizedCandle, SignalIntent
+from aura.domain.models import SignalIntent
 
 
 def _market_source(context: AgentContext, suffix: str) -> EvidenceSource:
