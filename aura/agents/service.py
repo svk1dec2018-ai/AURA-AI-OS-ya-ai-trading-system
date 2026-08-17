@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 
+from aura.agents.deliberation import AdversarialDeliberationEngine, DeliberationMemo
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
@@ -18,10 +19,11 @@ class MultiAgentDecisionOutcome:
     governed_result: DecisionResult | None
     data_quality_report: DataQualityReport | None = None
     agent_policy_decision: AgentPolicyDecision | None = None
+    deliberation: DeliberationMemo | None = None
 
 
 class MultiAgentDecisionService:
-    """Data quality -> specialists -> CEO -> evidence policy -> financial risk."""
+    """Data quality -> specialists -> debate -> CEO -> evidence policy -> financial risk."""
 
     strategy_id = "aura.multi_agent.ceo.v1"
 
@@ -33,12 +35,14 @@ class MultiAgentDecisionService:
         decision_pipeline: DecisionPipeline,
         data_quality_gate: CandleQualityGate | None = None,
         agent_risk_policy: AgentRiskPolicy | None = None,
+        deliberation_engine: AdversarialDeliberationEngine | None = None,
     ) -> None:
         self.orchestrator = orchestrator
         self.ceo = ceo
         self.decision_pipeline = decision_pipeline
         self.data_quality_gate = data_quality_gate
         self.agent_risk_policy = agent_risk_policy
+        self.deliberation_engine = deliberation_engine or AdversarialDeliberationEngine()
 
     async def evaluate(
         self,
@@ -88,9 +92,11 @@ class MultiAgentDecisionService:
                     governed_result=None,
                     data_quality_report=quality_report,
                     agent_policy_decision=policy_decision,
+                    deliberation=None,
                 )
 
         round_result = await self.orchestrator.run_round(context)
+        deliberation = self.deliberation_engine.deliberate(round_result)
         memo = self.ceo.synthesize(round_result)
         policy_decision = (
             self.agent_risk_policy.evaluate(round_result=round_result, memo=memo)
@@ -108,6 +114,7 @@ class MultiAgentDecisionService:
                 governed_result=None,
                 data_quality_report=quality_report,
                 agent_policy_decision=policy_decision,
+                deliberation=deliberation,
             )
 
         signal = StrategySignal(
@@ -133,4 +140,5 @@ class MultiAgentDecisionService:
             governed_result=governed,
             data_quality_report=quality_report,
             agent_policy_decision=policy_decision,
+            deliberation=deliberation,
         )
