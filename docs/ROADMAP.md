@@ -8,7 +8,7 @@ This roadmap is ordered by financial safety and dependency, not by visual appeal
 - timezone-aware normalized candles
 - broker-neutral instrument identity and venue symbol mapping
 - closed-candle strategy interface
-- shared strategy -> risk -> order decision pipeline
+- shared strategy/agent signal -> risk -> order decision pipeline
 - position-aware independent risk gate
 - order state machine, idempotent fills and overfill protection
 - cash/position/P&L ledger
@@ -18,25 +18,36 @@ This roadmap is ordered by financial safety and dependency, not by visual appeal
 - strategy validation/promotion firewall
 - Python 3.11/3.12 CI with lint and regression tests
 
-## Phase 1 — Durable execution foundation
+## Phase 1 — Durable execution foundation: substantially implemented
 
-Priority: highest.
+Implemented:
 
-- append-only write-ahead log for order/fill lifecycle
-- event IDs, correlation IDs and replay
-- durable portfolio snapshots
-- broker order-id/client-order-id mapping
-- restart recovery
-- reconciliation service for cash, positions, open orders and fills
-- timeout/retry/idempotency policy
-- connector health state and circuit breakers
+- append-only write-ahead log for order/fill/risk lifecycle
+- event IDs, correlation IDs, sequence validation and checksums
+- truncated/corrupt WAL detection
+- deterministic restart replay
+- order/client-order identity preservation
+- duplicate-fill-safe state restoration
+- broker order/position reconciliation comparison
+- explicit freeze-new-risk signal for critical broker/local divergence
 - deterministic paper broker adapter
-- failure-injection tests
+- market/limit/stop paper execution with costs/slippage
+- broker-side paper order/position snapshots
+- idempotent paper order submission
+
+Still required before Phase 1 is considered fully closed:
+
+- durable checkpoint/snapshot compaction while preserving WAL auditability
+- connector health state and circuit breakers
+- standardized timeout/retry/idempotency policy around network brokers
+- reconciliation of broker cash/balances and complete historical fill sets
+- disconnect/reconnect/fault-injection supervisor tests
+- operational recovery runbook
 
 Exit criteria:
 - process can crash/restart without duplicating fills or losing financial state
 - reconciliation identifies and surfaces broker/local mismatches
-- paper execution survives disconnect/reconnect scenarios
+- paper execution survives disconnect/reconnect and fault-injection scenarios
 
 ## Phase 2 — Portfolio and institutional risk expansion
 
@@ -76,19 +87,29 @@ Exit criteria:
 Exit criteria:
 - every promoted strategy has reproducible source data, configuration, code hash and validation artifacts
 
-## Phase 4 — Market intelligence/evidence engine
+## Phase 4 — Market intelligence/evidence engine: interfaces started
 
-Add specialist evidence producers behind stable typed interfaces:
+Implemented foundation:
 
-- higher-timeframe trend/bias
-- technical momentum/mean-reversion evidence
-- market structure / SMC-style structural features
-- VWAP, volume and volume-profile evidence
-- volatility and options evidence
-- cross-market/intermarket evidence
-- macro calendar and economic-event evidence
-- news/sentiment evidence with source/time provenance
-- market regime/chop detection
+- typed specialist roles
+- typed evidence with confidence, risk flags and source metadata
+- point-in-time-safe evidence validation
+- provider/model identity plumbing
+
+Still required:
+
+- higher-timeframe trend/bias feature producer
+- validated market structure / SMC/ICT feature producer
+- technical momentum/mean-reversion feature producer
+- VWAP/volume/volume-profile producer
+- options/volatility/Greeks evidence producer
+- cross-market/intermarket producer
+- macro calendar/economic-event producer
+- source-backed news/sentiment producer
+- regime/chop/OOD/drift producer
+- execution-quality/spread/liquidity producer
+- evidence freshness/staleness and contradiction gates
+- RAG/knowledge firewall integration
 
 Rules:
 - features must be causal and timestamped
@@ -96,17 +117,37 @@ Rules:
 - every evidence item carries source, freshness and confidence metadata
 - missing evidence is explicit; it is not silently fabricated
 
-## Phase 5 — Multi-agent research and CEO decision layer
+## Phase 5 — Multi-agent research and CEO decision layer: orchestration foundation implemented
 
-- specialist agents consume structured evidence, not raw unrestricted broker control
-- CEO layer aggregates independent specialist outputs
-- disagreement and uncertainty are preserved
-- research agent can propose hypotheses and new strategy versions
-- RAG/source firewall for external research
+Implemented:
+
+- concurrent specialist execution
+- per-agent timeout and failure isolation
+- multiple provider/model support through a common `ReasoningProvider` contract
+- deterministic CEO evidence aggregation
+- quorum and disagreement handling
+- supporting/opposing/abstaining agent audit trail
+- CEO output converted to a normal `StrategySignal`
+- multi-agent output routed through the same independent RiskEngine as conventional strategies
+- kill switch/risk sizing proven to remain authoritative over CEO output
+- permanent authority contract in `docs/MULTI_AGENT_CONSTITUTION.md`
+
+Still required:
+
+- concrete specialist feature implementations
+- production LLM/model provider adapters with secrets isolation
+- forced knowledge/RAG check before applicable research/macro claims
 - contradiction detection and trust weighting
-- all generated strategy candidates enter `RESEARCH` stage
+- model/version/prompt manifest persistence
+- CEO evidence-round persistence in audit WAL/event store
+- research agent strategy/hypothesis generation workflow
+- agent evaluation, calibration and drift monitoring
+
+Non-negotiable:
 - agents cannot approve a strategy for live deployment
 - agents cannot mutate deployed strategy code
+- agents cannot call broker execution directly
+- independent risk is not a voting agent
 
 Exit criteria:
 - every AI-generated decision is explainable through persisted evidence and model/strategy versions
@@ -115,7 +156,8 @@ Exit criteria:
 
 - 24x7 supervisor
 - live market scanners by asset class/timeframe
-- deterministic paper execution
+- multi-agent round scheduling across symbols/timeframes
+- deterministic paper execution wired end-to-end to the WAL/recovery/reconciliation stack
 - dashboard/API for positions, exposure, P&L and system health
 - alerts for risk, stale data, broker disconnects, reconciliation mismatches and strategy state
 - audit journal and decision explanations
@@ -130,10 +172,10 @@ Exit criteria:
 
 Implement one connector at a time behind common interfaces. Candidate families:
 
-- Indian equity/futures/options brokers
+- Indian equity/futures/options brokers such as Dhan/Shoonya where account/API access supports the required functions
 - Binance-compatible crypto trading
 - Kraken crypto
-- FX/CFD connector where legally/account-wise appropriate
+- MT5/FX connector where legally/account-wise appropriate
 - commodities through supported broker/exchange APIs
 
 Each connector requires:
@@ -174,4 +216,4 @@ Continuous across every phase:
 
 ## Non-goals until the foundation supports them
 
-Do not optimize for a claimed win rate, trade frequency or profit target before the data, execution and validation layers can measure them realistically. AURA should optimize for valid evidence, realistic simulation, controlled risk and reproducibility first; alpha claims come only from validated results.
+Do not optimize for a claimed win rate, trade frequency or profit target before the data, execution and validation layers can measure them realistically. AURA should scan broadly and avoid an artificial "never trade" bias, but it must not force trades to satisfy a quota. Alpha claims come only from validated out-of-sample results with realistic costs, execution and failure modes.
