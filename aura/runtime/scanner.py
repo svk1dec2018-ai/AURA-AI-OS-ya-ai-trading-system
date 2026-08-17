@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
+from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
 from aura.data.quality import CandleQualityGate, DataQualityReport
 from aura.domain.models import SignalIntent
 
@@ -15,10 +16,15 @@ class ScanCandidate:
     round: AgentRound
     memo: CEODecisionMemo
     data_quality: DataQualityReport | None
+    agent_policy: AgentPolicyDecision | None = None
 
     @property
     def actionable(self) -> bool:
-        return self.memo.quorum_met and self.memo.intent != SignalIntent.FLAT
+        return (
+            self.memo.quorum_met
+            and self.memo.intent != SignalIntent.FLAT
+            and (self.agent_policy is None or self.agent_policy.allowed)
+        )
 
 
 @dataclass(slots=True, frozen=True)
@@ -45,6 +51,7 @@ class MultiMarketIntelligenceScanner:
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
         data_quality_gate: CandleQualityGate | None = None,
+        agent_risk_policy: AgentRiskPolicy | None = None,
         max_concurrent_contexts: int = 20,
     ) -> None:
         if max_concurrent_contexts <= 0:
@@ -52,6 +59,7 @@ class MultiMarketIntelligenceScanner:
         self.orchestrator = orchestrator
         self.ceo = ceo
         self.data_quality_gate = data_quality_gate
+        self.agent_risk_policy = agent_risk_policy
         self.max_concurrent_contexts = max_concurrent_contexts
 
     async def scan(self, contexts: list[AgentContext] | tuple[AgentContext, ...]) -> MarketScanResult:
@@ -106,18 +114,33 @@ class MultiMarketIntelligenceScanner:
                     quorum_met=False,
                     generated_at=context.created_at,
                 )
+                policy_decision = (
+                    self.agent_risk_policy.evaluate(
+                        round_result=empty_round,
+                        memo=blocked_memo,
+                    )
+                    if self.agent_risk_policy is not None
+                    else None
+                )
                 return ScanCandidate(
                     context=context,
                     round=empty_round,
                     memo=blocked_memo,
                     data_quality=quality_report,
+                    agent_policy=policy_decision,
                 )
 
         round_result = await self.orchestrator.run_round(context)
         memo = self.ceo.synthesize(round_result)
+        policy_decision = (
+            self.agent_risk_policy.evaluate(round_result=round_result, memo=memo)
+            if self.agent_risk_policy is not None
+            else None
+        )
         return ScanCandidate(
             context=context,
             round=round_result,
             memo=memo,
             data_quality=quality_report,
+            agent_policy=policy_decision,
         )
