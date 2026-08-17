@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -167,6 +168,7 @@ class MultiMarketPaperCoordinator:
             self._marks[candle.symbol] = candle.close
         portfolio = self.ledger.snapshot(self._marks)
         close_time = ordered[0].close_time
+        decision_time = max(close_time, datetime.now(UTC))
         session_date = close_time.date()
         if self._current_session_date != session_date:
             self._current_session_date = session_date
@@ -201,7 +203,7 @@ class MultiMarketPaperCoordinator:
                     symbol=candle.symbol,
                     decision_timeframe=candle.timeframe,
                     candles=closed_history,
-                    created_at=candle.close_time,
+                    created_at=decision_time,
                     metadata=metadata,
                 )
             )
