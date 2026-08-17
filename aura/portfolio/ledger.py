@@ -78,6 +78,7 @@ class PortfolioLedger:
         market_value = Decimal(0)
         gross = Decimal(0)
         unrealized = Decimal(0)
+        position_values: dict[str, Decimal] = {}
 
         for symbol, position in self.positions.items():
             if position.quantity == 0:
@@ -86,6 +87,7 @@ class PortfolioLedger:
                 raise KeyError(f"missing mark for open position: {symbol}")
             mark = marks[symbol]
             value = position.quantity * mark
+            position_values[symbol] = value
             market_value += value
             gross += abs(value)
             unrealized += position.unrealized_pnl(mark)
@@ -107,4 +109,5 @@ class PortfolioLedger:
             unrealized_pnl=unrealized,
             peak_equity=self.peak_equity,
             drawdown_pct=drawdown,
+            position_values=position_values,
         )
