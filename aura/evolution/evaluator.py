@@ -8,6 +8,7 @@ from statistics import fmean, pstdev
 from typing import Protocol
 
 from aura.backtest.engine import BacktestEngine, BacktestResult
+from aura.core.pipeline import DecisionPipeline
 from aura.domain.models import NormalizedCandle
 from aura.evolution.core import CandidateEvaluation, PerformanceSlice, StrategyGenome
 from aura.research.robustness import WalkForwardPlan, bootstrap_monte_carlo
@@ -153,8 +154,6 @@ class CausalBacktestEvolutionEvaluator:
     ) -> BacktestResult:
         strategy = self.strategy_factory(genome)
         risk_engine = self.risk_engine_factory()
-        from aura.core.pipeline import DecisionPipeline
-
         return BacktestEngine(
             DecisionPipeline(strategy, risk_engine),
             starting_cash=self.starting_cash,
