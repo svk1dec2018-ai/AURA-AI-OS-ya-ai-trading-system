@@ -3,7 +3,9 @@ from __future__ import annotations
 import asyncio
 import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
+from decimal import Decimal
+from typing import Any
 
 from aura.data.mt5_demo import (
     MT5DemoClosedCandleSource,
@@ -61,14 +63,7 @@ class MT5SeedResult:
 
 
 class MT5DemoPollingSource:
-    """Poll every enabled MT5 demo symbol on scheduled candle boundaries.
-
-    Calls into the MetaTrader terminal are serialized inside one worker thread.
-    This avoids assuming that the platform-specific Python bridge is thread-safe,
-    while the async API keeps AURA's orchestration loop responsive. New closed
-    candles are deduplicated by symbol/timeframe/close_time and grouped by common
-    close timestamp for coordinated portfolio decisions.
-    """
+    """Poll enabled MT5 demo symbols and cache point-in-time execution metadata."""
 
     def __init__(
         self,
@@ -88,13 +83,20 @@ class MT5DemoPollingSource:
         self.policy = policy or MT5PollingPolicy()
         self.candles = MT5DemoClosedCandleSource(gateway, venue=venue)
         self._last_close: dict[tuple[str, str], datetime] = {}
-        self._next_due: dict[str, float] = {timeframe: 0.0 for timeframe in self.policy.timeframes}
+        self._next_due: dict[str, float] = {
+            timeframe: 0.0 for timeframe in self.policy.timeframes
+        }
+        self._execution_quality: dict[str, dict[str, Any]] = {}
         self._last_issues: tuple[MT5PollingIssue, ...] = ()
         self._stopped = False
 
     @property
     def last_issues(self) -> tuple[MT5PollingIssue, ...]:
         return self._last_issues
+
+    def metadata_for(self, symbol: str) -> dict[str, Any]:
+        snapshot = self._execution_quality.get(symbol)
+        return {"execution_quality": dict(snapshot)} if snapshot is not None else {}
 
     def stop(self) -> None:
         self._stopped = True
@@ -139,6 +141,7 @@ class MT5DemoPollingSource:
         histories: dict[tuple[str, str], tuple[NormalizedCandle, ...]] = {}
         issues: list[MT5PollingIssue] = []
         for symbol in self.symbols:
+            self._refresh_execution_quality(symbol)
             for timeframe in self.policy.timeframes:
                 try:
                     history = self.candles.fetch(
@@ -146,7 +149,7 @@ class MT5DemoPollingSource:
                         timeframe,
                         count=self.policy.seed_bars,
                     )
-                except Exception as exc:  # noqa: BLE001 - one inactive symbol must not kill universe seed
+                except Exception as exc:  # noqa: BLE001 - isolate inactive symbol/timeframe
                     issues.append(
                         MT5PollingIssue(
                             symbol=symbol,
@@ -166,6 +169,7 @@ class MT5DemoPollingSource:
         grouped: dict[datetime, list[NormalizedCandle]] = {}
         issues: list[MT5PollingIssue] = []
         for symbol in self.symbols:
+            self._refresh_execution_quality(symbol)
             for timeframe in timeframes:
                 key = (symbol, timeframe)
                 try:
@@ -195,3 +199,43 @@ class MT5DemoPollingSource:
                     grouped.setdefault(candle.close_time, []).append(candle)
                 self._last_close[key] = fresh[-1].close_time
         return grouped, tuple(issues)
+
+    def _refresh_execution_quality(self, symbol: str) -> None:
+        try:
+            raw = self.gateway.symbol_info_tick(symbol)
+        except Exception:  # noqa: BLE001 - execution advisory may remain unavailable
+            return
+        if raw is None:
+            return
+        source = _asdict(raw)
+        bid = Decimal(str(source.get("bid", 0)))
+        ask = Decimal(str(source.get("ask", 0)))
+        if bid <= 0 or ask <= 0 or ask < bid:
+            return
+        midpoint = (bid + ask) / Decimal(2)
+        spread_bps = float((ask - bid) / midpoint * Decimal(10000))
+        observed_at = _tick_timestamp(source)
+        self._execution_quality[symbol] = {
+            "source_id": f"mt5:{symbol}:bid-ask",
+            "observed_at": observed_at.isoformat(),
+            "spread_bps": spread_bps,
+            "estimated_slippage_bps": spread_bps / 2.0,
+            "top_of_book_notional": 0.0,
+            "trust_score": 1.0,
+        }
+
+
+def _asdict(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    if hasattr(value, "_asdict"):
+        return dict(value._asdict())
+    return dict(vars(value))
+
+
+def _tick_timestamp(source: dict[str, Any]) -> datetime:
+    if source.get("time_msc"):
+        return datetime.fromtimestamp(int(source["time_msc"]) / 1000, tz=UTC)
+    if source.get("time"):
+        return datetime.fromtimestamp(int(source["time"]), tz=UTC)
+    return datetime.now(UTC)
