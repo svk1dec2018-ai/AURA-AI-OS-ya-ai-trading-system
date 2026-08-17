@@ -25,6 +25,16 @@ BatchMetadataProvider = Callable[
     dict[str, Any],
 ]
 
+_HTF_MAP = {
+    "1m": "5m",
+    "5m": "15m",
+    "15m": "1h",
+    "30m": "4h",
+    "1h": "4h",
+    "4h": "1d",
+    "1d": "1w",
+}
+
 
 @dataclass(slots=True, frozen=True)
 class SubmittedPaperOrder:
@@ -44,13 +54,7 @@ class MultiMarketPaperStep:
 
 
 class MultiMarketPaperCoordinator:
-    """Coordinated multi-market paper loop with concurrent intelligence and central risk.
-
-    Market intelligence is parallel; financial allocation is intentionally
-    serialized through `PortfolioRiskCoordinator`. Existing broker orders are
-    advanced before new decisions, guaranteeing that a signal cannot fill on the
-    same candle batch that generated it.
-    """
+    """Coordinated multi-market paper loop with causal historical warm-up."""
 
     def __init__(
         self,
@@ -67,6 +71,7 @@ class MultiMarketPaperCoordinator:
         requested_quantities: dict[str, Decimal] | None = None,
         max_history_bars: int = 5000,
         metadata_provider: BatchMetadataProvider | None = None,
+        decision_timeframes: frozenset[str] | None = None,
     ) -> None:
         if starting_cash <= 0:
             raise ValueError("starting_cash must be positive")
@@ -78,6 +83,8 @@ class MultiMarketPaperCoordinator:
             raise ValueError(
                 "paper allocator and reconciliation supervisor must share one RiskEngine"
             )
+        if decision_timeframes is not None and not decision_timeframes:
+            raise ValueError("decision_timeframes cannot be empty")
         self.scanner = scanner
         self.allocator = allocator
         self.broker = broker
@@ -90,10 +97,35 @@ class MultiMarketPaperCoordinator:
         self.requested_quantities = dict(requested_quantities or {})
         self.max_history_bars = max_history_bars
         self.metadata_provider = metadata_provider
+        self.decision_timeframes = decision_timeframes
         self.day_start_equity = starting_cash
         self._current_session_date = None
         self._histories: dict[tuple[str, str], list[NormalizedCandle]] = {}
         self._marks: dict[str, Decimal] = {}
+
+    def seed_histories(
+        self,
+        histories: dict[tuple[str, str], tuple[NormalizedCandle, ...]],
+    ) -> None:
+        """Load closed historical warm-up without orders, fills or decisions."""
+        for key, candles in histories.items():
+            symbol, timeframe = key
+            valid = [
+                candle
+                for candle in candles
+                if candle.symbol == symbol
+                and candle.timeframe == timeframe
+                and candle.closed
+            ]
+            if len(valid) != len(candles):
+                raise ValueError(f"invalid seed history for {symbol}/{timeframe}")
+            ordered = sorted(valid, key=lambda item: item.close_time)
+            if any(
+                right.close_time <= left.close_time
+                for left, right in zip(ordered, ordered[1:], strict=False)
+            ):
+                raise ValueError(f"seed history is not strictly increasing: {symbol}/{timeframe}")
+            self._histories[key] = ordered[-self.max_history_bars :]
 
     async def start(self) -> None:
         await self.broker.connect()
@@ -137,22 +169,24 @@ class MultiMarketPaperCoordinator:
             self._current_session_date = session_date
             self.day_start_equity = portfolio.equity
 
+        for candle in ordered:
+            self._append_history(candle)
+
         contexts: list[AgentContext] = []
         for candle in ordered:
-            key = (candle.symbol, candle.timeframe)
-            history = self._histories.setdefault(key, [])
-            if history and candle.close_time <= history[-1].close_time:
-                raise ValueError(
-                    f"history for {candle.symbol}/{candle.timeframe} must be strictly increasing"
-                )
-            history.append(candle)
-            if len(history) > self.max_history_bars:
-                del history[: len(history) - self.max_history_bars]
-            closed_history = tuple(history)
+            if (
+                self.decision_timeframes is not None
+                and candle.timeframe not in self.decision_timeframes
+            ):
+                continue
+            closed_history = tuple(self._histories[(candle.symbol, candle.timeframe)])
             metadata: dict[str, Any] = {
                 "runtime": "multi_market_paper",
                 "venue": candle.venue,
             }
+            htf = self._higher_timeframe_history(candle)
+            if htf:
+                metadata["htf_candles"] = htf
             if self.metadata_provider is not None:
                 metadata.update(self.metadata_provider(candle, closed_history))
             contexts.append(
@@ -230,3 +264,24 @@ class MultiMarketPaperCoordinator:
         )
         ReconciliationSupervisor().enforce(report, self.risk_engine)
         return report
+
+    def _append_history(self, candle: NormalizedCandle) -> None:
+        key = (candle.symbol, candle.timeframe)
+        history = self._histories.setdefault(key, [])
+        if history and candle.close_time <= history[-1].close_time:
+            raise ValueError(
+                f"history for {candle.symbol}/{candle.timeframe} must be strictly increasing"
+            )
+        history.append(candle)
+        if len(history) > self.max_history_bars:
+            del history[: len(history) - self.max_history_bars]
+
+    def _higher_timeframe_history(
+        self,
+        candle: NormalizedCandle,
+    ) -> tuple[NormalizedCandle, ...]:
+        higher_timeframe = _HTF_MAP.get(candle.timeframe)
+        if higher_timeframe is None:
+            return ()
+        history = self._histories.get((candle.symbol, higher_timeframe), [])
+        return tuple(item for item in history if item.close_time <= candle.close_time)
