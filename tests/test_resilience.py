@@ -6,6 +6,7 @@ from aura.execution.resilience import (
     CircuitBreaker,
     CircuitOpenError,
     CircuitState,
+    ResilientCallExecutor,
     RetryPolicy,
     retry_async,
 )
@@ -117,3 +118,44 @@ async def test_retry_async_does_not_retry_non_transient_failures() -> None:
         await retry_async(operation, policy=RetryPolicy(max_attempts=5))
 
     assert attempts == 1
+
+
+@pytest.mark.asyncio
+async def test_non_idempotent_connector_call_gets_one_attempt_only() -> None:
+    attempts = 0
+    executor = ResilientCallExecutor(
+        breaker=CircuitBreaker(failure_threshold=1, recovery_timeout_seconds=30),
+        retry_policy=RetryPolicy(max_attempts=5, base_delay_seconds=0, max_delay_seconds=0),
+    )
+
+    async def submit_order() -> str:
+        nonlocal attempts
+        attempts += 1
+        raise TimeoutError("acknowledgement lost")
+
+    with pytest.raises(TimeoutError, match="acknowledgement lost"):
+        await executor.execute(submit_order, idempotent=False)
+
+    assert attempts == 1
+    assert executor.breaker.state == CircuitState.OPEN
+
+
+@pytest.mark.asyncio
+async def test_idempotent_connector_call_can_retry_and_recover() -> None:
+    attempts = 0
+    executor = ResilientCallExecutor(
+        breaker=CircuitBreaker(failure_threshold=2, recovery_timeout_seconds=30),
+        retry_policy=RetryPolicy(max_attempts=3, base_delay_seconds=0, max_delay_seconds=0),
+    )
+
+    async def fetch_positions() -> str:
+        nonlocal attempts
+        attempts += 1
+        if attempts < 3:
+            raise ConnectionError("temporary")
+        return "positions"
+
+    result = await executor.execute(fetch_positions, idempotent=True)
+    assert result == "positions"
+    assert attempts == 3
+    assert executor.breaker.state == CircuitState.CLOSED
