@@ -4,7 +4,6 @@ import asyncio
 import json
 import os
 from collections.abc import Awaitable, Callable
-from datetime import datetime
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -101,7 +100,7 @@ class OllamaReasoningProvider(ReasoningProvider):
             raise OllamaProviderError("Ollama response missing structured content")
         try:
             parsed = _StructuredDecision.model_validate_json(content)
-        except Exception as exc:  # noqa: BLE001 - provider boundary must normalize bad model output
+        except Exception as exc:
             raise OllamaProviderError("Ollama returned invalid structured decision") from exc
 
         latest = context.candles[-1]
@@ -264,7 +263,7 @@ def _sync_json_post(
         method="POST",
     )
     try:
-        with urlopen(request, timeout=timeout_seconds) as response:  # noqa: S310 - local/configured AI endpoint
+        with urlopen(request, timeout=timeout_seconds) as response:
             raw = response.read().decode("utf-8")
     except (HTTPError, URLError, TimeoutError, OSError) as exc:
         raise OllamaProviderError(f"Ollama request failed: {exc}") from exc
