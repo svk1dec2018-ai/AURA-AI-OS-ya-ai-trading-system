@@ -1,3 +1,4 @@
+from dataclasses import replace
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -218,3 +219,37 @@ def test_public_live_origin_learns_reliability_without_claiming_broker_origin(
     assert len(samples) == 1
     assert samples[0].origin == SampleOrigin.LIVE_PUBLIC
     assert samples[0].origin != SampleOrigin.LIVE_BROKER
+
+
+def test_skipped_ceo_trade_still_teaches_directional_agent_reliability(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 17, 12, 0, tzinfo=UTC)
+    base = _candidate(now)
+    flat_memo = base.memo.model_copy(
+        update={
+            "intent": SignalIntent.FLAT,
+            "confidence": 0.05,
+            "supporting_agents": (),
+            "opposing_agents": ("tech", "regime"),
+            "rationale": "CEO stayed flat after disagreement",
+        }
+    )
+    skipped = replace(base, memo=flat_memo)
+    tracker = AgentReliabilityTracker(tmp_path / "skipped_reliability.jsonl")
+    store = BrainReplayStore(tmp_path / "skipped_replay.jsonl")
+    recorder = ShadowDecisionOutcomeRecorder(
+        store,
+        policy=ShadowOutcomePolicy(horizon_bars=1, fallback_round_trip_cost_bps=2.0),
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=tracker,
+    )
+
+    assert recorder.register_scan(MarketScanResult(candidates=(skipped,))) == 0
+    assert recorder.pending_count == 0
+    assert recorder.pending_agent_outcome_count == 1
+    recorder.on_closed_candles((_candle(now + timedelta(minutes=1), "2020"),))
+
+    assert store.read_all() == ()
+    assert tracker.observation_count == 2
+    assert recorder.pending_agent_outcome_count == 0
