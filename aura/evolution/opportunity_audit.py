@@ -260,7 +260,7 @@ class MissedOpportunityAuditor:
 def _atr(candles: tuple[NormalizedCandle, ...], period: int) -> Decimal:
     window = candles[-(period + 1) :]
     true_ranges: list[Decimal] = []
-    for previous, current in zip(window, window[1:], strict=True):
+    for previous, current in zip(window, window[1:], strict=False):
         true_ranges.append(
             max(
                 current.high - current.low,
