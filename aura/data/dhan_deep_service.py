@@ -1,14 +1,17 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict
 from collections.abc import Callable
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
+from aura.data.candle_aggregation import CandleSession, SessionCandleAggregator
 from aura.data.dhan_live_full import DhanDeepFullSource
 from aura.data.dhan_live_ticker import (
     DhanLiveCredentials,
     build_ticker_subscriptions,
 )
+from aura.domain.models import NormalizedCandle
 from aura.markets.universe import CanonicalInstrument
 
 DhanFullSourceFactory = Callable[[tuple], DhanDeepFullSource]
@@ -18,8 +21,9 @@ class DhanDeepMetadataService:
     """Rotate Dhan Full-feed subscriptions over the current radar shortlist.
 
     Broad discovery stays on cheap Ticker mode. This service spends the expensive
-    Full stream only on deep candidates/open positions and caches point-in-time
-    spread, depth and OI metadata for the execution/derivatives specialists.
+    Full stream only on deep candidates/open positions, builds volume-bearing
+    session candles from Full-feed volume deltas, and caches spread/depth/OI
+    metadata for the execution and derivatives specialists.
     """
 
     def __init__(
@@ -27,6 +31,7 @@ class DhanDeepMetadataService:
         credentials: DhanLiveCredentials,
         instruments: tuple[CanonicalInstrument, ...] | list[CanonicalInstrument],
         *,
+        timeframes: tuple[str, ...] = ("1m", "5m", "15m", "30m", "1h", "4h"),
         source_factory: DhanFullSourceFactory | None = None,
     ) -> None:
         self.credentials = credentials
@@ -41,6 +46,15 @@ class DhanDeepMetadataService:
         self._active_symbols: tuple[str, ...] = ()
         self._metadata: dict[str, dict] = {}
         self._lock = asyncio.Lock()
+        self._stop = asyncio.Event()
+        self._queue: asyncio.Queue[tuple[NormalizedCandle, ...]] = asyncio.Queue()
+        self._aggregator = SessionCandleAggregator(
+            timeframes=timeframes,
+            session=CandleSession(
+                timezone="Asia/Kolkata",
+                session_start=datetime.strptime("09:15", "%H:%M").time(),
+            ),
+        )
 
     @property
     def active_symbols(self) -> tuple[str, ...]:
@@ -59,8 +73,10 @@ class DhanDeepMetadataService:
         async with self._lock:
             if requested == self._active_symbols:
                 return False
-            await self._stop_locked()
+            await self._flush_completed(datetime.now(UTC))
+            await self._stop_worker_locked()
             self._active_symbols = requested
+            self._stop.clear()
             if not requested:
                 return True
             instruments = tuple(self._instrument_by_symbol[symbol] for symbol in requested)
@@ -102,10 +118,19 @@ class DhanDeepMetadataService:
             return {}
         return dict(metadata)
 
+    async def batches(self):
+        while not self._stop.is_set() or not self._queue.empty():
+            try:
+                yield await asyncio.wait_for(self._queue.get(), timeout=1.0)
+            except TimeoutError:
+                continue
+
     async def stop(self) -> None:
         async with self._lock:
-            await self._stop_locked()
+            await self._flush_completed(datetime.now(UTC))
+            await self._stop_worker_locked()
             self._active_symbols = ()
+            self._stop.set()
 
     async def _run_source(self, source: DhanDeepFullSource) -> None:
         try:
@@ -113,10 +138,32 @@ class DhanDeepMetadataService:
                 metadata = source.metadata_for(tick.symbol)
                 if metadata:
                     self._metadata[tick.symbol] = metadata
+                completed = self._aggregator.on_tick(tick)
+                await self._enqueue_grouped(completed)
         except asyncio.CancelledError:
             raise
 
-    async def _stop_locked(self) -> None:
+    async def _flush_completed(self, timestamp: datetime) -> None:
+        await self._enqueue_grouped(self._aggregator.flush_until(timestamp))
+
+    async def _enqueue_grouped(
+        self,
+        candles: tuple[NormalizedCandle, ...] | list[NormalizedCandle],
+    ) -> None:
+        grouped: dict[datetime, list[NormalizedCandle]] = defaultdict(list)
+        for candle in candles:
+            grouped[candle.close_time].append(candle)
+        for close_time in sorted(grouped):
+            batch = tuple(
+                sorted(
+                    grouped[close_time],
+                    key=lambda item: (item.symbol, item.timeframe),
+                )
+            )
+            if batch:
+                await self._queue.put(batch)
+
+    async def _stop_worker_locked(self) -> None:
         if self._source is not None:
             self._source.stop()
         if self._worker is not None:
