@@ -1,194 +1,280 @@
 # AURA AI OS
 
-AURA AI OS is a broker-agnostic, multi-market AI trading operating system built around one non-negotiable rule: **research, backtest, paper/live execution, portfolio accounting, intelligence and risk must converge into one governed financial decision path**.
+AURA AI OS is a broker-agnostic, multi-market AI trading operating system. It combines deterministic financial controls, concurrent specialist agents, optional multiple AI models, strategy research/evolution, causal testing, paper/demo execution, durable accounting and fail-closed production governance in one system.
 
-This repository is the production foundation for AURA, not a signal-only demo bot.
+> **Current release class:** production-deployable **paper/demo research service candidate**. Real-money production remains intentionally gated by broker-origin forward evidence, immutable strategy approval and explicit human authorization.
 
-## Core principles
+See `docs/PRODUCTION_READINESS.md` for deployment and release procedures and `docs/IMPLEMENTATION_STATUS.md` for the current code-level status.
 
-- Broker-agnostic interfaces and canonical instrument/symbol mapping.
-- Closed-candle decisions by default; no repainting signal path.
-- Independent, position-aware risk engine sits above every strategy/model/agent decision.
-- Risk-reducing/flattening orders are distinguished from orders that add exposure.
-- Same signal -> risk -> order pipeline is reused by conventional strategies and multi-agent CEO decisions.
-- Deterministic order state machine with idempotent fills, partial-fill VWAP and overfill guards.
-- Portfolio ledger tracks cash, average price, realized/unrealized P&L, exposure and fees.
-- Durable append-only financial WAL enables deterministic restart recovery.
-- Broker/local reconciliation freezes new risk on critical state divergence rather than silently repairing it.
-- Research must graduate through backtest -> walk-forward + Monte Carlo -> paper trading -> explicit human approval.
-- AI automation may research, debate and attach evidence, but cannot perform final live-strategy approval or replace code under an approved strategy version.
-- Multiple specialist AI agents/providers may work concurrently; the CEO layer synthesizes evidence but does not execute.
+## Non-negotiable authority chain
 
-## Implemented foundation
+```text
+Point-in-time market/news/options data
+              |
+              v
+Fast scanner / strategy research farm
+              |
+              v
+Deterministic specialists + optional multiple AI models
+              |
+              v
+Bull / Bear / Counterfactual deliberation
+              |
+              v
+Reliability-weighted deterministic CEO synthesis
+              |
+              v
+Agent evidence policy
+              |
+              v
+Independent portfolio RiskEngine
+              |
+              v
+Order state machine -> Paper/Demo/Broker adapter -> Fill
+              |
+              v
+Portfolio ledger + WAL + reconciliation + audit
+              |
+              v
+Outcome / missed-trade / reliability / evolution learning
+```
 
-### Domain and market abstraction
+No AI model, CEO vote, research agent or strategy architect can bypass the independent risk/execution authority layers.
 
-- typed market, order, fill and portfolio models
-- normalized candle validation with timezone-aware timestamps
-- broker-neutral `Instrument` model for equities, indices, futures, options, FX, crypto and commodities
-- bidirectional venue symbol mapper with collision protection
-- asynchronous Kraken Spot WebSocket v2 OHLC adapter with closed-candle emission semantics
+## Implemented highlights
 
-### Shared strategy/agent decision path
+### Financial core
 
-- closed-candle `Strategy` interface
-- deterministic EMA crossover reference strategy for plumbing tests only
-- shared `DecisionPipeline.evaluate_signal(...)` used by ordinary strategies and multi-agent CEO candidates
-- current-position context passed into the independent risk gate
-- no separate permissive AI order path
-
-### Multi-agent intelligence foundation
-
-- concurrent specialist orchestration with per-agent timeout/failure isolation
-- specialist roles for HTF bias, SMC/ICT, technical, volume/VWAP, options/volatility, macro/sentiment, cross-market, regime and execution-quality evidence
-- typed evidence with source, trust score and point-in-time safety requirements
-- deterministic CEO aggregator with quorum/disagreement handling
-- provider-agnostic `ReasoningProvider` interface so different models/providers can participate in the same round
-- provider/model identity preserved in evidence metadata
-- multi-agent decision service routes CEO candidates through the same independent RiskEngine used by normal strategies
-- kill switch and risk sizing cannot be overridden by AI consensus
-
-See `docs/MULTI_AGENT_CONSTITUTION.md` for the permanent authority boundaries and target AURA concept.
-
-### Independent risk and portfolio accounting
-
-- manual/system kill switch
-- maximum order notional, gross exposure, daily-loss and drawdown gates
-- position-aware distinction between reductions, closes and new exposure
-- flattening remains available when protective risk gates block new risk
-- short-opening policy can clip a crossing order to the safe closing quantity
-- cash ledger, fees, long/short average cost, realized/unrealized P&L and position flips
-
-### Durable persistence and recovery
-
-- append-only JSONL write-ahead log with monotonic sequence numbers
-- event IDs and correlation IDs
-- per-record SHA-256 checksum validation
-- truncated/corrupt WAL detection
-- typed financial journal for orders, fills and kill-switch transitions
-- deterministic restart replay rebuilding order states and portfolio ledger
-- duplicate fill replay remains idempotent and cannot double P&L
-
-### Reconciliation
-
-- broker order/position snapshot domain models
-- local open-order vs broker open-order comparison
-- status and filled-quantity mismatch detection
-- broker/local position quantity mismatch detection
-- critical divergence produces an explicit `should_freeze_new_orders` signal
-- reconciliation intentionally reports/freeze state rather than silently mutating financial truth
-
-### Paper execution
-
-- deterministic broker-agnostic `PaperBroker`
-- idempotent client-order submission
-- market, limit and stop order simulation
-- configurable fees and adverse slippage
-- broker-side open-order and position snapshots for reconciliation tests
-- cancellation support
-- paper fills use the same normalized `Fill` model consumed by AURA accounting
-
-### Execution and backtesting
-
-- broker abstraction contract; strategy/agent code does not call broker SDKs directly
+- canonical candles, signals, orders, fills and portfolio snapshots
+- broker-neutral instruments and symbol mapping
+- shared strategy/agent -> RiskEngine -> order path
+- position-aware reductions/closes vs new exposure
+- kill switch, order-notional, gross-exposure, daily-loss and drawdown controls
+- contract-aware accounting/exposure semantics
 - deterministic order state machine
-- idempotent fill handling and overfill rejection
-- event-driven single-series backtester using the shared decision pipeline
-- signal generated on a closed candle and market fill simulated at the next candle open to avoid same-close lookahead execution
-- explicit rejection of unsupported multi-symbol input instead of silently producing incorrect portfolio marks
+- idempotent fills and partial-fill VWAP
+- cash/position ledger with fees and realized/unrealized P&L
+- append-only checksum-protected financial WAL
+- checkpoint + WAL-tail deterministic recovery
+- broker/local reconciliation that freezes new risk on critical mismatch
 
-### Strategy research governance
+### Multi-agent + multi-model intelligence
 
-- immutable strategy version identity backed by a content hash
-- evidence types for backtest, walk-forward, Monte Carlo and paper trading
-- enforced lifecycle promotion rules
-- final `PAPER_VALIDATED -> APPROVED` transition requires a human actor
-- approved/rejected/retired strategy evidence is immutable
-- live deployment gate accepts only `APPROVED` strategy versions
+Core roles include:
 
-### Quality controls
+1. HTF Bias
+2. SMC/ICT Structure
+3. Technical
+4. Volume/VWAP
+5. Forecast
+6. Options/Volatility
+7. Macro/Sentiment
+8. Cross-Market
+9. Regime
+10. Execution Quality
 
-- structured JSON logging
-- pytest regression coverage for order state, portfolio math, backtesting, risk controls, instruments, governance, WAL integrity, restart recovery, reconciliation, multi-agent orchestration and paper execution
-- GitHub Actions CI on Python 3.11 and 3.12 with Ruff + pytest
+The desk supports:
 
-> The reference EMA strategy exists only to validate platform plumbing. It is **not** presented as an alpha strategy and must not be promoted to live trading without passing the AURA research-validation lifecycle.
+- concurrent specialist execution
+- multiple local/provider AI agents through structured evidence
+- Ollama multi-model council
+- Bull/Bear/Counterfactual adversarial deliberation
+- deterministic CEO synthesis
+- market/regime/role-specific agent and model reliability learning
+- adaptive model routing with controlled exploration
+- counterfactual scoring of directional AI opinions even when the final trade is skipped
+- bounded AI in-flight capacity so slow models do not stall market ingestion
 
-## Quick start
+Raw private model reasoning is not treated as trading evidence; AURA stores validated conclusions, confidence, factors, provenance and risk flags.
+
+### Autonomous strategy research
+
+- bounded strategy DSL and factory
+- safe mutation/crossover/population evolution
+- live shadow strategy lab
+- AI Strategy Architect for bounded component proposals
+- causal blueprint compiler for supported primitives
+- no AI-controlled leverage, order quantity, kill switch, risk limits or broker permissions
+- causal next-bar execution backtesting
+- multi-symbol shared-portfolio backtesting
+- leakage-safe walk-forward testing
+- block-bootstrap Monte Carlo robustness
+- immutable experiment/research manifests
+- research -> backtest -> robustness -> paper -> human approval lifecycle
+- paper champion/challenger evolution
+- missed-opportunity, wrong-direction and capture-rate learning
+
+### Market data and broker/data adapters
+
+Implemented foundations/adapters include:
+
+- Exness / MetaTrader 5 DEMO data and guarded demo adapter
+- Dhan Indian-market master, ticker, FULL depth/OI/volume, history and option-chain context
+- Shoonya read-only live/historical data
+- Flattrade read-only live/historical data
+- OANDA v20 read-only/practice data
+- Binance and Kraken foundations
+- Coinbase, Bybit and OKX public/no-key crypto market-data adapters
+- cross-feed price sanity/outlier guard
+- second-level research candle aggregation
+
+### Free/official intelligence
+
+- point-in-time KnowledgeFirewall
+- RBI/SEBI official-feed support
+- GDELT
+- optional FRED, SEC EDGAR and Alpha Vantage integrations
+- contradiction handling and future-observation rejection
+
+## Production operations
+
+AURA now includes explicit production controls:
+
+- `ProductionPreflight` for deployment mode, secrets/config and durable runtime checks
+- `HealthReport` with HEALTHY / DEGRADED / UNHEALTHY readiness semantics
+- `ProductionReleaseGate` for objective live-canary eligibility
+- non-root Linux Docker image for public/HTTP/WebSocket services
+- Windows/MT5 deployment guidance
+- Python package build validation
+- CodeQL and Dependabot
+- non-self-modifying CI
+
+Default live-canary release policy requires, at minimum:
+
+- immutable strategy stage `APPROVED`
+- evidence source exactly `LIVE_BROKER`
+- at least 1,000 forward broker-origin trades
+- at least 30 elapsed forward-live days
+- positive expectancy
+- profit factor >= 1.10
+- max drawdown <= 10%
+- zero critical incidents
+- zero reconciliation failures
+- zero unresolved data-integrity incidents
+- explicit external human approval ID and live-risk acknowledgement
+
+These are minimum engineering gates, not a guarantee of profitability.
+
+## Quick start — development verification
+
+Python 3.11+ is required; Python 3.12 is recommended.
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
-pytest
-python examples/run_backtest.py
+python -m pip check
+ruff check aura tests examples
+pytest -q
+python -m build
 ```
 
-## Architecture
+Production configuration smoke without broker credentials:
 
-```text
-Venue feeds / point-in-time research evidence
-                |
-                v
-      Normalizer + Symbol Mapping
-                |
-                v
-        Closed Market Context
-                |
-       +--------+-----------------------------+
-       |                                      |
-       v                                      v
- Rules / ML strategy              Concurrent specialist agents
-                                          |
-                 HTF | SMC | Technical | Volume | Options | Macro | Cross-market | Regime
-                                          |
-                                          v
-                                    CEO Decision Memo
-                                          |
-                         +----------------+----------------+
-                         |                                 |
-                         +---------- StrategySignal -------+
-                                          |
-                                          v
-                                Shared DecisionPipeline
-                                          |
-                                          v
-                         Independent Position-Aware Risk Engine
-                                  |                  |
-                              reject/clip         approve
-                                                     |
-                                                     v
-                                             Order State Machine
-                                                     |
-                                             Broker / Paper Adapter
-                                                     |
-                                                     v
-                                                  Fill(s)
-                                                     |
-                                                     v
-                                              Portfolio Ledger
-                                                     |
-                                                     v
-                                               WAL / Audit Trail
-
-Restart: WAL -> deterministic recovery -> broker reconciliation
-                                      |
-                              mismatch -> freeze new risk
-
-Research candidates:
-Research -> Backtest -> Walk-forward + Monte Carlo -> Paper -> Human Approval
-                                                         |
-                                                         v
-                                               Eligible for controlled loading
+```bash
+python examples/run_production_preflight.py --mode paper --connector public
 ```
 
-## Current safety/deployment status
+## Run without broker credentials
 
-AURA remains in **engineering / research + deterministic paper foundation mode**. A live-money broker adapter is intentionally not enabled yet. Before controlled live deployment, the system still needs broader data-quality gates, multi-asset portfolio mechanics, richer execution/reconciliation supervision, research-grade multi-symbol backtesting, extended paper operation, secrets isolation, observability/alerts, connector-specific sandbox validation and governance-approved strategy evidence.
+Public crypto live-data path:
 
-See:
+```bash
+python examples/run_public_crypto_live.py
+```
 
+Autonomous strategy research farm:
+
+```bash
+python examples/run_free_public_strategy_lab.py
+```
+
+Local multi-AI council with Ollama:
+
+```bash
+# Example environment
+export AURA_OLLAMA_MODELS="qwen3,deepseek-r1"
+export AURA_AI_OPINIONS_PER_ROLE="1"
+python examples/run_free_public_ai_council.py
+```
+
+PowerShell uses `$env:NAME="value"` instead of `export`.
+
+## MT5 / Exness demo + internal paper
+
+On Windows with the MetaTrader 5 terminal installed:
+
+```powershell
+pip install MetaTrader5
+$env:AURA_MT5_DEMO_LOGIN="..."
+$env:AURA_MT5_DEMO_PASSWORD="..."
+$env:AURA_MT5_DEMO_SERVER="..."
+
+python examples/run_production_preflight.py --mode demo --connector mt5_demo
+python examples/run_mt5_self_evolving_paper.py
+```
+
+AURA verifies DEMO account mode before guarded MT5 trading calls. The all-market self-evolution path remains paper/demo-first.
+
+## Dhan live-data + internal paper
+
+```powershell
+$env:AURA_DHAN_CLIENT_ID="..."
+$env:AURA_DHAN_ACCESS_TOKEN="..."
+
+python examples/run_production_preflight.py --mode paper --connector dhan
+python examples/run_dhan_self_evolving_paper.py
+```
+
+## Docker
+
+For public-data and HTTP/WebSocket services that do not require the Windows MT5 bridge:
+
+```bash
+docker build -t aura-ai-os .
+docker run --rm -v aura-runtime:/app/runtime aura-ai-os
+```
+
+The Linux image does **not** claim MetaTrader 5 terminal support.
+
+## Real-money boundary
+
+AURA cannot be honestly certified for real-money production from code or backtests alone. Broker-specific credentials and elapsed forward operation are required to validate real fills, rejects, reconnects, margin mechanics, venue edge cases and operational stability.
+
+When measured evidence exists, evaluate it with:
+
+```bash
+python examples/evaluate_production_release.py docs/production_release_evidence.example.json
+```
+
+The example file is a schema/example only. Do not substitute example values for real measured evidence.
+
+Even a passing release manifest is insufficient without the existing human strategy approval plus explicit live-preflight authorization.
+
+## Repository quality gates
+
+Normal CI validates:
+
+- Python 3.11 and 3.12
+- dependency consistency
+- compile smoke
+- Ruff
+- full pytest suite
+- production public-paper preflight
+- Python distribution build
+- Docker production image build
+
+CodeQL scans Python on push/PR and weekly. Dependabot monitors pip and GitHub Actions dependencies.
+
+## Documentation
+
+- `docs/PRODUCTION_READINESS.md` — deployment, canary and release runbook
+- `docs/IMPLEMENTATION_STATUS.md` — current implemented/remaining status
 - `docs/MULTI_AGENT_CONSTITUTION.md` — permanent AI/authority contract
-- `docs/ARCHITECTURE.md` — system boundaries/invariants
-- `docs/ROADMAP.md` — dependency-ordered implementation plan
-- `SECURITY.md` — financial-system security boundaries
+- `docs/ARCHITECTURE.md` — architecture boundaries/invariants
+- `docs/AURA_MASTER_BLUEPRINT_2026.md` — broader AURA blueprint
+- `docs/DEMO_EVOLUTION_RUNBOOK.md` — paper/demo learning setup
+- `SECURITY.md` — security boundaries
+
+AURA is intentionally designed so research can move fast while live financial authority remains slow, explicit, auditable and fail closed.
