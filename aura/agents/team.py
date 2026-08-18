@@ -47,8 +47,9 @@ def build_default_agent_team(
     """Build AURA's deterministic desk plus an optional local multi-AI council.
 
     When `AURA_OLLAMA_MODELS` is configured, provider-backed AI specialists are
-    added automatically. Learned contextual reliability can scale advisory votes
-    but never grants execution, sizing or RiskEngine authority.
+    added automatically. The same learned reliability state drives both adaptive
+    model routing and bounded CEO vote weighting, while execution authority stays
+    in the downstream governed risk/execution path.
     """
 
     execution_agent = execution_quality_specialist or ExecutionQualitySpecialist()
@@ -64,7 +65,11 @@ def build_default_agent_team(
         RegimeSpecialist(),
         execution_agent,
     )
-    env_ai_agents = build_ollama_ai_council_from_env() if include_env_ai else ()
+    env_ai_agents = (
+        build_ollama_ai_council_from_env(reliability_tracker=reliability_tracker)
+        if include_env_ai
+        else ()
+    )
     agents = (*base_agents, *env_ai_agents, *extra_agents)
     effective_timeout = timeout_seconds
     if env_ai_agents:
