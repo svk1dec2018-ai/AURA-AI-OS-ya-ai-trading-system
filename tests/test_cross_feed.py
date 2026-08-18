@@ -37,7 +37,7 @@ def test_cross_feed_rejects_large_outlier_and_keeps_consensus() -> None:
     assert decision.safe
     assert set(decision.accepted_providers) == {"SHOONYA", "UPSTOX"}
     assert "BAD_FEED" in decision.rejected_providers
-    assert decision.consensus_price in {Decimal("25000"), Decimal("25002")}
+    assert decision.consensus_price in {Decimal(25000), Decimal(25002)}
 
 
 def test_cross_feed_fails_closed_when_only_one_fresh_provider() -> None:
