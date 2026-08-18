@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
+from itertools import pairwise
 from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -260,7 +260,7 @@ class MissedOpportunityAuditor:
 def _atr(candles: tuple[NormalizedCandle, ...], period: int) -> Decimal:
     window = candles[-(period + 1) :]
     true_ranges: list[Decimal] = []
-    for previous, current in zip(window, window[1:], strict=False):
+    for previous, current in pairwise(window):
         true_ranges.append(
             max(
                 current.high - current.low,
