@@ -1,207 +1,223 @@
 # AURA AI OS — Current Implementation Status
 
-This file describes what is implemented in code today versus what remains intentionally gated. It complements `MULTI_AGENT_CONSTITUTION.md` and `ROADMAP.md`.
+This document is the current source of truth for what is implemented in code versus what remains externally gated. See `PRODUCTION_READINESS.md` for deployment and release procedures.
+
+## Current classification
+
+**AURA is a production-deployable paper/demo research service candidate.**
+
+It is **not yet certified for unrestricted real-money production**. Real-money eligibility intentionally requires broker-origin forward evidence, an APPROVED immutable strategy version, explicit human approval, healthy operational state and a passing `ProductionReleaseGate` manifest.
+
+No backtest, LLM opinion, public-data shadow result, paper champion or code-only test can bypass that boundary.
 
 ## Implemented and wired
 
-### 1. Shared financial core
+### Financial and execution core
 
 - canonical candles, orders, fills and portfolio snapshots
-- broker-neutral instrument and venue symbol mapping
-- one shared signal -> independent RiskEngine -> order path
-- position-aware exposure reduction vs new-risk distinction
-- kill switch, max order notional, gross exposure, daily-loss and drawdown controls
+- broker-neutral instruments and venue symbol mapping
+- shared signal -> independent RiskEngine -> order path
+- position-aware reductions/closes vs new exposure
+- kill switch, order-notional, gross-exposure, daily-loss and drawdown controls
+- contract-aware accounting and exposure semantics
 - deterministic order state machine
 - idempotent fills, partial-fill VWAP and overfill rejection
 - cash/position ledger with fees, realized/unrealized P&L and long/short flips
+- deterministic PaperBroker with market/limit/stop simulation
 
-### 2. Durable state and recovery
+### Durable state, restart and reconciliation
 
-- checksum-protected append-only JSONL WAL
-- monotonic event sequence and event/correlation IDs
+- checksum-protected append-only financial WAL
+- event/correlation IDs and monotonic sequencing
 - typed financial event journal
-- deterministic restart replay
-- duplicate-fill-safe recovery
-- atomic checksum-protected financial checkpoints
-- checkpoint + WAL-tail recovery without deleting the immutable WAL audit trail
+- atomic checkpoints + WAL-tail replay
+- duplicate-fill-safe deterministic recovery
 - broker/local order and position reconciliation
-- reconciliation divergence freezes new risk and never silently self-heals
+- critical divergence freezes new risk rather than silently mutating state
+- connector circuit breaker and idempotency-aware retry guard
 
-### 3. Execution resilience and paper broker
+### Market-data safety and multi-market feeds
 
-- broker abstraction contract
-- bounded transient retry primitives
-- connector circuit breaker: CLOSED / OPEN / HALF_OPEN
-- idempotency-aware retry guard: unsafe order submission gets one attempt unless venue semantics prove safe idempotency
-- deterministic PaperBroker
-- market, limit and stop simulation
-- configurable fee and adverse-slippage assumptions
-- broker-side paper order/position snapshots
+- duplicate/out-of-order/gap/stale/future-data gates
+- session-aware candle aggregation including second-level research bars
+- cross-feed price sanity/outlier guard
+- Kraken and Binance foundations
+- public/no-key Coinbase, Bybit and OKX live market-data adapters
+- Exness/MetaTrader 5 DEMO market-data integration and guarded demo execution adapter
+- Dhan instrument master, broad ticker, FULL depth/OI/volume, history, option-chain and option-context services
+- Shoonya read-only live/historical data adapter
+- Flattrade read-only live/historical data adapter
+- OANDA v20 practice/live read-only market-data adapter
 
-### 4. Market-data safety
+### Multi-agent and multi-model intelligence
 
-- closed-candle normalization
-- duplicate/out-of-order/gap/stale/future-data quality checks
-- bad market data can block an intelligence round before agents run
-- Kraken public closed-candle WebSocket adapter foundation
-- operational feed-freshness supervisor that may engage the financial kill switch
-
-### 5. Nine-role concurrent AURA intelligence team
-
-The default team runs these roles concurrently:
+The intelligence desk contains deterministic specialists plus optional local/provider AI agents. Core roles include:
 
 1. HTF Bias
 2. SMC/ICT Structure
 3. Technical
 4. Volume/VWAP
-5. Options/Volatility
-6. Macro/Sentiment via KnowledgeFirewall
-7. Cross-Market
-8. Regime
-9. Execution Quality
+5. Forecast
+6. Options/Volatility
+7. Macro/Sentiment
+8. Cross-Market
+9. Regime
+10. Execution Quality
 
-Implemented intelligence infrastructure:
+Implemented AI infrastructure:
 
-- async concurrent specialist orchestrator
-- per-agent timeout and failure isolation
-- typed point-in-time AgentEvidence
-- source/trust/provenance metadata
-- provider-agnostic `ReasoningProvider` interface for adding multiple AI providers/models to the same round
-- provider/model identity retained in evidence
-- deterministic CEO aggregator with quorum/disagreement/support/opposition/abstention tracking
-- complete agent-round + CEO audit persistence to WAL
-- AgentRiskPolicy hard-block layer before financial risk
-- required-role missing/failure/warmup/unavailable checks
-- execution-quality and future-data/knowledge-contradiction hard blocks
-- CEO output still passes through the independent financial RiskEngine; AI consensus cannot override it
+- concurrent specialist orchestration with timeout/failure isolation
+- structured point-in-time AgentEvidence with trust/provenance
+- multi-model Ollama council using structured decisions
+- raw model private reasoning is not persisted as decision evidence
+- Bull/Bear/Counterfactual adversarial deliberation
+- deterministic CEO synthesis
+- AgentRiskPolicy before financial RiskEngine
+- contextual agent/model reliability learning by role, market and regime
+- adaptive model router with controlled exploration rather than static round-robin
+- forward counterfactual scoring even when the CEO skips a trade
+- persistent agent/model reliability state across brain-policy changes
 
-### 6. Concrete specialist logic
+### Specialist intelligence
 
-Implemented causal deterministic specialists:
+- EMA/RSI/MACD/Bollinger/Keltner technical evidence
+- SMC/ICT-style liquidity sweep, BOS/CHoCH and fair-value-gap primitives
+- VWAP, relative volume, OBV/VPT participation evidence
+- HTF context and trend/chop regime evidence
+- Dhan option-chain PCR/IV/Greeks/liquidity context
+- execution spread/slippage/top-book checks
+- cross-market context
+- trusted macro/news context via KnowledgeFirewall
+- no fabricated dealer positioning or directional options evidence when source data cannot support it
 
-- Technical: EMA + RSI evidence
-- SMC/ICT-style structure: causal liquidity sweep/reclaim and displacement features
-- Volume/VWAP: VWAP + relative participation
-- Regime: trend/chop advisory
-- HTF Bias: higher-timeframe EMA context with point-in-time validation
-- Options/Volatility: IV/PCR advisory and volatility risk flags; no fabricated direction when reliable directional derivatives evidence is absent
-- Cross-Market: weighted trusted related-market observations
-- Macro/Sentiment: only trusted structured claims from KnowledgeFirewall
-- Execution Quality: spread, estimated slippage and top-of-book liquidity risk flags
+### Free/official intelligence plane
 
-### 7. Knowledge / RAG firewall
+- point-in-time source/trust model
+- RBI/SEBI official-feed support
+- GDELT integration
+- optional FRED, SEC EDGAR and Alpha Vantage news/sentiment integrations
+- timestamped live intelligence cache
+- future-observed knowledge rejected from current decisions
+- contradictory trusted claims fail closed rather than silently choosing one
 
-- trust-score threshold
-- publication and observation timestamps
-- point-in-time retrieval bundles
-- identical-content deduplication
-- per-source versioning
-- structured claims
-- explicit contradiction detection
-- contradictory knowledge blocks safe decision use rather than silently choosing one claim
+### Research, strategy invention and self-evolution
 
-### 8. Paper runtimes
+- immutable strategy genomes and bounded gene spaces
+- autonomous strategy DSL/factory
+- safe mutation/crossover/population evolution
+- live shadow strategy lab
+- AI Strategy Architect generating bounded component proposals
+- AI output cannot set leverage, risk limits, order quantity, kill switch or broker permissions
+- causal blueprint compiler converting supported immutable blueprints into executable strategies
+- event-driven causal backtesting with next-bar execution semantics
+- multi-symbol shared-portfolio backtesting
+- leakage-safe walk-forward testing
+- block-bootstrap Monte Carlo robustness testing
+- deterministic research manifests and dataset/source identity
+- research -> backtest -> robustness -> paper -> human approval lifecycle
+- demo/paper champion/challenger evolution
+- forward-only live outcome labeling
+- missed-opportunity, wrong-direction and capture-rate learning
+- historical/public data may accelerate research but cannot masquerade as broker-forward live proof
 
-Single-event MultiAgentPaperRuntime:
+### Live/paper runtimes
 
-- rolling per-symbol/timeframe history for specialist warmups
-- retained multi-symbol marks for portfolio valuation
-- optional metadata-enrichment hook for HTF/options/cross-market/execution inputs
-- fills journaled before local ledger mutation
-- agent-round audit persistence
-- order-created -> broker submit -> order-submitted journaling
-- no same-bar signal fill
-- reconciliation against PaperBroker state
+- public no-key crypto live-data runner
+- public no-key autonomous strategy lab runner
+- public multi-AI council runner
+- MT5 all-market internal-paper runner
+- MT5 self-evolving paper runner
+- Dhan Indian-market self-evolving paper runner
+- broad radar -> deep shortlist architecture so expensive AI is not called on every market tick
+- bounded AI in-flight capacity so slow local models cannot stall market ingestion
 
-MultiMarketPaperCoordinator:
+### Production operations added
 
-- processes same-close-time symbol batches
-- advances existing paper orders first
-- updates all current marks/history
-- scans markets concurrently
-- runs full specialist rounds concurrently per context
-- centrally serializes portfolio allocation after intelligence
-- reserves approved-but-unfilled gross exposure so simultaneous opportunities cannot double-use capital
-- submits paper orders only after current batch execution has finished
-- one shared RiskEngine authority enforced between coordinator and allocator
+- `aura.ops.preflight.ProductionPreflight`
+  - Python/runtime-path checks
+  - connector configuration checks
+  - non-live modes fail if live-risk acknowledgement leaks into their environment
+  - LIVE requires APPROVED strategy + explicit human approval + exact live-risk acknowledgement
+- `aura.ops.health.HealthReport`
+  - HEALTHY / DEGRADED / UNHEALTHY contract
+  - only HEALTHY permits new risk
+- `aura.ops.release_gate.ProductionReleaseGate`
+  - requires broker-origin forward evidence for a live canary
+  - rejects `LIVE_PUBLIC`, historical and synthetic evidence for live release
+  - default minimum gate: 1,000 forward broker trades, 30 forward days, PF >= 1.10, positive expectancy, DD <= 10%, zero critical/reconciliation/data-integrity incidents
+- production preflight CLI
+- production release-evidence evaluator CLI
+- `.env.example` with secrets intentionally blank
+- non-root Docker image for Linux/public HTTP/WebSocket services
+- separate Windows/MT5 deployment guidance
+- production readiness/runbook documentation
 
-### 9. Multi-market scanning and allocation
+### CI and repository security
 
-- concurrent MultiMarketIntelligenceScanner
-- deterministic opportunity ranking
-- data-quality and AgentRiskPolicy filtering
-- PortfolioRiskCoordinator
-- approved-but-unfilled exposure reservation
-- current-position-aware allocation
-- concurrent intelligence / centralized financial authority separation
+Normal CI is non-self-modifying and validates:
 
-### 10. Backtesting and research robustness
+- Python 3.11 and 3.12
+- dependency consistency (`pip check`)
+- bytecode compile smoke
+- Ruff
+- complete pytest suite
+- public paper production-preflight smoke
+- Python distribution build
+- Docker production image build after test matrix passes
 
-- single-series event-driven next-bar-open backtester
-- causal MultiSymbolEventScheduler
-- shared-portfolio MultiSymbolBacktestEngine
-- same-time market signals ranked deterministically
-- one shared RiskEngine required across all symbols
-- approved-but-unfilled historical exposure reserved within each event batch
-- leakage-safe rolling and expanding walk-forward splits
-- block-bootstrap Monte Carlo with deterministic seeds
-- probability-of-loss and drawdown distribution metrics
-- robustness threshold decision
-- measured walk-forward/Monte-Carlo outputs automatically generate governance evidence; callers cannot manually claim a pass
+Additional repository controls:
 
-### 11. Research reproducibility and deployment governance
+- CodeQL Python security scanning on push/PR plus weekly schedule
+- Dependabot for pip and GitHub Actions dependencies
+- `.env` ignored by git
+- self-modifying patch-and-push workflow removed from normal production CI
 
-- immutable StrategyVersion identity/content hash
-- backtest / walk-forward / Monte Carlo / paper evidence stages
-- final strategy approval requires human actor
-- approved/rejected/retired evidence immutability
-- live eligibility only for APPROVED versions
-- point-in-time DatasetArtifact
-- ExperimentManifest binds strategy hash, dataset hashes/sources, configuration, execution assumptions, code revision and timestamp into one reproducible manifest hash
-- ResearchArtifact can be bound to the exact experiment manifest
+## What remains before real-money production certification
 
-## Current deployment status
+These items require external broker/account/runtime evidence and cannot be manufactured by repository code alone:
 
-**Engineering + research + deterministic paper only. Live-money execution is intentionally not enabled.**
+1. credential-backed long-duration operation on the intended host/VPS
+2. 1,000+ forward broker-origin paper/demo decisions/trades over 30+ elapsed days under the default release policy, or a stricter market-specific policy
+3. validation across trend, chop, high-volatility, news, reconnect and market-open/close regimes
+4. broker-specific order rejection/fill/partial-fill/reconnect/reconciliation fault testing
+5. venue-specific margin, freeze/lot/tick, expiry/settlement and liquidation-headroom validation
+6. zero unresolved critical incidents, reconciliation failures or data-integrity incidents in the release window
+7. immutable strategy must reach `PAPER_VALIDATED`, then a HUMAN actor must transition it to `APPROVED`
+8. `ProductionReleaseGate` must produce an eligible manifest from `LIVE_BROKER` evidence
+9. explicit live canary approval/change ticket and exact live-risk acknowledgement
+10. smallest-size canary first; capital/symbol scope increases require a separate approval
 
-The system is designed so live connectivity can be added behind the existing broker abstraction after the remaining controls below are completed and validated.
-
-## High-priority remaining work
-
-1. richer portfolio risk: contract multipliers, lots/ticks, futures margin/MTM, options Greeks, multi-currency cash, correlation/concentration, VaR/CVaR and stress limits
-2. production historical-data adapters and point-in-time dataset ingestion for target markets
-3. real provider adapters for selected AI models with secrets isolation, rate limits, model/version manifests and evaluation/calibration
-4. concrete broker sandbox connectors one-by-one, beginning with an explicitly chosen venue/account
-5. complete broker reconciliation: cash/balances, historical fills, venue-specific order edge cases and reconnect fault injection
-6. multi-timeframe live context builder and HTF aggregation service
-7. real options-chain/Greeks/IV source adapter
-8. point-in-time macro/news ingestion into KnowledgeFirewall
-9. portfolio-level live paper supervisor, alerts, metrics/dashboard and incident runbooks
-10. extended walk-forward, Monte Carlo and paper validation on real historical datasets before any live strategy can become eligible
-11. canary deployment/rollback tooling after all earlier gates pass
-
-## Non-negotiable authority chain
+## Authority chain
 
 ```text
-Data quality / point-in-time evidence
-             |
-             v
-9+ concurrent specialist agents / optional additional AI models
-             |
-             v
-CEO synthesis
-             |
-             v
-Agent evidence risk policy
-             |
-             v
+Point-in-time market/news/options data
+              |
+              v
+Fast scanner / research strategy farm
+              |
+              v
+Deterministic specialists + optional multiple AI models
+              |
+              v
+Bull / Bear / Counterfactual deliberation
+              |
+              v
+Reliability-weighted deterministic CEO synthesis
+              |
+              v
+Agent evidence policy
+              |
+              v
 Independent portfolio RiskEngine
-             |
-             v
-Order state machine -> Broker/Paper adapter -> Fill
-             |
-             v
+              |
+              v
+Order state machine -> Paper/Demo/Broker adapter -> Fill
+              |
+              v
 Portfolio ledger + WAL + reconciliation + audit
+              |
+              v
+Outcome / missed-trade / reliability / evolution learning
 ```
 
-No AI model, agent majority, CEO memo or research agent can skip any downstream authority layer.
+No AI model, agent majority, CEO memo, strategy architect or research loop can skip a downstream authority layer.
