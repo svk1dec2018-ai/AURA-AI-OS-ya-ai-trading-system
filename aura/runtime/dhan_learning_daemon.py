@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -11,10 +11,11 @@ from aura.agents.advisory_specialists import ExecutionQualitySpecialist
 from aura.agents.audit import AgentAuditJournal
 from aura.agents.models import AgentRole
 from aura.agents.risk_policy import AgentRiskPolicy
+from aura.agents.team import build_default_agent_team
 from aura.core.pipeline import DecisionPipeline
 from aura.data.dhan_deep_service import DhanDeepMetadataService
 from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles
-from aura.data.dhan_instruments import DhanInstrumentMaster, DhanInstrumentMasterDownloader
+from aura.data.dhan_instruments import DhanInstrumentMasterDownloader
 from aura.data.dhan_live_ticker import (
     DhanLiveCandleSource,
     DhanLiveCredentials,
@@ -63,9 +64,10 @@ class DhanSelfEvolvingPaperConfig:
     deep_top_k: int = 40
     timeframes: tuple[str, ...] = ("1m", "5m", "15m", "30m", "1h", "4h")
     decision_timeframes: frozenset[str] = frozenset({"1m", "5m", "15m", "30m", "1h"})
-    history_days: int = 7
-    min_seed_1m_bars: int = 30
+    history_days: int = 35
+    min_seed_1m_bars: int = 400
     max_new_history_seeds_per_radar_round: int = 8
+    history_seed_retry_minutes: int = 5
     max_concurrent_contexts: int = 24
     reconcile_every_batches: int = 20
     paper_fee_bps: Decimal = Decimal(2)
@@ -93,6 +95,8 @@ class DhanSelfEvolvingPaperConfig:
             raise ValueError("history seed settings must be positive")
         if self.max_new_history_seeds_per_radar_round <= 0:
             raise ValueError("history seed round cap must be positive")
+        if self.history_seed_retry_minutes <= 0:
+            raise ValueError("history_seed_retry_minutes must be positive")
 
 
 @dataclass(slots=True)
@@ -147,7 +151,7 @@ class DhanSelfEvolvingPaperDaemon:
         self.research_every_new_samples = research_every_new_samples
         self.counters = DhanPaperCounters()
         self._seeded_symbols: set[str] = set()
-        self._seed_failed_symbols: set[str] = set()
+        self._seed_retry_after: dict[str, datetime] = {}
         self._stop = asyncio.Event()
         self._radar_task: asyncio.Task | None = None
         self._samples_at_last_research = len(self._live_samples())
@@ -164,9 +168,23 @@ class DhanSelfEvolvingPaperDaemon:
         self._radar_task = asyncio.create_task(self._radar_loop())
         self._write_status(None)
         try:
-            async for batch in self.deep_service.batches():
+            async for raw_batch in self.deep_service.batches():
+                if not raw_batch:
+                    continue
+                active = set(self.deep_service.active_symbols)
+                open_positions = {
+                    symbol
+                    for symbol, position in self.coordinator.ledger.positions.items()
+                    if position.quantity != 0
+                }
+                batch = tuple(
+                    candle
+                    for candle in raw_batch
+                    if candle.symbol in active or candle.symbol in open_positions
+                )
                 if not batch:
                     continue
+
                 self.opportunity_auditor.on_closed_candles(batch)
                 resolved = self.recorder.on_closed_candles(batch)
                 for sample in resolved:
@@ -240,11 +258,12 @@ class DhanSelfEvolvingPaperDaemon:
             raise
 
     async def _seed_requested_symbols(self, symbols: tuple[str, ...]) -> None:
+        now = datetime.now(UTC)
         candidates = [
             symbol
             for symbol in symbols
             if symbol not in self._seeded_symbols
-            and symbol not in self._seed_failed_symbols
+            and self._seed_retry_after.get(symbol, now) <= now
         ][: self.config.max_new_history_seeds_per_radar_round]
         if not candidates:
             return
@@ -253,16 +272,15 @@ class DhanSelfEvolvingPaperDaemon:
             return_exceptions=True,
         )
         for symbol, result in zip(candidates, results, strict=True):
-            if isinstance(result, Exception):
-                self._seed_failed_symbols.add(symbol)
-                self.counters.history_seed_failures += 1
-                continue
-            if not result:
-                self._seed_failed_symbols.add(symbol)
+            if isinstance(result, Exception) or not result:
+                self._seed_retry_after[symbol] = now + timedelta(
+                    minutes=self.config.history_seed_retry_minutes
+                )
                 self.counters.history_seed_failures += 1
                 continue
             self.coordinator.seed_histories(result)
             self._seeded_symbols.add(symbol)
+            self._seed_retry_after.pop(symbol, None)
             self.counters.history_seeded_symbols += 1
 
     async def _fetch_seed(
@@ -364,7 +382,8 @@ class DhanSelfEvolvingPaperDaemon:
                 ],
             },
             "deep_active_symbols": list(self.deep_service.active_symbols),
-            "counters": self.counters.__dict__,
+            "history_seed_retry_symbols": sorted(self._seed_retry_after),
+            "counters": asdict(self.counters),
             "opportunity_audit": {
                 "material_opportunities": audit.material_opportunities,
                 "captured": audit.captured,
@@ -419,26 +438,28 @@ async def build_dhan_self_evolving_paper_daemon(
         )
     )
     plan = planner.primary_plan(universe)
-    if not plan.streamed:
+    broad_map = _unique_instrument_map(plan.streamed)
+    broad_instruments = tuple(broad_map.values())
+    if not broad_instruments:
         raise RuntimeError("Dhan instrument master produced no broad live universe")
 
     broad_ticker = DhanLiveTickerSource(
         credentials,
-        build_ticker_subscriptions(plan.streamed),
+        build_ticker_subscriptions(broad_instruments),
     )
     broad_source = DhanLiveCandleSource(
         broad_ticker,
         timeframes=("1m",),
     )
-    tradable = tuple(item for item in plan.streamed if item.tradable)
+    tradable = tuple(item for item in broad_instruments if item.tradable)
     instrument_by_symbol = _unique_instrument_map(tradable)
     radar = DhanOpportunityRadar(
-        plan.streamed,
+        broad_instruments,
         policy=DhanRadarPolicy(top_k_tradable=config.deep_top_k),
     )
     deep_service = DhanDeepMetadataService(
         credentials,
-        tradable,
+        tuple(instrument_by_symbol.values()),
         timeframes=config.timeframes,
     )
 
@@ -487,8 +508,6 @@ async def build_dhan_self_evolving_paper_daemon(
         min_directional_supporters=base_policy.min_directional_supporters,
     )
     firewall = KnowledgeFirewall()
-    from aura.agents.team import build_default_agent_team
-
     team = build_default_agent_team(
         firewall,
         execution_quality_specialist=ExecutionQualitySpecialist(
@@ -535,7 +554,7 @@ async def build_dhan_self_evolving_paper_daemon(
         requested_quantity_provider=lambda symbol: instrument_by_symbol[
             symbol
         ].min_quantity,
-        metadata_provider=lambda candle, history: deep_service.metadata_for(
+        metadata_provider=lambda candle, _history: deep_service.metadata_for(
             candle.symbol,
             decision_time=datetime.now(UTC),
         ),
@@ -579,7 +598,7 @@ async def build_dhan_self_evolving_paper_daemon(
 
 
 def _unique_instrument_map(
-    instruments: tuple[CanonicalInstrument, ...],
+    instruments: tuple[CanonicalInstrument, ...] | list[CanonicalInstrument],
 ) -> dict[str, CanonicalInstrument]:
     result: dict[str, CanonicalInstrument] = {}
     for item in instruments:
