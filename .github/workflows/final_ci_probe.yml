@@ -1,0 +1,73 @@
+name: final-ci-probe
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Validate Python 3.11
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install311.txt 2>&1
+          INSTALL311=$?
+          ruff check aura tests examples >/tmp/ruff311.txt 2>&1
+          RUFF311=$?
+          pytest -q >/tmp/pytest311.txt 2>&1
+          PYTEST311=$?
+          set -e
+          {
+            echo "PY311_INSTALL=${INSTALL311}"
+            echo "PY311_RUFF=${RUFF311}"
+            echo "PY311_PYTEST=${PYTEST311}"
+            echo "=== PY311 RUFF ==="
+            cat /tmp/ruff311.txt
+            echo "=== PY311 PYTEST ==="
+            tail -n 40 /tmp/pytest311.txt
+          } > final_ci_probe_result.txt
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Validate Python 3.12
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install312.txt 2>&1
+          INSTALL312=$?
+          ruff check aura tests examples >/tmp/ruff312.txt 2>&1
+          RUFF312=$?
+          pytest -q >/tmp/pytest312.txt 2>&1
+          PYTEST312=$?
+          set -e
+          {
+            echo "PY312_INSTALL=${INSTALL312}"
+            echo "PY312_RUFF=${RUFF312}"
+            echo "PY312_PYTEST=${PYTEST312}"
+            echo "=== PY312 RUFF ==="
+            cat /tmp/ruff312.txt
+            echo "=== PY312 PYTEST ==="
+            tail -n 40 /tmp/pytest312.txt
+          } >> final_ci_probe_result.txt
+      - name: Commit validation result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add final_ci_probe_result.txt
+          git commit -m "record final dual Python validation"
+          git push
