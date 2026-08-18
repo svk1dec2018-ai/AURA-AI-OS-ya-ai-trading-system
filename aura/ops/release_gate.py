@@ -14,9 +14,9 @@ from aura.research.lifecycle import StrategyStage
 class ReleasePolicy:
     min_forward_live_trades: int = 1000
     min_forward_live_days: int = 30
-    max_drawdown_pct: Decimal = Decimal("10")
+    max_drawdown_pct: Decimal = Decimal(10)
     min_profit_factor: Decimal = Decimal("1.10")
-    min_expectancy: Decimal = Decimal("0")
+    min_expectancy: Decimal = Decimal(0)
     max_critical_incidents: int = 0
     max_reconciliation_failures: int = 0
     max_unresolved_data_integrity_events: int = 0
