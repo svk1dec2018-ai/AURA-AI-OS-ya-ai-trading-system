@@ -75,7 +75,7 @@ def build_default_agent_team(
     if env_ai_agents:
         effective_timeout = max(
             timeout_seconds,
-            float(os.getenv("AURA_AI_AGENT_TIMEOUT_SECONDS", "60")),
+            float(os.getenv("AURA_AI_AGENT_TIMEOUT_SECONDS", "240")),
         )
     orchestrator = MultiAgentOrchestrator(
         list(agents),

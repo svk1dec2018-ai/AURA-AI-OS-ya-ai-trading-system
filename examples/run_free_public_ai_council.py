@@ -22,6 +22,7 @@ def _args() -> argparse.Namespace:
     parser.add_argument("--timeframe", default="1s")
     parser.add_argument("--min-history-bars", type=int, default=30)
     parser.add_argument("--analyze-every-bars", type=int, default=5)
+    parser.add_argument("--max-inflight-ai-decisions", type=int, default=1)
     parser.add_argument("--max-ticks", type=int, default=0)
     parser.add_argument("--max-ai-decisions", type=int, default=0)
     parser.add_argument("--state-dir", default="runtime/free_public_ai_council")
@@ -47,6 +48,7 @@ async def main() -> None:
             timeframes=timeframes,
             min_history_bars=args.min_history_bars,
             analyze_every_bars=args.analyze_every_bars,
+            max_inflight_ai_decisions=args.max_inflight_ai_decisions,
             state_dir=Path(args.state_dir),
         )
     )

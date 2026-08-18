@@ -40,11 +40,19 @@ PowerShell example:
 ```powershell
 $env:AURA_OLLAMA_MODELS="model-a,model-b"
 $env:AURA_OLLAMA_URL="http://127.0.0.1:11434"
-$env:AURA_OLLAMA_THINK="high"
-$env:AURA_AI_AGENT_TIMEOUT_SECONDS="60"
+$env:AURA_OLLAMA_THINK="false"
+$env:AURA_OLLAMA_TIMEOUT_SECONDS="120"
+$env:AURA_OLLAMA_MAX_CONCURRENCY="1"
+$env:AURA_AI_AGENT_TIMEOUT_SECONDS="240"
 ```
 
 Use actual model names installed in Ollama. Multiple models can be listed comma-separated.
+
+Thinking is disabled by default because only thinking-capable models (for example,
+Qwen 3) accept it. AURA automatically retries an Ollama HTTP 400 once without
+thinking and with broad JSON mode for mixed-model and older-server compatibility.
+Local model requests are serialized by default to avoid RAM pressure and queue
+timeouts; raise `AURA_OLLAMA_MAX_CONCURRENCY` only after measuring the machine.
 
 Optional role selection:
 

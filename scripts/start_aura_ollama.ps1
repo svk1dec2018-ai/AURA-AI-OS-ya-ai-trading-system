@@ -112,8 +112,10 @@ Write-Step "Configuring AURA Multi-AI council"
 $env:AURA_OLLAMA_URL = $ollamaUrl
 $env:AURA_OLLAMA_MODELS = ($Models -join ",")
 $env:AURA_AI_OPINIONS_PER_ROLE = [string]$OpinionsPerRole
-$env:AURA_OLLAMA_THINK = "true"
-$env:AURA_AI_AGENT_TIMEOUT_SECONDS = "90"
+$env:AURA_OLLAMA_THINK = "false"
+$env:AURA_OLLAMA_TIMEOUT_SECONDS = "120"
+$env:AURA_OLLAMA_MAX_CONCURRENCY = "1"
+$env:AURA_AI_AGENT_TIMEOUT_SECONDS = "240"
 $env:AURA_LIVE_TRADING_ENABLED = ""
 $env:AURA_HUMAN_LIVE_APPROVAL_ID = ""
 
@@ -137,7 +139,8 @@ $runArgs = @(
 ) + $Symbols + @(
     "--timeframe", $Timeframe,
     "--min-history-bars", "30",
-    "--analyze-every-bars", "5"
+    "--analyze-every-bars", "5",
+    "--max-inflight-ai-decisions", "1"
 )
 
 & $venvPython @runArgs
