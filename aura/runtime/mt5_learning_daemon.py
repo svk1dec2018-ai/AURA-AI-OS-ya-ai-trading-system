@@ -16,6 +16,8 @@ from aura.evolution.brain_policy import (
     build_brain_policy_team,
 )
 from aura.evolution.brain_replay import SampleOrigin
+from aura.evolution.online_bridge import OpportunityOnlineLearningBridge
+from aura.evolution.online_learning import SafeOnlineLearner
 from aura.evolution.opportunity_audit import (
     MissedOpportunityAuditor,
     OpportunityAuditPolicy,
@@ -48,6 +50,7 @@ class MT5SelfEvolvingPaperDaemon:
         recorder: ShadowDecisionOutcomeRecorder,
         champion_manager: BrainPaperChampionManager,
         opportunity_auditor: MissedOpportunityAuditor,
+        online_bridge: OpportunityOnlineLearningBridge,
         research_every_new_samples: int = 100,
     ) -> None:
         if research_every_new_samples <= 0:
@@ -59,7 +62,9 @@ class MT5SelfEvolvingPaperDaemon:
         self.recorder = recorder
         self.champion_manager = champion_manager
         self.opportunity_auditor = opportunity_auditor
+        self.online_bridge = online_bridge
         self.research_every_new_samples = research_every_new_samples
+        self._online_research_due = False
         self._samples_at_last_research = len(self._live_samples())
         self.brain_state_dir = base.config.state_dir / "brain"
         self.brain_state_dir.mkdir(parents=True, exist_ok=True)
@@ -72,7 +77,9 @@ class MT5SelfEvolvingPaperDaemon:
         self.base._write_status(None)
         try:
             async for batch in self.base.source.batches():
-                self.opportunity_auditor.on_closed_candles(batch)
+                audited = self.opportunity_auditor.on_closed_candles(batch)
+                if self.online_bridge.observe_records(audited):
+                    self._online_research_due = True
                 resolved = self.recorder.on_closed_candles(batch)
                 for sample in resolved:
                     self.champion_manager.observe(sample)
@@ -130,7 +137,10 @@ class MT5SelfEvolvingPaperDaemon:
     def _maybe_research(self) -> None:
         samples = self._live_samples()
         new_samples = len(samples) - self._samples_at_last_research
-        if new_samples < self.research_every_new_samples:
+        if (
+            new_samples < self.research_every_new_samples
+            and not self._online_research_due
+        ):
             return
         if len(samples) < self.optimizer.config.minimum_samples:
             return
@@ -138,6 +148,7 @@ class MT5SelfEvolvingPaperDaemon:
             return
         result = self.optimizer.optimize(samples, baseline=self.current_policy)
         self._samples_at_last_research = len(samples)
+        self._online_research_due = False
         self._write_research_result(result)
         if result.holdout_passed:
             self.champion_manager.install_research_challenger(
@@ -190,6 +201,7 @@ class MT5SelfEvolvingPaperDaemon:
             "replay_samples": len(all_samples),
             "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
+            "online_learning": self.online_bridge.status(),
             "opportunity_audit": {
                 "material_opportunities": audit.material_opportunities,
                 "captured": audit.captured,
@@ -242,6 +254,10 @@ async def build_mt5_self_evolving_paper_daemon(
         OpportunityAuditStore(brain_dir / "opportunity_audit.jsonl"),
         policy=opportunity_audit_policy,
     )
+    online_bridge = OpportunityOnlineLearningBridge(
+        SafeOnlineLearner(),
+        market="MT5_CFD",
+    )
     restored_champion = manager.paper_champion
     effective_initial_policy = (
         AuraBrainPolicy.from_genome(restored_champion)
@@ -256,6 +272,7 @@ async def build_mt5_self_evolving_paper_daemon(
         recorder=recorder,
         champion_manager=manager,
         opportunity_auditor=opportunity_auditor,
+        online_bridge=online_bridge,
         research_every_new_samples=research_every_new_samples,
     )
 

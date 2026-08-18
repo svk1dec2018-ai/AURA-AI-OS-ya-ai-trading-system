@@ -35,6 +35,8 @@ from aura.evolution.brain_online import (
 from aura.evolution.brain_optimizer import BrainOptimizerConfig, BrainResearchOptimizer
 from aura.evolution.brain_policy import AuraBrainPolicy, BrainPolicyGate, build_brain_policy_team
 from aura.evolution.brain_replay import SampleOrigin
+from aura.evolution.online_bridge import OpportunityOnlineLearningBridge
+from aura.evolution.online_learning import SafeOnlineLearner
 from aura.evolution.opportunity_audit import (
     MissedOpportunityAuditor,
     OpportunityAuditPolicy,
@@ -136,6 +138,7 @@ class DhanSelfEvolvingPaperDaemon:
         recorder: ShadowDecisionOutcomeRecorder,
         champion_manager: BrainPaperChampionManager,
         opportunity_auditor: MissedOpportunityAuditor,
+        online_bridge: OpportunityOnlineLearningBridge,
         current_policy: AuraBrainPolicy,
         research_every_new_samples: int,
     ) -> None:
@@ -156,7 +159,9 @@ class DhanSelfEvolvingPaperDaemon:
         self.recorder = recorder
         self.champion_manager = champion_manager
         self.opportunity_auditor = opportunity_auditor
+        self.online_bridge = online_bridge
         self.current_policy = current_policy
+        self._online_research_due = False
         self.research_every_new_samples = research_every_new_samples
         self.counters = DhanPaperCounters()
         self._seeded_symbols: set[str] = set()
@@ -183,7 +188,9 @@ class DhanSelfEvolvingPaperDaemon:
                 batch = self._eligible_deep_batch(raw_batch)
                 if not batch:
                     continue
-                self.opportunity_auditor.on_closed_candles(batch)
+                audited = self.opportunity_auditor.on_closed_candles(batch)
+                if self.online_bridge.observe_records(audited):
+                    self._online_research_due = True
                 for sample in self.recorder.on_closed_candles(batch):
                     self.champion_manager.observe(sample)
                 if self.champion_manager.try_promote():
@@ -321,7 +328,11 @@ class DhanSelfEvolvingPaperDaemon:
 
     def _maybe_research(self) -> None:
         samples = self._live_samples()
-        if len(samples) - self._samples_at_last_research < self.research_every_new_samples:
+        new_samples = len(samples) - self._samples_at_last_research
+        if (
+            new_samples < self.research_every_new_samples
+            and not self._online_research_due
+        ):
             return
         if len(samples) < self.optimizer.config.minimum_samples:
             return
@@ -329,6 +340,7 @@ class DhanSelfEvolvingPaperDaemon:
             return
         result = self.optimizer.optimize(samples, baseline=self.current_policy)
         self._samples_at_last_research = len(samples)
+        self._online_research_due = False
         _atomic_json(
             self.brain_state_dir / "latest_research_challenger.json",
             {
@@ -389,6 +401,7 @@ class DhanSelfEvolvingPaperDaemon:
             "option_context": self.option_service.status(),
             "history_seed_retry_symbols": sorted(self._seed_retry_after),
             "counters": asdict(self.counters),
+            "online_learning": self.online_bridge.status(),
             "opportunity_audit": {
                 "material_opportunities": audit.material_opportunities,
                 "captured": audit.captured,
@@ -572,6 +585,10 @@ async def build_dhan_self_evolving_paper_daemon(
         OpportunityAuditStore(brain_dir / "opportunity_audit.jsonl"),
         policy=opportunity_audit_policy,
     )
+    online_bridge = OpportunityOnlineLearningBridge(
+        SafeOnlineLearner(),
+        market="INDIA",
+    )
     return DhanSelfEvolvingPaperDaemon(
         config=config,
         broad_source=broad_source,
@@ -588,6 +605,7 @@ async def build_dhan_self_evolving_paper_daemon(
         recorder=recorder,
         champion_manager=champion_manager,
         opportunity_auditor=auditor,
+        online_bridge=online_bridge,
         current_policy=current_policy,
         research_every_new_samples=research_every_new_samples,
     )

@@ -9,7 +9,6 @@ from aura.evolution.online_learning import (
 )
 from aura.evolution.opportunity_audit import OpportunityAuditRecord, OpportunityOutcome
 
-
 _OUTCOME_MAP = {
     OpportunityOutcome.CAPTURED: OutcomeLabel.CAPTURED,
     OpportunityOutcome.MISSED_FLAT: OutcomeLabel.MISSED,
