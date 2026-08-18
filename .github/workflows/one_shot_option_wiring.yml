@@ -1,0 +1,369 @@
+name: one-shot-causal-options-wiring
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Apply causal option-context wiring
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          def replace_once(text: str, old: str, new: str, label: str) -> str:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one exact match, found {count}")
+              return text.replace(old, new)
+
+          # Freeze one decision timestamp and pass it to every metadata provider.
+          path = Path("aura/runtime/multi_market_paper.py")
+          text = path.read_text(encoding="utf-8")
+          text = replace_once(
+              text,
+              "BatchMetadataProvider = Callable[\n"
+              "    [NormalizedCandle, tuple[NormalizedCandle, ...]],\n"
+              "    dict[str, Any],\n"
+              "]\n",
+              "BatchMetadataProvider = Callable[\n"
+              "    [NormalizedCandle, tuple[NormalizedCandle, ...], datetime],\n"
+              "    dict[str, Any],\n"
+              "]\n",
+              "metadata provider type",
+          )
+          text = replace_once(
+              text,
+              "metadata.update(self.metadata_provider(candle, closed_history))",
+              "metadata.update(\n"
+              "                    self.metadata_provider(candle, closed_history, decision_time)\n"
+              "                )",
+              "metadata provider call",
+          )
+          path.write_text(text, encoding="utf-8")
+
+          path = Path("aura/runtime/mt5_paper_daemon.py")
+          text = path.read_text(encoding="utf-8")
+          text = replace_once(
+              text,
+              "metadata_provider=lambda candle, history: source.metadata_for(candle.symbol),",
+              "metadata_provider=lambda candle, _history, _decision_time: source.metadata_for(\n"
+              "                candle.symbol\n"
+              "            ),",
+              "MT5 metadata provider",
+          )
+          path.write_text(text, encoding="utf-8")
+
+          # Make options evidence underlying-aware and allow genuinely unavailable percentiles.
+          path = Path("aura/agents/external_specialists.py")
+          text = path.read_text(encoding="utf-8")
+          snapshot_pattern = re.compile(
+              r"class OptionsVolatilitySnapshot\(BaseModel\):\n.*?\n\nclass CrossMarketObservation",
+              re.S,
+          )
+          snapshot_replacement = '''class OptionsVolatilitySnapshot(BaseModel):
+              model_config = ConfigDict(frozen=True)
+
+              source_id: str = Field(min_length=1)
+              underlying_symbol: str = Field(min_length=1)
+              observed_at: datetime
+              implied_volatility: float | None = Field(default=None, ge=0.0)
+              iv_percentile: float | None = Field(default=None, ge=0.0, le=100.0)
+              put_call_oi_ratio: float | None = Field(default=None, ge=0.0)
+              put_call_volume_ratio: float | None = Field(default=None, ge=0.0)
+              trust_score: float = Field(default=1.0, ge=0.0, le=1.0)
+
+              @field_validator("observed_at")
+              @classmethod
+              def observed_at_must_be_timezone_aware(cls, value: datetime) -> datetime:
+                  if value.tzinfo is None or value.utcoffset() is None:
+                      raise ValueError("options observed_at must be timezone-aware")
+                  return value
+
+
+          class CrossMarketObservation'''
+          text, count = snapshot_pattern.subn(snapshot_replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f"options snapshot class: expected one match, found {count}")
+
+          specialist_pattern = re.compile(
+              r"class OptionsVolatilitySpecialist\(SpecialistAgent\):\n.*?\n\nclass CrossMarketSpecialist",
+              re.S,
+          )
+          specialist_replacement = '''class OptionsVolatilitySpecialist(SpecialistAgent):
+              """Volatility/risk advisory specialist; it never fabricates missing metrics."""
+
+              agent_id = "deterministic:options_volatility:v1"
+              role = AgentRole.OPTIONS_VOLATILITY
+
+              async def analyze(self, context: AgentContext) -> AgentEvidence:
+                  raw = context.metadata.get("options_snapshot")
+                  if raw is None:
+                      return self._abstain(
+                          context,
+                          "options/volatility snapshot is missing",
+                          "options_missing",
+                      )
+                  snapshot = OptionsVolatilitySnapshot.model_validate(raw)
+                  expected_underlying = str(
+                      context.metadata.get("underlying_symbol") or context.symbol
+                  )
+                  if snapshot.underlying_symbol != expected_underlying:
+                      return self._abstain(
+                          context,
+                          "options underlying symbol mismatch",
+                          "options_symbol_mismatch",
+                      )
+                  if snapshot.observed_at > context.created_at:
+                      return self._abstain(
+                          context,
+                          "options snapshot is from the future",
+                          "options_future_data",
+                      )
+
+                  flags: list[str] = []
+                  confidence_components: list[float] = []
+                  if snapshot.iv_percentile is not None:
+                      if snapshot.iv_percentile >= 80:
+                          flags.append("high_implied_volatility")
+                      elif snapshot.iv_percentile <= 20:
+                          flags.append("low_implied_volatility")
+                      confidence_components.append(
+                          min(abs(snapshot.iv_percentile - 50.0) / 50.0, 1.0)
+                      )
+                  if snapshot.put_call_oi_ratio is not None:
+                      if (
+                          snapshot.put_call_oi_ratio >= 1.8
+                          or snapshot.put_call_oi_ratio <= 0.5
+                      ):
+                          flags.append("extreme_put_call_open_interest_ratio")
+                      confidence_components.append(
+                          min(abs(snapshot.put_call_oi_ratio - 1.0), 1.0)
+                      )
+                  if snapshot.put_call_volume_ratio is not None:
+                      if (
+                          snapshot.put_call_volume_ratio >= 1.8
+                          or snapshot.put_call_volume_ratio <= 0.5
+                      ):
+                          flags.append("extreme_put_call_volume_ratio")
+                      confidence_components.append(
+                          min(abs(snapshot.put_call_volume_ratio - 1.0), 1.0)
+                      )
+
+                  confidence = max(
+                      confidence_components,
+                      default=0.1 if snapshot.implied_volatility is not None else 0.0,
+                  )
+                  iv_percentile_text = (
+                      f"{snapshot.iv_percentile:.1f}"
+                      if snapshot.iv_percentile is not None
+                      else "n/a"
+                  )
+                  pcr_oi_text = (
+                      f"{snapshot.put_call_oi_ratio:.2f}"
+                      if snapshot.put_call_oi_ratio is not None
+                      else "n/a"
+                  )
+                  pcr_volume_text = (
+                      f"{snapshot.put_call_volume_ratio:.2f}"
+                      if snapshot.put_call_volume_ratio is not None
+                      else "n/a"
+                  )
+                  return AgentEvidence(
+                      agent_id=self.agent_id,
+                      role=self.role,
+                      intent=SignalIntent.FLAT,
+                      confidence=confidence,
+                      thesis=(
+                          f"options volatility advisory: IV percentile {iv_percentile_text}, "
+                          f"PCR(OI) {pcr_oi_text}, PCR(volume) {pcr_volume_text}"
+                      ),
+                      risk_flags=tuple(sorted(flags)),
+                      sources=(
+                          EvidenceSource(
+                              source_id=snapshot.source_id,
+                              source_type=EvidenceSourceType.DERIVATIVES,
+                              observed_at=snapshot.observed_at,
+                              trust_score=snapshot.trust_score,
+                          ),
+                      ),
+                      features={
+                          "implied_volatility": snapshot.implied_volatility,
+                          "iv_percentile": snapshot.iv_percentile,
+                          "put_call_oi_ratio": snapshot.put_call_oi_ratio,
+                          "put_call_volume_ratio": snapshot.put_call_volume_ratio,
+                          "underlying_symbol": snapshot.underlying_symbol,
+                      },
+                      generated_at=context.created_at,
+                  )
+
+              def _abstain(
+                  self,
+                  context: AgentContext,
+                  thesis: str,
+                  flag: str,
+              ) -> AgentEvidence:
+                  return _abstain(
+                      agent_id=self.agent_id,
+                      role=self.role,
+                      context=context,
+                      thesis=thesis,
+                      flag=flag,
+                      source_type=EvidenceSourceType.DERIVATIVES,
+                      source_id=f"derivatives:{context.symbol}:missing-or-invalid",
+                  )
+
+
+          class CrossMarketSpecialist'''
+          text, count = specialist_pattern.subn(specialist_replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f"options specialist class: expected one match, found {count}")
+          # Remove indentation introduced by the triple-quoted workflow string.
+          text = text.replace("\n          class ", "\nclass ")
+          text = text.replace("\n              ", "\n    ")
+          text = text.replace("\n                  ", "\n        ")
+          text = text.replace("\n                      ", "\n            ")
+          text = text.replace("\n                          ", "\n                ")
+          text = text.replace("\n                              ", "\n                    ")
+          path.write_text(text, encoding="utf-8")
+
+          # Wire the Dhan option service into the live deep shortlist and decision metadata.
+          path = Path("aura/runtime/dhan_learning_daemon.py")
+          text = path.read_text(encoding="utf-8")
+          text = replace_once(
+              text,
+              "from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles\n",
+              "from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles\n"
+              "from aura.data.dhan_option_context import (\n"
+              "    DhanOptionContextService,\n"
+              "    DhanOptionTargetResolver,\n"
+              ")\n",
+              "Dhan option imports",
+          )
+          text = replace_once(
+              text,
+              "        deep_service: DhanDeepMetadataService,\n        radar: DhanOpportunityRadar,\n",
+              "        deep_service: DhanDeepMetadataService,\n"
+              "        option_service: DhanOptionContextService,\n"
+              "        radar: DhanOpportunityRadar,\n",
+              "Dhan init option parameter",
+          )
+          text = replace_once(
+              text,
+              "        self.deep_service = deep_service\n        self.radar = radar\n",
+              "        self.deep_service = deep_service\n"
+              "        self.option_service = option_service\n"
+              "        self.radar = radar\n",
+              "Dhan option assignment",
+          )
+          text = replace_once(
+              text,
+              "            await self.deep_service.stop()\n",
+              "            await self.deep_service.stop()\n"
+              "            await self.option_service.stop()\n",
+              "Dhan option shutdown",
+          )
+          text = replace_once(
+              text,
+              "            await self.deep_service.update_symbols(ready)\n"
+              "            self._write_status(None)\n",
+              "            await self.deep_service.update_symbols(ready)\n"
+              "            await self.option_service.update_symbols(ready)\n"
+              "            self._write_status(None)\n",
+              "Dhan option shortlist rotation",
+          )
+          text = replace_once(
+              text,
+              '            "deep_active_symbols": list(self.deep_service.active_symbols),\n',
+              '            "deep_active_symbols": list(self.deep_service.active_symbols),\n'
+              '            "option_context": self.option_service.status(),\n',
+              "Dhan option status",
+          )
+          text = replace_once(
+              text,
+              "    instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)\n",
+              "    instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)\n"
+              "    option_service = DhanOptionContextService(\n"
+              "        credentials,\n"
+              "        DhanOptionTargetResolver(universe),\n"
+              "    )\n",
+              "Dhan option service build",
+          )
+          old_metadata = '''        metadata_provider=lambda candle, _history: deep_service.metadata_for(
+              candle.symbol,
+              decision_time=datetime.now(UTC),
+          ),'''
+          new_metadata = '''        metadata_provider=lambda candle, _history, decision_time: _dhan_decision_metadata(
+              deep_service,
+              option_service,
+              candle.symbol,
+              decision_time,
+          ),'''
+          text = replace_once(text, old_metadata, new_metadata, "Dhan causal metadata provider")
+          text = replace_once(
+              text,
+              "        deep_service=deep_service,\n        radar=radar,\n",
+              "        deep_service=deep_service,\n"
+              "        option_service=option_service,\n"
+              "        radar=radar,\n",
+              "Dhan return option service",
+          )
+          helper_anchor = "\ndef _dhan_agent_risk_policy() -> AgentRiskPolicy:\n"
+          helper = '''
+          def _dhan_decision_metadata(
+              deep_service: DhanDeepMetadataService,
+              option_service: DhanOptionContextService,
+              symbol: str,
+              decision_time: datetime,
+          ) -> dict:
+              metadata = deep_service.metadata_for(
+                  symbol,
+                  decision_time=decision_time,
+              )
+              metadata.update(
+                  option_service.metadata_for(
+                      symbol,
+                      decision_time=decision_time,
+                  )
+              )
+              return metadata
+
+
+          def _dhan_agent_risk_policy() -> AgentRiskPolicy:
+          '''
+          if text.count(helper_anchor) != 1:
+              raise SystemExit("Dhan metadata helper anchor mismatch")
+          text = text.replace(helper_anchor, "\n" + helper)
+          text = text.replace("\n          def ", "\ndef ")
+          text = text.replace("\n              ", "\n    ")
+          text = text.replace("\n                  ", "\n        ")
+          path.write_text(text, encoding="utf-8")
+
+          Path(".github/workflows/one_shot_option_wiring.yml").unlink()
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Format and validate
+        run: |
+          pip install -e ".[dev]"
+          ruff check --fix aura tests examples
+          ruff check aura tests examples
+          pytest -q
+      - name: Commit patch and self-remove
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests .github/workflows/one_shot_option_wiring.yml
+          git commit -m "wire causal Dhan option context into live decisions"
+          git push
