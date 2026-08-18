@@ -165,9 +165,7 @@ class DhanOptionTargetResolver:
         def score(item: CanonicalInstrument) -> tuple[int, str, str]:
             if item.asset_class == AssetClass.INDEX:
                 rank = 0
-            elif option_exchange == "NSE" and item.exchange == "NSE":
-                rank = 1
-            elif option_exchange == "BSE" and item.exchange == "BSE":
+            elif option_exchange in {"NSE", "BSE"} and item.exchange == option_exchange:
                 rank = 1
             elif item.exchange == "NSE":
                 rank = 2

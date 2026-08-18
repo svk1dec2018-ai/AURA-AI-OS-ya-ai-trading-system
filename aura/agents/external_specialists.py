@@ -23,10 +23,10 @@ class OptionsVolatilitySnapshot(BaseModel):
     source_id: str = Field(min_length=1)
     underlying_symbol: str = Field(min_length=1)
     observed_at: datetime
-    implied_volatility: float = Field(ge=0.0)
-    iv_percentile: float = Field(ge=0.0, le=100.0)
-    put_call_oi_ratio: float = Field(ge=0.0)
-    put_call_volume_ratio: float = Field(ge=0.0)
+    implied_volatility: float | None = Field(default=None, ge=0.0)
+    iv_percentile: float | None = Field(default=None, ge=0.0, le=100.0)
+    put_call_oi_ratio: float | None = Field(default=None, ge=0.0)
+    put_call_volume_ratio: float | None = Field(default=None, ge=0.0)
     trust_score: float = Field(default=1.0, ge=0.0, le=1.0)
 
     @field_validator("observed_at")
@@ -183,31 +183,71 @@ class OptionsVolatilitySpecialist(SpecialistAgent):
         if raw is None:
             return self._abstain(context, "options/volatility snapshot is missing", "options_missing")
         snapshot = OptionsVolatilitySnapshot.model_validate(raw)
-        if snapshot.underlying_symbol != context.symbol:
-            return self._abstain(context, "options underlying symbol mismatch", "options_symbol_mismatch")
+        expected_underlying = str(
+            context.metadata.get("underlying_symbol") or context.symbol
+        )
+        if snapshot.underlying_symbol != expected_underlying:
+            return self._abstain(
+                context,
+                "options underlying symbol mismatch",
+                "options_symbol_mismatch",
+            )
         if snapshot.observed_at > context.created_at:
             return self._abstain(context, "options snapshot is from the future", "options_future_data")
 
         flags: list[str] = []
-        if snapshot.iv_percentile >= 80:
-            flags.append("high_implied_volatility")
-        elif snapshot.iv_percentile <= 20:
-            flags.append("low_implied_volatility")
-        if snapshot.put_call_oi_ratio >= 1.8 or snapshot.put_call_oi_ratio <= 0.5:
-            flags.append("extreme_put_call_open_interest_ratio")
-        if snapshot.put_call_volume_ratio >= 1.8 or snapshot.put_call_volume_ratio <= 0.5:
-            flags.append("extreme_put_call_volume_ratio")
+        confidence_components: list[float] = []
+        if snapshot.iv_percentile is not None:
+            if snapshot.iv_percentile >= 80:
+                flags.append("high_implied_volatility")
+            elif snapshot.iv_percentile <= 20:
+                flags.append("low_implied_volatility")
+            confidence_components.append(
+                min(abs(snapshot.iv_percentile - 50.0) / 50.0, 1.0)
+            )
+        if snapshot.put_call_oi_ratio is not None:
+            if snapshot.put_call_oi_ratio >= 1.8 or snapshot.put_call_oi_ratio <= 0.5:
+                flags.append("extreme_put_call_open_interest_ratio")
+            confidence_components.append(
+                min(abs(snapshot.put_call_oi_ratio - 1.0), 1.0)
+            )
+        if snapshot.put_call_volume_ratio is not None:
+            if (
+                snapshot.put_call_volume_ratio >= 1.8
+                or snapshot.put_call_volume_ratio <= 0.5
+            ):
+                flags.append("extreme_put_call_volume_ratio")
+            confidence_components.append(
+                min(abs(snapshot.put_call_volume_ratio - 1.0), 1.0)
+            )
 
-        state_confidence = min(abs(snapshot.iv_percentile - 50.0) / 50.0, 1.0)
+        state_confidence = max(
+            confidence_components,
+            default=0.1 if snapshot.implied_volatility is not None else 0.0,
+        )
+        iv_text = (
+            f"{snapshot.iv_percentile:.1f}"
+            if snapshot.iv_percentile is not None
+            else "n/a"
+        )
+        pcr_oi_text = (
+            f"{snapshot.put_call_oi_ratio:.2f}"
+            if snapshot.put_call_oi_ratio is not None
+            else "n/a"
+        )
+        pcr_volume_text = (
+            f"{snapshot.put_call_volume_ratio:.2f}"
+            if snapshot.put_call_volume_ratio is not None
+            else "n/a"
+        )
         return AgentEvidence(
             agent_id=self.agent_id,
             role=self.role,
             intent=SignalIntent.FLAT,
             confidence=state_confidence,
             thesis=(
-                f"options volatility advisory: IV percentile {snapshot.iv_percentile:.1f}, "
-                f"PCR(OI) {snapshot.put_call_oi_ratio:.2f}, "
-                f"PCR(volume) {snapshot.put_call_volume_ratio:.2f}"
+                f"options volatility advisory: IV percentile {iv_text}, "
+                f"PCR(OI) {pcr_oi_text}, PCR(volume) {pcr_volume_text}"
             ),
             risk_flags=tuple(sorted(flags)),
             sources=(

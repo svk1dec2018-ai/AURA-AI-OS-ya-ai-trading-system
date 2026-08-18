@@ -476,7 +476,9 @@ def _dedupe_events(events: Iterable[ExternalIntelligenceEvent]) -> tuple[Externa
 
 
 def _xml_text(entry, local_name: str) -> str:
-    node = entry.find(local_name) or entry.find(f"{{*}}{local_name}")
+    node = entry.find(local_name)
+    if node is None:
+        node = entry.find(f"{{*}}{local_name}")
     return (node.text or "").strip() if node is not None else ""
 
 
@@ -501,7 +503,7 @@ def _parse_feed_datetime(value: str, *, fallback: datetime) -> datetime:
     except (TypeError, ValueError, OverflowError):
         pass
     try:
-        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        parsed = datetime.fromisoformat(value)
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=UTC)
         return parsed.astimezone(UTC)

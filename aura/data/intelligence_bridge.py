@@ -9,7 +9,6 @@ from aura.data.free_intelligence import (
 )
 from aura.data.live_plane import DataDomain, LiveDataEvent
 
-
 _KIND_TO_DOMAIN = {
     IntelligenceKind.NEWS: DataDomain.NEWS,
     IntelligenceKind.REGULATORY: DataDomain.NEWS,
@@ -75,5 +74,5 @@ def macro_to_live_event(observation: MacroObservation) -> LiveDataEvent:
 
 
 def _hub_event_id(base: str, subject: str) -> str:
-    digest = hashlib.sha256(f"{base}|{subject}".encode("utf-8")).hexdigest()
+    digest = hashlib.sha256(f"{base}|{subject}".encode()).hexdigest()
     return f"external:{digest}"
