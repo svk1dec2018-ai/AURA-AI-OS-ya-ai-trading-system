@@ -49,9 +49,17 @@ _CONNECTOR_ENV: dict[str, tuple[str, ...]] = {
         "AURA_MT5_DEMO_SERVER",
     ),
     "dhan": ("AURA_DHAN_CLIENT_ID", "AURA_DHAN_ACCESS_TOKEN"),
-    "shoonya": ("AURA_SHOONYA_USER_ID", "AURA_SHOONYA_SESSION_TOKEN"),
-    "flattrade": ("AURA_FLATTRADE_USER_ID", "AURA_FLATTRADE_ACCESS_TOKEN"),
-    "oanda": ("AURA_OANDA_ACCOUNT_ID", "AURA_OANDA_TOKEN"),
+    "shoonya": (
+        "AURA_SHOONYA_USER_ID",
+        "AURA_SHOONYA_ACCOUNT_ID",
+        "AURA_SHOONYA_SESSION_TOKEN",
+    ),
+    "flattrade": (
+        "AURA_FLATTRADE_USER_ID",
+        "AURA_FLATTRADE_ACCOUNT_ID",
+        "AURA_FLATTRADE_ACCESS_TOKEN",
+    ),
+    "oanda": ("AURA_OANDA_ACCOUNT_ID", "AURA_OANDA_ACCESS_TOKEN"),
 }
 
 _LIVE_ACK = "I_UNDERSTAND_AND_APPROVE_LIVE_RISK"
@@ -60,9 +68,9 @@ _LIVE_ACK = "I_UNDERSTAND_AND_APPROVE_LIVE_RISK"
 class ProductionPreflight:
     """Fail-closed startup validation for research, paper, demo and live modes.
 
-    This gate deliberately validates configuration and durable-state prerequisites
-    before any broker or model runtime is created. It does not certify profitability.
-    Live mode additionally requires an APPROVED strategy and explicit human approval.
+    This gate validates configuration and durable-state prerequisites before any
+    broker or model runtime is created. It does not certify profitability. Live
+    mode additionally requires an APPROVED strategy and explicit human approval.
     """
 
     def __init__(
@@ -76,7 +84,9 @@ class ProductionPreflight:
     ) -> None:
         self.mode = mode
         self.runtime_dir = runtime_dir
-        self.connectors = tuple(dict.fromkeys(item.strip().lower() for item in connectors))
+        self.connectors = tuple(
+            dict.fromkeys(item.strip().lower() for item in connectors)
+        )
         self.strategy_stage = strategy_stage
         self.env = dict(os.environ if env is None else env)
 
@@ -128,12 +138,21 @@ class ProductionPreflight:
                     )
                 )
                 continue
-            missing = [name for name in _CONNECTOR_ENV[connector] if not self.env.get(name, "").strip()]
+            missing = [
+                name
+                for name in _CONNECTOR_ENV[connector]
+                if not self.env.get(name, "").strip()
+            ]
+            detail = (
+                "credentials/config present"
+                if not missing
+                else f"missing env: {', '.join(missing)}"
+            )
             checks.append(
                 PreflightCheck(
                     f"connector-{connector}",
                     not missing,
-                    "credentials/config present" if not missing else f"missing env: {', '.join(missing)}",
+                    detail,
                 )
             )
         return checks
@@ -143,7 +162,8 @@ class ProductionPreflight:
             return [
                 PreflightCheck(
                     "live-money-disabled",
-                    self.env.get("AURA_LIVE_TRADING_ENABLED", "").strip() != _LIVE_ACK,
+                    self.env.get("AURA_LIVE_TRADING_ENABLED", "").strip()
+                    != _LIVE_ACK,
                     "live-money acknowledgement is not enabled",
                     blocking=False,
                 )
@@ -165,7 +185,11 @@ class ProductionPreflight:
             PreflightCheck(
                 "human-live-approval",
                 bool(human_approval),
-                "human approval id present" if human_approval else "AURA_HUMAN_LIVE_APPROVAL_ID missing",
+                (
+                    "human approval id present"
+                    if human_approval
+                    else "AURA_HUMAN_LIVE_APPROVAL_ID missing"
+                ),
             ),
             PreflightCheck(
                 "explicit-live-risk-ack",
