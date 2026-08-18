@@ -3,10 +3,15 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+from aura.agents.adaptive_model_router import (
+    AdaptiveModelRouter,
+    RoutedProviderBackedSpecialist,
+)
 from aura.agents.base import SpecialistAgent
 from aura.agents.models import AgentRole
 from aura.agents.ollama_provider import OllamaReasoningProvider, build_ollama_providers_from_env
 from aura.agents.providers import ProviderBackedSpecialist
+from aura.agents.reliability import AgentReliabilityTracker
 
 _DEFAULT_ROLES = (
     AgentRole.HTF_BIAS,
@@ -26,6 +31,8 @@ _DEFAULT_ROLES = (
 class AICouncilConfig:
     roles: tuple[AgentRole, ...] = _DEFAULT_ROLES
     opinions_per_role: int = 1
+    adaptive_routing: bool = True
+    exploration_strength: float = 0.12
 
     def __post_init__(self) -> None:
         if not self.roles:
@@ -34,24 +41,44 @@ class AICouncilConfig:
             raise ValueError("AI council roles must be unique")
         if not 1 <= self.opinions_per_role <= 3:
             raise ValueError("opinions_per_role must be between 1 and 3")
+        if self.exploration_strength < 0:
+            raise ValueError("exploration_strength cannot be negative")
 
 
 def build_ollama_ai_council(
     providers: tuple[OllamaReasoningProvider, ...] | list[OllamaReasoningProvider],
     *,
     config: AICouncilConfig | None = None,
+    reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> tuple[SpecialistAgent, ...]:
-    """Map multiple local AI models across independent AURA specialist mandates.
+    """Build independent local-AI specialists with optional adaptive model routing.
 
-    Each AI specialist receives the same point-in-time market context but a
-    different mandate. Multiple opinions per role are allowed, but execution and
-    risk authority remain outside the AI council.
+    With a reliability tracker, each role chooses models from forward-observed
+    performance using bounded exploration. Multiple opinion slots select different
+    ranked models when possible. Without learned state the legacy deterministic
+    round-robin mapping is preserved.
     """
 
     if not providers:
         return ()
     effective = config or AICouncilConfig()
     models = tuple(providers)
+    if effective.adaptive_routing and reliability_tracker is not None:
+        router = AdaptiveModelRouter(
+            models,
+            reliability_tracker,
+            exploration_strength=effective.exploration_strength,
+        )
+        return tuple(
+            RoutedProviderBackedSpecialist(
+                router=router,
+                role=role,
+                opinion_slot=opinion_index,
+            )
+            for role in effective.roles
+            for opinion_index in range(effective.opinions_per_role)
+        )
+
     agents: list[SpecialistAgent] = []
     for role_index, role in enumerate(effective.roles):
         for opinion_index in range(effective.opinions_per_role):
@@ -69,18 +96,31 @@ def build_ollama_ai_council(
     return tuple(agents)
 
 
-def build_ollama_ai_council_from_env() -> tuple[SpecialistAgent, ...]:
+def build_ollama_ai_council_from_env(
+    *,
+    reliability_tracker: AgentReliabilityTracker | None = None,
+) -> tuple[SpecialistAgent, ...]:
     providers = build_ollama_providers_from_env()
     if not providers:
         return ()
     roles = _roles_from_env(os.getenv("AURA_AI_ROLES", ""))
     opinions = int(os.getenv("AURA_AI_OPINIONS_PER_ROLE", "1"))
+    exploration = float(os.getenv("AURA_AI_ROUTER_EXPLORATION", "0.12"))
+    adaptive = os.getenv("AURA_AI_ADAPTIVE_ROUTING", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
     return build_ollama_ai_council(
         providers,
         config=AICouncilConfig(
             roles=roles or _DEFAULT_ROLES,
             opinions_per_role=opinions,
+            adaptive_routing=adaptive,
+            exploration_strength=exploration,
         ),
+        reliability_tracker=reliability_tracker,
     )
 
 
