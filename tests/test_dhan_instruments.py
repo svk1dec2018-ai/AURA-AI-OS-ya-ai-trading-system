@@ -1,9 +1,11 @@
 from decimal import Decimal
 
 from aura.data.dhan_instruments import DhanExchangeSegment, DhanInstrumentMaster
+from aura.data.dhan_universe_planner import DhanUniversePlanner, DhanUniversePolicy
 from aura.markets.universe import AssetClass, OptionType, VenueFamily
 
 CSV = """SEM_SEGMENT,SEM_SMST_SECURITY_ID,SEM_INSTRUMENT_NAME,SEM_TRADING_SYMBOL,SEM_LOT_UNITS,SEM_CUSTOM_SYMBOL,SEM_EXPIRY_DATE,SEM_STRIKE_PRICE,SEM_OPTION_TYPE,SEM_TICK_SIZE,SEM_SERIES,SM_SYMBOL_NAME
+IDX_I,13,INDEX,NIFTY,1,NIFTY,,,,0.05,,NIFTY
 NSE_EQ,1333,EQUITY,HDFCBANK,1,HDFCBANK,,, ,0.05,EQ,HDFCBANK
 NSE_FNO,50001,FUTIDX,NIFTY-AUG2026-FUT,75,NIFTY AUG FUT,2026-08-27,0,,0.05,,NIFTY
 NSE_FNO,50002,OPTIDX,NIFTY-AUG2026-25000-CE,75,NIFTY AUG 25000 CE,2026-08-27,25000,CE,0.05,,NIFTY
@@ -12,12 +14,17 @@ MCX_COMM,70001,FUTCOM,GOLD-OCT2026-FUT,1,GOLD OCT FUT,2026-10-05,0,,1.0,,GOLD
 """
 
 
-def test_dhan_master_builds_cash_future_option_and_mcx_contracts() -> None:
+def test_dhan_master_builds_index_cash_future_option_and_mcx_contracts() -> None:
     master = DhanInstrumentMaster.from_csv_text(CSV)
     instruments = master.to_canonical_universe()
-    assert len(instruments) == 5
+    assert len(instruments) == 6
     assert all(item.venue_family == VenueFamily.DHAN_INDIA for item in instruments)
     by_security = {item.venue_symbol: item for item in instruments}
+
+    index = by_security["13"]
+    assert index.asset_class == AssetClass.INDEX
+    assert index.market_data_enabled
+    assert not index.tradable
 
     assert by_security["1333"].asset_class == AssetClass.CASH_EQUITY
     assert by_security["1333"].min_quantity == Decimal(1)
@@ -42,6 +49,23 @@ def test_dhan_master_builds_cash_future_option_and_mcx_contracts() -> None:
     assert mcx.exchange == "MCX"
     assert mcx.asset_class == AssetClass.FUTURE
     assert mcx.underlying == "GOLD"
+
+
+def test_dhan_primary_plan_keeps_index_context_without_trading_it() -> None:
+    instruments = DhanInstrumentMaster.from_csv_text(CSV).to_canonical_universe()
+    plan = DhanUniversePlanner(
+        DhanUniversePolicy(
+            max_stream_instruments=3,
+            max_primary_cash_symbols=1,
+            max_primary_futures=1,
+        )
+    ).primary_plan(instruments)
+    assert [item.asset_class for item in plan.streamed] == [
+        AssetClass.INDEX,
+        AssetClass.CASH_EQUITY,
+        AssetClass.FUTURE,
+    ]
+    assert not plan.streamed[0].tradable
 
 
 def test_dhan_master_can_limit_segments() -> None:
