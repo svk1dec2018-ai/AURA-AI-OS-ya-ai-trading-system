@@ -1,5 +1,5 @@
 RUFF_EXIT=1
-PYTEST_EXIT=0
+PYTEST_EXIT=1
 === RUFF ===
 DTZ007 Naive datetime constructed using `datetime.datetime.strptime()` without %z
   --> aura/data/dhan_deep_service.py:55:31
@@ -159,6 +159,144 @@ help: Replace with `1`
 Found 10 errors.
 [*] 6 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).
 === PYTEST ===
-........................................................................ [ 35%]
+...........................FF.FF........................................ [ 35%]
 ........................................................................ [ 70%]
 ............................................................             [100%]
+=================================== FAILURES ===================================
+_____ test_brain_optimizer_uses_sealed_holdout_and_returns_bounded_policy ______
+
+    def test_brain_optimizer_uses_sealed_holdout_and_returns_bounded_policy() -> None:
+        samples = tuple(_sample(i) for i in range(120))
+        optimizer = BrainResearchOptimizer(
+            BrainOptimizerConfig(
+                minimum_samples=100,
+                population_size=8,
+                generations=2,
+                elite_count=2,
+                minimum_validation_trades=5,
+                minimum_holdout_trades=5,
+            )
+        )
+>       result = optimizer.optimize(samples, baseline=AuraBrainPolicy())
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_brain_online_evolution.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+aura/evolution/brain_optimizer.py:123: in optimize
+    genome=best_policy.to_genome(generation=self.config.generations),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+aura/evolution/brain_policy.py:29: in to_genome
+    return StrategyGenome.from_parameters(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <class 'aura.evolution.core.StrategyGenome'>, item = 'from_parameters'
+
+    def __getattr__(self, item: str) -> Any:
+        """This is necessary to keep attribute access working for class attribute access."""
+        private_attributes = self.__dict__.get('__private_attributes__')
+        if private_attributes and item in private_attributes:
+            return private_attributes[item]
+>       raise AttributeError(item)
+E       AttributeError: from_parameters
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py:290: AttributeError
+__ test_forward_challenger_requires_new_live_samples_and_never_live_promotes ___
+
+tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_forward_challenger_requir0')
+
+    def test_forward_challenger_requires_new_live_samples_and_never_live_promotes(
+        tmp_path: Path,
+    ) -> None:
+        manager = BrainPaperChampionManager(
+            tmp_path,
+            promotion_policy=BrainPaperPromotionPolicy(
+                min_forward_trades=10,
+                min_profit_factor=1.0,
+                max_drawdown_pct=20.0,
+            ),
+        )
+>       genome = AuraBrainPolicy().to_genome()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_brain_online_evolution.py:69: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+aura/evolution/brain_policy.py:29: in to_genome
+    return StrategyGenome.from_parameters(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <class 'aura.evolution.core.StrategyGenome'>, item = 'from_parameters'
+
+    def __getattr__(self, item: str) -> Any:
+        """This is necessary to keep attribute access working for class attribute access."""
+        private_attributes = self.__dict__.get('__private_attributes__')
+        if private_attributes and item in private_attributes:
+            return private_attributes[item]
+>       raise AttributeError(item)
+E       AttributeError: from_parameters
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py:290: AttributeError
+____________ test_brain_policy_roundtrips_through_immutable_genome _____________
+
+    def test_brain_policy_roundtrips_through_immutable_genome() -> None:
+        policy = AuraBrainPolicy(min_opportunity_confidence=0.72)
+>       genome = policy.to_genome()
+                 ^^^^^^^^^^^^^^^^^^
+
+tests/test_brain_policy.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+aura/evolution/brain_policy.py:29: in to_genome
+    return StrategyGenome.from_parameters(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <class 'aura.evolution.core.StrategyGenome'>, item = 'from_parameters'
+
+    def __getattr__(self, item: str) -> Any:
+        """This is necessary to keep attribute access working for class attribute access."""
+        private_attributes = self.__dict__.get('__private_attributes__')
+        if private_attributes and item in private_attributes:
+            return private_attributes[item]
+>       raise AttributeError(item)
+E       AttributeError: from_parameters
+
+/opt/hostedtoolcache/Python/3.12.13/x64/lib/python3.12/site-packages/pydantic/_internal/_model_construction.py:290: AttributeError
+________ test_brain_policy_blocks_low_confidence_or_excess_disagreement ________
+
+    def test_brain_policy_blocks_low_confidence_or_excess_disagreement() -> None:
+        gate = BrainPolicyGate(
+            AuraBrainPolicy(
+                min_opportunity_confidence=0.7,
+                max_deliberation_disagreement=0.4,
+            )
+        )
+>       assert not gate.evaluate(
+            round_result=_round(), memo=_memo(0.6), deliberation=_deliberation(0.2)
+        ).allowed
+
+tests/test_brain_policy.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <aura.evolution.brain_policy.BrainPolicyGate object at 0x7f50a00ae630>
+
+    def evaluate(
+        self,
+        *,
+        round_result: AgentRound,
+        memo: CEODecisionMemo,
+        deliberation: DeliberationMemo | None,
+    ) -> BrainPolicyDecision:
+        if not memo.quorum_met:
+            return BrainPolicyDecision(False, "CEO quorum not met")
+        if memo.confidence < self.policy.min_opportunity_confidence:
+>           return BrainPolicyDecision(False, "opportunity confidence below brain policy")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           TypeError: BaseModel.__init__() takes 1 positional argument but 3 were given
+
+aura/evolution/brain_policy.py:108: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_brain_online_evolution.py::test_brain_optimizer_uses_sealed_holdout_and_returns_bounded_policy - AttributeError: from_parameters
+FAILED tests/test_brain_online_evolution.py::test_forward_challenger_requires_new_live_samples_and_never_live_promotes - AttributeError: from_parameters
+FAILED tests/test_brain_policy.py::test_brain_policy_roundtrips_through_immutable_genome - AttributeError: from_parameters
+FAILED tests/test_brain_policy.py::test_brain_policy_blocks_low_confidence_or_excess_disagreement - TypeError: BaseModel.__init__() takes 1 positional argument but 3 were given
