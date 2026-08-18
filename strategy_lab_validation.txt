@@ -1,0 +1,170 @@
+INSTALL=0
+RUFF=1
+PYTEST=1
+=== RUFF ===
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+   --> aura/research/autonomous_strategy_lab.py:283:27
+    |
+281 |     gains = Decimal(0)
+282 |     losses = Decimal(0)
+283 |     for prior, current in zip(window, window[1:]):
+    |                           ^^^
+284 |         change = current - prior
+285 |         if change > 0:
+    |
+help: Replace `zip()` with `itertools.pairwise()`
+
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+   --> aura/research/autonomous_strategy_lab.py:299:27
+    |
+297 |         return Decimal(0)
+298 |     values: list[Decimal] = []
+299 |     for prior, current in zip(candles, candles[1:]):
+    |                           ^^^
+300 |         values.append(
+301 |             max(
+    |
+help: Replace `zip()` with `itertools.pairwise()`
+
+RUF009 Do not perform function call `FitnessPolicy` in dataclass defaults
+   --> aura/research/autonomous_strategy_lab.py:318:34
+    |
+316 |     minimum_profit_factor: float = 1.10
+317 |     maximum_drawdown_pct: float = 15.0
+318 |     base_policy: FitnessPolicy = FitnessPolicy()
+    |                                  ^^^^^^^^^^^^^^^
+319 |
+320 |     def __post_init__(self) -> None:
+    |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_autonomous_strategy_lab.py:45:21
+   |
+43 |     start = datetime(2026, 8, 18, 0, 0, tzinfo=UTC)
+44 |     result = []
+45 |     price = Decimal("100")
+   |                     ^^^^^
+46 |     for index in range(count):
+47 |         next_price = price + Decimal("1")
+   |
+help: Replace with `100`
+   |
+44 |     result = []
+   -     price = Decimal("100")
+45 +     price = Decimal(100)
+46 |     for index in range(count):
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_autonomous_strategy_lab.py:47:38
+   |
+45 |     price = Decimal("100")
+46 |     for index in range(count):
+47 |         next_price = price + Decimal("1")
+   |                                      ^^^
+48 |         result.append(
+49 |             NormalizedCandle(
+   |
+help: Replace with `1`
+   |
+46 |     for index in range(count):
+   -         next_price = price + Decimal("1")
+47 +         next_price = price + Decimal(1)
+48 |         result.append(
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_candle_aggregation.py:55:23
+   |
+53 |         symbol="BTC-USD",
+54 |         venue="COINBASE_PUBLIC",
+55 |         price=Decimal("60000"),
+   |                       ^^^^^^^
+56 |         quantity=Decimal("0.1"),
+57 |         timestamp=datetime(2026, 8, 17, 10, 0, 0, 100000, tzinfo=UTC),
+   |
+help: Replace with `60000`
+   |
+54 |         venue="COINBASE_PUBLIC",
+   -         price=Decimal("60000"),
+55 +         price=Decimal(60000),
+56 |         quantity=Decimal("0.1"),
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_candle_aggregation.py:61:30
+   |
+59 |     later = first.model_copy(
+60 |         update={
+61 |             "price": Decimal("60001"),
+   |                              ^^^^^^^
+62 |             "quantity": Decimal("0.2"),
+63 |             "timestamp": datetime(2026, 8, 17, 10, 0, 1, 100000, tzinfo=UTC),
+   |
+help: Replace with `60001`
+   |
+60 |         update={
+   -             "price": Decimal("60001"),
+61 +             "price": Decimal(60001),
+62 |             "quantity": Decimal("0.2"),
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_candle_aggregation.py:70:42
+   |
+68 |     one_second = [item for item in completed if item.timeframe == "1s"]
+69 |     assert len(one_second) == 1
+70 |     assert one_second[0].open == Decimal("60000")
+   |                                          ^^^^^^^
+71 |     assert one_second[0].close == Decimal("60000")
+72 |     assert one_second[0].volume == Decimal("0.1")
+   |
+help: Replace with `60000`
+   |
+69 |     assert len(one_second) == 1
+   -     assert one_second[0].open == Decimal("60000")
+70 +     assert one_second[0].open == Decimal(60000)
+71 |     assert one_second[0].close == Decimal("60000")
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_candle_aggregation.py:71:43
+   |
+69 |     assert len(one_second) == 1
+70 |     assert one_second[0].open == Decimal("60000")
+71 |     assert one_second[0].close == Decimal("60000")
+   |                                           ^^^^^^^
+72 |     assert one_second[0].volume == Decimal("0.1")
+   |
+help: Replace with `60000`
+   |
+70 |     assert one_second[0].open == Decimal("60000")
+   -     assert one_second[0].close == Decimal("60000")
+71 +     assert one_second[0].close == Decimal(60000)
+72 |     assert one_second[0].volume == Decimal("0.1")
+   |
+
+Found 9 errors.
+[*] 6 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).
+=== PYTEST ===
+........................................................................ [ 29%]
+........................................................................ [ 59%]
+........................................................................ [ 88%]
+................F..........                                              [100%]
+=================================== FAILURES ===================================
+______ test_strategy_farm_evaluates_population_and_counts_virtual_trades _______
+async def functions are not natively supported.
+You need to install a suitable plugin for your async framework, for example:
+  - anyio
+  - pytest-asyncio
+  - pytest-tornasync
+  - pytest-trio
+  - pytest-twisted
+=========================== short test summary info ============================
+FAILED tests/test_strategy_farm.py::test_strategy_farm_evaluates_population_and_counts_virtual_trades - Failed: async def functions are not natively supported.
+You need to install a suitable plugin for your async framework, for example:
+  - anyio
+  - pytest-asyncio
+  - pytest-tornasync
+  - pytest-trio
+  - pytest-twisted
