@@ -8,24 +8,24 @@ This matrix separates **official capability**, **cost/access**, and **AURA imple
 |---|---|---|---|---|
 | Exness / MT5 | FX, metals, energy, index/stock/crypto CFDs | account/MT5 access | live terminal data, history, account/order APIs | adapter implemented; self-evolving runner internal-paper by default |
 | DhanHQ | NSE/BSE/F&O/MCX | trading API + paid Data API subscription | live WebSocket, Full feed, history, option chain/Greeks/OI | substantial adapter implemented; live credentials not validated in repo |
-| Shoonya / Finvasia | NSE/BSE/NFO/CDS/MCX | developer APIs advertised without API charge for account users | REST quote/history/options + single WebSocket touchline/depth | live/historical market-data adapter implemented in AURA; execution intentionally not enabled |
-| Upstox | Indian cash/F&O/commodities | official developer APIs advertise free trading/market-data access | WebSocket, history, orders | researched; adapter pending |
-| Angel One SmartAPI | Indian cash/F&O/commodities | Trading/Historical/Market Feed APIs advertised free | Full quote, OI, depth, WebSocket, orders | researched; adapter pending; static-IP/order rules must be honored |
-| FYERS | Indian cash/F&O/commodities | developer/trading API advertised free for FYERS users | history, real-time data, orders | researched; adapter pending; current retail-algo rules apply |
-| Flattrade Pi v2 | NSE/BSE/NFO/CDS/MCX | Pi branded free stock-market/algo API for account users | REST, WS, TPSeries, option chain, OI, orders | researched; adapter pending; execution approval/static-IP rules apply |
-| Kotak Neo | NSE/BSE/F&O/CDS/MCX | official Trade API | quotes/WS/orders | researched; adapter pending |
-| Alice Blue ANT | Indian exchanges | open API account integration | live feed/order status/orders | researched; adapter pending |
-| 5paisa | Indian markets | developer APIs advertised free | live quote/depth/OI/WebSocket/orders | researched; adapter pending |
-| ICICI Breeze | NSE cash/F&O | account API | WebSocket/OHLCV/history/orders | researched; adapter pending; published daily/rate limits apply |
-| Zerodha Kite | Indian cash/F&O/commodities | Personal execution/account tier free; real-time+historical data ₹500/month/app | mature REST/WebSocket/order stack | researched; adapter pending |
-| cTrader Open API | broker-dependent FX/CFDs | cTID/broker account | real-time data, history, demo/live orders | researched; adapter pending |
-| OANDA v20 | FX/CFDs where account supported | practice/live account | pricing, candles, positions/orders | researched; adapter pending |
-| Alpaca | US equities/options/crypto | free Basic + free paper; Basic market coverage limited | HTTP/WS market data + paper/live trading | researched; adapter pending |
-| Interactive Brokers | global multi-asset | IB account / market-data entitlements | TWS/IB Gateway, broad asset coverage, paper account | researched; adapter pending |
+| Shoonya / Finvasia | NSE/BSE/NFO/CDS/MCX | developer APIs advertised without API charge for account users | REST quote/history/options + single WebSocket touchline/depth | live/historical market-data adapter implemented; execution intentionally disabled |
+| Upstox | Indian cash/F&O/commodities | official developer APIs advertise trading/market-data access | WebSocket, history, orders | researched; concrete AURA adapter pending |
+| Angel One SmartAPI | Indian cash/F&O/commodities | Trading/Historical/Market Feed APIs | Full quote, OI, depth, WebSocket, orders | researched; concrete AURA adapter pending; current static-IP/order rules must be honored |
+| FYERS | Indian cash/F&O/commodities | developer/trading APIs for FYERS users | history, real-time data, orders | researched; concrete AURA adapter pending; current retail-algo rules apply |
+| Flattrade Pi v2 | NSE/BSE/NFO/CDS/MCX | Pi v2 account API | REST TPSeries, WebSocket touchline, options/OI capabilities | read-only Pi v2 market-data adapter implemented; execution intentionally disabled pending reconciliation/static-IP validation |
+| Kotak Neo | NSE/BSE/F&O/CDS/MCX | official Trade API | quotes/WS/orders | researched; concrete AURA adapter pending |
+| Alice Blue ANT | Indian exchanges | account API | live feed/order status/orders | researched; concrete AURA adapter pending |
+| 5paisa | Indian markets | developer APIs | live quote/depth/OI/WebSocket/orders | researched; concrete AURA adapter pending |
+| ICICI Breeze | NSE cash/F&O | account API | WebSocket/OHLCV/history/orders | researched; concrete AURA adapter pending |
+| Zerodha Kite | Indian cash/F&O/commodities | Personal account/execution tier plus paid market-data tier | mature REST/WebSocket/order stack | researched; concrete AURA adapter pending |
+| cTrader Open API | broker-dependent FX/CFDs | cTID/broker account | real-time data, history, demo/live orders | researched; concrete AURA adapter pending |
+| OANDA v20 | FX/CFDs where account supported | practice/live account | pricing, candles, positions/orders API surface | read-only pricing/candle adapter implemented; `practice` recommended; execution intentionally disabled |
+| Alpaca | US equities/options/crypto | Basic + paper/live account tiers | HTTP/WS market data + paper/live trading | researched; concrete AURA adapter pending |
+| Interactive Brokers | global multi-asset | IB account / market-data entitlements | TWS/IB Gateway, broad asset coverage, paper account | researched; concrete AURA adapter pending |
 | Binance | crypto | public market data + account trading | WebSocket/depth/kline/orders/test environments | adapter foundation implemented |
 | Kraken | crypto | public market data + account trading | public WebSocket + trading APIs | public data adapter implemented |
 
-## India free-data preference
+## India free/low-cost data preference
 
 AURA must not assume one broker is always the best source. For Indian market-data redundancy, the target hierarchy is capability-driven:
 
@@ -40,7 +40,16 @@ OFFICIAL exchange/regulator events
         -> scanner
 ```
 
-Current candidates for zero/low API-cost data paths include Shoonya, Upstox, Angel One, FYERS, Flattrade and 5paisa subject to account/access/current broker rules. Dhan and Zerodha data are not marked free in AURA's current catalog because their official current data offerings have paid tiers.
+Concrete read-only AURA transports now exist for Shoonya and Flattrade in addition to the Dhan path. The connector catalog also tracks Upstox, Angel One, FYERS, 5paisa and other Indian APIs for later concrete adapters. Dhan is not marked as a free live-data source in the current catalog because its current official Data API is a paid subscription.
+
+## Forex/CFD data preference
+
+AURA's current concrete forex/CFD data paths include:
+
+- Exness / MetaTrader 5 terminal integration;
+- OANDA v20 read-only practice/live pricing and candles.
+
+These can later participate in cross-provider sanity checks after canonical symbol mapping is configured. OANDA practice is a data/testing environment, not proof of live-money readiness.
 
 ## Execution policy for Indian brokers
 
@@ -59,30 +68,31 @@ Before a connector becomes `LIVE_ELIGIBLE`, AURA requires all of:
 9. kill-switch and operator alerts;
 10. explicit live approval.
 
-## Free external intelligence plane
+## Free/official external intelligence plane
 
-AURA's low/no-cost external information plane now targets:
+AURA's low/no-cost external information plane now includes or targets:
 
 - RBI official press-release and notification RSS;
 - SEBI official RSS;
 - NSE official RSS/corporate-information feeds where stable documented URLs are available;
 - GDELT global news search/context;
-- FRED point-in-time macro observations (free key);
-- SEC EDGAR submissions/filings (no API key, descriptive User-Agent required);
-- Alpha Vantage News & Sentiment as an optional free-key supplement.
+- FRED point-in-time macro observations with a free key;
+- SEC EDGAR submissions/filings with a descriptive User-Agent;
+- Alpha Vantage News & Sentiment as an optional key-based supplement.
 
-No external news source is allowed to place an order. News/macro/filing events become timestamped evidence with source/trust provenance for specialists and the CEO layer.
+No external news source is allowed to place an order. News/macro/filing events become timestamped evidence with source/trust provenance for specialists and the CEO layer. The live cache rejects events that were not available at the frozen decision time.
 
 ## Credential policy
 
 Secrets are runtime-only. They belong in environment variables or a secret manager on the machine/VPS. They must never be committed to GitHub, stored in a strategy genome or written into an agent prompt/log.
 
-Examples already supported/planned:
+Examples:
 
 ```text
 AURA_MT5_DEMO_LOGIN
 AURA_MT5_DEMO_PASSWORD
 AURA_MT5_DEMO_SERVER
+AURA_MT5_TERMINAL_PATH
 
 AURA_DHAN_CLIENT_ID
 AURA_DHAN_ACCESS_TOKEN
@@ -90,6 +100,14 @@ AURA_DHAN_ACCESS_TOKEN
 AURA_SHOONYA_USER_ID
 AURA_SHOONYA_ACCOUNT_ID
 AURA_SHOONYA_SESSION_TOKEN
+
+AURA_FLATTRADE_USER_ID
+AURA_FLATTRADE_ACCOUNT_ID
+AURA_FLATTRADE_ACCESS_TOKEN
+
+AURA_OANDA_ACCOUNT_ID
+AURA_OANDA_ACCESS_TOKEN
+AURA_OANDA_ENVIRONMENT
 
 AURA_FRED_API_KEY
 AURA_ALPHA_VANTAGE_API_KEY
