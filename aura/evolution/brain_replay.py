@@ -3,20 +3,31 @@ from __future__ import annotations
 import asyncio
 import math
 from datetime import datetime
+from enum import Enum
 from statistics import fmean, pstdev
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from aura.evolution.brain_policy import AuraBrainPolicy
 from aura.evolution.core import CandidateEvaluation, PerformanceSlice, StrategyGenome
 from aura.research.robustness import bootstrap_monte_carlo
 
 
+class SampleOrigin(str, Enum):
+    """Provenance of an outcome used by AURA's learning stack."""
+
+    LIVE_BROKER = "live_broker"
+    HISTORICAL = "historical"
+    SYNTHETIC = "synthetic"
+
+
 class BrainReplaySample(BaseModel):
-    """One historically recorded shadow/paper decision plus its later outcome.
+    """One recorded shadow/paper decision plus its later realized outcome.
 
     Decision fields must be captured at `decision_time`. `net_return_pct` is joined
-    only after the outcome is known and is used exclusively by offline research.
+    only after the outcome is known and is used exclusively by research/evaluation.
+    Samples default to HISTORICAL so forward paper promotion fails closed unless a
+    live broker/feed runtime explicitly marks them as LIVE_BROKER.
     """
 
     model_config = ConfigDict(frozen=True)
@@ -33,12 +44,20 @@ class BrainReplaySample(BaseModel):
     execution_spread_bps: float = Field(ge=0)
     estimated_slippage_bps: float = Field(ge=0)
     net_return_pct: float
+    origin: SampleOrigin = SampleOrigin.HISTORICAL
+
+    @field_validator("decision_time")
+    @classmethod
+    def decision_time_must_be_timezone_aware(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("brain replay decision_time must be timezone-aware")
+        return value
 
 
 class BrainPolicyReplayEvaluator:
     """Fast chronological research evaluator for AURA brain-policy genomes.
 
-    It evaluates only previously observed decisions/outcomes, preserves time order,
+    It evaluates previously observed decisions/outcomes, preserves time order,
     creates rolling OOS folds, and emits *no paper evidence*. Therefore a strong
     replay candidate can become a challenger but never a paper/live champion by
     replay alone.
