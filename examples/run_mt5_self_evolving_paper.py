@@ -6,9 +6,8 @@ from decimal import Decimal
 from pathlib import Path
 
 from aura.evolution.brain_online import BrainPaperPromotionPolicy
-from aura.evolution.shadow_outcomes import ShadowOutcomePolicy
-
 from aura.evolution.brain_optimizer import BrainOptimizerConfig
+from aura.evolution.shadow_outcomes import ShadowOutcomePolicy
 from aura.runtime.mt5_learning_daemon import build_mt5_self_evolving_paper_daemon
 from aura.runtime.mt5_paper_daemon import MT5AllMarketPaperConfig
 
