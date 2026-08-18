@@ -264,7 +264,7 @@ class RecordingScanner:
 
     async def scan(self, contexts):
         self.contexts = tuple(contexts)
-        return MarketScanResult(candidates=(), failures=())
+        return MarketScanResult(candidates=())
 
 
 def _candle(symbol: str, timeframe: str, close_time: datetime, close: str) -> NormalizedCandle:
