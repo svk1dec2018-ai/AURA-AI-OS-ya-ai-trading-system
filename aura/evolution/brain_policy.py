@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from aura.agents.advisory_specialists import ExecutionQualitySpecialist
 from aura.agents.deliberation import DeliberationMemo
 from aura.agents.models import AgentRound, CEODecisionMemo
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.team import AuraAgentTeam, build_default_agent_team
 from aura.evolution.core import StrategyGenome
@@ -136,12 +137,13 @@ def build_brain_policy_team(
     timeout_seconds: float = 10.0,
     risk_policy: AgentRiskPolicy | None = None,
     min_top_of_book_notional: float = 0.0,
+    reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> AuraAgentTeam:
     """Build an evolvable brain without changing downstream financial authority.
 
-    Venue-specific evidence policy may be supplied and is preserved across brain
-    champion swaps. Financial RiskEngine settings are not part of this builder or
-    the evolvable genome.
+    Venue-specific evidence policy and contextual reliability state may be supplied
+    and are preserved across brain champion swaps. Financial RiskEngine settings
+    are not part of this builder or the evolvable genome.
     """
     return build_default_agent_team(
         firewall,
@@ -153,4 +155,5 @@ def build_brain_policy_team(
         timeout_seconds=timeout_seconds,
         min_directional_margin=policy.ceo_directional_margin,
         risk_policy=risk_policy,
+        reliability_tracker=reliability_tracker,
     )
