@@ -44,10 +44,9 @@ class _PendingDecision:
 class ShadowDecisionOutcomeRecorder:
     """Resolve safe directional decisions against later closed bars.
 
-    Brain replay may be used in historical research, but contextual agent/model
-    vote reliability is updated only when this recorder is explicitly operating
-    on `LIVE_BROKER` origin. This prevents backtest/replay outcomes from silently
-    acquiring production voting authority.
+    Historical/replay samples never alter advisory vote reliability. Forward
+    LIVE_PUBLIC and LIVE_BROKER outcomes may train bounded contextual reliability,
+    while only LIVE_BROKER remains eligible for broker-forward promotion policy.
     """
 
     def __init__(
@@ -184,7 +183,10 @@ class ShadowDecisionOutcomeRecorder:
         round_trip_cost_bps: float,
         outcome_observed_at: datetime,
     ) -> None:
-        if self.reliability_tracker is None or self.origin != SampleOrigin.LIVE_BROKER:
+        if self.reliability_tracker is None or self.origin not in {
+            SampleOrigin.LIVE_BROKER,
+            SampleOrigin.LIVE_PUBLIC,
+        }:
             return
         market_move_bps = float(market_move_pct * Decimal(100))
         if abs(market_move_bps) <= round_trip_cost_bps:
