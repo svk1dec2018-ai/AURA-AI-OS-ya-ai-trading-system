@@ -4,6 +4,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from aura.data.intelligence_service import LiveIntelligenceService
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
     BrainPaperPromotionPolicy,
@@ -51,6 +52,7 @@ class MT5SelfEvolvingPaperDaemon:
         champion_manager: BrainPaperChampionManager,
         opportunity_auditor: MissedOpportunityAuditor,
         online_bridge: OpportunityOnlineLearningBridge,
+        intelligence_service: LiveIntelligenceService,
         research_every_new_samples: int = 100,
     ) -> None:
         if research_every_new_samples <= 0:
@@ -63,6 +65,7 @@ class MT5SelfEvolvingPaperDaemon:
         self.champion_manager = champion_manager
         self.opportunity_auditor = opportunity_auditor
         self.online_bridge = online_bridge
+        self.intelligence_service = intelligence_service
         self.research_every_new_samples = research_every_new_samples
         self._online_research_due = False
         self._samples_at_last_research = len(self._live_samples())
@@ -73,6 +76,7 @@ class MT5SelfEvolvingPaperDaemon:
     async def run(self, *, max_batches: int | None = None):
         if max_batches is not None and max_batches <= 0:
             raise ValueError("max_batches must be positive")
+        await self.intelligence_service.start()
         await self.base.coordinator.start()
         self.base._write_status(None)
         try:
@@ -122,6 +126,7 @@ class MT5SelfEvolvingPaperDaemon:
                 self.base.counters.reconciliations += 1
             finally:
                 await self.base.coordinator.stop()
+                await self.intelligence_service.stop()
                 self.base.gateway.shutdown()
                 self.base._write_status(None)
                 self._write_brain_status("stopped")
@@ -202,6 +207,7 @@ class MT5SelfEvolvingPaperDaemon:
             "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
             "online_learning": self.online_bridge.status(),
+            "live_intelligence": self.intelligence_service.status(),
             "opportunity_audit": {
                 "material_opportunities": audit.material_opportunities,
                 "captured": audit.captured,
@@ -258,6 +264,20 @@ async def build_mt5_self_evolving_paper_daemon(
         SafeOnlineLearner(),
         market="MT5_CFD",
     )
+    intelligence_service = LiveIntelligenceService(
+        include_official_india=False,
+        gdelt_queries=("forex", "gold", "oil", "central bank"),
+    )
+    prior_metadata_provider = base.coordinator.metadata_provider
+    base.coordinator.metadata_provider = (
+        lambda candle, history, decision_time: _mt5_decision_metadata(
+            prior_metadata_provider,
+            intelligence_service,
+            candle,
+            history,
+            decision_time,
+        )
+    )
     restored_champion = manager.paper_champion
     effective_initial_policy = (
         AuraBrainPolicy.from_genome(restored_champion)
@@ -273,8 +293,30 @@ async def build_mt5_self_evolving_paper_daemon(
         champion_manager=manager,
         opportunity_auditor=opportunity_auditor,
         online_bridge=online_bridge,
+        intelligence_service=intelligence_service,
         research_every_new_samples=research_every_new_samples,
     )
+
+
+def _mt5_decision_metadata(
+    prior_provider,
+    intelligence_service: LiveIntelligenceService,
+    candle,
+    history,
+    decision_time: datetime,
+) -> dict:
+    metadata = (
+        prior_provider(candle, history, decision_time)
+        if prior_provider is not None
+        else {}
+    )
+    metadata.update(
+        intelligence_service.metadata_for(
+            candle.symbol,
+            decision_time=decision_time,
+        )
+    )
+    return metadata
 
 
 def _metric_payload(metric) -> dict:

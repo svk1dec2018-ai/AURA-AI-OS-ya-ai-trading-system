@@ -13,6 +13,7 @@ from aura.agents.models import (
     EvidenceSource,
     EvidenceSourceType,
 )
+from aura.data.free_intelligence import ExternalIntelligenceEvent, IntelligenceKind
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.knowledge.firewall import KnowledgeFirewall, KnowledgeSourceType
 
@@ -373,7 +374,7 @@ class KnowledgeMacroSentimentSpecialist(SpecialistAgent):
             required_tags=self.required_tags,
         )
         if not bundle.items:
-            return self._abstain(context, "no trusted point-in-time macro knowledge", "macro_missing")
+            return self._analyze_external_intelligence(context)
         if not bundle.safe_for_decision:
             keys = ",".join(item.claim_key for item in bundle.contradictions)
             return self._abstain(
@@ -415,6 +416,95 @@ class KnowledgeMacroSentimentSpecialist(SpecialistAgent):
                 for item in claim_items
             ),
             features={"knowledge_items": [item.item_id for item in claim_items]},
+            generated_at=context.created_at,
+        )
+
+    def _analyze_external_intelligence(self, context: AgentContext) -> AgentEvidence:
+        raw = context.metadata.get("external_intelligence_events")
+        if not raw:
+            return self._abstain(
+                context,
+                "no trusted point-in-time macro/news intelligence",
+                "macro_missing",
+            )
+        events = tuple(ExternalIntelligenceEvent.model_validate(item) for item in raw)
+        if any(
+            item.published_at > context.created_at
+            or item.observed_at > context.created_at
+            for item in events
+        ):
+            return self._abstain(
+                context,
+                "external macro/news intelligence contains future data",
+                "macro_future_data",
+            )
+        visible = tuple(item for item in events if item.trust_score >= 0.6)
+        if not visible:
+            return self._abstain(
+                context,
+                "external macro/news intelligence is below trust threshold",
+                "macro_missing",
+            )
+        flags: list[str] = []
+        if any(item.kind == IntelligenceKind.CENTRAL_BANK for item in visible):
+            flags.append("fresh_central_bank_event")
+        if any(item.kind == IntelligenceKind.REGULATORY for item in visible):
+            flags.append("fresh_regulatory_event")
+        directional = tuple(item for item in visible if item.sentiment is not None)
+        if directional:
+            total_trust = sum(item.trust_score for item in directional)
+            score = (
+                sum(float(item.sentiment) * item.trust_score for item in directional)
+                / total_trust
+                if total_trust > 0
+                else 0.0
+            )
+            flags.append("external_intelligence_sentiment")
+            if score >= 0.2:
+                intent = SignalIntent.LONG
+            elif score <= -0.2:
+                intent = SignalIntent.SHORT
+            else:
+                intent = SignalIntent.FLAT
+            confidence = min(abs(score), 1.0) if intent != SignalIntent.FLAT else 0.0
+            thesis = (
+                f"sourced external intelligence sentiment={score:.3f} "
+                f"across {len(directional)} events"
+            )
+        else:
+            intent = SignalIntent.FLAT
+            confidence = 0.0
+            thesis = (
+                f"{len(visible)} fresh trusted macro/regulatory events; "
+                "no explicit directional sentiment supplied"
+            )
+        return AgentEvidence(
+            agent_id=self.agent_id,
+            role=self.role,
+            intent=intent,
+            confidence=confidence,
+            thesis=thesis,
+            risk_flags=tuple(sorted(set(flags))),
+            sources=tuple(
+                EvidenceSource(
+                    source_id=item.event_id,
+                    source_type=(
+                        EvidenceSourceType.MACRO
+                        if item.kind in {
+                            IntelligenceKind.MACRO,
+                            IntelligenceKind.CENTRAL_BANK,
+                        }
+                        else EvidenceSourceType.NEWS
+                    ),
+                    observed_at=item.observed_at,
+                    trust_score=item.trust_score,
+                )
+                for item in visible
+            ),
+            features={
+                "external_event_count": len(visible),
+                "explicit_sentiment_count": len(directional),
+            },
             generated_at=context.created_at,
         )
 

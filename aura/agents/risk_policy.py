@@ -60,6 +60,7 @@ class AgentRiskPolicy:
             "cross_market_future",
             "execution_quality_future",
             "macro_contradiction",
+            "macro_future_data",
             "spread_too_wide",
             "estimated_slippage_too_high",
             "top_of_book_liquidity_too_low",

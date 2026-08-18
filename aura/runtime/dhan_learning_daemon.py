@@ -26,6 +26,7 @@ from aura.data.dhan_live_ticker import (
     load_dhan_live_credentials_from_env,
 )
 from aura.data.dhan_universe_planner import DhanUniversePlanner, DhanUniversePolicy
+from aura.data.intelligence_service import LiveIntelligenceService
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
@@ -127,6 +128,7 @@ class DhanSelfEvolvingPaperDaemon:
         broad_source: DhanLiveCandleSource,
         deep_service: DhanDeepMetadataService,
         option_service: DhanOptionContextService,
+        intelligence_service: LiveIntelligenceService,
         radar: DhanOpportunityRadar,
         coordinator: MultiMarketPaperCoordinator,
         history_client: DhanIntradayHistoryClient,
@@ -148,6 +150,7 @@ class DhanSelfEvolvingPaperDaemon:
         self.broad_source = broad_source
         self.deep_service = deep_service
         self.option_service = option_service
+        self.intelligence_service = intelligence_service
         self.radar = radar
         self.coordinator = coordinator
         self.history_client = history_client
@@ -178,6 +181,7 @@ class DhanSelfEvolvingPaperDaemon:
         if max_deep_batches is not None and max_deep_batches <= 0:
             raise ValueError("max_deep_batches must be positive")
         self._stop.clear()
+        await self.intelligence_service.start()
         await self.coordinator.start()
         self._radar_task = asyncio.create_task(self._radar_loop())
         self._write_status(None)
@@ -223,6 +227,7 @@ class DhanSelfEvolvingPaperDaemon:
             self.broad_source.stop()
             await self.deep_service.stop()
             await self.option_service.stop()
+            await self.intelligence_service.stop()
             if self._radar_task is not None:
                 self._radar_task.cancel()
                 await asyncio.gather(self._radar_task, return_exceptions=True)
@@ -399,6 +404,7 @@ class DhanSelfEvolvingPaperDaemon:
             },
             "deep_active_symbols": list(self.deep_service.active_symbols),
             "option_context": self.option_service.status(),
+            "live_intelligence": self.intelligence_service.status(),
             "history_seed_retry_symbols": sorted(self._seed_retry_after),
             "counters": asdict(self.counters),
             "online_learning": self.online_bridge.status(),
@@ -481,6 +487,10 @@ async def build_dhan_self_evolving_paper_daemon(
     option_service = DhanOptionContextService(
         credentials,
         DhanOptionTargetResolver(universe),
+    )
+    intelligence_service = LiveIntelligenceService(
+        include_official_india=True,
+        gdelt_queries=("India stock market", "Reserve Bank of India", "SEBI"),
     )
 
     multipliers = {
@@ -571,6 +581,7 @@ async def build_dhan_self_evolving_paper_daemon(
         metadata_provider=lambda candle, _history, decision_time: _dhan_decision_metadata(
             deep_service,
             option_service,
+            intelligence_service,
             candle.symbol,
             decision_time,
         ),
@@ -594,6 +605,7 @@ async def build_dhan_self_evolving_paper_daemon(
         broad_source=broad_source,
         deep_service=deep_service,
         option_service=option_service,
+        intelligence_service=intelligence_service,
         radar=radar,
         coordinator=coordinator,
         history_client=DhanIntradayHistoryClient(credentials),
@@ -614,6 +626,7 @@ async def build_dhan_self_evolving_paper_daemon(
 def _dhan_decision_metadata(
     deep_service: DhanDeepMetadataService,
     option_service: DhanOptionContextService,
+    intelligence_service: LiveIntelligenceService,
     symbol: str,
     decision_time: datetime,
 ) -> dict:
@@ -623,6 +636,12 @@ def _dhan_decision_metadata(
     )
     metadata.update(
         option_service.metadata_for(
+            symbol,
+            decision_time=decision_time,
+        )
+    )
+    metadata.update(
+        intelligence_service.metadata_for(
             symbol,
             decision_time=decision_time,
         )

@@ -248,8 +248,9 @@ DEFAULT_CONNECTOR_CATALOG = ConnectorCatalog(
             markets=("NSE", "BSE", "NFO", "CDS", "MCX"),
             capabilities=frozenset({Capability.LIVE_QUOTES, Capability.WEBSOCKET, Capability.DEPTH, Capability.HISTORICAL, Capability.ORDERS, Capability.ORDER_UPDATES, Capability.POSITIONS, Capability.OPTIONS, Capability.OPTION_CHAIN, Capability.OPEN_INTEREST}),
             cost_tier=CostTier.FREE_ACCOUNT_REQUIRED,
-            maturity=ConnectorMaturity.RESEARCHED,
-            notes=("Pi v2 execution use is subject to current exchange approval/static-IP rules.",),
+            maturity=ConnectorMaturity.ADAPTER_IMPLEMENTED,
+            required_env=("AURA_FLATTRADE_USER_ID", "AURA_FLATTRADE_ACCOUNT_ID", "AURA_FLATTRADE_ACCESS_TOKEN"),
+            notes=("AURA implements Pi v2 live touchline and TPSeries market data; execution remains disabled pending reconciliation/static-IP validation.",),
         ),
         ConnectorDescriptor(
             connector_id="kotak_neo",
@@ -320,7 +321,9 @@ DEFAULT_CONNECTOR_CATALOG = ConnectorCatalog(
             markets=("FOREX", "CFD"),
             capabilities=frozenset({Capability.LIVE_QUOTES, Capability.HISTORICAL, Capability.ORDERS, Capability.ORDER_UPDATES, Capability.POSITIONS, Capability.DEMO}),
             cost_tier=CostTier.FREE_ACCOUNT_REQUIRED,
-            maturity=ConnectorMaturity.RESEARCHED,
+            maturity=ConnectorMaturity.ADAPTER_IMPLEMENTED,
+            required_env=("AURA_OANDA_ACCOUNT_ID", "AURA_OANDA_ACCESS_TOKEN"),
+            notes=("AURA implements read-only v20 practice/live pricing and candles; order routing remains disabled.",),
         ),
         ConnectorDescriptor(
             connector_id="alpaca",
