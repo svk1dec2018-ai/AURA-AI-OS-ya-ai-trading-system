@@ -19,6 +19,9 @@ def _index() -> CanonicalInstrument:
         exchange="INDEX",
         segment="IDX_I",
         currency="INR",
+        tick_size=Decimal("0.05"),
+        min_quantity=Decimal(1),
+        quantity_step=Decimal(1),
         tradable=False,
     )
 
@@ -35,6 +38,7 @@ def _future() -> CanonicalInstrument:
         currency="INR",
         underlying="NIFTY",
         expiry=datetime(2026, 8, 27, tzinfo=UTC),
+        tick_size=Decimal("0.05"),
         min_quantity=Decimal(75),
         quantity_step=Decimal(75),
         lot_size=Decimal(75),
@@ -44,9 +48,7 @@ def _future() -> CanonicalInstrument:
 def _option(option_type: OptionType, security_id: str) -> CanonicalInstrument:
     return CanonicalInstrument(
         instrument_id=f"dhan:NSE_FNO:{security_id}",
-        canonical_symbol=(
-            f"NIFTY-2026-08-27-25650-{option_type.value}"
-        ),
+        canonical_symbol=f"NIFTY-2026-08-27-25650-{option_type.value}",
         venue_family=VenueFamily.DHAN_INDIA,
         venue_symbol=security_id,
         asset_class=AssetClass.OPTION,
@@ -57,6 +59,7 @@ def _option(option_type: OptionType, security_id: str) -> CanonicalInstrument:
         expiry=datetime(2026, 8, 27, tzinfo=UTC),
         strike=Decimal(25650),
         option_type=option_type,
+        tick_size=Decimal("0.05"),
         min_quantity=Decimal(75),
         quantity_step=Decimal(75),
         lot_size=Decimal(75),
