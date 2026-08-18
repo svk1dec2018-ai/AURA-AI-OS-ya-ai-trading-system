@@ -1,0 +1,72 @@
+name: final-adaptive-intelligence-gate
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Python 3.11 gate
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/i311 2>&1
+          I311=$?
+          ruff check aura tests examples >/tmp/r311 2>&1
+          R311=$?
+          pytest -q >/tmp/p311 2>&1
+          P311=$?
+          set -e
+          {
+            echo "PY311_INSTALL=${I311}"
+            echo "PY311_RUFF=${R311}"
+            echo "PY311_PYTEST=${P311}"
+            echo "=== PY311 RUFF ==="
+            cat /tmp/r311
+            echo "=== PY311 PYTEST ==="
+            tail -n 240 /tmp/p311
+          } > final_adaptive_intelligence_validation.txt
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Python 3.12 gate
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/i312 2>&1
+          I312=$?
+          ruff check aura tests examples >/tmp/r312 2>&1
+          R312=$?
+          pytest -q >/tmp/p312 2>&1
+          P312=$?
+          set -e
+          {
+            echo "PY312_INSTALL=${I312}"
+            echo "PY312_RUFF=${R312}"
+            echo "PY312_PYTEST=${P312}"
+            echo "=== PY312 RUFF ==="
+            cat /tmp/r312
+            echo "=== PY312 PYTEST ==="
+            tail -n 240 /tmp/p312
+          } >> final_adaptive_intelligence_validation.txt
+      - name: Record result and cleanup
+        shell: bash
+        run: |
+          rm .github/workflows/final_adaptive_intelligence_gate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add final_adaptive_intelligence_validation.txt .github/workflows/final_adaptive_intelligence_gate.yml
+          git commit -m "record final adaptive intelligence validation"
+          git push
