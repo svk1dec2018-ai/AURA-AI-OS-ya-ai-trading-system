@@ -17,7 +17,7 @@ def _history(now: datetime) -> tuple[NormalizedCandle, ...]:
     candles: list[NormalizedCandle] = []
     for index in range(20):
         close_time = now - timedelta(minutes=19 - index)
-        base = Decimal("2000") + Decimal(index % 3)
+        base = Decimal(2000) + Decimal(index % 3)
         candles.append(
             NormalizedCandle(
                 symbol="XAUUSD",
@@ -26,8 +26,8 @@ def _history(now: datetime) -> tuple[NormalizedCandle, ...]:
                 open_time=close_time - timedelta(minutes=1),
                 close_time=close_time,
                 open=base,
-                high=base + Decimal("2"),
-                low=base - Decimal("2"),
+                high=base + Decimal(2),
+                low=base - Decimal(2),
                 close=base + Decimal("0.5"),
                 volume=Decimal(100),
                 closed=True,
@@ -46,8 +46,8 @@ def _future(now: datetime, minute: int, close: str) -> NormalizedCandle:
         open_time=close_time - timedelta(minutes=1),
         close_time=close_time,
         open=price,
-        high=price + Decimal("1"),
-        low=price - Decimal("1"),
+        high=price + Decimal(1),
+        low=price - Decimal(1),
         close=price,
         volume=Decimal(100),
         closed=True,
