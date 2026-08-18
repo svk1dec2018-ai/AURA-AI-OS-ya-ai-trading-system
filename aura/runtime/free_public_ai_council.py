@@ -9,7 +9,8 @@ from pathlib import Path
 
 from aura.agents.models import AgentContext
 from aura.agents.team import build_default_agent_team
-from aura.data.candle_aggregation import NormalizedCandle, SessionCandleAggregator
+from aura.data.candle_aggregation import SessionCandleAggregator
+from aura.domain.models import NormalizedCandle
 from aura.data.public_crypto_feeds import BybitPublicTradeFeed, CoinbasePublicTradeFeed
 from aura.knowledge.firewall import KnowledgeFirewall
 from aura.runtime.scanner import MultiMarketIntelligenceScanner
@@ -49,6 +50,7 @@ class FreePublicAICouncilCounters:
     ai_decisions_started: int = 0
     ai_decisions_completed: int = 0
     actionable_decisions: int = 0
+    skipped_ai_due_capacity: int = 0
 
 
 class FreePublicAICouncilRuntime:
@@ -116,6 +118,10 @@ class FreePublicAICouncilRuntime:
                     if len(self.histories[key]) < self.config.min_history_bars:
                         continue
                     if self.bar_counts[key] % self.config.analyze_every_bars != 0:
+                        continue
+                    self._collect_finished()
+                    if len(self._inflight) >= self.config.max_inflight_ai_decisions:
+                        self.counters.skipped_ai_due_capacity += 1
                         continue
                     self._schedule_decision(candle)
 
@@ -193,6 +199,7 @@ class FreePublicAICouncilRuntime:
                 "ai_decisions_started": self.counters.ai_decisions_started,
                 "ai_decisions_completed": self.counters.ai_decisions_completed,
                 "actionable_decisions": self.counters.actionable_decisions,
+                "skipped_ai_due_capacity": self.counters.skipped_ai_due_capacity,
                 "inflight": len(self._inflight),
             },
         }
