@@ -13,6 +13,11 @@ from aura.agents.models import (
     AgentRound,
     CEODecisionMemo,
 )
+from aura.agents.reliability import (
+    AgentReliabilityTracker,
+    reliability_market_key,
+    reliability_regime_key,
+)
 from aura.domain.models import SignalIntent
 
 
@@ -97,11 +102,11 @@ class MultiAgentOrchestrator:
 
 
 class CEOAggregator:
-    """Deterministic CEO evidence synthesis with quorum and disagreement checks.
+    """Deterministic CEO evidence synthesis with contextual reliability weighting.
 
-    This component is deliberately advisory. It cannot size positions, call a
-    broker, or bypass the independent RiskEngine. A future LLM CEO may explain
-    the same evidence bundle, but authority boundaries must remain identical.
+    Learned reliability only scales advisory evidence inside strict bounded vote
+    weights. It cannot size positions, call a broker, alter the RiskEngine, disable
+    a kill switch or approve a strategy for live money.
     """
 
     def __init__(
@@ -111,6 +116,7 @@ class CEOAggregator:
         min_distinct_roles: int = 3,
         min_directional_margin: float = 0.15,
         role_weights: dict[AgentRole, float] | None = None,
+        reliability_tracker: AgentReliabilityTracker | None = None,
     ) -> None:
         if min_agents <= 0 or min_distinct_roles <= 0:
             raise ValueError("CEO quorum thresholds must be positive")
@@ -120,8 +126,14 @@ class CEOAggregator:
         self.min_distinct_roles = min_distinct_roles
         self.min_directional_margin = min_directional_margin
         self.role_weights = dict(role_weights or {})
+        self.reliability_tracker = reliability_tracker
 
-    def synthesize(self, round_result: AgentRound) -> CEODecisionMemo:
+    def synthesize(
+        self,
+        round_result: AgentRound,
+        *,
+        context: AgentContext | None = None,
+    ) -> CEODecisionMemo:
         distinct_roles = {item.role for item in round_result.evidence}
         quorum_met = (
             len(round_result.evidence) >= self.min_agents
@@ -144,13 +156,33 @@ class CEOAggregator:
                 quorum_met=False,
             )
 
+        market = reliability_market_key(context) if context is not None else "unknown"
+        regime = (
+            reliability_regime_key(round_result, context)
+            if context is not None
+            else "unknown"
+        )
         scores: dict[SignalIntent, float] = defaultdict(float)
         directional_agents: dict[SignalIntent, list[str]] = defaultdict(list)
         neutral_agents: list[str] = []
+        reliability_weights: list[float] = []
         for item in round_result.evidence:
             source_trust = sum(source.trust_score for source in item.sources) / len(item.sources)
             role_weight = self.role_weights.get(item.role, 1.0)
-            effective_score = item.confidence * source_trust * role_weight
+            reliability_weight = 1.0
+            if self.reliability_tracker is not None and context is not None:
+                reliability_weight = self.reliability_tracker.vote_weight(
+                    item,
+                    market=market,
+                    regime=regime,
+                )
+            reliability_weights.append(reliability_weight)
+            effective_score = (
+                item.confidence
+                * source_trust
+                * role_weight
+                * reliability_weight
+            )
             scores[item.intent] += effective_score
             if item.intent == SignalIntent.FLAT:
                 neutral_agents.append(item.agent_id)
@@ -174,6 +206,13 @@ class CEOAggregator:
             )
 
         directional_margin = abs(long_score - short_score) / directional_total
+        reliability_note = ""
+        if self.reliability_tracker is not None and context is not None:
+            average_weight = sum(reliability_weights) / len(reliability_weights)
+            reliability_note = (
+                f", market={market}, regime={regime}, "
+                f"avg_reliability_weight={average_weight:.3f}"
+            )
         if directional_margin < self.min_directional_margin:
             return CEODecisionMemo(
                 correlation_id=round_result.correlation_id,
@@ -191,6 +230,7 @@ class CEOAggregator:
                 rationale=(
                     f"directional disagreement too high: margin {directional_margin:.3f} "
                     f"below required {self.min_directional_margin:.3f}"
+                    f"{reliability_note}"
                 ),
                 quorum_met=True,
             )
@@ -208,6 +248,7 @@ class CEOAggregator:
             rationale=(
                 f"weighted evidence favors {intent.value}: long={long_score:.3f}, "
                 f"short={short_score:.3f}, margin={directional_margin:.3f}"
+                f"{reliability_note}"
             ),
             quorum_met=True,
         )
