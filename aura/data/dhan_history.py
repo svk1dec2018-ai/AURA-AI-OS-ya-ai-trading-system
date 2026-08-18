@@ -5,6 +5,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 from aura.data.dhan_live_ticker import DhanLiveCredentials
 from aura.domain.models import NormalizedCandle
@@ -26,6 +27,7 @@ DHAN_INSTRUMENT_TYPES = frozenset(
         "OPTCUR",
     }
 )
+_INDIA_TZ = ZoneInfo("Asia/Kolkata")
 
 
 class DhanHistoricalDataError(RuntimeError):
@@ -178,7 +180,7 @@ def normalize_dhan_intraday_response(
 
 
 def _dhan_datetime(value: datetime) -> str:
-    return value.astimezone(UTC).strftime("%Y-%m-%d %H:%M:%S")
+    return value.astimezone(_INDIA_TZ).strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _require_aware(value: datetime, name: str) -> None:
