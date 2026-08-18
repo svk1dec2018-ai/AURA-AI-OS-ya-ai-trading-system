@@ -1,0 +1,14 @@
+{
+  "strategy_id": "replace-with-approved-strategy-id",
+  "strategy_version": "replace-with-immutable-version",
+  "strategy_stage": "APPROVED",
+  "forward_live_trades": 1500,
+  "forward_live_days": 45,
+  "max_drawdown_pct": "6.5",
+  "profit_factor": "1.35",
+  "expectancy": "0.18",
+  "critical_incidents": 0,
+  "reconciliation_failures": 0,
+  "unresolved_data_integrity_events": 0,
+  "source": "LIVE_BROKER"
+}
