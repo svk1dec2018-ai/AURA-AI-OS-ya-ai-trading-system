@@ -139,11 +139,12 @@ class StrategyFreedomPolicy:
 
 
 class AutonomousStrategyFactory:
-    """Generate many diverse immutable research strategies inside hard safety rails.
+    """Generate diverse immutable research strategies inside hard safety rails.
 
-    The factory is deliberately free to combine alpha/entry/exit concepts, but it
-    cannot emit portfolio sizing, leverage, kill-switch or loss-limit controls.
-    Those remain outside the strategy and under AURA's deterministic RiskEngine.
+    Random search and AI-directed search share the same compiler. AI may choose
+    approved alpha/confirmation/exit primitives, but it cannot provide arbitrary
+    executable code or portfolio-risk parameters. Numeric parameters are generated
+    only from deterministic bounded allow-lists owned by this factory.
     """
 
     _ENTRY_POOL = (
@@ -197,15 +198,7 @@ class AutonomousStrategyFactory:
             feedback=feedback,
             candidate_index=candidate_index,
         )
-        version = f"g{candidate_index + 1:06d}-{blueprint.content_hash[:8]}"
-        strategy = StrategyVersion(
-            strategy_id=blueprint.family,
-            version=version,
-            content_hash=blueprint.content_hash,
-            stage=StrategyStage.RESEARCH,
-        )
-        self._blueprints[strategy.content_hash] = blueprint
-        return strategy
+        return self.register_blueprint(blueprint, candidate_index=candidate_index)
 
     def propose(
         self,
@@ -216,8 +209,6 @@ class AutonomousStrategyFactory:
     ) -> StrategyBlueprint:
         if candidate_index < 0:
             raise ValueError("candidate_index cannot be negative")
-        market_scope = hypothesis.market_scope or ("ALL",)
-        timeframe_scope = hypothesis.timeframe_scope or ("1m", "5m", "15m")
         seed = self.policy.random_seed ^ _stable_int(
             f"{hypothesis.hypothesis_id}|{candidate_index}|{'|'.join(feedback)}"
         )
@@ -235,24 +226,120 @@ class AutonomousStrategyFactory:
             sorted(rng.sample(self._CONFIRMATION_POOL, confirmation_count), key=lambda item: item.value)
         )
         exits = tuple(sorted(rng.sample(self._EXIT_POOL, exit_count), key=lambda item: item.value))
-
-        parameters = self._parameters_for(entries, confirmations, exits, rng)
-        return StrategyBlueprint(
-            family=f"autonomous:{hypothesis.hypothesis_id}",
-            market_scope=tuple(market_scope),
-            timeframe_scope=tuple(timeframe_scope),
+        return self.propose_from_components(
+            hypothesis,
             entries=entries,
             confirmations=confirmations,
             exits=exits,
+            feedback=feedback,
+            candidate_index=candidate_index,
+            design_tag="random",
+        )
+
+    def propose_from_components(
+        self,
+        hypothesis: ResearchHypothesis,
+        *,
+        entries: tuple[StrategyPrimitive, ...],
+        confirmations: tuple[StrategyPrimitive, ...],
+        exits: tuple[ExitPrimitive, ...],
+        feedback: tuple[str, ...] = (),
+        candidate_index: int = 0,
+        design_tag: str = "directed",
+    ) -> StrategyBlueprint:
+        """Compile selected primitives through deterministic bounded parameters."""
+
+        if candidate_index < 0:
+            raise ValueError("candidate_index cannot be negative")
+        self._validate_components(entries, confirmations, exits)
+        normalized_entries = tuple(sorted(entries, key=lambda item: item.value))
+        normalized_confirmations = tuple(sorted(confirmations, key=lambda item: item.value))
+        normalized_exits = tuple(sorted(exits, key=lambda item: item.value))
+        component_key = "|".join(
+            [
+                *(item.value for item in normalized_entries),
+                "--confirm--",
+                *(item.value for item in normalized_confirmations),
+                "--exit--",
+                *(item.value for item in normalized_exits),
+            ]
+        )
+        seed = self.policy.random_seed ^ _stable_int(
+            f"{hypothesis.hypothesis_id}|{candidate_index}|{design_tag}|{component_key}|{'|'.join(feedback)}"
+        )
+        rng = random.Random(seed)
+        parameters = self._parameters_for(
+            normalized_entries,
+            normalized_confirmations,
+            normalized_exits,
+            rng,
+        )
+        return StrategyBlueprint(
+            family=f"autonomous:{hypothesis.hypothesis_id}",
+            market_scope=tuple(hypothesis.market_scope or ("ALL",)),
+            timeframe_scope=tuple(hypothesis.timeframe_scope or ("1m", "5m", "15m")),
+            entries=normalized_entries,
+            confirmations=normalized_confirmations,
+            exits=normalized_exits,
             parameters=parameters,
             target_win_rate=self.policy.target_win_rate,
         )
+
+    def register_blueprint(
+        self,
+        blueprint: StrategyBlueprint,
+        *,
+        candidate_index: int,
+    ) -> StrategyVersion:
+        if candidate_index < 0:
+            raise ValueError("candidate_index cannot be negative")
+        version = f"g{candidate_index + 1:06d}-{blueprint.content_hash[:8]}"
+        strategy = StrategyVersion(
+            strategy_id=blueprint.family,
+            version=version,
+            content_hash=blueprint.content_hash,
+            stage=StrategyStage.RESEARCH,
+        )
+        self._blueprints[strategy.content_hash] = blueprint
+        return strategy
 
     def blueprint_for(self, strategy: StrategyVersion) -> StrategyBlueprint:
         try:
             return self._blueprints[strategy.content_hash]
         except KeyError as exc:
             raise KeyError(f"unknown generated strategy blueprint: {strategy.content_hash}") from exc
+
+    def _validate_components(
+        self,
+        entries: tuple[StrategyPrimitive, ...],
+        confirmations: tuple[StrategyPrimitive, ...],
+        exits: tuple[ExitPrimitive, ...],
+    ) -> None:
+        if not entries or len(entries) > self.policy.max_entry_primitives:
+            raise ValueError("AI entry primitive count violates strategy freedom policy")
+        if len(confirmations) > self.policy.max_confirmation_primitives:
+            raise ValueError("AI confirmation count violates strategy freedom policy")
+        if not exits or len(exits) > self.policy.max_exit_primitives:
+            raise ValueError("AI exit primitive count violates strategy freedom policy")
+        if len(set(entries)) != len(entries):
+            raise ValueError("AI entry primitives must be unique")
+        if len(set(confirmations)) != len(confirmations):
+            raise ValueError("AI confirmation primitives must be unique")
+        if len(set(exits)) != len(exits):
+            raise ValueError("AI exit primitives must be unique")
+        invalid_entries = [item.value for item in entries if item not in self._ENTRY_POOL]
+        invalid_confirmations = [
+            item.value for item in confirmations if item not in self._CONFIRMATION_POOL
+        ]
+        invalid_exits = [item.value for item in exits if item not in self._EXIT_POOL]
+        if invalid_entries:
+            raise ValueError(f"primitive not allowed as entry: {', '.join(invalid_entries)}")
+        if invalid_confirmations:
+            raise ValueError(
+                f"primitive not allowed as confirmation: {', '.join(invalid_confirmations)}"
+            )
+        if invalid_exits:
+            raise ValueError(f"primitive not allowed as exit: {', '.join(invalid_exits)}")
 
     @staticmethod
     def _parameters_for(
@@ -269,7 +356,9 @@ class AutonomousStrategyFactory:
         if StrategyPrimitive.EMA_TREND in components:
             fast = rng.choice((5, 8, 9, 12, 13, 21))
             slow = rng.choice(tuple(value for value in (21, 34, 50, 55, 100) if value > fast))
-            params.update({"ema_fast": fast, "ema_slow": slow, "ema_trend": rng.choice((50, 100, 200))})
+            params.update(
+                {"ema_fast": fast, "ema_slow": slow, "ema_trend": rng.choice((50, 100, 200))}
+            )
         if StrategyPrimitive.RSI_STATE in components:
             params.update(
                 {
@@ -281,13 +370,33 @@ class AutonomousStrategyFactory:
         if StrategyPrimitive.MACD_MOMENTUM in components:
             params.update({"macd_fast": 12, "macd_slow": 26, "macd_signal": 9})
         if StrategyPrimitive.BOLLINGER_REVERSION in components:
-            params.update({"bollinger_period": rng.choice((14, 20, 24)), "bollinger_sigma": rng.choice((1.5, 2.0, 2.5))})
+            params.update(
+                {
+                    "bollinger_period": rng.choice((14, 20, 24)),
+                    "bollinger_sigma": rng.choice((1.5, 2.0, 2.5)),
+                }
+            )
         if StrategyPrimitive.KELTNER_BREAKOUT in components:
-            params.update({"keltner_period": rng.choice((14, 20, 24)), "keltner_atr_multiple": rng.choice((1.5, 2.0, 2.5))})
+            params.update(
+                {
+                    "keltner_period": rng.choice((14, 20, 24)),
+                    "keltner_atr_multiple": rng.choice((1.5, 2.0, 2.5)),
+                }
+            )
         if StrategyPrimitive.SUPERTREND in components:
-            params.update({"supertrend_period": rng.choice((7, 10, 14)), "supertrend_multiple": rng.choice((2.0, 2.5, 3.0, 3.5))})
+            params.update(
+                {
+                    "supertrend_period": rng.choice((7, 10, 14)),
+                    "supertrend_multiple": rng.choice((2.0, 2.5, 3.0, 3.5)),
+                }
+            )
         if StrategyPrimitive.ATR_VOLATILITY in components or ExitPrimitive.ATR_STOP in exits:
-            params.update({"atr_period": rng.choice((7, 14, 21)), "atr_stop_multiple": rng.choice((1.0, 1.5, 2.0, 2.5, 3.0))})
+            params.update(
+                {
+                    "atr_period": rng.choice((7, 14, 21)),
+                    "atr_stop_multiple": rng.choice((1.0, 1.5, 2.0, 2.5, 3.0)),
+                }
+            )
         if StrategyPrimitive.RELATIVE_VOLUME in components:
             params["relative_volume_min"] = rng.choice((1.0, 1.2, 1.5, 2.0))
         if StrategyPrimitive.LIQUIDITY_SWEEP in components or StrategyPrimitive.BOS_CHOCH in components:
