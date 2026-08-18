@@ -103,6 +103,7 @@ Raw private model reasoning is not treated as trading evidence; AURA stores vali
 - research -> backtest -> robustness -> paper -> human approval lifecycle
 - paper champion/challenger evolution
 - missed-opportunity, wrong-direction and capture-rate learning
+- restart-safe pending opportunity labels and deterministic online-learning replay
 
 ### Market data and broker/data adapters
 

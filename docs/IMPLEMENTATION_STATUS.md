@@ -118,6 +118,8 @@ Implemented AI infrastructure:
 - demo/paper champion/challenger evolution
 - forward-only live outcome labeling
 - missed-opportunity, wrong-direction and capture-rate learning
+- restart-safe unresolved opportunity checkpoints and idempotent replay into the
+  safe online learner
 - historical/public data may accelerate research but cannot masquerade as broker-forward live proof
 
 ### Live/paper runtimes

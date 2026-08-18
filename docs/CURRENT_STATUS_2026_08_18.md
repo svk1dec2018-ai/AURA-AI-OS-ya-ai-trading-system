@@ -19,6 +19,8 @@ AURA is an advanced working codebase, but **not a proven live-money autonomous t
 - point-in-time memory/model/forecast/drift infrastructure;
 - missed-opportunity and wrong-direction audit;
 - safe event-by-event online measurements with research triggers;
+- atomic restart recovery for unresolved opportunity horizons plus deterministic
+  rehydration of online-learning measurements from the append-only audit;
 - broker-neutral target-exposure planner;
 - cross-provider quote consensus/outlier guard;
 - free/official external intelligence ingest and live cache;

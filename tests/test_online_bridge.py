@@ -47,3 +47,20 @@ def test_opportunity_bridge_updates_online_outcome_state() -> None:
     assert snapshot.ewma_capture_rate > 0
     assert snapshot.ewma_wrong_direction_rate > 0
     assert bridge.status()["tracked_states"] == 1
+
+
+def test_bridge_replays_records_in_time_order_and_deduplicates() -> None:
+    learner = SafeOnlineLearner()
+    bridge = OpportunityOnlineLearningBridge(learner, market="FX")
+    earlier = _record(OpportunityOutcome.CAPTURED, 0)
+    later = _record(OpportunityOutcome.WRONG_DIRECTION, 1)
+
+    bridge.replay_records([later, earlier])
+    bridge.observe_records([earlier, later])
+
+    snapshot = learner.snapshot(market="FX", symbol="XAUUSD")
+    assert snapshot.events_seen == 2
+    assert snapshot.outcomes_seen == 2
+    assert snapshot.last_observed_at == later.resolved_time
+    assert bridge.status()["observed_records"] == 2
+    assert bridge.status()["replayed_records"] == 2
