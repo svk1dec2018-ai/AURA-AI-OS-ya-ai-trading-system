@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,7 +23,7 @@ class ShadowOutcomePolicy(BaseModel):
 @dataclass(slots=True)
 class _PendingDecision:
     sample_id: str
-    decision_time_iso: str
+    decision_time: datetime
     symbol: str
     timeframe: str
     entry_price: Decimal
@@ -82,7 +83,7 @@ class ShadowDecisionOutcomeRecorder:
             )
             self._pending[sample_id] = _PendingDecision(
                 sample_id=sample_id,
-                decision_time_iso=candidate.context.created_at.isoformat(),
+                decision_time=candidate.context.created_at,
                 symbol=candidate.context.symbol,
                 timeframe=candidate.context.decision_timeframe,
                 entry_price=latest.close,
@@ -117,8 +118,7 @@ class ShadowDecisionOutcomeRecorder:
             ]
             for sample_id in matching_ids:
                 pending = self._pending[sample_id]
-                decision_time = _parse_iso(pending.decision_time_iso)
-                if candle.close_time <= decision_time:
+                if candle.close_time <= pending.decision_time:
                     continue
                 pending.bars_seen += 1
                 if pending.bars_seen < self.policy.horizon_bars:
@@ -144,7 +144,7 @@ class ShadowDecisionOutcomeRecorder:
         net_return_pct = float(raw_return) - round_trip_cost_bps / 100.0
         return BrainReplaySample(
             sample_id=pending.sample_id,
-            decision_time=_parse_iso(pending.decision_time_iso),
+            decision_time=pending.decision_time,
             symbol=pending.symbol,
             timeframe=pending.timeframe,
             regime=pending.regime,
@@ -192,12 +192,3 @@ def _regime(candidate: ScanCandidate) -> str:
                 return value
     value = candidate.context.metadata.get("regime")
     return str(value) if value else "unknown"
-
-
-def _parse_iso(value: str):
-    from datetime import datetime
-
-    parsed = datetime.fromisoformat(value)
-    if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise ValueError("pending shadow decision timestamp must be timezone-aware")
-    return parsed
