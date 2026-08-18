@@ -2,12 +2,19 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+from aura.agents.deliberation import DeliberationCase, DeliberationMemo
+from aura.agents.models import (
+    AgentContext,
+    AgentEvidence,
+    AgentRole,
+    AgentRound,
+    CEODecisionMemo,
+    EvidenceSource,
+    EvidenceSourceType,
+)
+from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.evolution.brain_online import BrainReplayStore
 from aura.evolution.shadow_outcomes import ShadowDecisionOutcomeRecorder, ShadowOutcomePolicy
-
-from aura.agents.deliberation import DeliberationCase, DeliberationMemo
-from aura.agents.models import AgentContext, AgentEvidence, AgentRole, AgentRound, CEODecisionMemo
-from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.runtime.scanner import MarketScanResult, ScanCandidate
 
 
@@ -27,23 +34,50 @@ def _candle(close_time: datetime, price: str) -> NormalizedCandle:
     )
 
 
+def _evidence(
+    *,
+    agent_id: str,
+    role: AgentRole,
+    now: datetime,
+    confidence: float,
+    thesis: str,
+    features: dict | None = None,
+) -> AgentEvidence:
+    return AgentEvidence(
+        agent_id=agent_id,
+        role=role,
+        intent=SignalIntent.LONG,
+        confidence=confidence,
+        thesis=thesis,
+        sources=(
+            EvidenceSource(
+                source_id=f"test:{agent_id}",
+                source_type=EvidenceSourceType.MARKET_DATA,
+                observed_at=now,
+                trust_score=1.0,
+            ),
+        ),
+        features=features or {},
+        generated_at=now,
+    )
+
+
 def _candidate(now: datetime) -> ScanCandidate:
     evidence = (
-        AgentEvidence(
+        _evidence(
             agent_id="tech",
             role=AgentRole.TECHNICAL,
-            intent=SignalIntent.LONG,
+            now=now,
             confidence=0.8,
-            rationale="trend",
-            observed_at=now,
+            thesis="trend",
         ),
-        AgentEvidence(
+        _evidence(
             agent_id="regime",
             role=AgentRole.REGIME,
-            intent=SignalIntent.LONG,
+            now=now,
             confidence=0.7,
-            rationale="trend regime",
-            observed_at=now,
+            thesis="trend regime",
+            features={"regime": "trend"},
         ),
     )
     round_result = AgentRound(
@@ -53,10 +87,21 @@ def _candidate(now: datetime) -> ScanCandidate:
         started_at=now,
         completed_at=now,
     )
-    case = DeliberationCase(label="case", arguments=(), aggregate_confidence=0.0)
+    bull = DeliberationCase(
+        intent=SignalIntent.LONG,
+        supporting_agents=("tech", "regime"),
+        arguments=("trend", "trend regime"),
+        weighted_strength=1.5,
+    )
+    bear = DeliberationCase(
+        intent=SignalIntent.SHORT,
+        supporting_agents=(),
+        arguments=(),
+        weighted_strength=0.0,
+    )
     deliberation = DeliberationMemo(
-        bull_case=case,
-        bear_case=case,
+        bull_case=bull,
+        bear_case=bear,
         neutral_arguments=(),
         counterfactuals=(),
         disagreement_ratio=0.2,
@@ -110,6 +155,7 @@ def test_shadow_outcome_waits_for_future_horizon_and_persists_sample(tmp_path: P
     )
     assert len(resolved) == 1
     assert resolved[0].net_return_pct > 0
+    assert resolved[0].regime == "trend"
     assert resolved[0].deliberation_disagreement == 0.2
     assert resolved[0].execution_spread_bps == 2.0
     assert len(store.read_all()) == 1
