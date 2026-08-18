@@ -19,6 +19,17 @@ def test_public_paper_preflight_is_ready(tmp_path) -> None:
     assert report.blocking_failures == ()
 
 
+def test_non_live_preflight_rejects_live_acknowledgement(tmp_path) -> None:
+    report = ProductionPreflight(
+        mode=DeploymentMode.PAPER,
+        runtime_dir=tmp_path,
+        connectors=("public",),
+        env={"AURA_LIVE_TRADING_ENABLED": "I_UNDERSTAND_AND_APPROVE_LIVE_RISK"},
+    ).run()
+    assert report.ready is False
+    assert any(item.check_id == "live-money-disabled" for item in report.blocking_failures)
+
+
 def test_demo_preflight_fails_closed_when_credentials_missing(tmp_path) -> None:
     report = ProductionPreflight(
         mode=DeploymentMode.DEMO,
