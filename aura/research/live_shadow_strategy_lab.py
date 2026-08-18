@@ -113,6 +113,8 @@ class LiveShadowStrategyLab:
         }
         self.total_plans = 0
         self.total_resolved = 0
+        self.discarded_pending_on_refresh = 0
+        self.population_refreshes = 0
 
     def on_closed_candles(
         self,
@@ -150,6 +152,43 @@ class LiveShadowStrategyLab:
         self.total_plans += len(new_plans)
         return tuple(new_plans)
 
+    def replace_population(
+        self,
+        genomes: tuple[StrategyGenome, ...] | list[StrategyGenome],
+        *,
+        preserve_retained_metrics: bool = True,
+    ) -> None:
+        """Install a new research population while preserving causal market history.
+
+        Pending plans are discarded at refresh because removed candidates must not
+        continue accumulating evidence. Retained genomes can keep their resolved
+        metrics, while new challengers start with a clean score. Historical price
+        context and per-series bar indices remain intact so challengers can begin
+        evaluating immediately without replaying future information.
+        """
+
+        if not genomes:
+            raise ValueError("replacement population cannot be empty")
+        unique = {item.genome_id: item for item in genomes}
+        ordered = tuple(unique[key] for key in sorted(unique))
+        previous_metrics = self._metrics
+        self.genomes = ordered
+        self._strategies = {
+            item.genome_id: AutonomousDslStrategy(item) for item in ordered
+        }
+        self._metrics = {
+            item.genome_id: (
+                previous_metrics[item.genome_id]
+                if preserve_retained_metrics and item.genome_id in previous_metrics
+                else _LiveMetric()
+            )
+            for item in ordered
+        }
+        discarded = self.pending_plans
+        self.discarded_pending_on_refresh += discarded
+        self._pending = defaultdict(list)
+        self.population_refreshes += 1
+
     def snapshots(self) -> tuple[LiveStrategySnapshot, ...]:
         result = []
         for genome in self.genomes:
@@ -180,6 +219,9 @@ class LiveShadowStrategyLab:
     def pending_plans(self) -> int:
         return sum(len(items) for items in self._pending.values())
 
+    def history_size(self, symbol: str, timeframe: str) -> int:
+        return len(self._histories.get((symbol, timeframe), ()))
+
     def _resolve(
         self,
         key: tuple[str, str],
@@ -198,7 +240,9 @@ class LiveShadowStrategyLab:
             signed_return_bps = (
                 raw_return_bps if plan.intent == SignalIntent.LONG else -raw_return_bps
             )
-            metric = self._metrics[plan.genome_id]
+            metric = self._metrics.get(plan.genome_id)
+            if metric is None:
+                continue
             metric.resolved += 1
             metric.sum_signed_return_bps += signed_return_bps
             if abs(signed_return_bps) < self.policy.min_abs_outcome_bps:
