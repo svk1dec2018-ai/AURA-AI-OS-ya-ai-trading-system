@@ -4,7 +4,6 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from aura.domain.models import SignalIntent
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
     BrainPaperPromotionPolicy,
@@ -27,61 +26,13 @@ from aura.evolution.shadow_outcomes import (
     ShadowOutcomePolicy,
 )
 from aura.knowledge.firewall import KnowledgeFirewall
-from aura.runtime.brain_scanner import BrainPolicyScanner
+from aura.runtime.learning_scanner import LearningBrainPolicyScanner
 from aura.runtime.mt5_paper_daemon import (
     MT5AllMarketPaperConfig,
     MT5AllMarketPaperDaemon,
     build_mt5_all_market_paper_daemon,
 )
-from aura.runtime.scanner import MarketScanResult, MultiMarketIntelligenceScanner, ScanCandidate
-
-
-class LearningBrainPolicyScanner(BrainPolicyScanner):
-    """Brain-policy scanner that preserves the unfiltered round for learning."""
-
-    def __init__(self, scanner: MultiMarketIntelligenceScanner, gate: BrainPolicyGate) -> None:
-        super().__init__(scanner, gate)
-        self.last_raw_scan = MarketScanResult(candidates=())
-
-    async def scan(self, contexts) -> MarketScanResult:
-        raw = await self.scanner.scan(contexts)
-        self.last_raw_scan = raw
-        candidates: list[ScanCandidate] = []
-        for candidate in raw.candidates:
-            decision = self.gate.evaluate(
-                round_result=candidate.round,
-                memo=candidate.memo,
-                deliberation=candidate.deliberation,
-            )
-            if decision.allowed or candidate.memo.intent == SignalIntent.FLAT:
-                candidates.append(candidate)
-                continue
-            memo = candidate.memo.model_copy(
-                update={
-                    "intent": SignalIntent.FLAT,
-                    "confidence": 0.0,
-                    "risk_flags": tuple(
-                        dict.fromkeys(
-                            (*candidate.memo.risk_flags, "brain_policy_block")
-                        )
-                    ),
-                    "rationale": (
-                        f"{candidate.memo.rationale}; brain policy blocked: "
-                        f"{decision.reason}"
-                    ),
-                }
-            )
-            candidates.append(
-                ScanCandidate(
-                    context=candidate.context,
-                    round=candidate.round,
-                    memo=memo,
-                    data_quality=candidate.data_quality,
-                    agent_policy=candidate.agent_policy,
-                    deliberation=candidate.deliberation,
-                )
-            )
-        return MarketScanResult(candidates=tuple(candidates))
+from aura.runtime.scanner import MultiMarketIntelligenceScanner
 
 
 class MT5SelfEvolvingPaperDaemon:
