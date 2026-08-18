@@ -26,10 +26,10 @@ class AuraBrainPolicy(BaseModel):
     max_execution_slippage_bps: float = Field(default=25.0, ge=1.0, le=60.0)
 
     def to_genome(self, *, generation: int = 0) -> StrategyGenome:
-        return StrategyGenome.from_parameters(
-            strategy_family="aura_brain_policy",
+        return StrategyGenome(
+            family="aura_brain_policy",
             parameters={
-                key: Decimal(str(value))
+                key: float(value)
                 for key, value in self.model_dump(mode="python").items()
             },
             generation=generation,
@@ -37,7 +37,7 @@ class AuraBrainPolicy(BaseModel):
 
     @classmethod
     def from_genome(cls, genome: StrategyGenome) -> AuraBrainPolicy:
-        if genome.strategy_family != "aura_brain_policy":
+        if genome.family != "aura_brain_policy":
             raise ValueError("brain policy requires aura_brain_policy genome")
         return cls(**{key: float(value) for key, value in genome.parameters.items()})
 
@@ -103,21 +103,30 @@ class BrainPolicyGate:
         deliberation: DeliberationMemo | None,
     ) -> BrainPolicyDecision:
         if not memo.quorum_met:
-            return BrainPolicyDecision(False, "CEO quorum not met")
+            return BrainPolicyDecision(allowed=False, reason="CEO quorum not met")
         if memo.confidence < self.policy.min_opportunity_confidence:
-            return BrainPolicyDecision(False, "opportunity confidence below brain policy")
+            return BrainPolicyDecision(
+                allowed=False,
+                reason="opportunity confidence below brain policy",
+            )
         total_agents = len(round_result.evidence) + len(round_result.failures)
         if total_agents:
             failure_fraction = len(round_result.failures) / total_agents
             if failure_fraction > self.policy.max_failed_agent_fraction:
-                return BrainPolicyDecision(False, "too many specialist failures")
+                return BrainPolicyDecision(
+                    allowed=False,
+                    reason="too many specialist failures",
+                )
         if (
             deliberation is not None
             and deliberation.disagreement_ratio
             > self.policy.max_deliberation_disagreement
         ):
-            return BrainPolicyDecision(False, "bull/bear disagreement above brain policy")
-        return BrainPolicyDecision(True, "brain policy passed")
+            return BrainPolicyDecision(
+                allowed=False,
+                reason="bull/bear disagreement above brain policy",
+            )
+        return BrainPolicyDecision(allowed=True, reason="brain policy passed")
 
 
 def build_brain_policy_team(
