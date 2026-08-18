@@ -1,0 +1,13 @@
+.git
+.github
+.venv
+.env
+__pycache__
+.pytest_cache
+.ruff_cache
+runtime
+tests
+*.log
+*_validation.txt
+dist
+build
