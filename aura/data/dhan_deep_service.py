@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections import defaultdict
 from collections.abc import Callable
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, time, timedelta
 
 from aura.data.candle_aggregation import CandleSession, SessionCandleAggregator
 from aura.data.dhan_live_full import DhanDeepFullSource
@@ -52,7 +52,7 @@ class DhanDeepMetadataService:
             timeframes=timeframes,
             session=CandleSession(
                 timezone="Asia/Kolkata",
-                session_start=datetime.strptime("09:15", "%H:%M").time(),
+                session_start=time(9, 15),
             ),
         )
 
