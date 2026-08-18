@@ -14,6 +14,7 @@ from aura.agents.external_specialists import (
 )
 from aura.agents.forecast_specialist import ForecastEnsembleSpecialist
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.specialists import (
     RegimeSpecialist,
@@ -41,12 +42,13 @@ def build_default_agent_team(
     min_directional_margin: float = 0.15,
     risk_policy: AgentRiskPolicy | None = None,
     include_env_ai: bool = True,
+    reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> AuraAgentTeam:
     """Build AURA's deterministic desk plus an optional local multi-AI council.
 
     When `AURA_OLLAMA_MODELS` is configured, provider-backed AI specialists are
-    added automatically. Each AI is advisory only: it cannot call a broker, size
-    positions, mutate RiskEngine controls or approve a strategy for live money.
+    added automatically. Learned contextual reliability can scale advisory votes
+    but never grants execution, sizing or RiskEngine authority.
     """
 
     execution_agent = execution_quality_specialist or ExecutionQualitySpecialist()
@@ -78,6 +80,7 @@ def build_default_agent_team(
         min_agents=6,
         min_distinct_roles=6,
         min_directional_margin=min_directional_margin,
+        reliability_tracker=reliability_tracker,
     )
     return AuraAgentTeam(
         agents=agents,
