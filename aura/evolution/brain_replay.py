@@ -17,6 +17,7 @@ class SampleOrigin(str, Enum):
     """Provenance of an outcome used by AURA's learning stack."""
 
     LIVE_BROKER = "live_broker"
+    LIVE_PUBLIC = "live_public"
     HISTORICAL = "historical"
     SYNTHETIC = "synthetic"
 
@@ -27,7 +28,9 @@ class BrainReplaySample(BaseModel):
     Decision fields must be captured at `decision_time`. `net_return_pct` is joined
     only after the outcome is known and is used exclusively by research/evaluation.
     Samples default to HISTORICAL so forward paper promotion fails closed unless a
-    live broker/feed runtime explicitly marks them as LIVE_BROKER.
+    broker-connected runtime explicitly marks them as LIVE_BROKER. Public live
+    feeds use LIVE_PUBLIC and may train advisory reliability without satisfying
+    broker-forward promotion requirements.
     """
 
     model_config = ConfigDict(frozen=True)
