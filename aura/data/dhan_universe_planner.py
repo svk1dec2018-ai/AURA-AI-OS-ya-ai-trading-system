@@ -37,10 +37,9 @@ class DhanPrimaryUniversePlan:
 class DhanUniversePlanner:
     """Plan an A-to-Z Indian universe under broker streaming limits.
 
-    The complete cash/F&O/MCX master remains indexed. Broad primary scanning uses
-    cash, futures and liquid underlyings, while options are activated dynamically
-    around an underlying opportunity instead of wasting the connection budget on
-    thousands of far-OTM strikes. This is universe staging, not a manual watchlist.
+    Index underlyings are always retained as market-data evidence even though they
+    are not directly tradable. Cash/futures use the remaining broad-stream budget,
+    while options stay fully indexed and are activated around live opportunities.
     """
 
     def __init__(self, policy: DhanUniversePolicy | None = None) -> None:
@@ -53,6 +52,11 @@ class DhanUniversePlanner:
         as_of: datetime | None = None,
     ) -> DhanPrimaryUniversePlan:
         decision_time = as_of or datetime.now(UTC)
+        indices = [
+            item
+            for item in instruments
+            if item.asset_class == AssetClass.INDEX and item.market_data_enabled
+        ]
         cash = [
             item
             for item in instruments
@@ -77,6 +81,7 @@ class DhanUniversePlanner:
             and (item.expiry is None or item.expiry >= decision_time)
         ]
 
+        indices.sort(key=lambda item: item.canonical_symbol)
         cash.sort(key=lambda item: (item.exchange or "", item.canonical_symbol))
         futures.sort(
             key=lambda item: (
@@ -93,7 +98,10 @@ class DhanUniversePlanner:
         )
 
         selected: list[CanonicalInstrument] = []
-        selected.extend(cash[: self.policy.max_primary_cash_symbols])
+        selected.extend(indices[: self.policy.max_stream_instruments])
+        remaining = self.policy.max_stream_instruments - len(selected)
+        if remaining > 0:
+            selected.extend(cash[: min(self.policy.max_primary_cash_symbols, remaining)])
         remaining = self.policy.max_stream_instruments - len(selected)
         if remaining > 0:
             selected.extend(
@@ -103,7 +111,7 @@ class DhanUniversePlanner:
         selected_ids = {item.instrument_id for item in selected}
         deferred = tuple(
             item
-            for item in (*cash, *futures)
+            for item in (*indices, *cash, *futures)
             if item.instrument_id not in selected_ids
         )
         return DhanPrimaryUniversePlan(
