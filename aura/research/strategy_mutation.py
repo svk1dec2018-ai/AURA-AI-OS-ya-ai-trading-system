@@ -81,9 +81,9 @@ def mutate_autonomous_genome(
 
 def _mutate_value(
     spec: GeneSpec,
-    value: int | float | str,
+    value: float | str,
     rng: random.Random,
-) -> int | float | str:
+) -> float | str:
     if spec.kind == GeneKind.CATEGORICAL:
         choices = [item for item in spec.choices if item != value]
         return rng.choice(choices or list(spec.choices))
@@ -92,15 +92,15 @@ def _mutate_value(
     mutated = float(value) + rng.gauss(0.0, span * spec.mutation_scale)
     mutated = min(max(mutated, spec.low), spec.high)
     if spec.kind == GeneKind.INTEGER:
-        return int(round(mutated))
+        return round(mutated)
     return _quantize(mutated, spec)
 
 
 def _force_alternative(
     spec: GeneSpec,
-    value: int | float | str,
+    value: float | str,
     rng: random.Random,
-) -> int | float | str:
+) -> float | str:
     if spec.kind == GeneKind.CATEGORICAL:
         choices = [item for item in spec.choices if item != value]
         return rng.choice(choices or list(spec.choices))
