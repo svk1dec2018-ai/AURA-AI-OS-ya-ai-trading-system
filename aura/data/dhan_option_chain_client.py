@@ -202,15 +202,7 @@ def _nested(payload: dict, outer: str, inner: str):
 def _expiry_datetime(value: str) -> datetime:
     for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y"):
         try:
-            parsed = datetime.strptime(value, fmt).date()
-            return datetime(
-                parsed.year,
-                parsed.month,
-                parsed.day,
-                10,
-                0,
-                tzinfo=UTC,
-            )
+            return datetime.strptime(value, fmt).replace(hour=10, tzinfo=UTC)
         except ValueError:
             continue
     raise DhanOptionChainError(f"unsupported Dhan expiry date: {value}")
