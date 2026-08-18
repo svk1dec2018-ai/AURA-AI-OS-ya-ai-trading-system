@@ -197,3 +197,24 @@ def test_agent_reliability_updates_only_from_material_live_broker_outcomes(
         ).hit_rate
         == 1.0
     )
+
+
+def test_public_live_origin_learns_reliability_without_claiming_broker_origin(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 17, 11, 0, tzinfo=UTC)
+    tracker = AgentReliabilityTracker(tmp_path / "public_reliability.jsonl")
+    store = BrainReplayStore(tmp_path / "public_replay.jsonl")
+    recorder = ShadowDecisionOutcomeRecorder(
+        store,
+        policy=ShadowOutcomePolicy(horizon_bars=1, fallback_round_trip_cost_bps=2.0),
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=tracker,
+    )
+    assert recorder.register_scan(MarketScanResult(candidates=(_candidate(now),))) == 1
+    recorder.on_closed_candles((_candle(now + timedelta(minutes=1), "2020"),))
+    assert tracker.observation_count == 2
+    samples = store.read_all()
+    assert len(samples) == 1
+    assert samples[0].origin == SampleOrigin.LIVE_PUBLIC
+    assert samples[0].origin != SampleOrigin.LIVE_BROKER
