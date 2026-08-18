@@ -26,6 +26,17 @@ class OllamaProviderError(RuntimeError):
     pass
 
 
+class OllamaHTTPError(OllamaProviderError):
+    """HTTP failure returned by the local Ollama API."""
+
+    def __init__(self, status_code: int, response_body: str = "") -> None:
+        self.status_code = status_code
+        self.response_body = response_body
+        detail = _ollama_error_detail(response_body)
+        suffix = f": {detail}" if detail else ""
+        super().__init__(f"Ollama HTTP {status_code}{suffix}")
+
+
 class _StructuredDecision(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -66,10 +77,11 @@ class OllamaReasoningProvider(ReasoningProvider):
         model_id: str,
         *,
         base_url: str = "http://127.0.0.1:11434",
-        timeout_seconds: float = 45.0,
-        think: bool | str = True,
+        timeout_seconds: float = 120.0,
+        think: bool | str = False,
         transport: JsonTransport | None = None,
         max_candles: int = 80,
+        request_limiter: asyncio.Semaphore | None = None,
     ) -> None:
         model_id = model_id.strip()
         if not model_id:
@@ -84,14 +96,11 @@ class OllamaReasoningProvider(ReasoningProvider):
         self.think = think
         self.transport = transport or _default_json_transport
         self.max_candles = max_candles
+        self.request_limiter = request_limiter
 
     async def analyze(self, *, role: AgentRole, context: AgentContext) -> ProviderAnalysis:
         payload = self._payload(role, context)
-        response = await self.transport(
-            f"{self.base_url}/api/chat",
-            payload,
-            self.timeout_seconds,
-        )
+        response, compatibility_mode = await self._request(payload)
         message = response.get("message")
         if not isinstance(message, dict):
             raise OllamaProviderError("Ollama response missing message object")
@@ -121,9 +130,46 @@ class OllamaReasoningProvider(ReasoningProvider):
                 "key_factors": parsed.key_factors,
                 "invalidation": parsed.invalidation,
                 "internal_thinking_discarded": True,
+                "ollama_compatibility_mode": compatibility_mode,
                 "context_created_at": context.created_at.isoformat(),
             },
         )
+
+    async def _request(
+        self,
+        payload: dict[str, Any],
+    ) -> tuple[dict[str, Any], bool]:
+        if self.request_limiter is None:
+            return await self._request_with_compatibility(payload)
+        async with self.request_limiter:
+            return await self._request_with_compatibility(payload)
+
+    async def _request_with_compatibility(
+        self,
+        payload: dict[str, Any],
+    ) -> tuple[dict[str, Any], bool]:
+        url = f"{self.base_url}/api/chat"
+        try:
+            response = await self.transport(url, payload, self.timeout_seconds)
+            return response, False
+        except OllamaHTTPError as exc:
+            if exc.status_code != 400:
+                raise
+
+        # Older Ollama builds may only accept format="json", while models such
+        # as Llama 3.1 and Qwen 2.5 do not support the `think` capability. Keep
+        # the full schema in the prompt, remove thinking, and retry once using
+        # the broad JSON mode so mixed local model councils remain compatible.
+        fallback = dict(payload)
+        fallback.pop("think", None)
+        fallback["format"] = "json"
+        try:
+            response = await self.transport(url, fallback, self.timeout_seconds)
+        except OllamaProviderError as exc:
+            raise OllamaProviderError(
+                f"Ollama compatibility retry failed: {exc}"
+            ) from exc
+        return response, True
 
     def _payload(self, role: AgentRole, context: AgentContext) -> dict[str, Any]:
         schema = _StructuredDecision.model_json_schema()
@@ -140,7 +186,7 @@ class OllamaReasoningProvider(ReasoningProvider):
             "market": _market_context(context, max_candles=self.max_candles),
             "output_schema": schema,
         }
-        return {
+        payload: dict[str, Any] = {
             "model": self.model_id,
             "messages": [
                 {
@@ -156,10 +202,12 @@ class OllamaReasoningProvider(ReasoningProvider):
                 },
             ],
             "stream": False,
-            "think": self.think,
             "format": schema,
             "options": {"temperature": 0.15},
         }
+        if self.think is not False:
+            payload["think"] = self.think
+        return payload
 
 
 def build_ollama_providers_from_env() -> tuple[OllamaReasoningProvider, ...]:
@@ -170,14 +218,17 @@ def build_ollama_providers_from_env() -> tuple[OllamaReasoningProvider, ...]:
     if not models:
         return ()
     base_url = os.getenv("AURA_OLLAMA_URL", "http://127.0.0.1:11434")
-    timeout = float(os.getenv("AURA_OLLAMA_TIMEOUT_SECONDS", "45"))
-    think = _parse_think(os.getenv("AURA_OLLAMA_THINK", "true"))
+    timeout = float(os.getenv("AURA_OLLAMA_TIMEOUT_SECONDS", "120"))
+    think = _parse_think(os.getenv("AURA_OLLAMA_THINK", "false"))
+    max_concurrency = _positive_int_env("AURA_OLLAMA_MAX_CONCURRENCY", default=1)
+    request_limiter = asyncio.Semaphore(max_concurrency)
     return tuple(
         OllamaReasoningProvider(
             model,
             base_url=base_url,
             timeout_seconds=timeout,
             think=think,
+            request_limiter=request_limiter,
         )
         for model in models
     )
@@ -243,6 +294,17 @@ def _parse_think(value: str) -> bool | str:
     raise ValueError("AURA_OLLAMA_THINK must be true/false/low/medium/high")
 
 
+def _positive_int_env(name: str, *, default: int) -> int:
+    raw = os.getenv(name, str(default))
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive integer") from exc
+    if value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
 async def _default_json_transport(
     url: str,
     payload: dict[str, Any],
@@ -265,7 +327,13 @@ def _sync_json_post(
     try:
         with urlopen(request, timeout=timeout_seconds) as response:
             raw = response.read().decode("utf-8")
-    except (HTTPError, URLError, TimeoutError, OSError) as exc:
+    except HTTPError as exc:
+        try:
+            body = exc.read().decode("utf-8", errors="replace")
+        except OSError:
+            body = ""
+        raise OllamaHTTPError(exc.code, body) from exc
+    except (URLError, TimeoutError, OSError) as exc:
         raise OllamaProviderError(f"Ollama request failed: {exc}") from exc
     try:
         result = json.loads(raw)
@@ -274,3 +342,18 @@ def _sync_json_post(
     if not isinstance(result, dict):
         raise OllamaProviderError("Ollama response must be a JSON object")
     return result
+
+
+def _ollama_error_detail(response_body: str, *, max_chars: int = 500) -> str:
+    if not response_body.strip():
+        return ""
+    try:
+        payload = json.loads(response_body)
+    except json.JSONDecodeError:
+        detail = response_body.strip()
+    else:
+        if isinstance(payload, dict) and isinstance(payload.get("error"), str):
+            detail = payload["error"].strip()
+        else:
+            detail = json.dumps(payload, separators=(",", ":"), default=str)
+    return detail[:max_chars]

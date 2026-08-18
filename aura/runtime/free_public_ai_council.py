@@ -32,7 +32,7 @@ class FreePublicAICouncilConfig:
     min_history_bars: int = 30
     analyze_every_bars: int = 5
     max_history_bars: int = 300
-    max_inflight_ai_decisions: int = 2
+    max_inflight_ai_decisions: int = 1
     state_dir: Path = Path("runtime/free_public_ai_council")
 
     def __post_init__(self) -> None:
