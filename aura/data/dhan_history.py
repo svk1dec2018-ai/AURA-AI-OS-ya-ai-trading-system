@@ -4,6 +4,7 @@ import json
 from collections import defaultdict
 from datetime import UTC, datetime, time, timedelta
 from decimal import Decimal, InvalidOperation
+from itertools import pairwise
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
@@ -229,7 +230,7 @@ def resample_india_session_candles(
             continue
         if any(
             right.open_time - left.open_time != timedelta(minutes=1)
-            for left, right in zip(bucket, bucket[1:], strict=False)
+            for left, right in pairwise(bucket)
         ):
             continue
         close_time = open_time + duration
