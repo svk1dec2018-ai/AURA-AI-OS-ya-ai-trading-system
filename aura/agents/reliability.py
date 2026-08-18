@@ -63,9 +63,10 @@ class AgentReliabilitySummary:
 class AgentReliabilityTracker:
     """Learn contextual vote reliability from forward-observed outcomes.
 
-    The tracker has no execution authority. It only supplies a bounded multiplier
-    to CEO evidence synthesis. A Bayesian prior prevents a handful of lucky or bad
-    outcomes from making one agent dominate or disappear.
+    Reliability is tracked independently for agent identities and AI model/role
+    combinations. This prevents a model that is strong at one mandate (for example
+    macro) from borrowing that reputation for a different mandate (for example
+    execution quality). The tracker has no execution authority.
     """
 
     def __init__(
@@ -167,8 +168,9 @@ class AgentReliabilityTracker:
             and isinstance(model_id, str)
             and model_id
         ):
-            model_summary = self.summarize_model(
+            model_summary = self.summarize_model_role(
                 f"{provider_id}:{model_id}",
+                role=evidence.role,
                 market=market,
                 regime=regime,
             )
@@ -202,6 +204,7 @@ class AgentReliabilityTracker:
         market: str,
         regime: str,
     ) -> AgentReliabilitySummary:
+        """Aggregate one model across roles. Prefer summarize_model_role for routing."""
         items = [
             item
             for item in self._observations.values()
@@ -210,6 +213,36 @@ class AgentReliabilityTracker:
             and item.regime == regime
         ]
         return self._summary(model_key, market, regime, items)
+
+    def summarize_model_role(
+        self,
+        model_key: str,
+        *,
+        role: AgentRole,
+        market: str,
+        regime: str | None,
+    ) -> AgentReliabilitySummary:
+        """Summarize a model for one specialist mandate.
+
+        `regime=None` intentionally aggregates all observed regimes within the
+        market. The adaptive router uses that as a fallback until enough exact
+        regime evidence exists.
+        """
+        items = [
+            item
+            for item in self._observations.values()
+            if item.model_key == model_key
+            and item.role == role
+            and item.market == market
+            and (regime is None or item.regime == regime)
+        ]
+        regime_key = regime if regime is not None else "*"
+        return self._summary(
+            f"{model_key}:{role.value}",
+            market,
+            regime_key,
+            items,
+        )
 
     def leaderboard(
         self,
