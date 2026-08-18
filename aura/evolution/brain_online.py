@@ -75,7 +75,7 @@ class BrainReplayStore:
                 continue
             try:
                 sample = BrainReplaySample.model_validate_json(line)
-            except Exception as exc:  # noqa: BLE001 - corrupt evolution state must fail closed
+            except Exception as exc:
                 raise RuntimeError(
                     f"invalid brain replay sample at line {line_number}: {exc}"
                 ) from exc
@@ -281,7 +281,7 @@ def _read_json(path: Path) -> dict:
     except (OSError, json.JSONDecodeError) as exc:
         raise RuntimeError(f"invalid evolution state file {path}: {exc}") from exc
     if not isinstance(payload, dict):
-        raise RuntimeError(f"evolution state file is not an object: {path}")
+        raise TypeError(f"evolution state file is not an object: {path}")
     return payload
 
 
