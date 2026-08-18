@@ -167,7 +167,7 @@ class AutonomousDslStrategy(Strategy):
         votes = self._votes(history)
         long_votes = sum(1 for value in votes.values() if value > 0)
         short_votes = sum(1 for value in votes.values() if value < 0)
-        required = self.blueprint.min_votes
+        required = min(self.blueprint.min_votes, max(len(votes), 1))
         if long_votes >= required and long_votes > short_votes:
             intent = SignalIntent.LONG
             directional = long_votes
@@ -230,7 +230,6 @@ class AutonomousDslStrategy(Strategy):
                 band_vote = 0
             else:
                 z = float((latest.close - mean) / stdev)
-                # Mean-reversion style fades extremes; other styles treat extremes as momentum.
                 if b.style == StrategyStyle.MEAN_REVERSION:
                     band_vote = -1 if z >= b.band_z else 1 if z <= -b.band_z else 0
                 else:
@@ -281,7 +280,7 @@ def _rsi(values: Sequence[Decimal], period: int) -> float:
     window = values[-(period + 1) :]
     gains = Decimal(0)
     losses = Decimal(0)
-    for prior, current in zip(window, window[1:], strict=True):
+    for prior, current in zip(window, window[1:]):
         change = current - prior
         if change > 0:
             gains += change
@@ -297,7 +296,7 @@ def _atr(candles: Sequence[NormalizedCandle]) -> Decimal:
     if len(candles) < 2:
         return Decimal(0)
     values: list[Decimal] = []
-    for prior, current in zip(candles, candles[1:], strict=True):
+    for prior, current in zip(candles, candles[1:]):
         values.append(
             max(
                 current.high - current.low,
