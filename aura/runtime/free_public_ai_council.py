@@ -8,10 +8,17 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from aura.agents.models import AgentContext
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.team import build_default_agent_team
 from aura.data.candle_aggregation import SessionCandleAggregator
-from aura.domain.models import NormalizedCandle
 from aura.data.public_crypto_feeds import BybitPublicTradeFeed, CoinbasePublicTradeFeed
+from aura.domain.models import NormalizedCandle
+from aura.evolution.brain_online import BrainReplayStore
+from aura.evolution.brain_replay import SampleOrigin
+from aura.evolution.shadow_outcomes import (
+    ShadowDecisionOutcomeRecorder,
+    ShadowOutcomePolicy,
+)
 from aura.knowledge.firewall import KnowledgeFirewall
 from aura.runtime.scanner import MultiMarketIntelligenceScanner
 
@@ -57,13 +64,29 @@ class FreePublicAICouncilRuntime:
     """No-key live public market data -> deterministic desk + local multi-AI council.
 
     Market ingestion keeps running while deep AI analyses execute in bounded
-    background tasks. This runtime never creates or submits broker orders.
+    background tasks. Public live outcomes train bounded advisory reliability but
+    never satisfy broker-live strategy promotion. No broker orders are created.
     """
 
     def __init__(self, config: FreePublicAICouncilConfig | None = None) -> None:
         self.config = config or FreePublicAICouncilConfig()
         self.config.state_dir.mkdir(parents=True, exist_ok=True)
-        team = build_default_agent_team(KnowledgeFirewall(), include_env_ai=True)
+        brain_dir = self.config.state_dir / "brain"
+        self.reliability_tracker = AgentReliabilityTracker(
+            brain_dir / "agent_reliability.jsonl"
+        )
+        self.replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
+        self.recorder = ShadowDecisionOutcomeRecorder(
+            self.replay_store,
+            policy=ShadowOutcomePolicy(horizon_bars=5),
+            origin=SampleOrigin.LIVE_PUBLIC,
+            reliability_tracker=self.reliability_tracker,
+        )
+        team = build_default_agent_team(
+            KnowledgeFirewall(),
+            include_env_ai=True,
+            reliability_tracker=self.reliability_tracker,
+        )
         ai_agents = tuple(
             item for item in team.agents if item.agent_id.startswith("ai-council:")
         )
@@ -108,6 +131,7 @@ class FreePublicAICouncilRuntime:
             async for tick in self.feed.stream():
                 self.counters.ticks += 1
                 completed = self.aggregator.on_tick(tick)
+                self.recorder.on_closed_candles(completed)
                 self.counters.closed_candles += len(completed)
                 for candle in completed:
                     key = (candle.symbol, candle.timeframe)
@@ -168,6 +192,7 @@ class FreePublicAICouncilRuntime:
     async def _analyze(self, context: AgentContext) -> None:
         async with self._decision_semaphore:
             result = await self.scanner.scan([context])
+        self.recorder.register_scan(result)
         candidate = result.candidates[0]
         self.counters.ai_decisions_completed += 1
         if candidate.actionable:
@@ -193,6 +218,9 @@ class FreePublicAICouncilRuntime:
             "ai_agent_count": self.ai_agent_count,
             "real_money_enabled": False,
             "broker_orders_enabled": False,
+            "reliability_provenance": SampleOrigin.LIVE_PUBLIC.value,
+            "agent_reliability_observations": self.reliability_tracker.observation_count,
+            "pending_shadow_outcomes": self.recorder.pending_count,
             "counters": {
                 "ticks": self.counters.ticks,
                 "closed_candles": self.counters.closed_candles,
