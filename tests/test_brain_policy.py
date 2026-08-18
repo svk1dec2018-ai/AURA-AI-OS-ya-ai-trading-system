@@ -1,7 +1,14 @@
 from datetime import UTC, datetime
 
 from aura.agents.deliberation import DeliberationCase, DeliberationMemo
-from aura.agents.models import AgentEvidence, AgentRole, AgentRound, CEODecisionMemo
+from aura.agents.models import (
+    AgentEvidence,
+    AgentRole,
+    AgentRound,
+    CEODecisionMemo,
+    EvidenceSource,
+    EvidenceSourceType,
+)
 from aura.domain.models import SignalIntent
 from aura.evolution.brain_policy import (
     BRAIN_POLICY_GENE_SPACE,
@@ -18,8 +25,16 @@ def _round() -> AgentRound:
             role=role,
             intent=SignalIntent.LONG,
             confidence=0.8,
-            rationale="support",
-            observed_at=now,
+            thesis="support",
+            sources=(
+                EvidenceSource(
+                    source_id=f"test:{role.value}",
+                    source_type=EvidenceSourceType.MARKET_DATA,
+                    observed_at=now,
+                    trust_score=1.0,
+                ),
+            ),
+            generated_at=now,
         )
         for i, role in enumerate(
             (
@@ -57,14 +72,21 @@ def _memo(confidence: float = 0.8) -> CEODecisionMemo:
 
 
 def _deliberation(disagreement: float) -> DeliberationMemo:
-    empty = DeliberationCase(
-        label="case",
+    bull = DeliberationCase(
+        intent=SignalIntent.LONG,
+        supporting_agents=(),
         arguments=(),
-        aggregate_confidence=0.0,
+        weighted_strength=0.0,
+    )
+    bear = DeliberationCase(
+        intent=SignalIntent.SHORT,
+        supporting_agents=(),
+        arguments=(),
+        weighted_strength=0.0,
     )
     return DeliberationMemo(
-        bull_case=empty,
-        bear_case=empty,
+        bull_case=bull,
+        bear_case=bear,
         neutral_arguments=(),
         counterfactuals=(),
         disagreement_ratio=disagreement,
