@@ -1,0 +1,229 @@
+name: wire-online-learning
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Wire online learner
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def once(path_name, old, new):
+              path = Path(path_name)
+              text = path.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path_name}: expected one match, found {count}: {old[:120]!r}")
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          # MT5 imports and constructor.
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "from aura.evolution.opportunity_audit import (\n",
+              "from aura.evolution.online_bridge import OpportunityOnlineLearningBridge\n"
+              "from aura.evolution.online_learning import SafeOnlineLearner\n"
+              "from aura.evolution.opportunity_audit import (\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "        opportunity_auditor: MissedOpportunityAuditor,\n"
+              "        research_every_new_samples: int = 100,\n",
+              "        opportunity_auditor: MissedOpportunityAuditor,\n"
+              "        online_bridge: OpportunityOnlineLearningBridge,\n"
+              "        research_every_new_samples: int = 100,\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "        self.opportunity_auditor = opportunity_auditor\n"
+              "        self.research_every_new_samples = research_every_new_samples\n",
+              "        self.opportunity_auditor = opportunity_auditor\n"
+              "        self.online_bridge = online_bridge\n"
+              "        self.research_every_new_samples = research_every_new_samples\n"
+              "        self._online_research_due = False\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "                self.opportunity_auditor.on_closed_candles(batch)\n"
+              "                resolved = self.recorder.on_closed_candles(batch)\n",
+              "                audited = self.opportunity_auditor.on_closed_candles(batch)\n"
+              "                if self.online_bridge.observe_records(audited):\n"
+              "                    self._online_research_due = True\n"
+              "                resolved = self.recorder.on_closed_candles(batch)\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "        if new_samples < self.research_every_new_samples:\n"
+              "            return\n",
+              "        if (\n"
+              "            new_samples < self.research_every_new_samples\n"
+              "            and not self._online_research_due\n"
+              "        ):\n"
+              "            return\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "        self._samples_at_last_research = len(samples)\n"
+              "        self._write_research_result(result)\n",
+              "        self._samples_at_last_research = len(samples)\n"
+              "        self._online_research_due = False\n"
+              "        self._write_research_result(result)\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              '            "opportunity_audit": {\n',
+              '            "online_learning": self.online_bridge.status(),\n'
+              '            "opportunity_audit": {\n',
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "    opportunity_auditor = MissedOpportunityAuditor(\n"
+              "        OpportunityAuditStore(brain_dir / \"opportunity_audit.jsonl\"),\n"
+              "        policy=opportunity_audit_policy,\n"
+              "    )\n",
+              "    opportunity_auditor = MissedOpportunityAuditor(\n"
+              "        OpportunityAuditStore(brain_dir / \"opportunity_audit.jsonl\"),\n"
+              "        policy=opportunity_audit_policy,\n"
+              "    )\n"
+              "    online_bridge = OpportunityOnlineLearningBridge(\n"
+              "        SafeOnlineLearner(),\n"
+              "        market=\"MT5_CFD\",\n"
+              "    )\n",
+          )
+          once(
+              "aura/runtime/mt5_learning_daemon.py",
+              "        opportunity_auditor=opportunity_auditor,\n"
+              "        research_every_new_samples=research_every_new_samples,\n",
+              "        opportunity_auditor=opportunity_auditor,\n"
+              "        online_bridge=online_bridge,\n"
+              "        research_every_new_samples=research_every_new_samples,\n",
+          )
+
+          # Dhan imports and constructor.
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "from aura.evolution.opportunity_audit import (\n",
+              "from aura.evolution.online_bridge import OpportunityOnlineLearningBridge\n"
+              "from aura.evolution.online_learning import SafeOnlineLearner\n"
+              "from aura.evolution.opportunity_audit import (\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        opportunity_auditor: MissedOpportunityAuditor,\n"
+              "        current_policy: AuraBrainPolicy,\n",
+              "        opportunity_auditor: MissedOpportunityAuditor,\n"
+              "        online_bridge: OpportunityOnlineLearningBridge,\n"
+              "        current_policy: AuraBrainPolicy,\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        self.opportunity_auditor = opportunity_auditor\n"
+              "        self.current_policy = current_policy\n",
+              "        self.opportunity_auditor = opportunity_auditor\n"
+              "        self.online_bridge = online_bridge\n"
+              "        self.current_policy = current_policy\n"
+              "        self._online_research_due = False\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "                self.opportunity_auditor.on_closed_candles(batch)\n"
+              "                for sample in self.recorder.on_closed_candles(batch):\n",
+              "                audited = self.opportunity_auditor.on_closed_candles(batch)\n"
+              "                if self.online_bridge.observe_records(audited):\n"
+              "                    self._online_research_due = True\n"
+              "                for sample in self.recorder.on_closed_candles(batch):\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        if len(samples) - self._samples_at_last_research < self.research_every_new_samples:\n"
+              "            return\n",
+              "        new_samples = len(samples) - self._samples_at_last_research\n"
+              "        if (\n"
+              "            new_samples < self.research_every_new_samples\n"
+              "            and not self._online_research_due\n"
+              "        ):\n"
+              "            return\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        self._samples_at_last_research = len(samples)\n"
+              "        _atomic_json(\n",
+              "        self._samples_at_last_research = len(samples)\n"
+              "        self._online_research_due = False\n"
+              "        _atomic_json(\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              '            "opportunity_audit": {\n',
+              '            "online_learning": self.online_bridge.status(),\n'
+              '            "opportunity_audit": {\n',
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "    auditor = MissedOpportunityAuditor(\n"
+              "        OpportunityAuditStore(brain_dir / \"opportunity_audit.jsonl\"),\n"
+              "        policy=opportunity_audit_policy,\n"
+              "    )\n",
+              "    auditor = MissedOpportunityAuditor(\n"
+              "        OpportunityAuditStore(brain_dir / \"opportunity_audit.jsonl\"),\n"
+              "        policy=opportunity_audit_policy,\n"
+              "    )\n"
+              "    online_bridge = OpportunityOnlineLearningBridge(\n"
+              "        SafeOnlineLearner(),\n"
+              "        market=\"INDIA\",\n"
+              "    )\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        opportunity_auditor=auditor,\n"
+              "        current_policy=current_policy,\n",
+              "        opportunity_auditor=auditor,\n"
+              "        online_bridge=online_bridge,\n"
+              "        current_policy=current_policy,\n",
+          )
+          Path(".github/workflows/wire_online_learning.yml").unlink()
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate and capture
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install 2>&1
+          INSTALL=$?
+          ruff check --fix aura tests examples >/tmp/ruff_fix 2>&1
+          RUFF_FIX=$?
+          ruff check aura tests examples >/tmp/ruff 2>&1
+          RUFF=$?
+          pytest -q >/tmp/pytest 2>&1
+          PYTEST=$?
+          set -e
+          {
+            echo "INSTALL=${INSTALL}"
+            echo "RUFF_FIX=${RUFF_FIX}"
+            echo "RUFF=${RUFF}"
+            echo "PYTEST=${PYTEST}"
+            echo "=== RUFF ==="
+            cat /tmp/ruff
+            echo "=== PYTEST ==="
+            tail -n 120 /tmp/pytest
+          } > wire_online_learning_result.txt
+      - name: Commit patch and result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests .github/workflows/wire_online_learning.yml wire_online_learning_result.txt
+          git commit -m "wire safe online learning into live paper daemons"
+          git push
