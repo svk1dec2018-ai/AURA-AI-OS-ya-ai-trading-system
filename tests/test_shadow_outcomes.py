@@ -12,8 +12,10 @@ from aura.agents.models import (
     EvidenceSource,
     EvidenceSourceType,
 )
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.evolution.brain_online import BrainReplayStore
+from aura.evolution.brain_replay import SampleOrigin
 from aura.evolution.shadow_outcomes import ShadowDecisionOutcomeRecorder, ShadowOutcomePolicy
 from aura.runtime.scanner import MarketScanResult, ScanCandidate
 
@@ -160,3 +162,38 @@ def test_shadow_outcome_waits_for_future_horizon_and_persists_sample(tmp_path: P
     assert resolved[0].execution_spread_bps == 2.0
     assert len(store.read_all()) == 1
     assert recorder.pending_count == 0
+
+
+def test_agent_reliability_updates_only_from_material_live_broker_outcomes(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 17, 10, 0, tzinfo=UTC)
+    historical_tracker = AgentReliabilityTracker(tmp_path / "historical_reliability.jsonl")
+    historical = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(tmp_path / "historical_replay.jsonl"),
+        policy=ShadowOutcomePolicy(horizon_bars=1, fallback_round_trip_cost_bps=2.0),
+        origin=SampleOrigin.HISTORICAL,
+        reliability_tracker=historical_tracker,
+    )
+    assert historical.register_scan(MarketScanResult(candidates=(_candidate(now),))) == 1
+    historical.on_closed_candles((_candle(now + timedelta(minutes=1), "2020"),))
+    assert historical_tracker.observation_count == 0
+
+    live_tracker = AgentReliabilityTracker(tmp_path / "live_reliability.jsonl")
+    live = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(tmp_path / "live_replay.jsonl"),
+        policy=ShadowOutcomePolicy(horizon_bars=1, fallback_round_trip_cost_bps=2.0),
+        origin=SampleOrigin.LIVE_BROKER,
+        reliability_tracker=live_tracker,
+    )
+    assert live.register_scan(MarketScanResult(candidates=(_candidate(now),))) == 1
+    live.on_closed_candles((_candle(now + timedelta(minutes=1), "2020"),))
+    assert live_tracker.observation_count == 2
+    assert (
+        live_tracker.summarize_agent(
+            "tech",
+            market="EXNESS_MT5_DEMO",
+            regime="trend",
+        ).hit_rate
+        == 1.0
+    )
