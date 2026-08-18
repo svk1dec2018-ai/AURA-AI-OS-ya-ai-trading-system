@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 
 from aura.agents.advisory_specialists import ExecutionQualitySpecialist
+from aura.agents.ai_council import build_ollama_ai_council_from_env
 from aura.agents.base import SpecialistAgent
 from aura.agents.external_specialists import (
     CrossMarketSpecialist,
@@ -38,13 +40,13 @@ def build_default_agent_team(
     timeout_seconds: float = 10.0,
     min_directional_margin: float = 0.15,
     risk_policy: AgentRiskPolicy | None = None,
+    include_env_ai: bool = True,
 ) -> AuraAgentTeam:
-    """Build AURA's default concurrent specialist team and evidence policy.
+    """Build AURA's deterministic desk plus an optional local multi-AI council.
 
-    `extra_agents` is the extension point for provider-backed AI models. A venue
-    may inject an execution-quality specialist with calibrated liquidity inputs,
-    while the default remains strict. Neither specialists nor CEO receive broker
-    or RiskEngine mutation authority.
+    When `AURA_OLLAMA_MODELS` is configured, provider-backed AI specialists are
+    added automatically. Each AI is advisory only: it cannot call a broker, size
+    positions, mutate RiskEngine controls or approve a strategy for live money.
     """
 
     execution_agent = execution_quality_specialist or ExecutionQualitySpecialist()
@@ -60,8 +62,18 @@ def build_default_agent_team(
         RegimeSpecialist(),
         execution_agent,
     )
-    agents = (*base_agents, *extra_agents)
-    orchestrator = MultiAgentOrchestrator(list(agents), timeout_seconds=timeout_seconds)
+    env_ai_agents = build_ollama_ai_council_from_env() if include_env_ai else ()
+    agents = (*base_agents, *env_ai_agents, *extra_agents)
+    effective_timeout = timeout_seconds
+    if env_ai_agents:
+        effective_timeout = max(
+            timeout_seconds,
+            float(os.getenv("AURA_AI_AGENT_TIMEOUT_SECONDS", "60")),
+        )
+    orchestrator = MultiAgentOrchestrator(
+        list(agents),
+        timeout_seconds=effective_timeout,
+    )
     ceo = CEOAggregator(
         min_agents=6,
         min_distinct_roles=6,
