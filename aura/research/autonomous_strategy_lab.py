@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
+from itertools import pairwise
 
 from aura.domain.models import NormalizedCandle, SignalIntent, StrategySignal
 from aura.evolution.core import (
@@ -280,7 +281,7 @@ def _rsi(values: Sequence[Decimal], period: int) -> float:
     window = values[-(period + 1) :]
     gains = Decimal(0)
     losses = Decimal(0)
-    for prior, current in zip(window, window[1:]):
+    for prior, current in pairwise(window):
         change = current - prior
         if change > 0:
             gains += change
@@ -296,7 +297,7 @@ def _atr(candles: Sequence[NormalizedCandle]) -> Decimal:
     if len(candles) < 2:
         return Decimal(0)
     values: list[Decimal] = []
-    for prior, current in zip(candles, candles[1:]):
+    for prior, current in pairwise(candles):
         values.append(
             max(
                 current.high - current.low,
@@ -315,7 +316,7 @@ class ProTraderResearchObjective:
     min_oos_trades_for_confidence: int = 200
     minimum_profit_factor: float = 1.10
     maximum_drawdown_pct: float = 15.0
-    base_policy: FitnessPolicy = FitnessPolicy()
+    base_policy: FitnessPolicy = field(default_factory=FitnessPolicy)
 
     def __post_init__(self) -> None:
         if not 0 < self.aspirational_win_rate < 1:

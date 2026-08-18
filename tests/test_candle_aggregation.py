@@ -52,13 +52,13 @@ def test_second_level_research_buckets_are_causal() -> None:
     first = CanonicalTradeTick(
         symbol="BTC-USD",
         venue="COINBASE_PUBLIC",
-        price=Decimal("60000"),
+        price=Decimal(60000),
         quantity=Decimal("0.1"),
         timestamp=datetime(2026, 8, 17, 10, 0, 0, 100000, tzinfo=UTC),
     )
     later = first.model_copy(
         update={
-            "price": Decimal("60001"),
+            "price": Decimal(60001),
             "quantity": Decimal("0.2"),
             "timestamp": datetime(2026, 8, 17, 10, 0, 1, 100000, tzinfo=UTC),
         }
@@ -67,8 +67,8 @@ def test_second_level_research_buckets_are_causal() -> None:
     completed = aggregator.on_tick(later)
     one_second = [item for item in completed if item.timeframe == "1s"]
     assert len(one_second) == 1
-    assert one_second[0].open == Decimal("60000")
-    assert one_second[0].close == Decimal("60000")
+    assert one_second[0].open == Decimal(60000)
+    assert one_second[0].close == Decimal(60000)
     assert one_second[0].volume == Decimal("0.1")
 
 

@@ -48,7 +48,7 @@ def _candle(index: int, price: Decimal) -> NormalizedCandle:
         high=price + Decimal("0.2"),
         low=price - Decimal("0.2"),
         close=price + Decimal("0.1"),
-        volume=Decimal("1"),
+        volume=Decimal(1),
         closed=True,
     )
 

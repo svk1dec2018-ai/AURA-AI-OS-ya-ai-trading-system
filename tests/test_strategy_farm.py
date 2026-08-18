@@ -1,3 +1,5 @@
+import pytest
+
 from aura.evolution.core import CandidateEvaluation, PerformanceSlice, StrategyGenome
 from aura.research.autonomous_strategy_lab import ProTraderResearchObjective
 from aura.research.strategy_farm import AutonomousStrategyResearchFarm, StrategyFarmConfig
@@ -31,6 +33,7 @@ class _Evaluator:
         )
 
 
+@pytest.mark.asyncio
 async def test_strategy_farm_evaluates_population_and_counts_virtual_trades() -> None:
     farm = AutonomousStrategyResearchFarm(
         _Evaluator(),

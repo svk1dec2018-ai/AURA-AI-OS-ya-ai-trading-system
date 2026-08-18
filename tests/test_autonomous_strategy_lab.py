@@ -42,9 +42,9 @@ def _genome(**overrides) -> StrategyGenome:
 def _candles(count: int = 30) -> list[NormalizedCandle]:
     start = datetime(2026, 8, 18, 0, 0, tzinfo=UTC)
     result = []
-    price = Decimal("100")
+    price = Decimal(100)
     for index in range(count):
-        next_price = price + Decimal("1")
+        next_price = price + Decimal(1)
         result.append(
             NormalizedCandle(
                 symbol="TEST",
