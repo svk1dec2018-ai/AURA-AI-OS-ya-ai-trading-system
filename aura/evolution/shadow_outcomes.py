@@ -6,7 +6,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from aura.agents.models import AgentRole
+from aura.agents.models import AgentEvidence, AgentRole
+from aura.agents.reliability import AgentReliabilityTracker, reliability_market_key
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.evolution.brain_online import BrainReplayStore
 from aura.evolution.brain_replay import BrainReplaySample, SampleOrigin
@@ -26,6 +27,7 @@ class _PendingDecision:
     decision_time: datetime
     symbol: str
     timeframe: str
+    market: str
     entry_price: Decimal
     direction: SignalIntent
     regime: str
@@ -35,17 +37,17 @@ class _PendingDecision:
     failed_agent_fraction: float
     execution_spread_bps: float
     estimated_slippage_bps: float
+    agent_evidence: tuple[AgentEvidence, ...]
     bars_seen: int = 0
 
 
 class ShadowDecisionOutcomeRecorder:
     """Resolve safe directional decisions against later closed bars.
 
-    The recorder is intentionally independent from whether the evolvable brain
-    accepted a trade. This lets AURA learn both taken and missed opportunities,
-    while non-evolvable data/agent safety blocks remain excluded. Promotion
-    provenance is explicit: only a live runtime should construct this recorder
-    with `SampleOrigin.LIVE_BROKER`.
+    Brain replay may be used in historical research, but contextual agent/model
+    vote reliability is updated only when this recorder is explicitly operating
+    on `LIVE_BROKER` origin. This prevents backtest/replay outcomes from silently
+    acquiring production voting authority.
     """
 
     def __init__(
@@ -54,10 +56,12 @@ class ShadowDecisionOutcomeRecorder:
         *,
         policy: ShadowOutcomePolicy | None = None,
         origin: SampleOrigin = SampleOrigin.HISTORICAL,
+        reliability_tracker: AgentReliabilityTracker | None = None,
     ) -> None:
         self.store = store
         self.policy = policy or ShadowOutcomePolicy()
         self.origin = origin
+        self.reliability_tracker = reliability_tracker
         self._pending: dict[str, _PendingDecision] = {}
         self._known_sample_ids = {sample.sample_id for sample in store.read_all()}
 
@@ -86,6 +90,7 @@ class ShadowDecisionOutcomeRecorder:
                 decision_time=candidate.context.created_at,
                 symbol=candidate.context.symbol,
                 timeframe=candidate.context.decision_timeframe,
+                market=reliability_market_key(candidate.context),
                 entry_price=latest.close,
                 direction=candidate.memo.intent,
                 regime=_regime(candidate),
@@ -99,6 +104,7 @@ class ShadowDecisionOutcomeRecorder:
                 failed_agent_fraction=failed_fraction,
                 execution_spread_bps=spread_bps,
                 estimated_slippage_bps=slippage_bps,
+                agent_evidence=tuple(candidate.round.evidence),
             )
             added += 1
         return added
@@ -123,17 +129,23 @@ class ShadowDecisionOutcomeRecorder:
                 pending.bars_seen += 1
                 if pending.bars_seen < self.policy.horizon_bars:
                     continue
-                sample = self._resolve(pending, candle.close)
+                sample = self._resolve(pending, candle.close, candle.close_time)
                 if self.store.append(sample):
                     self._known_sample_ids.add(sample.sample_id)
                     resolved.append(sample)
                 del self._pending[sample_id]
         return tuple(resolved)
 
-    def _resolve(self, pending: _PendingDecision, exit_price: Decimal) -> BrainReplaySample:
+    def _resolve(
+        self,
+        pending: _PendingDecision,
+        exit_price: Decimal,
+        outcome_observed_at: datetime,
+    ) -> BrainReplaySample:
         if exit_price <= 0:
             raise ValueError("shadow exit price must be positive")
-        raw_return = (exit_price - pending.entry_price) / pending.entry_price * Decimal(100)
+        market_move_pct = (exit_price - pending.entry_price) / pending.entry_price * Decimal(100)
+        raw_return = market_move_pct
         if pending.direction == SignalIntent.SHORT:
             raw_return = -raw_return
         round_trip_cost_bps = (
@@ -142,6 +154,12 @@ class ShadowDecisionOutcomeRecorder:
         if round_trip_cost_bps <= 0:
             round_trip_cost_bps = self.policy.fallback_round_trip_cost_bps
         net_return_pct = float(raw_return) - round_trip_cost_bps / 100.0
+        self._record_reliability_if_material(
+            pending,
+            market_move_pct=market_move_pct,
+            round_trip_cost_bps=round_trip_cost_bps,
+            outcome_observed_at=outcome_observed_at,
+        )
         return BrainReplaySample(
             sample_id=pending.sample_id,
             decision_time=pending.decision_time,
@@ -157,6 +175,33 @@ class ShadowDecisionOutcomeRecorder:
             net_return_pct=net_return_pct,
             origin=self.origin,
         )
+
+    def _record_reliability_if_material(
+        self,
+        pending: _PendingDecision,
+        *,
+        market_move_pct: Decimal,
+        round_trip_cost_bps: float,
+        outcome_observed_at: datetime,
+    ) -> None:
+        if self.reliability_tracker is None or self.origin != SampleOrigin.LIVE_BROKER:
+            return
+        market_move_bps = float(market_move_pct * Decimal(100))
+        if abs(market_move_bps) <= round_trip_cost_bps:
+            return
+        realized_intent = (
+            SignalIntent.LONG if market_move_bps > 0 else SignalIntent.SHORT
+        )
+        for evidence in pending.agent_evidence:
+            self.reliability_tracker.record_evidence_outcome(
+                evidence,
+                observation_prefix=f"agent-reliability:{pending.sample_id}",
+                market=pending.market,
+                regime=pending.regime,
+                realized_intent=realized_intent,
+                decision_time=pending.decision_time,
+                outcome_observed_at=outcome_observed_at,
+            )
 
 
 def _eligible_for_shadow_learning(candidate: ScanCandidate) -> bool:
@@ -189,6 +234,6 @@ def _regime(candidate: ScanCandidate) -> str:
         if evidence.role == AgentRole.REGIME:
             value = evidence.features.get("regime")
             if isinstance(value, str) and value:
-                return value
+                return value.lower()
     value = candidate.context.metadata.get("regime")
-    return str(value) if value else "unknown"
+    return str(value).lower() if value else "unknown"
