@@ -73,7 +73,12 @@ class _WorkingCandle:
 
 
 _FIXED_TIMEFRAMES = {
+    "1s": timedelta(seconds=1),
+    "5s": timedelta(seconds=5),
+    "15s": timedelta(seconds=15),
+    "30s": timedelta(seconds=30),
     "1m": timedelta(minutes=1),
+    "3m": timedelta(minutes=3),
     "5m": timedelta(minutes=5),
     "15m": timedelta(minutes=15),
     "30m": timedelta(minutes=30),
@@ -94,7 +99,7 @@ class SessionCandleAggregator:
     def __init__(
         self,
         *,
-        timeframes: tuple[str, ...] = ("1m", "5m", "15m", "30m", "1h"),
+        timeframes: tuple[str, ...] = ("1m", "3m", "5m", "15m", "30m", "1h"),
         session: CandleSession | None = None,
     ) -> None:
         if not timeframes:
