@@ -1,0 +1,164 @@
+RUFF_EXIT=1
+PYTEST_EXIT=0
+=== RUFF ===
+DTZ007 Naive datetime constructed using `datetime.datetime.strptime()` without %z
+  --> aura/data/dhan_deep_service.py:55:31
+   |
+53 |             session=CandleSession(
+54 |                 timezone="Asia/Kolkata",
+55 |                 session_start=datetime.strptime("09:15", "%H:%M").time(),
+   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+56 |             ),
+57 |         )
+   |
+help: Call `.replace(tzinfo=<timezone>)` or `.astimezone()` to convert to an aware datetime
+
+TRY203 Remove exception handler; error is immediately re-raised
+   --> aura/data/dhan_deep_service.py:143:9
+    |
+141 |                   completed = self._aggregator.on_tick(tick)
+142 |                   await self._enqueue_grouped(completed)
+143 | /         except asyncio.CancelledError:
+144 | |             raise
+    | |_________________^
+145 |
+146 |       async def _flush_completed(self, timestamp: datetime) -> None:
+    |
+
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+   --> aura/data/dhan_history.py:232:32
+    |
+230 |         if any(
+231 |             right.open_time - left.open_time != timedelta(minutes=1)
+232 |             for left, right in zip(bucket, bucket[1:], strict=False)
+    |                                ^^^
+233 |         ):
+234 |             continue
+    |
+help: Replace `zip()` with `itertools.pairwise()`
+
+F401 [*] `json` imported but unused
+ --> aura/evolution/opportunity_audit.py:3:8
+  |
+1 | from __future__ import annotations
+2 |
+3 | import json
+  |        ^^^^
+4 | import os
+5 | from dataclasses import dataclass
+  |
+help: Remove unused import: `json`
+  |
+2 |
+  - import json
+3 | import os
+  |
+
+RUF007 Prefer `itertools.pairwise()` over `zip()` when iterating over successive pairs
+   --> aura/evolution/opportunity_audit.py:263:30
+    |
+261 |     window = candles[-(period + 1) :]
+262 |     true_ranges: list[Decimal] = []
+263 |     for previous, current in zip(window, window[1:], strict=False):
+    |                              ^^^
+264 |         true_ranges.append(
+265 |             max(
+    |
+help: Replace `zip()` with `itertools.pairwise()`
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_opportunity_audit.py:20:24
+   |
+18 |     for index in range(20):
+19 |         close_time = now - timedelta(minutes=19 - index)
+20 |         base = Decimal("2000") + Decimal(index % 3)
+   |                        ^^^^^^
+21 |         candles.append(
+22 |             NormalizedCandle(
+   |
+help: Replace with `2000`
+   |
+19 |         close_time = now - timedelta(minutes=19 - index)
+   -         base = Decimal("2000") + Decimal(index % 3)
+20 +         base = Decimal(2000) + Decimal(index % 3)
+21 |         candles.append(
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_opportunity_audit.py:29:37
+   |
+27 |                 close_time=close_time,
+28 |                 open=base,
+29 |                 high=base + Decimal("2"),
+   |                                     ^^^
+30 |                 low=base - Decimal("2"),
+31 |                 close=base + Decimal("0.5"),
+   |
+help: Replace with `2`
+   |
+28 |                 open=base,
+   -                 high=base + Decimal("2"),
+29 +                 high=base + Decimal(2),
+30 |                 low=base - Decimal("2"),
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_opportunity_audit.py:30:36
+   |
+28 |                 open=base,
+29 |                 high=base + Decimal("2"),
+30 |                 low=base - Decimal("2"),
+   |                                    ^^^
+31 |                 close=base + Decimal("0.5"),
+32 |                 volume=Decimal(100),
+   |
+help: Replace with `2`
+   |
+29 |                 high=base + Decimal("2"),
+   -                 low=base - Decimal("2"),
+30 +                 low=base - Decimal(2),
+31 |                 close=base + Decimal("0.5"),
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_opportunity_audit.py:49:30
+   |
+47 |         close_time=close_time,
+48 |         open=price,
+49 |         high=price + Decimal("1"),
+   |                              ^^^
+50 |         low=price - Decimal("1"),
+51 |         close=price,
+   |
+help: Replace with `1`
+   |
+48 |         open=price,
+   -         high=price + Decimal("1"),
+49 +         high=price + Decimal(1),
+50 |         low=price - Decimal("1"),
+   |
+
+FURB157 [*] Verbose expression in `Decimal` constructor
+  --> tests/test_opportunity_audit.py:50:29
+   |
+48 |         open=price,
+49 |         high=price + Decimal("1"),
+50 |         low=price - Decimal("1"),
+   |                             ^^^
+51 |         close=price,
+52 |         volume=Decimal(100),
+   |
+help: Replace with `1`
+   |
+49 |         high=price + Decimal("1"),
+   -         low=price - Decimal("1"),
+50 +         low=price - Decimal(1),
+51 |         close=price,
+   |
+
+Found 10 errors.
+[*] 6 fixable with the `--fix` option (2 hidden fixes can be enabled with the `--unsafe-fixes` option).
+=== PYTEST ===
+........................................................................ [ 35%]
+........................................................................ [ 70%]
+............................................................             [100%]
