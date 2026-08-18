@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from datetime import UTC, datetime, timedelta
+from collections import defaultdict
+from datetime import UTC, datetime, time, timedelta
 from decimal import Decimal, InvalidOperation
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -28,6 +29,14 @@ DHAN_INSTRUMENT_TYPES = frozenset(
     }
 )
 _INDIA_TZ = ZoneInfo("Asia/Kolkata")
+_RESAMPLE_MINUTES = {
+    "1m": 1,
+    "5m": 5,
+    "15m": 15,
+    "30m": 30,
+    "1h": 60,
+    "4h": 240,
+}
 
 
 class DhanHistoricalDataError(RuntimeError):
@@ -177,6 +186,71 @@ def normalize_dhan_intraday_response(
         candle.open_time: candle for candle in candles
     }
     return tuple(deduped[key] for key in sorted(deduped))
+
+
+def resample_india_session_candles(
+    minute_candles: tuple[NormalizedCandle, ...] | list[NormalizedCandle],
+    timeframe: str,
+) -> tuple[NormalizedCandle, ...]:
+    """Aggregate complete 1m bars into India-session aligned higher timeframes.
+
+    Missing one-minute bars make that higher-timeframe bucket ineligible instead
+    of fabricating liquidity. The 09:15 Asia/Kolkata session anchor matches live
+    Dhan candle aggregation, keeping warm-up and live paths structurally aligned.
+    """
+
+    if timeframe not in _RESAMPLE_MINUTES:
+        raise ValueError(f"unsupported India resample timeframe: {timeframe}")
+    minutes = _RESAMPLE_MINUTES[timeframe]
+    ordered = sorted(minute_candles, key=lambda item: item.open_time)
+    if timeframe == "1m":
+        return tuple(item for item in ordered if item.closed and item.timeframe == "1m")
+    if any(not item.closed or item.timeframe != "1m" for item in ordered):
+        raise ValueError("India history resampling requires closed 1m candles")
+    if not ordered:
+        return ()
+
+    buckets: dict[datetime, list[NormalizedCandle]] = defaultdict(list)
+    duration = timedelta(minutes=minutes)
+    for candle in ordered:
+        local = candle.open_time.astimezone(_INDIA_TZ)
+        anchor = datetime.combine(local.date(), time(9, 15), tzinfo=_INDIA_TZ)
+        if local < anchor:
+            continue
+        elapsed_minutes = int((local - anchor).total_seconds() // 60)
+        bucket_index = elapsed_minutes // minutes
+        local_open = anchor + bucket_index * duration
+        buckets[local_open.astimezone(UTC)].append(candle)
+
+    result: list[NormalizedCandle] = []
+    for open_time in sorted(buckets):
+        bucket = sorted(buckets[open_time], key=lambda item: item.open_time)
+        if len(bucket) != minutes:
+            continue
+        if any(
+            right.open_time - left.open_time != timedelta(minutes=1)
+            for left, right in zip(bucket, bucket[1:], strict=False)
+        ):
+            continue
+        close_time = open_time + duration
+        if bucket[-1].close_time != close_time:
+            continue
+        result.append(
+            NormalizedCandle(
+                symbol=bucket[0].symbol,
+                venue=bucket[0].venue,
+                timeframe=timeframe,
+                open_time=open_time,
+                close_time=close_time,
+                open=bucket[0].open,
+                high=max(item.high for item in bucket),
+                low=min(item.low for item in bucket),
+                close=bucket[-1].close,
+                volume=sum((item.volume for item in bucket), Decimal(0)),
+                closed=True,
+            )
+        )
+    return tuple(result)
 
 
 def _dhan_datetime(value: datetime) -> str:
