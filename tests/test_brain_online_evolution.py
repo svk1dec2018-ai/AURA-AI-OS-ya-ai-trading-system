@@ -5,6 +5,7 @@ from aura.evolution.brain_online import (
     BrainPaperChampionManager,
     BrainPaperPromotionPolicy,
 )
+
 from aura.evolution.brain_optimizer import BrainOptimizerConfig, BrainResearchOptimizer
 from aura.evolution.brain_policy import AuraBrainPolicy
 from aura.evolution.brain_replay import BrainReplaySample

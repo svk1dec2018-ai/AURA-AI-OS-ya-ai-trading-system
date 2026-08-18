@@ -13,7 +13,6 @@ from aura.data.mt5_demo import (
 )
 from aura.domain.models import NormalizedCandle
 
-
 _DEFAULT_POLL_SECONDS = {
     "1m": 5.0,
     "5m": 15.0,
