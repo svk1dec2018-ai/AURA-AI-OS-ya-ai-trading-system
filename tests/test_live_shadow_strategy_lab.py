@@ -4,6 +4,7 @@ from decimal import Decimal
 from aura.domain.models import NormalizedCandle
 from aura.evolution.core import StrategyGenome
 from aura.research.live_shadow_strategy_lab import LiveShadowPolicy, LiveShadowStrategyLab
+from aura.research.strategy_mutation import mutate_autonomous_genome
 
 
 def _genome() -> StrategyGenome:
@@ -72,3 +73,35 @@ def test_live_shadow_lab_resolves_forward_only_plans() -> None:
     assert snapshot.win_rate > 0.5
     assert snapshot.expectancy_bps > 0
     assert lab.pending_plans >= 0
+
+
+def test_population_refresh_preserves_elite_metrics_and_market_history() -> None:
+    elite = _genome()
+    lab = LiveShadowStrategyLab(
+        [elite],
+        policy=LiveShadowPolicy(
+            horizon_bars=2,
+            max_history_bars=100,
+            min_resolved_for_confidence=2,
+            min_abs_outcome_bps=0.0,
+        ),
+    )
+    for index in range(20):
+        lab.on_closed_candles([_candle(index, Decimal(100 + index))])
+    before = lab.snapshots()[0]
+    assert before.resolved > 0
+    assert lab.history_size("BTC-USD", "1s") == 20
+    assert lab.pending_plans > 0
+
+    challenger = mutate_autonomous_genome(elite, seed=123)
+    assert challenger.content_hash != elite.content_hash
+    assert challenger.parents == (elite.genome_id,)
+    lab.replace_population([elite, challenger], preserve_retained_metrics=True)
+
+    after_by_id = {item.genome_id: item for item in lab.snapshots()}
+    assert after_by_id[elite.genome_id].resolved == before.resolved
+    assert after_by_id[challenger.genome_id].resolved == 0
+    assert lab.history_size("BTC-USD", "1s") == 20
+    assert lab.pending_plans == 0
+    assert lab.discarded_pending_on_refresh > 0
+    assert lab.population_refreshes == 1
