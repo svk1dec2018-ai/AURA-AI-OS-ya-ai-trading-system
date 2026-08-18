@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import io
 from dataclasses import dataclass
-from datetime import datetime, time
+from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from enum import Enum
 from urllib.error import HTTPError, URLError
@@ -348,17 +348,14 @@ def _parse_expiry(value: str) -> datetime | None:
     if not value:
         return None
     cleaned = value.strip().split(" ")[0]
+    timezone = ZoneInfo("Asia/Kolkata")
     formats = ("%Y-%m-%d", "%d-%m-%Y", "%d/%m/%Y", "%Y/%m/%d")
-    parsed = None
     for fmt in formats:
         try:
-            parsed = datetime.strptime(cleaned, fmt).date()
-            break
+            return datetime.strptime(cleaned, fmt).replace(tzinfo=timezone)
         except ValueError:
             continue
-    if parsed is None:
-        return None
-    return datetime.combine(parsed, time.min, tzinfo=ZoneInfo("Asia/Kolkata"))
+    return None
 
 
 def _option_type(value: str, symbol: str) -> OptionType | None:
