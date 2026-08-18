@@ -137,7 +137,7 @@ class MultiMarketIntelligenceScanner:
 
         round_result = await self.orchestrator.run_round(context)
         deliberation = self.deliberation_engine.deliberate(round_result)
-        memo = self.ceo.synthesize(round_result)
+        memo = self.ceo.synthesize(round_result, context=context)
         policy_decision = (
             self.agent_risk_policy.evaluate(round_result=round_result, memo=memo)
             if self.agent_risk_policy is not None
