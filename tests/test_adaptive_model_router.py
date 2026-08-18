@@ -51,11 +51,11 @@ def _context(*, correlation_id: str = "route-1") -> AgentContext:
         timeframe="1m",
         open_time=close_time - timedelta(minutes=1),
         close_time=close_time,
-        open=Decimal("100"),
-        high=Decimal("101"),
-        low=Decimal("99"),
+        open=Decimal(100),
+        high=Decimal(101),
+        low=Decimal(99),
         close=Decimal("100.5"),
-        volume=Decimal("20"),
+        volume=Decimal(20),
         closed=True,
     )
     return AgentContext(
