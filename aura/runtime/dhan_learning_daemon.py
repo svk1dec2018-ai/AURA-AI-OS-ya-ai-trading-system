@@ -13,6 +13,10 @@ from aura.agents.risk_policy import AgentRiskPolicy
 from aura.core.pipeline import DecisionPipeline
 from aura.data.dhan_deep_service import DhanDeepMetadataService
 from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles
+from aura.data.dhan_option_context import (
+    DhanOptionContextService,
+    DhanOptionTargetResolver,
+)
 from aura.data.dhan_instruments import DhanInstrumentMasterDownloader
 from aura.data.dhan_live_ticker import (
     DhanLiveCandleSource,
@@ -120,6 +124,7 @@ class DhanSelfEvolvingPaperDaemon:
         config: DhanSelfEvolvingPaperConfig,
         broad_source: DhanLiveCandleSource,
         deep_service: DhanDeepMetadataService,
+        option_service: DhanOptionContextService,
         radar: DhanOpportunityRadar,
         coordinator: MultiMarketPaperCoordinator,
         history_client: DhanIntradayHistoryClient,
@@ -139,6 +144,7 @@ class DhanSelfEvolvingPaperDaemon:
         self.config = config
         self.broad_source = broad_source
         self.deep_service = deep_service
+        self.option_service = option_service
         self.radar = radar
         self.coordinator = coordinator
         self.history_client = history_client
@@ -209,6 +215,7 @@ class DhanSelfEvolvingPaperDaemon:
             self._stop.set()
             self.broad_source.stop()
             await self.deep_service.stop()
+            await self.option_service.stop()
             if self._radar_task is not None:
                 self._radar_task.cancel()
                 await asyncio.gather(self._radar_task, return_exceptions=True)
@@ -251,6 +258,7 @@ class DhanSelfEvolvingPaperDaemon:
             await self._seed_requested_symbols(requested)
             ready = tuple(symbol for symbol in requested if symbol in self._seeded_symbols)
             await self.deep_service.update_symbols(ready)
+            await self.option_service.update_symbols(ready)
             self._write_status(None)
 
     async def _seed_requested_symbols(self, symbols: tuple[str, ...]) -> None:
@@ -378,6 +386,7 @@ class DhanSelfEvolvingPaperDaemon:
                 ],
             },
             "deep_active_symbols": list(self.deep_service.active_symbols),
+            "option_context": self.option_service.status(),
             "history_seed_retry_symbols": sorted(self._seed_retry_after),
             "counters": asdict(self.counters),
             "opportunity_audit": {
@@ -456,6 +465,10 @@ async def build_dhan_self_evolving_paper_daemon(
         timeframes=config.timeframes,
     )
     instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)
+    option_service = DhanOptionContextService(
+        credentials,
+        DhanOptionTargetResolver(universe),
+    )
 
     multipliers = {
         symbol: item.contract_size for symbol, item in instrument_by_symbol.items()
@@ -542,9 +555,11 @@ async def build_dhan_self_evolving_paper_daemon(
         starting_cash=config.starting_cash,
         default_requested_quantity=Decimal(1),
         requested_quantity_provider=lambda symbol: instrument_by_symbol[symbol].min_quantity,
-        metadata_provider=lambda candle, _history: deep_service.metadata_for(
+        metadata_provider=lambda candle, _history, decision_time: _dhan_decision_metadata(
+            deep_service,
+            option_service,
             candle.symbol,
-            decision_time=datetime.now(UTC),
+            decision_time,
         ),
         decision_timeframes=config.decision_timeframes,
     )
@@ -561,6 +576,7 @@ async def build_dhan_self_evolving_paper_daemon(
         config=config,
         broad_source=broad_source,
         deep_service=deep_service,
+        option_service=option_service,
         radar=radar,
         coordinator=coordinator,
         history_client=DhanIntradayHistoryClient(credentials),
@@ -575,6 +591,25 @@ async def build_dhan_self_evolving_paper_daemon(
         current_policy=current_policy,
         research_every_new_samples=research_every_new_samples,
     )
+
+
+def _dhan_decision_metadata(
+    deep_service: DhanDeepMetadataService,
+    option_service: DhanOptionContextService,
+    symbol: str,
+    decision_time: datetime,
+) -> dict:
+    metadata = deep_service.metadata_for(
+        symbol,
+        decision_time=decision_time,
+    )
+    metadata.update(
+        option_service.metadata_for(
+            symbol,
+            decision_time=decision_time,
+        )
+    )
+    return metadata
 
 
 def _dhan_agent_risk_policy() -> AgentRiskPolicy:

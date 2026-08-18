@@ -22,7 +22,7 @@ from aura.runtime.allocation import PortfolioAllocationResult, PortfolioRiskCoor
 from aura.runtime.scanner import MarketScanResult, MultiMarketIntelligenceScanner
 
 BatchMetadataProvider = Callable[
-    [NormalizedCandle, tuple[NormalizedCandle, ...]],
+    [NormalizedCandle, tuple[NormalizedCandle, ...], datetime],
     dict[str, Any],
 ]
 RequestedQuantityProvider = Callable[[str], Decimal]
@@ -193,7 +193,9 @@ class MultiMarketPaperCoordinator:
             if htf:
                 metadata["htf_candles"] = htf
             if self.metadata_provider is not None:
-                metadata.update(self.metadata_provider(candle, closed_history))
+                metadata.update(
+                    self.metadata_provider(candle, closed_history, decision_time)
+                )
             contexts.append(
                 AgentContext(
                     correlation_id=(

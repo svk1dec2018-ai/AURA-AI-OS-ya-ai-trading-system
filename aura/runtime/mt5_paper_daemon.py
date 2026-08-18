@@ -342,7 +342,9 @@ async def build_mt5_all_market_paper_daemon(
             requested_quantity_provider=lambda symbol: instrument_by_symbol[
                 symbol
             ].min_quantity,
-            metadata_provider=lambda candle, history: source.metadata_for(candle.symbol),
+            metadata_provider=lambda candle, _history, _decision_time: source.metadata_for(
+                candle.symbol
+            ),
             decision_timeframes=config.decision_timeframes,
         )
         coordinator.seed_histories(seed.histories)

@@ -134,10 +134,11 @@ class DhanOptionTargetResolver:
             return None
         underlying = instrument.underlying or instrument.canonical_symbol
         key = _symbol_key(underlying)
+        india_date = as_of.astimezone(_INDIA_TZ).date()
         active_options = [
             item
             for item in self._options.get(key, ())
-            if item.expiry is not None and item.expiry >= as_of
+            if item.expiry is not None and item.expiry.date() >= india_date
         ]
         if not active_options:
             return None
@@ -184,7 +185,8 @@ class DhanOptionTargetResolver:
         candidates = [
             item
             for item in self._futures.get(key, ())
-            if item.expiry is None or item.expiry >= as_of
+            if item.expiry is None
+            or item.expiry.date() >= as_of.astimezone(_INDIA_TZ).date()
         ]
         if option_exchange:
             aligned = [item for item in candidates if item.exchange == option_exchange]
