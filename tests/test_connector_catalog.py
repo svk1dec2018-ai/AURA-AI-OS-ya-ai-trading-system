@@ -1,8 +1,8 @@
 from aura.connectors.catalog import (
+    DEFAULT_CONNECTOR_CATALOG,
     Capability,
     ConnectorMaturity,
     CostTier,
-    DEFAULT_CONNECTOR_CATALOG,
 )
 
 
