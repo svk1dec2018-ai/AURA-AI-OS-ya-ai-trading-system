@@ -10,6 +10,7 @@ from typing import Any, ClassVar
 import websockets
 from websockets.exceptions import WebSocketException
 
+from aura.data.candle_aggregation import CanonicalTradeTick
 from aura.data.cross_feed import QuoteObservation
 
 
@@ -63,12 +64,12 @@ def _iso8601(value: Any) -> datetime:
     return parsed.astimezone(UTC)
 
 
-def parse_coinbase_ticker(message: dict[str, Any], *, received_at: datetime) -> tuple[QuoteObservation, ...]:
-    """Parse Coinbase Advanced Trade public ticker messages.
-
-    Most Advanced Trade market-data channels are public. AURA accepts only data
-    whose provider timestamp is not later than the local receive timestamp.
-    """
+def parse_coinbase_ticker(
+    message: dict[str, Any],
+    *,
+    received_at: datetime,
+) -> tuple[QuoteObservation, ...]:
+    """Parse Coinbase Advanced Trade public ticker messages."""
 
     _aware(received_at, "received_at")
     if message.get("channel") != "ticker":
@@ -101,7 +102,47 @@ def parse_coinbase_ticker(message: dict[str, Any], *, received_at: datetime) -> 
     return tuple(quotes)
 
 
-def parse_bybit_ticker(message: dict[str, Any], *, received_at: datetime) -> tuple[QuoteObservation, ...]:
+def parse_coinbase_market_trades(
+    message: dict[str, Any],
+    *,
+    received_at: datetime,
+) -> tuple[CanonicalTradeTick, ...]:
+    """Normalize Coinbase public market-trade updates into AURA trade ticks."""
+
+    _aware(received_at, "received_at")
+    if message.get("channel") != "market_trades":
+        return ()
+    ticks: list[CanonicalTradeTick] = []
+    for event in message.get("events", []):
+        if not isinstance(event, dict):
+            continue
+        for trade in event.get("trades", []):
+            if not isinstance(trade, dict):
+                continue
+            symbol = str(trade.get("product_id") or "").strip().upper()
+            if not symbol:
+                continue
+            observed = _iso8601(trade.get("time"))
+            if observed > received_at:
+                continue
+            ticks.append(
+                CanonicalTradeTick(
+                    symbol=symbol,
+                    venue="COINBASE_PUBLIC",
+                    price=_positive(trade.get("price"), "Coinbase trade price"),
+                    quantity=_positive(trade.get("size"), "Coinbase trade size"),
+                    timestamp=observed,
+                )
+            )
+    ticks.sort(key=lambda item: (item.timestamp, item.symbol))
+    return tuple(ticks)
+
+
+def parse_bybit_ticker(
+    message: dict[str, Any],
+    *,
+    received_at: datetime,
+) -> tuple[QuoteObservation, ...]:
     """Parse Bybit v5 public ticker snapshots/deltas when a last price is present."""
 
     _aware(received_at, "received_at")
@@ -135,7 +176,43 @@ def parse_bybit_ticker(message: dict[str, Any], *, received_at: datetime) -> tup
     return tuple(quotes)
 
 
-def parse_okx_ticker(message: dict[str, Any], *, received_at: datetime) -> tuple[QuoteObservation, ...]:
+def parse_bybit_public_trades(
+    message: dict[str, Any],
+    *,
+    received_at: datetime,
+) -> tuple[CanonicalTradeTick, ...]:
+    """Normalize Bybit v5 publicTrade messages into AURA trade ticks."""
+
+    _aware(received_at, "received_at")
+    topic = str(message.get("topic") or "")
+    if not topic.startswith("publicTrade."):
+        return ()
+    ticks: list[CanonicalTradeTick] = []
+    for trade in message.get("data", []):
+        if not isinstance(trade, dict):
+            continue
+        symbol = str(trade.get("s") or topic.removeprefix("publicTrade.")).strip().upper()
+        observed = _millis(trade.get("T", message.get("ts")))
+        if not symbol or observed > received_at:
+            continue
+        ticks.append(
+            CanonicalTradeTick(
+                symbol=symbol,
+                venue="BYBIT_PUBLIC",
+                price=_positive(trade.get("p"), "Bybit trade price"),
+                quantity=_positive(trade.get("v"), "Bybit trade size"),
+                timestamp=observed,
+            )
+        )
+    ticks.sort(key=lambda item: (item.timestamp, item.symbol))
+    return tuple(ticks)
+
+
+def parse_okx_ticker(
+    message: dict[str, Any],
+    *,
+    received_at: datetime,
+) -> tuple[QuoteObservation, ...]:
     """Parse OKX v5 public ticker messages."""
 
     _aware(received_at, "received_at")
@@ -189,7 +266,13 @@ class _ReconnectingPublicTickerFeed:
                     yield quote
             except asyncio.CancelledError:
                 raise
-            except (OSError, TimeoutError, WebSocketException, PublicCryptoFeedError, json.JSONDecodeError):
+            except (
+                OSError,
+                TimeoutError,
+                WebSocketException,
+                PublicCryptoFeedError,
+                json.JSONDecodeError,
+            ):
                 if self._stopped:
                     return
                 await asyncio.sleep(backoff)
@@ -219,6 +302,62 @@ class CoinbasePublicTickerFeed(_ReconnectingPublicTickerFeed):
                 received_at = datetime.now(UTC)
                 for quote in parse_coinbase_ticker(raw, received_at=received_at):
                     yield quote
+
+
+class CoinbasePublicTradeFeed:
+    endpoint = "wss://advanced-trade-ws.coinbase.com"
+
+    def __init__(self, symbols: list[str] | tuple[str, ...]) -> None:
+        normalized = tuple(sorted({item.strip().upper() for item in symbols if item.strip()}))
+        if not normalized:
+            raise ValueError("at least one Coinbase symbol is required")
+        self.symbols = normalized
+        self._stopped = False
+
+    def stop(self) -> None:
+        self._stopped = True
+
+    async def stream(self) -> AsyncIterator[CanonicalTradeTick]:
+        backoff = 1.0
+        while not self._stopped:
+            try:
+                async with websockets.connect(
+                    self.endpoint,
+                    ping_interval=20,
+                    ping_timeout=20,
+                ) as ws:
+                    await ws.send(
+                        json.dumps(
+                            {
+                                "type": "subscribe",
+                                "product_ids": list(self.symbols),
+                                "channel": "market_trades",
+                            }
+                        )
+                    )
+                    await ws.send(json.dumps({"type": "subscribe", "channel": "heartbeats"}))
+                    while not self._stopped:
+                        message = json.loads(await ws.recv())
+                        received_at = datetime.now(UTC)
+                        for tick in parse_coinbase_market_trades(
+                            message,
+                            received_at=received_at,
+                        ):
+                            backoff = 1.0
+                            yield tick
+            except asyncio.CancelledError:
+                raise
+            except (
+                OSError,
+                TimeoutError,
+                WebSocketException,
+                PublicCryptoFeedError,
+                json.JSONDecodeError,
+            ):
+                if self._stopped:
+                    return
+                await asyncio.sleep(backoff)
+                backoff = min(backoff * 2, 30.0)
 
 
 class BybitPublicTickerFeed(_ReconnectingPublicTickerFeed):
@@ -252,6 +391,70 @@ class BybitPublicTickerFeed(_ReconnectingPublicTickerFeed):
                 received_at = datetime.now(UTC)
                 for quote in parse_bybit_ticker(raw, received_at=received_at):
                     yield quote
+
+
+class BybitPublicTradeFeed:
+    _endpoints = BybitPublicTickerFeed._endpoints
+
+    def __init__(self, symbols: list[str] | tuple[str, ...], *, market: str = "spot") -> None:
+        normalized = tuple(sorted({item.strip().upper() for item in symbols if item.strip()}))
+        if not normalized:
+            raise ValueError("at least one Bybit symbol is required")
+        market = market.strip().lower()
+        if market not in self._endpoints:
+            raise ValueError(f"unsupported Bybit public market: {market}")
+        self.symbols = normalized
+        self.market = market
+        self.endpoint = self._endpoints[market]
+        self._stopped = False
+
+    def stop(self) -> None:
+        self._stopped = True
+
+    async def stream(self) -> AsyncIterator[CanonicalTradeTick]:
+        backoff = 1.0
+        while not self._stopped:
+            try:
+                async with websockets.connect(
+                    self.endpoint,
+                    ping_interval=20,
+                    ping_timeout=20,
+                ) as ws:
+                    await ws.send(
+                        json.dumps(
+                            {
+                                "op": "subscribe",
+                                "args": [f"publicTrade.{symbol}" for symbol in self.symbols],
+                            }
+                        )
+                    )
+                    while not self._stopped:
+                        try:
+                            payload = await asyncio.wait_for(ws.recv(), timeout=20.0)
+                        except TimeoutError:
+                            await ws.send(json.dumps({"op": "ping"}))
+                            continue
+                        message = json.loads(payload)
+                        received_at = datetime.now(UTC)
+                        for tick in parse_bybit_public_trades(
+                            message,
+                            received_at=received_at,
+                        ):
+                            backoff = 1.0
+                            yield tick
+            except asyncio.CancelledError:
+                raise
+            except (
+                OSError,
+                TimeoutError,
+                WebSocketException,
+                PublicCryptoFeedError,
+                json.JSONDecodeError,
+            ):
+                if self._stopped:
+                    return
+                await asyncio.sleep(backoff)
+                backoff = min(backoff * 2, 30.0)
 
 
 class OkxPublicTickerFeed(_ReconnectingPublicTickerFeed):
