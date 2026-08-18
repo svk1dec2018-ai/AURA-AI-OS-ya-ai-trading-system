@@ -1,0 +1,158 @@
+PY311_INSTALL=0
+PY311_RUFF=1
+PY311_PYTEST=0
+=== PY311 RUFF ===
+I001 [*] Import block is un-sorted or un-formatted
+  --> aura/connectors/public_no_key.py:1:1
+   |
+ 1 | / from __future__ import annotations
+ 2 | |
+ 3 | | from aura.connectors.catalog import (
+ 4 | |     Capability,
+ 5 | |     ConnectorCatalog,
+ 6 | |     ConnectorDescriptor,
+ 7 | |     ConnectorKind,
+ 8 | |     ConnectorMaturity,
+ 9 | |     CostTier,
+10 | | )
+   | |_^
+help: Organize imports
+   |
+11 |
+   -
+12 | PUBLIC_NO_KEY_CONNECTOR_CATALOG = ConnectorCatalog(
+   |
+
+PYI041 [*] Use `float` instead of `int | float`
+  --> aura/research/strategy_mutation.py:84:12
+   |
+82 | def _mutate_value(
+83 |     spec: GeneSpec,
+84 |     value: int | float | str,
+   |            ^^^^^^^^^^^^^^^^^
+85 |     rng: random.Random,
+86 | ) -> int | float | str:
+   |
+help: Remove redundant type
+   |
+83 |     spec: GeneSpec,
+   -     value: int | float | str,
+84 +     value: float | str,
+85 |     rng: random.Random,
+   |
+
+RUF046 Value being cast to `int` is already an integer
+  --> aura/research/strategy_mutation.py:95:16
+   |
+93 |     mutated = min(max(mutated, spec.low), spec.high)
+94 |     if spec.kind == GeneKind.INTEGER:
+95 |         return int(round(mutated))
+   |                ^^^^^^^^^^^^^^^^^^^
+96 |     return _quantize(mutated, spec)
+   |
+help: Remove unnecessary `int` call
+
+PYI041 [*] Use `float` instead of `int | float`
+   --> aura/research/strategy_mutation.py:101:12
+    |
+ 99 | def _force_alternative(
+100 |     spec: GeneSpec,
+101 |     value: int | float | str,
+    |            ^^^^^^^^^^^^^^^^^
+102 |     rng: random.Random,
+103 | ) -> int | float | str:
+    |
+help: Remove redundant type
+    |
+100 |     spec: GeneSpec,
+    -     value: int | float | str,
+101 +     value: float | str,
+102 |     rng: random.Random,
+    |
+
+Found 4 errors.
+[*] 3 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).
+=== PY311 PYTEST ===
+........................................................................ [ 29%]
+........................................................................ [ 58%]
+........................................................................ [ 87%]
+...............................                                          [100%]
+PY312_INSTALL=0
+PY312_RUFF=1
+PY312_PYTEST=0
+=== PY312 RUFF ===
+I001 [*] Import block is un-sorted or un-formatted
+  --> aura/connectors/public_no_key.py:1:1
+   |
+ 1 | / from __future__ import annotations
+ 2 | |
+ 3 | | from aura.connectors.catalog import (
+ 4 | |     Capability,
+ 5 | |     ConnectorCatalog,
+ 6 | |     ConnectorDescriptor,
+ 7 | |     ConnectorKind,
+ 8 | |     ConnectorMaturity,
+ 9 | |     CostTier,
+10 | | )
+   | |_^
+help: Organize imports
+   |
+11 |
+   -
+12 | PUBLIC_NO_KEY_CONNECTOR_CATALOG = ConnectorCatalog(
+   |
+
+PYI041 [*] Use `float` instead of `int | float`
+  --> aura/research/strategy_mutation.py:84:12
+   |
+82 | def _mutate_value(
+83 |     spec: GeneSpec,
+84 |     value: int | float | str,
+   |            ^^^^^^^^^^^^^^^^^
+85 |     rng: random.Random,
+86 | ) -> int | float | str:
+   |
+help: Remove redundant type
+   |
+83 |     spec: GeneSpec,
+   -     value: int | float | str,
+84 +     value: float | str,
+85 |     rng: random.Random,
+   |
+
+RUF046 Value being cast to `int` is already an integer
+  --> aura/research/strategy_mutation.py:95:16
+   |
+93 |     mutated = min(max(mutated, spec.low), spec.high)
+94 |     if spec.kind == GeneKind.INTEGER:
+95 |         return int(round(mutated))
+   |                ^^^^^^^^^^^^^^^^^^^
+96 |     return _quantize(mutated, spec)
+   |
+help: Remove unnecessary `int` call
+
+PYI041 [*] Use `float` instead of `int | float`
+   --> aura/research/strategy_mutation.py:101:12
+    |
+ 99 | def _force_alternative(
+100 |     spec: GeneSpec,
+101 |     value: int | float | str,
+    |            ^^^^^^^^^^^^^^^^^
+102 |     rng: random.Random,
+103 | ) -> int | float | str:
+    |
+help: Remove redundant type
+    |
+100 |     spec: GeneSpec,
+    -     value: int | float | str,
+101 +     value: float | str,
+102 |     rng: random.Random,
+    |
+
+Found 4 errors.
+[*] 3 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).
+=== PY312 PYTEST ===
+........................................................................ [ 29%]
+........................................................................ [ 58%]
+........................................................................ [ 87%]
+...............................                                          [100%]
