@@ -77,6 +77,7 @@ class BacktestEngine:
         last_date = candles[0].open_time.date()
         equity_curve: list[Decimal] = [self.ledger.starting_cash]
         period_returns: list[Decimal] = []
+        position_entry_index: int | None = None
 
         for index, candle in enumerate(candles):
             if candle.open_time.date() != last_date:
@@ -85,6 +86,10 @@ class BacktestEngine:
                 last_date = candle.open_time.date()
 
             if pending is not None:
+                prior_position = self.ledger.positions.get(pending.symbol)
+                old_qty = (
+                    prior_position.quantity if prior_position is not None else Decimal(0)
+                )
                 state = OrderState(pending)
                 state.submit()
                 fill_price = self._apply_slippage(candle.open, pending.side)
@@ -103,6 +108,12 @@ class BacktestEngine:
                 )
                 state.apply_fill(fill)
                 self.ledger.apply_fill(fill)
+                position = self.ledger.positions.get(pending.symbol)
+                new_qty = position.quantity if position is not None else Decimal(0)
+                if new_qty == 0:
+                    position_entry_index = None
+                elif old_qty == 0 or (old_qty > 0 > new_qty) or (old_qty < 0 < new_qty):
+                    position_entry_index = index
                 fills += 1
                 pending = None
 
@@ -122,7 +133,17 @@ class BacktestEngine:
                 continue
 
             position = self.ledger.positions.get(candle.symbol)
-            current_position_quantity = position.quantity if position is not None else Decimal(0)
+            current_position_quantity = (
+                position.quantity if position is not None else Decimal(0)
+            )
+            position_average_price = (
+                position.average_price if position is not None else Decimal(0)
+            )
+            bars_in_position = (
+                index - position_entry_index + 1
+                if current_position_quantity != 0 and position_entry_index is not None
+                else 0
+            )
             result: DecisionResult | None = self.pipeline.evaluate_closed_candle(
                 history=history,
                 portfolio=snapshot,
@@ -130,6 +151,8 @@ class BacktestEngine:
                 venue=candle.venue,
                 requested_quantity=self.requested_quantity,
                 current_position_quantity=current_position_quantity,
+                position_average_price=position_average_price,
+                bars_in_position=bars_in_position,
             )
             if result is None:
                 continue
