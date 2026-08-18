@@ -4,7 +4,7 @@ import math
 import random
 from dataclasses import dataclass
 
-from aura.evolution.brain_policy import AuraBrainPolicy
+from aura.evolution.brain_policy import BRAIN_POLICY_GENE_SPACE, AuraBrainPolicy
 from aura.evolution.brain_replay import BrainReplaySample, policy_allows
 from aura.evolution.core import StrategyGenome
 
@@ -187,10 +187,17 @@ def _mutate(
         "max_execution_spread_bps": 15.0,
         "max_execution_slippage_bps": 8.0,
     }
+    bounds = {
+        spec.name: (float(spec.low), float(spec.high))
+        for spec in BRAIN_POLICY_GENE_SPACE
+        if spec.low is not None and spec.high is not None
+    }
     fields = list(scales)
     mutations = rng.randint(2 if exploratory else 1, 4 if exploratory else 2)
     for name in rng.sample(fields, k=min(mutations, len(fields))):
-        data[name] = float(data[name]) + rng.gauss(0.0, scales[name])
+        mutated = float(data[name]) + rng.gauss(0.0, scales[name])
+        low, high = bounds[name]
+        data[name] = min(high, max(low, mutated))
     return AuraBrainPolicy(**data)
 
 
