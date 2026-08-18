@@ -1,0 +1,51 @@
+name: final-command-validation
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Validate 3.11
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/i311 2>&1; I311=$?
+          ruff check aura tests examples >/tmp/r311 2>&1; R311=$?
+          pytest -q >/tmp/p311 2>&1; P311=$?
+          set -e
+          printf 'PY311_INSTALL=%s\nPY311_RUFF=%s\nPY311_PYTEST=%s\n' "$I311" "$R311" "$P311" > final_command_validation.txt
+          cat /tmp/r311 >> final_command_validation.txt
+          tail -n 80 /tmp/p311 >> final_command_validation.txt
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate 3.12
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/i312 2>&1; I312=$?
+          ruff check aura tests examples >/tmp/r312 2>&1; R312=$?
+          pytest -q >/tmp/p312 2>&1; P312=$?
+          set -e
+          printf '\nPY312_INSTALL=%s\nPY312_RUFF=%s\nPY312_PYTEST=%s\n' "$I312" "$R312" "$P312" >> final_command_validation.txt
+          cat /tmp/r312 >> final_command_validation.txt
+          tail -n 80 /tmp/p312 >> final_command_validation.txt
+      - name: Commit result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add final_command_validation.txt
+          git commit -m "record final command-center validation"
+          git push
