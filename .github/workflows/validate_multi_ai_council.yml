@@ -1,0 +1,51 @@
+name: validate-multi-ai-council
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Validate
+        shell: bash
+        run: |
+          set +e
+          ruff check --fix aura tests examples >/tmp/fix 2>&1
+          FIX=$?
+          ruff check aura tests examples >/tmp/ruff 2>&1
+          RUFF=$?
+          pytest -q >/tmp/pytest 2>&1
+          PYTEST=$?
+          set -e
+          {
+            echo "RUFF_FIX=${FIX}"
+            echo "RUFF=${RUFF}"
+            echo "PYTEST=${PYTEST}"
+            echo "=== RUFF ==="
+            cat /tmp/ruff
+            echo "=== PYTEST ==="
+            tail -n 180 /tmp/pytest
+          } > multi_ai_validation.txt
+      - name: Commit safe fixes and result
+        shell: bash
+        run: |
+          rm .github/workflows/validate_multi_ai_council.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests examples multi_ai_validation.txt .github/workflows/validate_multi_ai_council.yml
+          git commit -m "validate multi AI council"
+          git push
