@@ -4,7 +4,6 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from aura.agents.team import build_default_agent_team
 from aura.domain.models import SignalIntent
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
@@ -17,6 +16,7 @@ from aura.evolution.brain_policy import (
     BrainPolicyGate,
     build_brain_policy_team,
 )
+from aura.evolution.brain_replay import SampleOrigin
 from aura.evolution.shadow_outcomes import (
     ShadowDecisionOutcomeRecorder,
     ShadowOutcomePolicy,
@@ -102,7 +102,7 @@ class MT5SelfEvolvingPaperDaemon:
         self.recorder = recorder
         self.champion_manager = champion_manager
         self.research_every_new_samples = research_every_new_samples
-        self._samples_at_last_research = len(replay_store.read_all())
+        self._samples_at_last_research = len(self._live_samples())
         self.brain_state_dir = base.config.state_dir / "brain"
         self.brain_state_dir.mkdir(parents=True, exist_ok=True)
         self._install_policy(initial_policy)
@@ -160,8 +160,15 @@ class MT5SelfEvolvingPaperDaemon:
                 self._write_brain_status("stopped")
         return self.base.counters
 
+    def _live_samples(self):
+        return tuple(
+            sample
+            for sample in self.replay_store.read_all()
+            if sample.origin == SampleOrigin.LIVE_BROKER
+        )
+
     def _maybe_research(self) -> None:
-        samples = self.replay_store.read_all()
+        samples = self._live_samples()
         new_samples = len(samples) - self._samples_at_last_research
         if new_samples < self.research_every_new_samples:
             return
@@ -201,6 +208,7 @@ class MT5SelfEvolvingPaperDaemon:
             "sealed_holdout": _metric_payload(result.sealed_holdout),
             "holdout_passed": result.holdout_passed,
             "samples_used": result.samples_used,
+            "sample_origin": SampleOrigin.LIVE_BROKER.value,
             "paper_validated": False,
             "live_approved": False,
         }
@@ -209,12 +217,17 @@ class MT5SelfEvolvingPaperDaemon:
     def _write_brain_status(self, state: str) -> None:
         challenger = self.champion_manager.challenger
         metrics = self.champion_manager.challenger_metrics()
+        all_samples = self.replay_store.read_all()
+        live_samples = tuple(
+            sample for sample in all_samples if sample.origin == SampleOrigin.LIVE_BROKER
+        )
         payload = {
             "updated_at": datetime.now(UTC).isoformat(),
             "state": state,
             "current_paper_policy": self.current_policy.model_dump(),
             "current_paper_policy_genome_id": self.current_policy.to_genome().genome_id,
-            "replay_samples": len(self.replay_store.read_all()),
+            "replay_samples": len(all_samples),
+            "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
             "forward_challenger": (
                 {
@@ -226,6 +239,7 @@ class MT5SelfEvolvingPaperDaemon:
                 if challenger is not None
                 else None
             ),
+            "validation_source_required": SampleOrigin.LIVE_BROKER.value,
             "real_money_enabled": False,
             "live_approved": False,
         }
@@ -244,14 +258,24 @@ async def build_mt5_self_evolving_paper_daemon(
     base = await build_mt5_all_market_paper_daemon(config)
     brain_dir = base.config.state_dir / "brain"
     replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
-    recorder = ShadowDecisionOutcomeRecorder(replay_store, policy=shadow_policy)
+    recorder = ShadowDecisionOutcomeRecorder(
+        replay_store,
+        policy=shadow_policy,
+        origin=SampleOrigin.LIVE_BROKER,
+    )
     manager = BrainPaperChampionManager(
         brain_dir,
         promotion_policy=promotion_policy,
     )
+    restored_champion = manager.paper_champion
+    effective_initial_policy = (
+        AuraBrainPolicy.from_genome(restored_champion)
+        if restored_champion is not None
+        else initial_policy or AuraBrainPolicy()
+    )
     return MT5SelfEvolvingPaperDaemon(
         base,
-        initial_policy=initial_policy or AuraBrainPolicy(),
+        initial_policy=effective_initial_policy,
         optimizer=BrainResearchOptimizer(optimizer_config),
         replay_store=replay_store,
         recorder=recorder,
