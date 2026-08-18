@@ -2,10 +2,11 @@ param(
     [string[]]$Models = @(),
     [ValidateSet("coinbase", "bybit")]
     [string]$Provider = "coinbase",
-    [string[]]$Symbols = @("BTC-USD"),
+    [string[]]$Symbols = @(),
     [string]$Timeframe = "5s",
     [ValidateRange(1, 3)]
     [int]$OpinionsPerRole = 1,
+    [switch]$NoVoice,
     [switch]$SkipDependencyInstall
 )
 
@@ -24,8 +25,16 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Split-Path -Parent $scriptDir
 Set-Location $repoRoot
 
-Write-Host "AURA AI OS - One Click Ollama + Multi-AI Launcher" -ForegroundColor Green
-Write-Host "Mode: PUBLIC LIVE DATA + SHADOW/AI RESEARCH. Broker orders and real money remain disabled." -ForegroundColor Yellow
+if ($Symbols.Count -eq 0) {
+    if ($Provider -eq "coinbase") {
+        $Symbols = @("BTC-USD", "ETH-USD")
+    } else {
+        $Symbols = @("BTCUSDT", "ETHUSDT")
+    }
+}
+
+Write-Host "AURA AI OS - One Click Autonomous Research Launcher" -ForegroundColor Green
+Write-Host "Mode: PUBLIC LIVE DATA + MULTI-AI + SHADOW TRAINING. Broker orders and real money remain disabled." -ForegroundColor Yellow
 
 Write-Step "Checking Ollama"
 $ollama = Get-Command ollama -ErrorAction SilentlyContinue
@@ -128,12 +137,12 @@ if ($LASTEXITCODE -ne 0) {
     Fail "Production preflight failed. AURA was not started."
 }
 
-Write-Step "Starting AURA public live Multi-AI Council"
+Write-Step "Starting AURA public autonomy and forward shadow training"
 Write-Host "Provider: $Provider | Symbols: $($Symbols -join ', ') | Timeframe: $Timeframe" -ForegroundColor Green
 Write-Host "Press Ctrl+C when you want to stop the local session." -ForegroundColor DarkGray
 
 $runArgs = @(
-    "examples/run_free_public_ai_council.py",
+    "examples/run_free_public_autonomy.py",
     "--provider", $Provider,
     "--symbols"
 ) + $Symbols + @(
@@ -142,6 +151,10 @@ $runArgs = @(
     "--analyze-every-bars", "5",
     "--max-inflight-ai-decisions", "1"
 )
+
+if (-not $NoVoice) {
+    $runArgs += "--voice"
+}
 
 & $venvPython @runArgs
 exit $LASTEXITCODE

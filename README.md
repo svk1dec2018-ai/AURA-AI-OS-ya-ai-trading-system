@@ -199,6 +199,22 @@ export AURA_AI_OPINIONS_PER_ROLE="1"
 python examples/run_free_public_ai_council.py
 ```
 
+Run the complete no-key autonomy stack (Multi-AI council + historical seed + live
+intelligence + deterministic forecasts + missed-opportunity audit + forward-only
+shadow strategy training):
+
+```bash
+python examples/run_free_public_autonomy.py --voice
+```
+
+On Windows, `START_AURA_OLLAMA.cmd` performs the preflight and starts this combined
+runtime. It uses Coinbase/Bybit public market endpoints, GDELT and official feeds;
+no third-party key is embedded. OS-native voice alerts are local and optional.
+
+Authorized books and video transcripts can be added through
+`knowledge/public_corpus/manifest.jsonl`; see that directory's README. AURA never
+downloads copyrighted books/transcripts automatically.
+
 PowerShell uses `$env:NAME="value"` instead of `export`.
 
 ## MT5 / Exness demo + internal paper

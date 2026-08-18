@@ -243,6 +243,7 @@ def _market_context(context: AgentContext, *, max_candles: int) -> dict[str, Any
         "cross_market",
         "execution_quality",
         "live_intelligence",
+        "retrieved_knowledge",
         "underlying_symbol",
         "runtime",
         "venue",

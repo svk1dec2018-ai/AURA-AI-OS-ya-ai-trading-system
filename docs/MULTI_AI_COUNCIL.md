@@ -31,6 +31,13 @@ AURA's current concrete AI adapter targets the local Ollama `/api/chat` interfac
 
 No broker credentials are needed to run the local AI council.
 
+The combined public autonomy runtime also seeds point-in-time candles from the
+official Coinbase Exchange or Bybit public REST endpoints, polls failure-isolated
+official/GDELT intelligence, creates a conservative two-baseline probabilistic
+forecast, audits missed opportunities, and feeds resolved labels into bounded
+online measurements. These measurements can queue research; they cannot mutate or
+deploy a live strategy.
+
 ## Configure one or more local models
 
 After Ollama is installed and the desired local models have been pulled, configure AURA with environment variables.
@@ -88,6 +95,24 @@ Only bounded point-in-time context is sent to the local model:
 - timestamp-safe live intelligence when available.
 
 Credentials, broker secrets and arbitrary runtime objects are not part of the AI prompt.
+
+License-gated local knowledge chunks may also be supplied through
+`knowledge/public_corpus/manifest.jsonl`. Only `.md`/`.txt` sources explicitly marked
+public-domain, open-licensed, official-open or user-provided are eligible. Every
+retrieved chunk carries source, timestamp, trust score and SHA-256 content hash.
+
+## One-click autonomous research
+
+On Windows run `START_AURA_OLLAMA.cmd`. It starts both the council and the public
+forward-shadow strategy lab, with optional local SAPI voice alerts. Direct Python:
+
+```powershell
+python examples/run_free_public_autonomy.py --provider coinbase `
+  --symbols BTC-USD ETH-USD --timeframe 5s --voice
+```
+
+Runtime audit state is written below `runtime/free_public_autonomy/`. Broker orders,
+real-money execution and automatic research promotion remain disabled.
 
 ## AI mandates
 
