@@ -1,0 +1,152 @@
+name: final-reliability-validation
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Wire reliability into live learning daemons
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise SystemExit(f"patch guard failed for {path}: {old[:80]!r}")
+              file.write_text(text.replace(old, new), encoding="utf-8")
+
+          mt5 = "aura/runtime/mt5_learning_daemon.py"
+          replace_once(
+              mt5,
+              "from pathlib import Path\n\nfrom aura.data.intelligence_service",
+              "from pathlib import Path\n\nfrom aura.agents.reliability import AgentReliabilityTracker\nfrom aura.data.intelligence_service",
+          )
+          replace_once(
+              mt5,
+              "        replay_store: BrainReplayStore,\n        recorder: ShadowDecisionOutcomeRecorder,",
+              "        replay_store: BrainReplayStore,\n        reliability_tracker: AgentReliabilityTracker,\n        recorder: ShadowDecisionOutcomeRecorder,",
+          )
+          replace_once(
+              mt5,
+              "        self.replay_store = replay_store\n        self.recorder = recorder",
+              "        self.replay_store = replay_store\n        self.reliability_tracker = reliability_tracker\n        self.recorder = recorder",
+          )
+          replace_once(
+              mt5,
+              "        team = build_brain_policy_team(firewall, policy)\n",
+              "        team = build_brain_policy_team(\n            firewall,\n            policy,\n            reliability_tracker=self.reliability_tracker,\n        )\n",
+          )
+          replace_once(
+              mt5,
+              '            "pending_shadow_outcomes": self.recorder.pending_count,\n',
+              '            "pending_shadow_outcomes": self.recorder.pending_count,\n            "agent_reliability_observations": self.reliability_tracker.observation_count,\n',
+          )
+          replace_once(
+              mt5,
+              '    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")\n    recorder = ShadowDecisionOutcomeRecorder(\n',
+              '    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")\n    reliability_tracker = AgentReliabilityTracker(\n        brain_dir / "agent_reliability.jsonl"\n    )\n    recorder = ShadowDecisionOutcomeRecorder(\n',
+          )
+          replace_once(
+              mt5,
+              "        origin=SampleOrigin.LIVE_BROKER,\n    )\n    manager = BrainPaperChampionManager(",
+              "        origin=SampleOrigin.LIVE_BROKER,\n        reliability_tracker=reliability_tracker,\n    )\n    manager = BrainPaperChampionManager(",
+          )
+          replace_once(
+              mt5,
+              "        replay_store=replay_store,\n        recorder=recorder,",
+              "        replay_store=replay_store,\n        reliability_tracker=reliability_tracker,\n        recorder=recorder,",
+          )
+
+          dhan = "aura/runtime/dhan_learning_daemon.py"
+          replace_once(
+              dhan,
+              "from aura.agents.models import AgentRole\nfrom aura.agents.risk_policy",
+              "from aura.agents.models import AgentRole\nfrom aura.agents.reliability import AgentReliabilityTracker\nfrom aura.agents.risk_policy",
+          )
+          replace_once(
+              dhan,
+              "        replay_store: BrainReplayStore,\n        recorder: ShadowDecisionOutcomeRecorder,",
+              "        replay_store: BrainReplayStore,\n        reliability_tracker: AgentReliabilityTracker,\n        recorder: ShadowDecisionOutcomeRecorder,",
+          )
+          replace_once(
+              dhan,
+              "        self.replay_store = replay_store\n        self.recorder = recorder",
+              "        self.replay_store = replay_store\n        self.reliability_tracker = reliability_tracker\n        self.recorder = recorder",
+          )
+          replace_once(
+              dhan,
+              "            min_top_of_book_notional=1.0,\n        )\n        raw_scanner = MultiMarketIntelligenceScanner(",
+              "            min_top_of_book_notional=1.0,\n            reliability_tracker=self.reliability_tracker,\n        )\n        raw_scanner = MultiMarketIntelligenceScanner(",
+          )
+          replace_once(
+              dhan,
+              '                "live_samples": len(self._live_samples()),\n',
+              '                "live_samples": len(self._live_samples()),\n                "agent_reliability_observations": self.reliability_tracker.observation_count,\n',
+          )
+          replace_once(
+              dhan,
+              '    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")\n    champion_manager = BrainPaperChampionManager(\n',
+              '    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")\n    reliability_tracker = AgentReliabilityTracker(\n        brain_dir / "agent_reliability.jsonl"\n    )\n    champion_manager = BrainPaperChampionManager(\n',
+          )
+          replace_once(
+              dhan,
+              "        min_top_of_book_notional=1.0,\n    )\n    scanner = LearningBrainPolicyScanner(",
+              "        min_top_of_book_notional=1.0,\n        reliability_tracker=reliability_tracker,\n    )\n    scanner = LearningBrainPolicyScanner(",
+          )
+          replace_once(
+              dhan,
+              "        origin=SampleOrigin.LIVE_BROKER,\n    )\n    auditor = MissedOpportunityAuditor(",
+              "        origin=SampleOrigin.LIVE_BROKER,\n        reliability_tracker=reliability_tracker,\n    )\n    auditor = MissedOpportunityAuditor(",
+          )
+          replace_once(
+              dhan,
+              "        replay_store=replay_store,\n        recorder=recorder,",
+              "        replay_store=replay_store,\n        reliability_tracker=reliability_tracker,\n        recorder=recorder,",
+          )
+      - name: Validate full repository
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install 2>&1
+          INSTALL=$?
+          ruff check --fix aura tests examples >/tmp/fix 2>&1
+          FIX=$?
+          ruff check aura tests examples >/tmp/ruff 2>&1
+          RUFF=$?
+          pytest -q >/tmp/pytest 2>&1
+          PYTEST=$?
+          set -e
+          {
+            echo "INSTALL=${INSTALL}"
+            echo "RUFF_FIX=${FIX}"
+            echo "RUFF=${RUFF}"
+            echo "PYTEST=${PYTEST}"
+            echo "=== RUFF ==="
+            cat /tmp/ruff
+            echo "=== PYTEST ==="
+            tail -n 220 /tmp/pytest
+          } > contextual_reliability_validation.txt
+      - name: Commit result and cleanup
+        shell: bash
+        run: |
+          rm .github/workflows/final_reliability_validation.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests examples contextual_reliability_validation.txt .github/workflows/final_reliability_validation.yml
+          git commit -m "wire contextual agent reliability into live learning"
+          git push
