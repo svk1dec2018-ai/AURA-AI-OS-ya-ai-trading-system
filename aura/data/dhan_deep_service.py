@@ -133,15 +133,12 @@ class DhanDeepMetadataService:
             self._stop.set()
 
     async def _run_source(self, source: DhanDeepFullSource) -> None:
-        try:
-            async for tick in source.ticks():
-                metadata = source.metadata_for(tick.symbol)
-                if metadata:
-                    self._metadata[tick.symbol] = metadata
-                completed = self._aggregator.on_tick(tick)
-                await self._enqueue_grouped(completed)
-        except asyncio.CancelledError:
-            raise
+        async for tick in source.ticks():
+            metadata = source.metadata_for(tick.symbol)
+            if metadata:
+                self._metadata[tick.symbol] = metadata
+            completed = self._aggregator.on_tick(tick)
+            await self._enqueue_grouped(completed)
 
     async def _flush_completed(self, timestamp: datetime) -> None:
         await self._enqueue_grouped(self._aggregator.flush_until(timestamp))
