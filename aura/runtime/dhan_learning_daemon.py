@@ -7,11 +7,9 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
-from aura.agents.advisory_specialists import ExecutionQualitySpecialist
 from aura.agents.audit import AgentAuditJournal
 from aura.agents.models import AgentRole
 from aura.agents.risk_policy import AgentRiskPolicy
-from aura.agents.team import build_default_agent_team
 from aura.core.pipeline import DecisionPipeline
 from aura.data.dhan_deep_service import DhanDeepMetadataService
 from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles
@@ -21,6 +19,7 @@ from aura.data.dhan_live_ticker import (
     DhanLiveCredentials,
     DhanLiveTickerSource,
     build_ticker_subscriptions,
+    load_dhan_live_credentials_from_env,
 )
 from aura.data.dhan_universe_planner import DhanUniversePlanner, DhanUniversePolicy
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
@@ -85,7 +84,7 @@ class DhanSelfEvolvingPaperConfig:
             raise ValueError("starting_cash must be positive")
         if not 1 <= self.broad_stream_cap <= 5000:
             raise ValueError("broad_stream_cap must be between 1 and 5000")
-        if self.deep_top_k <= 0 or self.deep_top_k > self.broad_stream_cap:
+        if not 1 <= self.deep_top_k <= self.broad_stream_cap:
             raise ValueError("deep_top_k must be within the broad stream cap")
         if not self.timeframes or not self.decision_timeframes:
             raise ValueError("Dhan daemon requires timeframes and decision timeframes")
@@ -113,7 +112,7 @@ class DhanPaperCounters:
 
 
 class DhanSelfEvolvingPaperDaemon:
-    """AURA Indian live-data scanner with internal-paper execution and evolution."""
+    """Live Indian market data -> deep AURA desk -> internal paper -> evolution."""
 
     def __init__(
         self,
@@ -126,6 +125,7 @@ class DhanSelfEvolvingPaperDaemon:
         history_client: DhanIntradayHistoryClient,
         instrument_by_symbol: dict[str, CanonicalInstrument],
         instrument_type_by_symbol: dict[str, str],
+        agent_risk_policy: AgentRiskPolicy,
         optimizer: BrainResearchOptimizer,
         replay_store: BrainReplayStore,
         recorder: ShadowDecisionOutcomeRecorder,
@@ -134,6 +134,8 @@ class DhanSelfEvolvingPaperDaemon:
         current_policy: AuraBrainPolicy,
         research_every_new_samples: int,
     ) -> None:
+        if research_every_new_samples <= 0:
+            raise ValueError("research_every_new_samples must be positive")
         self.config = config
         self.broad_source = broad_source
         self.deep_service = deep_service
@@ -142,6 +144,7 @@ class DhanSelfEvolvingPaperDaemon:
         self.history_client = history_client
         self.instrument_by_symbol = instrument_by_symbol
         self.instrument_type_by_symbol = instrument_type_by_symbol
+        self.agent_risk_policy = agent_risk_policy
         self.optimizer = optimizer
         self.replay_store = replay_store
         self.recorder = recorder
@@ -169,25 +172,13 @@ class DhanSelfEvolvingPaperDaemon:
         self._write_status(None)
         try:
             async for raw_batch in self.deep_service.batches():
-                if not raw_batch:
-                    continue
-                active = set(self.deep_service.active_symbols)
-                open_positions = {
-                    symbol
-                    for symbol, position in self.coordinator.ledger.positions.items()
-                    if position.quantity != 0
-                }
-                batch = tuple(
-                    candle
-                    for candle in raw_batch
-                    if candle.symbol in active or candle.symbol in open_positions
-                )
+                if self._stop.is_set():
+                    break
+                batch = self._eligible_deep_batch(raw_batch)
                 if not batch:
                     continue
-
                 self.opportunity_auditor.on_closed_candles(batch)
-                resolved = self.recorder.on_closed_candles(batch)
-                for sample in resolved:
+                for sample in self.recorder.on_closed_candles(batch):
                     self.champion_manager.observe(sample)
                 if self.champion_manager.try_promote():
                     champion = self.champion_manager.paper_champion
@@ -212,11 +203,7 @@ class DhanSelfEvolvingPaperDaemon:
                     self.counters.reconciliations += 1
                 self._maybe_research()
                 self._write_status(step)
-
-                if (
-                    max_deep_batches is not None
-                    and self.counters.deep_batches >= max_deep_batches
-                ):
+                if max_deep_batches and self.counters.deep_batches >= max_deep_batches:
                     break
         finally:
             self._stop.set()
@@ -233,29 +220,38 @@ class DhanSelfEvolvingPaperDaemon:
                 self._write_status(None)
         return self.counters
 
+    def _eligible_deep_batch(
+        self,
+        batch: tuple,
+    ) -> tuple:
+        active = set(self.deep_service.active_symbols)
+        active.update(
+            symbol
+            for symbol, position in self.coordinator.ledger.positions.items()
+            if position.quantity != 0
+        )
+        return tuple(candle for candle in batch if candle.symbol in active)
+
     async def _radar_loop(self) -> None:
-        try:
-            async for batch in self.broad_source.batches():
-                if self._stop.is_set():
-                    return
-                one_minute = tuple(candle for candle in batch if candle.timeframe == "1m")
-                if not one_minute:
-                    continue
-                open_positions = {
-                    symbol
-                    for symbol, position in self.coordinator.ledger.positions.items()
-                    if position.quantity != 0
-                }
-                self.radar.set_priority_symbols(open_positions)
-                selection = self.radar.observe(one_minute)
-                self.counters.radar_batches += 1
-                requested = selection.selected_tradable_symbols
-                await self._seed_requested_symbols(requested)
-                ready = tuple(symbol for symbol in requested if symbol in self._seeded_symbols)
-                await self.deep_service.update_symbols(ready)
-                self._write_status(None)
-        except asyncio.CancelledError:
-            raise
+        async for batch in self.broad_source.batches():
+            if self._stop.is_set():
+                return
+            one_minute = tuple(candle for candle in batch if candle.timeframe == "1m")
+            if not one_minute:
+                continue
+            open_positions = {
+                symbol
+                for symbol, position in self.coordinator.ledger.positions.items()
+                if position.quantity != 0
+            }
+            self.radar.set_priority_symbols(open_positions)
+            selection = self.radar.observe(one_minute)
+            self.counters.radar_batches += 1
+            requested = selection.selected_tradable_symbols
+            await self._seed_requested_symbols(requested)
+            ready = tuple(symbol for symbol in requested if symbol in self._seeded_symbols)
+            await self.deep_service.update_symbols(ready)
+            self._write_status(None)
 
     async def _seed_requested_symbols(self, symbols: tuple[str, ...]) -> None:
         now = datetime.now(UTC)
@@ -283,10 +279,7 @@ class DhanSelfEvolvingPaperDaemon:
             self._seed_retry_after.pop(symbol, None)
             self.counters.history_seeded_symbols += 1
 
-    async def _fetch_seed(
-        self,
-        symbol: str,
-    ) -> dict[tuple[str, str], tuple]:
+    async def _fetch_seed(self, symbol: str) -> dict[tuple[str, str], tuple]:
         instrument = self.instrument_by_symbol[symbol]
         instrument_type = self.instrument_type_by_symbol.get(symbol)
         if not instrument_type:
@@ -320,8 +313,7 @@ class DhanSelfEvolvingPaperDaemon:
 
     def _maybe_research(self) -> None:
         samples = self._live_samples()
-        new_samples = len(samples) - self._samples_at_last_research
-        if new_samples < self.research_every_new_samples:
+        if len(samples) - self._samples_at_last_research < self.research_every_new_samples:
             return
         if len(samples) < self.optimizer.config.minimum_samples:
             return
@@ -351,8 +343,12 @@ class DhanSelfEvolvingPaperDaemon:
             )
 
     def _install_policy(self, policy: AuraBrainPolicy) -> None:
-        firewall = KnowledgeFirewall()
-        team = build_brain_policy_team(firewall, policy)
+        team = build_brain_policy_team(
+            KnowledgeFirewall(),
+            policy,
+            risk_policy=self.agent_risk_policy,
+            min_top_of_book_notional=1.0,
+        )
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
@@ -397,7 +393,7 @@ class DhanSelfEvolvingPaperDaemon:
                 "current_genome_id": self.current_policy.to_genome().genome_id,
                 "live_samples": len(self._live_samples()),
                 "forward_challenger_genome_id": (
-                    challenger.genome.genome_id if challenger is not None else None
+                    challenger.genome.genome_id if challenger else None
                 ),
             },
             "risk_kill_switch": self.coordinator.risk_engine.kill_switch,
@@ -427,32 +423,29 @@ async def build_dhan_self_evolving_paper_daemon(
 ) -> DhanSelfEvolvingPaperDaemon:
     config = config or DhanSelfEvolvingPaperConfig()
     config.state_dir.mkdir(parents=True, exist_ok=True)
-    credentials = credentials or DhanLiveCredentials.from_env()
+    credentials = credentials or load_dhan_live_credentials_from_env()
     master = await asyncio.to_thread(DhanInstrumentMasterDownloader().download)
     universe = master.to_canonical_universe()
-    planner = DhanUniversePlanner(
+    plan = DhanUniversePlanner(
         DhanUniversePolicy(
             max_stream_instruments=config.broad_stream_cap,
             max_primary_cash_symbols=config.broad_cash_cap,
             max_primary_futures=config.broad_futures_cap,
         )
-    )
-    plan = planner.primary_plan(universe)
-    broad_map = _unique_instrument_map(plan.streamed)
-    broad_instruments = tuple(broad_map.values())
+    ).primary_plan(universe)
+    broad_instruments = tuple(_unique_instrument_map(plan.streamed).values())
     if not broad_instruments:
         raise RuntimeError("Dhan instrument master produced no broad live universe")
-
-    broad_ticker = DhanLiveTickerSource(
-        credentials,
-        build_ticker_subscriptions(broad_instruments),
-    )
-    broad_source = DhanLiveCandleSource(
-        broad_ticker,
-        timeframes=("1m",),
-    )
     tradable = tuple(item for item in broad_instruments if item.tradable)
     instrument_by_symbol = _unique_instrument_map(tradable)
+
+    broad_source = DhanLiveCandleSource(
+        DhanLiveTickerSource(
+            credentials,
+            build_ticker_subscriptions(broad_instruments),
+        ),
+        timeframes=("1m",),
+    )
     radar = DhanOpportunityRadar(
         broad_instruments,
         policy=DhanRadarPolicy(top_k_tradable=config.deep_top_k),
@@ -462,20 +455,8 @@ async def build_dhan_self_evolving_paper_daemon(
         tuple(instrument_by_symbol.values()),
         timeframes=config.timeframes,
     )
+    instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)
 
-    type_by_security = {
-        (record.exchange_segment, record.security_id): record.instrument_name.upper()
-        for record in master.records
-        if record.instrument_name
-    }
-    instrument_type_by_symbol = {
-        symbol: type_by_security.get((item.segment or "", item.venue_symbol), "")
-        for symbol, item in instrument_by_symbol.items()
-    }
-
-    instrument_specs = {
-        symbol: _ledger_spec(item) for symbol, item in instrument_by_symbol.items()
-    }
     multipliers = {
         symbol: item.contract_size for symbol, item in instrument_by_symbol.items()
     }
@@ -499,29 +480,36 @@ async def build_dhan_self_evolving_paper_daemon(
         quantity_rules=quantity_rules,
     )
 
-    base_policy = AgentRiskPolicy()
-    execution_required_policy = AgentRiskPolicy(
-        required_roles=base_policy.required_roles | {AgentRole.EXECUTION_QUALITY},
-        unavailable_evidence_flags=base_policy.unavailable_evidence_flags
-        | {"execution_quality_missing"},
-        hard_block_flags=base_policy.hard_block_flags,
-        min_directional_supporters=base_policy.min_directional_supporters,
+    evidence_policy = _dhan_agent_risk_policy()
+    brain_dir = config.state_dir / "brain"
+    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
+    champion_manager = BrainPaperChampionManager(
+        brain_dir,
+        promotion_policy=promotion_policy,
     )
-    firewall = KnowledgeFirewall()
-    team = build_default_agent_team(
-        firewall,
-        execution_quality_specialist=ExecutionQualitySpecialist(
-            max_spread_bps=config.max_spread_bps,
-            max_slippage_bps=config.max_slippage_bps,
-            min_top_of_book_notional=1.0,
+    restored = champion_manager.paper_champion
+    current_policy = (
+        AuraBrainPolicy.from_genome(restored)
+        if restored
+        else AuraBrainPolicy(
+            max_execution_spread_bps=config.max_spread_bps,
+            max_execution_slippage_bps=config.max_slippage_bps,
+        )
+    )
+    initial_team = build_brain_policy_team(
+        KnowledgeFirewall(),
+        current_policy,
+        risk_policy=evidence_policy,
+        min_top_of_book_notional=1.0,
+    )
+    scanner = LearningBrainPolicyScanner(
+        MultiMarketIntelligenceScanner(
+            orchestrator=initial_team.orchestrator,
+            ceo=initial_team.ceo,
+            agent_risk_policy=initial_team.risk_policy,
+            max_concurrent_contexts=config.max_concurrent_contexts,
         ),
-        risk_policy=execution_required_policy,
-    )
-    scanner = MultiMarketIntelligenceScanner(
-        orchestrator=team.orchestrator,
-        ceo=team.ceo,
-        agent_risk_policy=team.risk_policy,
-        max_concurrent_contexts=config.max_concurrent_contexts,
+        BrainPolicyGate(current_policy),
     )
     allocator = PortfolioRiskCoordinator(
         DecisionPipeline(EmaCrossStrategy(fast=8, slow=21), risk_engine)
@@ -533,15 +521,17 @@ async def build_dhan_self_evolving_paper_daemon(
         ),
         contract_multipliers=multipliers,
     )
-    ledger = PortfolioLedger(
-        config.starting_cash,
-        instrument_specs=instrument_specs,
-    )
     coordinator = MultiMarketPaperCoordinator(
         scanner=scanner,
         allocator=allocator,
         broker=broker,
-        ledger=ledger,
+        ledger=PortfolioLedger(
+            config.starting_cash,
+            instrument_specs={
+                symbol: _ledger_spec(item)
+                for symbol, item in instrument_by_symbol.items()
+            },
+        ),
         financial_journal=FinancialEventJournal(
             JsonlWriteAheadLog(config.state_dir / "financial.jsonl")
         ),
@@ -551,33 +541,22 @@ async def build_dhan_self_evolving_paper_daemon(
         risk_engine=risk_engine,
         starting_cash=config.starting_cash,
         default_requested_quantity=Decimal(1),
-        requested_quantity_provider=lambda symbol: instrument_by_symbol[
-            symbol
-        ].min_quantity,
+        requested_quantity_provider=lambda symbol: instrument_by_symbol[symbol].min_quantity,
         metadata_provider=lambda candle, _history: deep_service.metadata_for(
             candle.symbol,
             decision_time=datetime.now(UTC),
         ),
         decision_timeframes=config.decision_timeframes,
     )
-
-    brain_dir = config.state_dir / "brain"
-    replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
     recorder = ShadowDecisionOutcomeRecorder(
         replay_store,
         policy=shadow_policy,
         origin=SampleOrigin.LIVE_BROKER,
     )
-    champion_manager = BrainPaperChampionManager(
-        brain_dir,
-        promotion_policy=promotion_policy,
-    )
-    opportunity_auditor = MissedOpportunityAuditor(
+    auditor = MissedOpportunityAuditor(
         OpportunityAuditStore(brain_dir / "opportunity_audit.jsonl"),
         policy=opportunity_audit_policy,
     )
-    restored = champion_manager.paper_champion
-    current_policy = AuraBrainPolicy.from_genome(restored) if restored else AuraBrainPolicy()
     return DhanSelfEvolvingPaperDaemon(
         config=config,
         broad_source=broad_source,
@@ -587,39 +566,58 @@ async def build_dhan_self_evolving_paper_daemon(
         history_client=DhanIntradayHistoryClient(credentials),
         instrument_by_symbol=instrument_by_symbol,
         instrument_type_by_symbol=instrument_type_by_symbol,
+        agent_risk_policy=evidence_policy,
         optimizer=BrainResearchOptimizer(optimizer_config),
         replay_store=replay_store,
         recorder=recorder,
         champion_manager=champion_manager,
-        opportunity_auditor=opportunity_auditor,
+        opportunity_auditor=auditor,
         current_policy=current_policy,
         research_every_new_samples=research_every_new_samples,
     )
 
 
-def _unique_instrument_map(
-    instruments: tuple[CanonicalInstrument, ...] | list[CanonicalInstrument],
-) -> dict[str, CanonicalInstrument]:
+def _dhan_agent_risk_policy() -> AgentRiskPolicy:
+    base = AgentRiskPolicy()
+    return AgentRiskPolicy(
+        required_roles=base.required_roles | {AgentRole.EXECUTION_QUALITY},
+        unavailable_evidence_flags=base.unavailable_evidence_flags
+        | {"execution_quality_missing"},
+        hard_block_flags=base.hard_block_flags,
+        min_directional_supporters=base.min_directional_supporters,
+    )
+
+
+def _instrument_type_map(records, instruments: dict[str, CanonicalInstrument]) -> dict[str, str]:
+    by_security = {
+        (record.exchange_segment, record.security_id): record.instrument_name.upper()
+        for record in records
+        if record.instrument_name
+    }
+    return {
+        symbol: by_security.get((item.segment or "", item.venue_symbol), "")
+        for symbol, item in instruments.items()
+    }
+
+
+def _unique_instrument_map(instruments) -> dict[str, CanonicalInstrument]:
     result: dict[str, CanonicalInstrument] = {}
     for item in instruments:
         prior = result.get(item.canonical_symbol)
-        if prior is None:
-            result[item.canonical_symbol] = item
-            continue
-        if prior.exchange == "BSE" and item.exchange == "NSE":
+        if prior is None or (prior.exchange == "BSE" and item.exchange == "NSE"):
             result[item.canonical_symbol] = item
     return result
 
 
 def _ledger_spec(instrument: CanonicalInstrument) -> InstrumentLedgerSpec:
     if instrument.asset_class == AssetClass.OPTION:
-        mode = AccountingMode.PREMIUM
+        accounting = AccountingMode.PREMIUM
     elif instrument.asset_class == AssetClass.FUTURE:
-        mode = AccountingMode.DERIVATIVE
+        accounting = AccountingMode.DERIVATIVE
     else:
-        mode = AccountingMode.SPOT
+        accounting = AccountingMode.SPOT
     return InstrumentLedgerSpec(
-        accounting=mode,
+        accounting=accounting,
         contract_multiplier=instrument.contract_size,
     )
 
