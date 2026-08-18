@@ -1,0 +1,204 @@
+name: wire-dhan-options
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Apply causal wiring
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def once(path_name, old, new):
+              path = Path(path_name)
+              text = path.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path_name}: expected one match, found {count}: {old[:100]!r}")
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          once(
+              "aura/runtime/multi_market_paper.py",
+              "BatchMetadataProvider = Callable[\n"
+              "    [NormalizedCandle, tuple[NormalizedCandle, ...]],\n"
+              "    dict[str, Any],\n"
+              "]\n",
+              "BatchMetadataProvider = Callable[\n"
+              "    [NormalizedCandle, tuple[NormalizedCandle, ...], datetime],\n"
+              "    dict[str, Any],\n"
+              "]\n",
+          )
+          once(
+              "aura/runtime/multi_market_paper.py",
+              "                metadata.update(self.metadata_provider(candle, closed_history))\n",
+              "                metadata.update(\n"
+              "                    self.metadata_provider(candle, closed_history, decision_time)\n"
+              "                )\n",
+          )
+          once(
+              "aura/runtime/mt5_paper_daemon.py",
+              "            metadata_provider=lambda candle, history: source.metadata_for(candle.symbol),\n",
+              "            metadata_provider=lambda candle, _history, _decision_time: source.metadata_for(\n"
+              "                candle.symbol\n"
+              "            ),\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles\n",
+              "from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles\n"
+              "from aura.data.dhan_option_context import (\n"
+              "    DhanOptionContextService,\n"
+              "    DhanOptionTargetResolver,\n"
+              ")\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        deep_service: DhanDeepMetadataService,\n        radar: DhanOpportunityRadar,\n",
+              "        deep_service: DhanDeepMetadataService,\n"
+              "        option_service: DhanOptionContextService,\n"
+              "        radar: DhanOpportunityRadar,\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        self.deep_service = deep_service\n        self.radar = radar\n",
+              "        self.deep_service = deep_service\n"
+              "        self.option_service = option_service\n"
+              "        self.radar = radar\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "            await self.deep_service.stop()\n",
+              "            await self.deep_service.stop()\n"
+              "            await self.option_service.stop()\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "            await self.deep_service.update_symbols(ready)\n"
+              "            self._write_status(None)\n",
+              "            await self.deep_service.update_symbols(ready)\n"
+              "            await self.option_service.update_symbols(ready)\n"
+              "            self._write_status(None)\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              '            "deep_active_symbols": list(self.deep_service.active_symbols),\n',
+              '            "deep_active_symbols": list(self.deep_service.active_symbols),\n'
+              '            "option_context": self.option_service.status(),\n',
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "    instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)\n",
+              "    instrument_type_by_symbol = _instrument_type_map(master.records, instrument_by_symbol)\n"
+              "    option_service = DhanOptionContextService(\n"
+              "        credentials,\n"
+              "        DhanOptionTargetResolver(universe),\n"
+              "    )\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        metadata_provider=lambda candle, _history: deep_service.metadata_for(\n"
+              "            candle.symbol,\n"
+              "            decision_time=datetime.now(UTC),\n"
+              "        ),\n",
+              "        metadata_provider=lambda candle, _history, decision_time: _dhan_decision_metadata(\n"
+              "            deep_service,\n"
+              "            option_service,\n"
+              "            candle.symbol,\n"
+              "            decision_time,\n"
+              "        ),\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "        deep_service=deep_service,\n        radar=radar,\n",
+              "        deep_service=deep_service,\n"
+              "        option_service=option_service,\n"
+              "        radar=radar,\n",
+          )
+          once(
+              "aura/runtime/dhan_learning_daemon.py",
+              "\ndef _dhan_agent_risk_policy() -> AgentRiskPolicy:\n",
+              "\ndef _dhan_decision_metadata(\n"
+              "    deep_service: DhanDeepMetadataService,\n"
+              "    option_service: DhanOptionContextService,\n"
+              "    symbol: str,\n"
+              "    decision_time: datetime,\n"
+              ") -> dict:\n"
+              "    metadata = deep_service.metadata_for(\n"
+              "        symbol,\n"
+              "        decision_time=decision_time,\n"
+              "    )\n"
+              "    metadata.update(\n"
+              "        option_service.metadata_for(\n"
+              "            symbol,\n"
+              "            decision_time=decision_time,\n"
+              "        )\n"
+              "    )\n"
+              "    return metadata\n\n\n"
+              "def _dhan_agent_risk_policy() -> AgentRiskPolicy:\n",
+          )
+          once(
+              "aura/data/dhan_option_context.py",
+              "        active_options = [\n"
+              "            item\n"
+              "            for item in self._options.get(key, ())\n"
+              "            if item.expiry is not None and item.expiry >= as_of\n"
+              "        ]\n",
+              "        india_date = as_of.astimezone(_INDIA_TZ).date()\n"
+              "        active_options = [\n"
+              "            item\n"
+              "            for item in self._options.get(key, ())\n"
+              "            if item.expiry is not None and item.expiry.date() >= india_date\n"
+              "        ]\n",
+          )
+          once(
+              "aura/data/dhan_option_context.py",
+              "            if item.expiry is None or item.expiry >= as_of\n",
+              "            if item.expiry is None\n"
+              "            or item.expiry.date() >= as_of.astimezone(_INDIA_TZ).date()\n",
+          )
+          Path(".github/workflows/wire_dhan_options.yml").unlink()
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate and capture
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install 2>&1
+          INSTALL=$?
+          ruff check --fix aura tests examples >/tmp/ruff_fix 2>&1
+          RUFF_FIX=$?
+          ruff check aura tests examples >/tmp/ruff 2>&1
+          RUFF=$?
+          pytest -q >/tmp/pytest 2>&1
+          PYTEST=$?
+          set -e
+          {
+            echo "INSTALL=${INSTALL}"
+            echo "RUFF_FIX=${RUFF_FIX}"
+            echo "RUFF=${RUFF}"
+            echo "PYTEST=${PYTEST}"
+            echo "=== RUFF ==="
+            cat /tmp/ruff
+            echo "=== PYTEST ==="
+            tail -n 120 /tmp/pytest
+          } > wire_dhan_options_result.txt
+      - name: Commit patch and result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests .github/workflows/wire_dhan_options.yml wire_dhan_options_result.txt
+          git commit -m "wire causal Dhan option context into live decisions"
+          git push
