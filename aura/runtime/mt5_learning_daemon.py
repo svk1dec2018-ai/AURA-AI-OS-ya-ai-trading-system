@@ -17,6 +17,11 @@ from aura.evolution.brain_policy import (
     build_brain_policy_team,
 )
 from aura.evolution.brain_replay import SampleOrigin
+from aura.evolution.opportunity_audit import (
+    MissedOpportunityAuditor,
+    OpportunityAuditPolicy,
+    OpportunityAuditStore,
+)
 from aura.evolution.shadow_outcomes import (
     ShadowDecisionOutcomeRecorder,
     ShadowOutcomePolicy,
@@ -91,6 +96,7 @@ class MT5SelfEvolvingPaperDaemon:
         replay_store: BrainReplayStore,
         recorder: ShadowDecisionOutcomeRecorder,
         champion_manager: BrainPaperChampionManager,
+        opportunity_auditor: MissedOpportunityAuditor,
         research_every_new_samples: int = 100,
     ) -> None:
         if research_every_new_samples <= 0:
@@ -101,6 +107,7 @@ class MT5SelfEvolvingPaperDaemon:
         self.replay_store = replay_store
         self.recorder = recorder
         self.champion_manager = champion_manager
+        self.opportunity_auditor = opportunity_auditor
         self.research_every_new_samples = research_every_new_samples
         self._samples_at_last_research = len(self._live_samples())
         self.brain_state_dir = base.config.state_dir / "brain"
@@ -114,6 +121,7 @@ class MT5SelfEvolvingPaperDaemon:
         self.base._write_status(None)
         try:
             async for batch in self.base.source.batches():
+                self.opportunity_auditor.on_closed_candles(batch)
                 resolved = self.recorder.on_closed_candles(batch)
                 for sample in resolved:
                     self.champion_manager.observe(sample)
@@ -129,6 +137,7 @@ class MT5SelfEvolvingPaperDaemon:
                 if not isinstance(scanner, LearningBrainPolicyScanner):
                     raise RuntimeError("learning daemon scanner was replaced unexpectedly")
                 self.recorder.register_scan(scanner.last_raw_scan)
+                self.opportunity_auditor.register_scan(scanner.last_raw_scan)
 
                 self.base.counters.batches += 1
                 self.base.counters.contexts += len(step.scan.candidates)
@@ -221,6 +230,7 @@ class MT5SelfEvolvingPaperDaemon:
         live_samples = tuple(
             sample for sample in all_samples if sample.origin == SampleOrigin.LIVE_BROKER
         )
+        audit = self.opportunity_auditor.store.metrics()
         payload = {
             "updated_at": datetime.now(UTC).isoformat(),
             "state": state,
@@ -229,6 +239,15 @@ class MT5SelfEvolvingPaperDaemon:
             "replay_samples": len(all_samples),
             "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
+            "opportunity_audit": {
+                "material_opportunities": audit.material_opportunities,
+                "captured": audit.captured,
+                "missed_flat": audit.missed_flat,
+                "wrong_direction": audit.wrong_direction,
+                "blocked_safety": audit.blocked_safety,
+                "capture_rate": audit.capture_rate,
+                "pending": self.opportunity_auditor.pending_count,
+            },
             "forward_challenger": (
                 {
                     "genome_id": challenger.genome.genome_id,
@@ -253,6 +272,7 @@ async def build_mt5_self_evolving_paper_daemon(
     optimizer_config: BrainOptimizerConfig | None = None,
     shadow_policy: ShadowOutcomePolicy | None = None,
     promotion_policy: BrainPaperPromotionPolicy | None = None,
+    opportunity_audit_policy: OpportunityAuditPolicy | None = None,
     research_every_new_samples: int = 100,
 ) -> MT5SelfEvolvingPaperDaemon:
     base = await build_mt5_all_market_paper_daemon(config)
@@ -267,6 +287,10 @@ async def build_mt5_self_evolving_paper_daemon(
         brain_dir,
         promotion_policy=promotion_policy,
     )
+    opportunity_auditor = MissedOpportunityAuditor(
+        OpportunityAuditStore(brain_dir / "opportunity_audit.jsonl"),
+        policy=opportunity_audit_policy,
+    )
     restored_champion = manager.paper_champion
     effective_initial_policy = (
         AuraBrainPolicy.from_genome(restored_champion)
@@ -280,6 +304,7 @@ async def build_mt5_self_evolving_paper_daemon(
         replay_store=replay_store,
         recorder=recorder,
         champion_manager=manager,
+        opportunity_auditor=opportunity_auditor,
         research_every_new_samples=research_every_new_samples,
     )
 
