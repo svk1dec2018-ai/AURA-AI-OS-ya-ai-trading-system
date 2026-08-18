@@ -21,6 +21,7 @@ class KnowledgeSourceType(str, Enum):
     NEWS = "news"
     MACRO = "macro"
     BOOK = "book"
+    VIDEO_TRANSCRIPT = "video_transcript"
     INTERNAL = "internal"
 
 

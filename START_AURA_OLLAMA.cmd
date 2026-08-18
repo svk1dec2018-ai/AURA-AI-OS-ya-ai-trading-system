@@ -3,8 +3,8 @@ setlocal
 cd /d "%~dp0"
 echo.
 echo ============================================================
-echo   AURA AI OS - One Click Ollama Multi-AI Launcher
-echo   PUBLIC LIVE DATA / RESEARCH MODE - REAL MONEY DISABLED
+echo   AURA AI OS - One Click Autonomous Research Launcher
+echo   LIVE DATA + MULTI-AI + SHADOW TRAINING - REAL MONEY OFF
 echo ============================================================
 echo.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0scripts\start_aura_ollama.ps1"
