@@ -24,7 +24,31 @@ AURA is an advanced working codebase, but **not a proven live-money autonomous t
 - free/official external intelligence ingest and live cache;
 - live macro/news specialist fallback using explicit structured sentiment only;
 - Dhan option-chain/IV/PCR/Greeks/liquidity context in live decisions;
-- live-data self-evolving internal-paper runners for MT5 and Dhan.
+- live-data self-evolving internal-paper runners for MT5 and Dhan;
+- bounded autonomous strategy-invention DSL for trend, breakout, mean-reversion and hybrid hypotheses;
+- autonomous strategy research farm with concurrent population evaluation/evolution;
+- second-level research candles: 1s/5s/15s/30s plus 1m/3m/5m and higher frames;
+- no-key public live crypto feeds for Coinbase and Bybit trades/tickers plus OKX ticker redundancy;
+- forward-only live shadow strategy lab that can evaluate many candidate plans on every eligible closed research bar without sending orders;
+- continuous live population refresh: retain live-shadow elites, mutate bounded alpha genes and inject fresh challengers while preserving market history;
+- sample-aware pro-trader research objective with an aspirational 80% win-rate target plus expectancy, profit factor, drawdown and minimum-trade requirements.
+
+## Autonomous strategy intelligence
+
+AURA's strategy-invention layer is deliberately more free than a fixed indicator bot but less dangerous than arbitrary self-modifying Python. It can combine and evolve bounded alpha concepts such as:
+
+- EMA/trend structure;
+- RSI state;
+- momentum;
+- breakout logic;
+- Bollinger/mean-reversion behavior;
+- relative-volume confirmation;
+- ATR/volatility behavior;
+- style, lookback, threshold and feature-selection combinations.
+
+The broader specialist desk remains responsible for SMC/ICT structure, VWAP/volume, HTF context, options/volatility, macro/news, cross-market, regime and execution-quality evidence. Strategy invention has **no risk-sizing, kill-switch, broker-permission or live-approval genes**.
+
+The no-key live shadow runtime can create a large amount of forward-only virtual experience from real public market events. These are research plans, not broker orders. High win rate alone cannot confirm a strategy: small-sample or negative-expectancy candidates are penalized.
 
 ## Concrete connector code
 
@@ -55,6 +79,18 @@ State: market-data/transport foundations implemented, including production/test 
 ### Kraken
 
 State: public market-data adapter foundation implemented. Full AURA broker execution qualification remains a separate stage.
+
+### Coinbase public market data
+
+State: `ADAPTER_IMPLEMENTED`, no API key required for AURA's current public ticker/market-trade ingestion. Data only; no broker execution authority.
+
+### Bybit public market data
+
+State: `ADAPTER_IMPLEMENTED`, no API key required for AURA's current public ticker/public-trade ingestion. Data only; no broker execution authority.
+
+### OKX public market data
+
+State: `ADAPTER_IMPLEMENTED` for the current public ticker redundancy path. Data only; no broker execution authority.
 
 ## Researched connector catalog — not yet concrete AURA transports
 
@@ -88,19 +124,38 @@ These entries are intentionally marked `RESEARCHED` until actual AURA transport 
 - future-data rejection;
 - no headline-to-direction guessing when explicit sentiment is absent.
 
-Dhan and MT5 self-evolving paper paths now merge the live intelligence cache into the frozen decision-time metadata used by the specialist desk.
+Dhan and MT5 self-evolving paper paths merge the live intelligence cache into the frozen decision-time metadata used by the specialist desk.
 
 ## Continuous learning meaning
 
-AURA does not mutate the deployed strategy on every millisecond/tick. It can update online state for every meaningful event:
+AURA does not rewrite a deployed live strategy on every millisecond/tick. It can update research/online state for every meaningful event and second-level bar:
 
 - prediction/calibration error;
 - captured/missed/wrong-direction outcomes;
+- live-shadow strategy outcomes;
+- strategy population rankings;
 - spread/slippage/latency;
 - regime/drift measurements;
 - memory salience.
 
-A threshold breach can request a new research cycle. A new candidate must still pass the governed research and NEW forward-live-data paper validation chain before it can become a paper champion.
+The public live strategy lab may continuously create new research challengers from proven live-shadow elites. That still does not grant live execution. A strategy intended for money deployment must pass the governed validation path.
+
+## Strategy confirmation path
+
+```text
+public/live shadow learning
+ -> bounded strategy hypothesis
+ -> causal backtest
+ -> walk-forward testing
+ -> Monte Carlo / robustness
+ -> sealed holdout
+ -> NEW forward live-data shadow/paper evidence
+ -> paper champion
+ -> broker-specific canary / reconciliation validation
+ -> explicit human live approval
+```
+
+Historical/replay or live-shadow experience can accelerate learning, but neither can independently mark a strategy `LIVE_ELIGIBLE`.
 
 ## What is still required before live money
 
@@ -116,4 +171,4 @@ A threshold breach can request a new research cycle. A new candidate must still 
 
 ## Accuracy statement
 
-No honest trading system can guarantee zero losing trades or zero missed opportunities. AURA's implementation objective is to **measure and reduce both**, while optimizing net expectancy, calibration, opportunity capture, drawdown, execution quality and portfolio-level risk under forward evidence.
+No honest trading system can guarantee zero losing trades, zero missed opportunities or an 80%+ future win rate. AURA uses 80% as an **aspirational research target**, while confirmation also requires sufficient sample size, positive net expectancy, profit factor, controlled drawdown, robustness and forward evidence. The implementation objective is to measure and reduce both wrong trades and missed opportunities while protecting portfolio capital.
