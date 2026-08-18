@@ -159,13 +159,18 @@ class ProductionPreflight:
 
     def _mode_checks(self) -> list[PreflightCheck]:
         if self.mode != DeploymentMode.LIVE:
+            disabled = (
+                self.env.get("AURA_LIVE_TRADING_ENABLED", "").strip() != _LIVE_ACK
+            )
             return [
                 PreflightCheck(
                     "live-money-disabled",
-                    self.env.get("AURA_LIVE_TRADING_ENABLED", "").strip()
-                    != _LIVE_ACK,
-                    "live-money acknowledgement is not enabled",
-                    blocking=False,
+                    disabled,
+                    (
+                        "live-money acknowledgement is not enabled"
+                        if disabled
+                        else "live-risk acknowledgement must be unset outside LIVE mode"
+                    ),
                 )
             ]
 
