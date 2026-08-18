@@ -87,6 +87,15 @@ class StrategySignal(BaseModel):
     reference_price: Decimal
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     reason: str = ""
+    exit_position: bool = False
+
+    @model_validator(mode="after")
+    def validate_exit_semantics(self) -> StrategySignal:
+        if self.reference_price <= 0:
+            raise ValueError("strategy signal reference_price must be positive")
+        if self.exit_position and self.intent != SignalIntent.FLAT:
+            raise ValueError("explicit position exit requires FLAT intent")
+        return self
 
 
 class OrderRequest(BaseModel):
