@@ -27,6 +27,7 @@ class DhanInstrumentMasterError(RuntimeError):
 
 
 class DhanExchangeSegment(str, Enum):
+    IDX_I = "IDX_I"
     NSE_EQ = "NSE_EQ"
     NSE_FNO = "NSE_FNO"
     BSE_EQ = "BSE_EQ"
@@ -51,13 +52,7 @@ class DhanInstrumentRecord:
 
 
 class DhanInstrumentMaster:
-    """Parse Dhan's detailed scrip master into AURA canonical instruments.
-
-    Column lookup is alias-based because Dhan has historically exposed both
-    compact and detailed labels. Unsupported segments are ignored rather than
-    silently mislabeled. F&O quantities are represented in exchange units, so
-    `lot_size`/`min_quantity` carry the lot while contract multiplier remains 1.
-    """
+    """Parse Dhan's detailed scrip master into AURA canonical instruments."""
 
     def __init__(self, records: tuple[DhanInstrumentRecord, ...]) -> None:
         self.records = records
@@ -74,11 +69,7 @@ class DhanInstrumentMaster:
             try:
                 record = DhanInstrumentRecord(
                     exchange_segment=_pick(
-                        row,
-                        "SEM_SEGMENT",
-                        "EXCH_ID",
-                        "EXCHANGE_SEGMENT",
-                        "SEGMENT",
+                        row, "SEM_SEGMENT", "EXCH_ID", "EXCHANGE_SEGMENT", "SEGMENT"
                     ),
                     security_id=_pick(
                         row,
@@ -87,16 +78,10 @@ class DhanInstrumentMaster:
                         "SECURITY_ID_V2",
                     ),
                     trading_symbol=_pick(
-                        row,
-                        "SEM_TRADING_SYMBOL",
-                        "TRADING_SYMBOL",
-                        required=False,
+                        row, "SEM_TRADING_SYMBOL", "TRADING_SYMBOL", required=False
                     ),
                     custom_symbol=_pick(
-                        row,
-                        "SEM_CUSTOM_SYMBOL",
-                        "CUSTOM_SYMBOL",
-                        required=False,
+                        row, "SEM_CUSTOM_SYMBOL", "CUSTOM_SYMBOL", required=False
                     ),
                     instrument_name=_pick(
                         row,
@@ -105,29 +90,15 @@ class DhanInstrumentMaster:
                         "INSTRUMENT_NAME",
                         required=False,
                     ),
-                    series=_pick(
-                        row,
-                        "SEM_SERIES",
-                        "SERIES",
-                        required=False,
-                    ),
+                    series=_pick(row, "SEM_SERIES", "SERIES", required=False),
                     expiry_date=_pick(
-                        row,
-                        "SEM_EXPIRY_DATE",
-                        "EXPIRY_DATE",
-                        required=False,
+                        row, "SEM_EXPIRY_DATE", "EXPIRY_DATE", required=False
                     ),
                     strike_price=_pick(
-                        row,
-                        "SEM_STRIKE_PRICE",
-                        "STRIKE_PRICE",
-                        required=False,
+                        row, "SEM_STRIKE_PRICE", "STRIKE_PRICE", required=False
                     ),
                     option_type=_pick(
-                        row,
-                        "SEM_OPTION_TYPE",
-                        "OPTION_TYPE",
-                        required=False,
+                        row, "SEM_OPTION_TYPE", "OPTION_TYPE", required=False
                     ),
                     lot_units=_pick(
                         row,
@@ -137,10 +108,7 @@ class DhanInstrumentMaster:
                         required=False,
                     ),
                     tick_size=_pick(
-                        row,
-                        "SEM_TICK_SIZE",
-                        "TICK_SIZE",
-                        required=False,
+                        row, "SEM_TICK_SIZE", "TICK_SIZE", required=False
                     ),
                     symbol_name=_pick(
                         row,
@@ -237,6 +205,25 @@ def _canonicalize(
 
     instrument_text = f"{record.instrument_name} {record.series} {record.option_type}".upper()
     exchange = "MCX" if segment == DhanExchangeSegment.MCX_COMM else segment.value.split("_")[0]
+
+    if segment == DhanExchangeSegment.IDX_I:
+        return CanonicalInstrument(
+            instrument_id=f"dhan:{segment.value}:{record.security_id}",
+            canonical_symbol=symbol,
+            venue_family=VenueFamily.DHAN_INDIA,
+            venue_symbol=record.security_id,
+            asset_class=AssetClass.INDEX,
+            exchange="INDEX",
+            segment=segment.value,
+            currency="INR",
+            contract_size=Decimal(1),
+            lot_size=Decimal(1),
+            tick_size=tick_size,
+            min_quantity=Decimal(1),
+            quantity_step=Decimal(1),
+            tradable=False,
+            market_data_enabled=True,
+        )
 
     if segment in {DhanExchangeSegment.NSE_EQ, DhanExchangeSegment.BSE_EQ}:
         asset_class = (
