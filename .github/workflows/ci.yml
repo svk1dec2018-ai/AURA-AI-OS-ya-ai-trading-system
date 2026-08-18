@@ -35,3 +35,11 @@ jobs:
         run: python examples/run_production_preflight.py --mode paper --connector public
       - name: Build distribution
         run: python -m build
+
+  container-build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build non-root production image
+        run: docker build --tag aura-ai-os:ci .
