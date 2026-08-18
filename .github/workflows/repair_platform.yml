@@ -1,0 +1,178 @@
+name: repair-platform
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Apply guarded repairs
+        shell: python
+        run: |
+          from pathlib import Path
+
+          def once(path_name, old, new):
+              path = Path(path_name)
+              text = path.read_text(encoding="utf-8")
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{path_name}: expected 1 match, found {count}: {old[:80]!r}")
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          once(
+              "aura/agents/external_specialists.py",
+              "    implied_volatility: float = Field(ge=0.0)\n"
+              "    iv_percentile: float = Field(ge=0.0, le=100.0)\n"
+              "    put_call_oi_ratio: float = Field(ge=0.0)\n"
+              "    put_call_volume_ratio: float = Field(ge=0.0)\n",
+              "    implied_volatility: float | None = Field(default=None, ge=0.0)\n"
+              "    iv_percentile: float | None = Field(default=None, ge=0.0, le=100.0)\n"
+              "    put_call_oi_ratio: float | None = Field(default=None, ge=0.0)\n"
+              "    put_call_volume_ratio: float | None = Field(default=None, ge=0.0)\n",
+          )
+          once(
+              "aura/agents/external_specialists.py",
+              "        if snapshot.underlying_symbol != context.symbol:\n"
+              "            return self._abstain(context, \"options underlying symbol mismatch\", \"options_symbol_mismatch\")\n",
+              "        expected_underlying = str(\n"
+              "            context.metadata.get(\"underlying_symbol\") or context.symbol\n"
+              "        )\n"
+              "        if snapshot.underlying_symbol != expected_underlying:\n"
+              "            return self._abstain(\n"
+              "                context,\n"
+              "                \"options underlying symbol mismatch\",\n"
+              "                \"options_symbol_mismatch\",\n"
+              "            )\n",
+          )
+          once(
+              "aura/agents/external_specialists.py",
+              "        flags: list[str] = []\n"
+              "        if snapshot.iv_percentile >= 80:\n"
+              "            flags.append(\"high_implied_volatility\")\n"
+              "        elif snapshot.iv_percentile <= 20:\n"
+              "            flags.append(\"low_implied_volatility\")\n"
+              "        if snapshot.put_call_oi_ratio >= 1.8 or snapshot.put_call_oi_ratio <= 0.5:\n"
+              "            flags.append(\"extreme_put_call_open_interest_ratio\")\n"
+              "        if snapshot.put_call_volume_ratio >= 1.8 or snapshot.put_call_volume_ratio <= 0.5:\n"
+              "            flags.append(\"extreme_put_call_volume_ratio\")\n\n"
+              "        state_confidence = min(abs(snapshot.iv_percentile - 50.0) / 50.0, 1.0)\n"
+              "        return AgentEvidence(\n",
+              "        flags: list[str] = []\n"
+              "        confidence_components: list[float] = []\n"
+              "        if snapshot.iv_percentile is not None:\n"
+              "            if snapshot.iv_percentile >= 80:\n"
+              "                flags.append(\"high_implied_volatility\")\n"
+              "            elif snapshot.iv_percentile <= 20:\n"
+              "                flags.append(\"low_implied_volatility\")\n"
+              "            confidence_components.append(\n"
+              "                min(abs(snapshot.iv_percentile - 50.0) / 50.0, 1.0)\n"
+              "            )\n"
+              "        if snapshot.put_call_oi_ratio is not None:\n"
+              "            if snapshot.put_call_oi_ratio >= 1.8 or snapshot.put_call_oi_ratio <= 0.5:\n"
+              "                flags.append(\"extreme_put_call_open_interest_ratio\")\n"
+              "            confidence_components.append(\n"
+              "                min(abs(snapshot.put_call_oi_ratio - 1.0), 1.0)\n"
+              "            )\n"
+              "        if snapshot.put_call_volume_ratio is not None:\n"
+              "            if (\n"
+              "                snapshot.put_call_volume_ratio >= 1.8\n"
+              "                or snapshot.put_call_volume_ratio <= 0.5\n"
+              "            ):\n"
+              "                flags.append(\"extreme_put_call_volume_ratio\")\n"
+              "            confidence_components.append(\n"
+              "                min(abs(snapshot.put_call_volume_ratio - 1.0), 1.0)\n"
+              "            )\n\n"
+              "        state_confidence = max(\n"
+              "            confidence_components,\n"
+              "            default=0.1 if snapshot.implied_volatility is not None else 0.0,\n"
+              "        )\n"
+              "        iv_text = (\n"
+              "            f\"{snapshot.iv_percentile:.1f}\"\n"
+              "            if snapshot.iv_percentile is not None\n"
+              "            else \"n/a\"\n"
+              "        )\n"
+              "        pcr_oi_text = (\n"
+              "            f\"{snapshot.put_call_oi_ratio:.2f}\"\n"
+              "            if snapshot.put_call_oi_ratio is not None\n"
+              "            else \"n/a\"\n"
+              "        )\n"
+              "        pcr_volume_text = (\n"
+              "            f\"{snapshot.put_call_volume_ratio:.2f}\"\n"
+              "            if snapshot.put_call_volume_ratio is not None\n"
+              "            else \"n/a\"\n"
+              "        )\n"
+              "        return AgentEvidence(\n",
+          )
+          once(
+              "aura/agents/external_specialists.py",
+              "                f\"options volatility advisory: IV percentile {snapshot.iv_percentile:.1f}, \"\n"
+              "                f\"PCR(OI) {snapshot.put_call_oi_ratio:.2f}, \"\n"
+              "                f\"PCR(volume) {snapshot.put_call_volume_ratio:.2f}\"\n",
+              "                f\"options volatility advisory: IV percentile {iv_text}, \"\n"
+              "                f\"PCR(OI) {pcr_oi_text}, PCR(volume) {pcr_volume_text}\"\n",
+          )
+          once(
+              "aura/data/dhan_option_context.py",
+              "            elif option_exchange == \"NSE\" and item.exchange == \"NSE\":\n"
+              "                rank = 1\n"
+              "            elif option_exchange == \"BSE\" and item.exchange == \"BSE\":\n"
+              "                rank = 1\n",
+              "            elif option_exchange in {\"NSE\", \"BSE\"} and item.exchange == option_exchange:\n"
+              "                rank = 1\n",
+          )
+          once(
+              "aura/data/free_intelligence.py",
+              "    node = entry.find(local_name) or entry.find(f\"{{*}}{local_name}\")\n",
+              "    node = entry.find(local_name)\n"
+              "    if node is None:\n"
+              "        node = entry.find(f\"{{*}}{local_name}\")\n",
+          )
+          once(
+              "aura/data/free_intelligence.py",
+              "        parsed = datetime.fromisoformat(value.replace(\"Z\", \"+00:00\"))\n",
+              "        parsed = datetime.fromisoformat(value)\n",
+          )
+          Path(".github/workflows/repair_platform.yml").unlink()
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate and capture
+        shell: bash
+        run: |
+          set +e
+          pip install -e ".[dev]" >/tmp/install 2>&1
+          INSTALL=$?
+          ruff check --fix aura tests examples >/tmp/ruff_fix 2>&1
+          RUFF_FIX=$?
+          ruff check aura tests examples >/tmp/ruff 2>&1
+          RUFF=$?
+          pytest -q >/tmp/pytest 2>&1
+          PYTEST=$?
+          set -e
+          {
+            echo "INSTALL=${INSTALL}"
+            echo "RUFF_FIX=${RUFF_FIX}"
+            echo "RUFF=${RUFF}"
+            echo "PYTEST=${PYTEST}"
+            echo "=== RUFF ==="
+            cat /tmp/ruff
+            echo "=== PYTEST ==="
+            tail -n 100 /tmp/pytest
+          } > repair_platform_result.txt
+      - name: Commit repairs and result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add aura tests .github/workflows/repair_platform.yml repair_platform_result.txt
+          git commit -m "repair platform expansion and options contracts"
+          git push
