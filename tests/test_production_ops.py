@@ -105,7 +105,7 @@ def test_release_gate_rejects_weak_or_operationally_unsafe_candidate() -> None:
         _evidence(
             forward_live_trades=100,
             forward_live_days=3,
-            max_drawdown_pct=Decimal("14"),
+            max_drawdown_pct=Decimal(14),
             profit_factor=Decimal("0.9"),
             expectancy=Decimal("-0.1"),
             critical_incidents=1,
