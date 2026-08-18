@@ -4,6 +4,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.data.intelligence_service import LiveIntelligenceService
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
@@ -48,6 +49,7 @@ class MT5SelfEvolvingPaperDaemon:
         initial_policy: AuraBrainPolicy,
         optimizer: BrainResearchOptimizer,
         replay_store: BrainReplayStore,
+        reliability_tracker: AgentReliabilityTracker,
         recorder: ShadowDecisionOutcomeRecorder,
         champion_manager: BrainPaperChampionManager,
         opportunity_auditor: MissedOpportunityAuditor,
@@ -61,6 +63,7 @@ class MT5SelfEvolvingPaperDaemon:
         self.current_policy = initial_policy
         self.optimizer = optimizer
         self.replay_store = replay_store
+        self.reliability_tracker = reliability_tracker
         self.recorder = recorder
         self.champion_manager = champion_manager
         self.opportunity_auditor = opportunity_auditor
@@ -163,7 +166,11 @@ class MT5SelfEvolvingPaperDaemon:
 
     def _install_policy(self, policy: AuraBrainPolicy) -> None:
         firewall = KnowledgeFirewall()
-        team = build_brain_policy_team(firewall, policy)
+        team = build_brain_policy_team(
+            firewall,
+            policy,
+            reliability_tracker=self.reliability_tracker,
+        )
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
@@ -206,6 +213,7 @@ class MT5SelfEvolvingPaperDaemon:
             "replay_samples": len(all_samples),
             "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
+            "agent_reliability_observations": self.reliability_tracker.observation_count,
             "online_learning": self.online_bridge.status(),
             "live_intelligence": self.intelligence_service.status(),
             "opportunity_audit": {
@@ -247,10 +255,14 @@ async def build_mt5_self_evolving_paper_daemon(
     base = await build_mt5_all_market_paper_daemon(config)
     brain_dir = base.config.state_dir / "brain"
     replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
+    reliability_tracker = AgentReliabilityTracker(
+        brain_dir / "agent_reliability.jsonl"
+    )
     recorder = ShadowDecisionOutcomeRecorder(
         replay_store,
         policy=shadow_policy,
         origin=SampleOrigin.LIVE_BROKER,
+        reliability_tracker=reliability_tracker,
     )
     manager = BrainPaperChampionManager(
         brain_dir,
@@ -289,6 +301,7 @@ async def build_mt5_self_evolving_paper_daemon(
         initial_policy=effective_initial_policy,
         optimizer=BrainResearchOptimizer(optimizer_config),
         replay_store=replay_store,
+        reliability_tracker=reliability_tracker,
         recorder=recorder,
         champion_manager=manager,
         opportunity_auditor=opportunity_auditor,

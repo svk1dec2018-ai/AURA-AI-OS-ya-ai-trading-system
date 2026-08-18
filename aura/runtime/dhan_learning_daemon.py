@@ -9,6 +9,7 @@ from pathlib import Path
 
 from aura.agents.audit import AgentAuditJournal
 from aura.agents.models import AgentRole
+from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.core.pipeline import DecisionPipeline
 from aura.data.dhan_deep_service import DhanDeepMetadataService
@@ -137,6 +138,7 @@ class DhanSelfEvolvingPaperDaemon:
         agent_risk_policy: AgentRiskPolicy,
         optimizer: BrainResearchOptimizer,
         replay_store: BrainReplayStore,
+        reliability_tracker: AgentReliabilityTracker,
         recorder: ShadowDecisionOutcomeRecorder,
         champion_manager: BrainPaperChampionManager,
         opportunity_auditor: MissedOpportunityAuditor,
@@ -159,6 +161,7 @@ class DhanSelfEvolvingPaperDaemon:
         self.agent_risk_policy = agent_risk_policy
         self.optimizer = optimizer
         self.replay_store = replay_store
+        self.reliability_tracker = reliability_tracker
         self.recorder = recorder
         self.champion_manager = champion_manager
         self.opportunity_auditor = opportunity_auditor
@@ -373,6 +376,7 @@ class DhanSelfEvolvingPaperDaemon:
             policy,
             risk_policy=self.agent_risk_policy,
             min_top_of_book_notional=1.0,
+            reliability_tracker=self.reliability_tracker,
         )
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
@@ -420,6 +424,7 @@ class DhanSelfEvolvingPaperDaemon:
             "brain": {
                 "current_genome_id": self.current_policy.to_genome().genome_id,
                 "live_samples": len(self._live_samples()),
+                "agent_reliability_observations": self.reliability_tracker.observation_count,
                 "forward_challenger_genome_id": (
                     challenger.genome.genome_id if challenger else None
                 ),
@@ -519,6 +524,9 @@ async def build_dhan_self_evolving_paper_daemon(
     evidence_policy = _dhan_agent_risk_policy()
     brain_dir = config.state_dir / "brain"
     replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
+    reliability_tracker = AgentReliabilityTracker(
+        brain_dir / "agent_reliability.jsonl"
+    )
     champion_manager = BrainPaperChampionManager(
         brain_dir,
         promotion_policy=promotion_policy,
@@ -537,6 +545,7 @@ async def build_dhan_self_evolving_paper_daemon(
         current_policy,
         risk_policy=evidence_policy,
         min_top_of_book_notional=1.0,
+        reliability_tracker=reliability_tracker,
     )
     scanner = LearningBrainPolicyScanner(
         MultiMarketIntelligenceScanner(
@@ -591,6 +600,7 @@ async def build_dhan_self_evolving_paper_daemon(
         replay_store,
         policy=shadow_policy,
         origin=SampleOrigin.LIVE_BROKER,
+        reliability_tracker=reliability_tracker,
     )
     auditor = MissedOpportunityAuditor(
         OpportunityAuditStore(brain_dir / "opportunity_audit.jsonl"),
@@ -614,6 +624,7 @@ async def build_dhan_self_evolving_paper_daemon(
         agent_risk_policy=evidence_policy,
         optimizer=BrainResearchOptimizer(optimizer_config),
         replay_store=replay_store,
+        reliability_tracker=reliability_tracker,
         recorder=recorder,
         champion_manager=champion_manager,
         opportunity_auditor=auditor,
