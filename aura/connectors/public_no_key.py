@@ -9,7 +9,6 @@ from aura.connectors.catalog import (
     CostTier,
 )
 
-
 PUBLIC_NO_KEY_CONNECTOR_CATALOG = ConnectorCatalog(
     (
         ConnectorDescriptor(
