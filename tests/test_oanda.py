@@ -14,7 +14,7 @@ class _Client(OandaMarketDataClient):
 
 
 def test_oanda_pricing_normalizes_bid_ask_midpoint() -> None:
-    now = datetime(2026, 8, 18, 5, 0, tzinfo=UTC)
+    now = datetime(2026, 8, 18, 5, 0, 1, tzinfo=UTC)
     client = _Client(
         [
             {
