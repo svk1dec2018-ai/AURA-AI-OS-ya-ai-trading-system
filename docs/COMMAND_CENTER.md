@@ -1,6 +1,6 @@
 # AURA Command Center
 
-AURA now includes a deterministic command/privilege boundary for a future Jarvis-style text or voice interface.
+AURA includes a deterministic command/privilege boundary plus a local-first mobile/PWA operator surface for a Jarvis-style text or voice interface.
 
 Supported intent classes include:
 
@@ -13,6 +13,56 @@ Supported intent classes include:
 - paper control;
 - live control.
 
-The command surface has no broker dependency. Read-only commands cannot become orders. Research and paper actions have separate privilege levels. `LIVE_CONTROL` is disabled by default and, even when explicitly enabled by deployment governance, only routes a governed request to a handler; it does not itself submit an order or bypass AURA's RiskEngine, execution policy, reconciliation or human live approval.
+The underlying typed command model remains broker-independent. Read-only commands cannot become orders, research and paper actions have separate privilege levels, and `LIVE_CONTROL` is disabled by default. Even if deployment governance later enables a live handler elsewhere, the command model itself does not bypass AURA's RiskEngine, execution policy, reconciliation, or human live approval.
 
-Voice input can later be implemented as speech-to-text around this same typed command model, so adding voice does not create a second unsafe execution path.
+## Local PWA
+
+Start the command center with:
+
+```bash
+python examples/run_command_center.py
+```
+
+Then open `http://127.0.0.1:8765`. Supported browsers may expose speech-to-text through the browser Web Speech API; typed commands always remain available. Voice produces text which still passes through the same deterministic command classifier, so speech does not create a second execution path.
+
+The PWA/API surface is deliberately narrower than the core router:
+
+- it has no broker submit/cancel adapter;
+- live-money intents are rejected with HTTP 403 before handler execution;
+- paper execution-control intents are also rejected by this observation/research surface;
+- market, portfolio, and risk values are never invented; until governed sources are attached, the API returns `source_available=false` instead of synthetic values;
+- research/change requests are append-only, SHA-256 checksummed, flushed with `fsync`, and revalidated on restart;
+- queued research is marked `pending_human_review` and `auto_promotion_allowed=false`;
+- optional idempotency keys are persisted only as SHA-256 digests, not raw keys.
+
+## Network exposure
+
+The default bind is loopback-only:
+
+```text
+AURA_COMMAND_CENTER_HOST=127.0.0.1
+AURA_COMMAND_CENTER_PORT=8765
+AURA_COMMAND_CENTER_QUEUE=artifacts/operator/research_requests.jsonl
+AURA_COMMAND_CENTER_TOKEN=
+```
+
+Binding to a non-loopback address fails closed unless `AURA_COMMAND_CENTER_TOKEN` contains at least 32 characters. API callers must then send that token as `Authorization: Bearer ...`. Never commit the token.
+
+## API
+
+- `GET /api/health` — command-center health and safety state.
+- `GET /api/status` — operator snapshot used by the PWA.
+- `POST /api/command` with JSON `{"text":"system status"}` — deterministic command classification.
+- `Idempotency-Key` is optional for read-only commands and recommended for research requests.
+
+Example:
+
+```bash
+curl http://127.0.0.1:8765/api/status
+curl -X POST http://127.0.0.1:8765/api/command \
+  -H 'Content-Type: application/json' \
+  -H 'Idempotency-Key: owner-request-001' \
+  -d '{"text":"research XAUUSD regime filters"}'
+```
+
+A request such as `go live` or `paper start` is rejected by design. Enabling live money requires the separate controlled-live governance process, broker-origin validation, independent risk approval, reconciliation evidence, and explicit human approval. The PWA is not a shortcut around those controls.

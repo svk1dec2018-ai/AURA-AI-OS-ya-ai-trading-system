@@ -103,6 +103,7 @@ Raw private model reasoning is not treated as trading evidence; AURA stores vali
 - research -> backtest -> robustness -> paper -> human approval lifecycle
 - paper champion/challenger evolution
 - missed-opportunity, wrong-direction and capture-rate learning
+- restart-safe pending opportunity labels and deterministic online-learning replay
 
 ### Market data and broker/data adapters
 
@@ -211,11 +212,52 @@ On Windows, `START_AURA_OLLAMA.cmd` performs the preflight and starts this combi
 runtime. It uses Coinbase/Bybit public market endpoints, GDELT and official feeds;
 no third-party key is embedded. OS-native voice alerts are local and optional.
 
+Run the same fail-closed stack continuously as a service:
+
+```bash
+# Docker Desktop / Docker Engine (voice disabled inside the container)
+docker compose -f compose.paper.yml up -d --build
+docker compose -f compose.paper.yml logs -f
+
+# Linux systemd user service, after creating .venv and installing AURA
+./scripts/install_aura_user_service.sh
+systemctl --user status aura-paper.service
+```
+
+On Windows, first run `START_AURA_OLLAMA.cmd` successfully once, then register the
+same launcher as a restartable logon task:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_aura_windows_task.ps1 -StartNow
+```
+
+These service modes explicitly clear live-trading authority and run the public
+paper preflight before startup. See `docs/AURA_VISION_COVERAGE.md` for the exact
+vision-to-code audit and `output/pdf/AURA_SETUP_AND_OPERATIONS.pdf` for the complete
+operator guide.
+
 Authorized books and video transcripts can be added through
 `knowledge/public_corpus/manifest.jsonl`; see that directory's README. AURA never
 downloads copyrighted books/transcripts automatically.
 
 PowerShell uses `$env:NAME="value"` instead of `export`.
+
+## Optional Telegram outbound alerts
+
+Create a bot through Telegram's official BotFather flow, start a conversation with
+that bot (or add it to the intended chat), then keep both values in the process
+environment only:
+
+```bash
+export AURA_TELEGRAM_BOT_TOKEN="..."
+export AURA_TELEGRAM_CHAT_ID="..."
+python examples/send_telegram_test_alert.py
+```
+
+Successful and failed delivery receipts are checksummed and restart-safe at
+`runtime/alerts/telegram_receipts.jsonl`. The journal contains only a hash of the
+destination, never the token or raw chat ID. This adapter sends outbound alerts;
+it does not accept commands and has no order-execution authority.
 
 ## MT5 / Exness demo + internal paper
 
@@ -242,6 +284,31 @@ $env:AURA_DHAN_ACCESS_TOKEN="..."
 python examples/run_production_preflight.py --mode paper --connector dhan
 python examples/run_dhan_self_evolving_paper.py
 ```
+
+## Angel One SmartAPI read-only + reconciliation
+
+AURA includes a concrete SmartAPI adapter for profile verification, LTP queries,
+order/trade books, position snapshots, symbol routing and restart reconciliation.
+Because SmartAPI order eligibility depends on the operator's current account and
+static-IP requirements, submit/cancel remain deliberately locked until broker-origin
+validation and the controlled-live phase gates pass.
+
+Generate short-lived session tokens using Angel One's official login flow; AURA does
+not accept or store your PIN/TOTP seed. Then run the account preflight:
+
+```powershell
+pip install smartapi-python
+$env:AURA_ANGEL_ONE_API_KEY="..."
+$env:AURA_ANGEL_ONE_CLIENT_CODE="..."
+$env:AURA_ANGEL_ONE_JWT_TOKEN="..."
+$env:AURA_ANGEL_ONE_REFRESH_TOKEN="..."
+$env:AURA_ANGEL_ONE_FEED_TOKEN="..."  # optional for REST-only check
+
+python examples/check_angel_one_account.py
+```
+
+The command prints only non-secret readiness/count information. It cannot place or
+cancel an Angel One order.
 
 ## Docker
 

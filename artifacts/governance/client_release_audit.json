@@ -1,0 +1,42 @@
+{
+  "release_class": "paper_demo_research_release_candidate",
+  "live_money_enabled": false,
+  "validation": {
+    "phase_0_repository_audit": "PASS",
+    "repository_audit_current": true,
+    "ruff": "PASS",
+    "pytest": {
+      "status": "PASS",
+      "tests": 417
+    },
+    "compileall": "PASS",
+    "dependency_consistency": "PASS",
+    "sdist_build": "PASS",
+    "wheel_build": "PASS",
+    "public_paper_preflight": "PASS"
+  },
+  "inventory": {
+    "repository_files": 330,
+    "python_modules": 273,
+    "source_modules": 144,
+    "test_modules": 110,
+    "entrypoints": 21,
+    "unclassified_modules": 0,
+    "unknown_assets": 0,
+    "parse_errors": 0,
+    "unresolved_internal_imports": 0
+  },
+  "safety": {
+    "credentials_embedded": false,
+    "market_data_fabricated": false,
+    "risk_controls_bypassed": false,
+    "strategy_auto_promoted": false,
+    "live_certification_claimed": false
+  },
+  "external_blockers": [
+    "sequential Phase 1-15 validation evidence",
+    "credential-backed broker demo validation",
+    "long-duration broker-origin forward evidence",
+    "explicit human live approval"
+  ]
+}

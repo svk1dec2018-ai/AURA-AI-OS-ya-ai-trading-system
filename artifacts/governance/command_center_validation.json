@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "milestone": "web_command_center",
+  "classification": "paper_research_only",
+  "source_tree_audit_excludes_this_governance_path": true,
+  "implemented": [
+    "local_first_mobile_pwa",
+    "browser_speech_to_text_input_when_supported",
+    "deterministic_command_privilege_routing",
+    "restart_safe_checksummed_research_queue",
+    "idempotent_research_request_enqueue",
+    "non_loopback_bearer_token_gate",
+    "hard_http_block_for_live_control",
+    "hard_http_block_for_paper_execution_control",
+    "explicit_unavailable_response_for_unattached_market_risk_portfolio_sources"
+  ],
+  "safety": {
+    "live_money_enabled": false,
+    "broker_order_submit_exposed": false,
+    "risk_controls_bypassed": false,
+    "fabricated_market_data_allowed": false,
+    "strategy_auto_promotion_allowed": false,
+    "third_party_credentials_embedded": false
+  },
+  "validation": {
+    "targeted_local_tests": 7,
+    "targeted_local_tests_result": "pass",
+    "local_compileall": "pass",
+    "phase0_audit_and_ledger": "generated_and_atomically_synced_by_ci",
+    "ruff_normalization": "pass_on_latest_synced_source",
+    "http_test_portability_fix": "uses_unprivileged_ephemeral_loopback_port",
+    "full_ci_recheck": "triggered_after_source_audit_and_ledger_sync"
+  }
+}

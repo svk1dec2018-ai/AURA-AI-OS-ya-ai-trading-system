@@ -1,0 +1,27 @@
+[Unit]
+Description=AURA AI OS public-data paper research service
+Documentation=file://@AURA_ROOT@/docs/CLIENT_HANDOFF.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@AURA_ROOT@
+EnvironmentFile=-@AURA_ROOT@/.env
+Environment=AURA_LIVE_TRADING_ENABLED=
+Environment=AURA_HUMAN_LIVE_APPROVAL_ID=
+ExecStartPre=@AURA_PYTHON@ examples/run_production_preflight.py --mode paper --connector public --runtime-dir runtime/free_public_autonomy
+ExecStart=@AURA_PYTHON@ examples/run_free_public_autonomy.py --provider coinbase --timeframe 5s --state-dir runtime/free_public_autonomy
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+KillSignal=SIGINT
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=@AURA_ROOT@/runtime
+UMask=0077
+
+[Install]
+WantedBy=default.target

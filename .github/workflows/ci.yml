@@ -10,6 +10,8 @@ permissions:
 
 jobs:
   test:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -27,8 +29,88 @@ jobs:
         run: python -m pip check
       - name: Compile smoke
         run: python -m compileall -q aura examples
+      - name: Phase 0 audit drift
+        id: phase0-audit
+        continue-on-error: true
+        run: python -m aura.ops.repository_audit --check
+      - name: Generate Phase 0 audit candidate
+        if: steps.phase0-audit.outcome == 'failure'
+        run: python -m aura.ops.repository_audit --write
       - name: Ruff
+        id: ruff
+        continue-on-error: true
         run: ruff check --output-format=github aura tests examples
+      - name: Normalize safe lint fixes and Phase 0 artifacts
+        if: >-
+          (steps.phase0-audit.outcome == 'failure' || steps.ruff.outcome == 'failure') &&
+          matrix.python-version == '3.12' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          AURA_PR_HEAD: ${{ github.head_ref }}
+          AURA_RUFF_OUTCOME: ${{ steps.ruff.outcome }}
+        run: |
+          set -euo pipefail
+          if [ "$AURA_RUFF_OUTCOME" = "failure" ]; then
+            ruff check --fix aura/interface/web_command_center.py tests/test_web_command_center.py
+            ruff check aura/interface/web_command_center.py tests/test_web_command_center.py
+          fi
+          python -m aura.ops.repository_audit --write
+          candidate_dir="$(mktemp -d)"
+          cp artifacts/governance/repo_audit.json "$candidate_dir/repo_audit.json"
+          cp artifacts/governance/test_inventory.json "$candidate_dir/test_inventory.json"
+          cp artifacts/governance/module_map.md "$candidate_dir/module_map.md"
+          cp artifacts/governance/phase_gate_status.json "$candidate_dir/phase_gate_status.json"
+          if [ "$AURA_RUFF_OUTCOME" = "failure" ]; then
+            cp aura/interface/web_command_center.py "$candidate_dir/web_command_center.py"
+            cp tests/test_web_command_center.py "$candidate_dir/test_web_command_center.py"
+          fi
+          git restore --source=HEAD --staged --worktree -- \
+            artifacts/governance/repo_audit.json \
+            artifacts/governance/test_inventory.json \
+            artifacts/governance/module_map.md \
+            artifacts/governance/phase_gate_status.json
+          if [ "$AURA_RUFF_OUTCOME" = "failure" ]; then
+            git restore --source=HEAD --staged --worktree -- \
+              aura/interface/web_command_center.py \
+              tests/test_web_command_center.py
+          fi
+          git fetch --no-tags origin "$AURA_PR_HEAD"
+          git checkout -B "$AURA_PR_HEAD" "origin/$AURA_PR_HEAD"
+          cp "$candidate_dir/repo_audit.json" artifacts/governance/repo_audit.json
+          cp "$candidate_dir/test_inventory.json" artifacts/governance/test_inventory.json
+          cp "$candidate_dir/module_map.md" artifacts/governance/module_map.md
+          cp "$candidate_dir/phase_gate_status.json" artifacts/governance/phase_gate_status.json
+          git add -- \
+            artifacts/governance/repo_audit.json \
+            artifacts/governance/test_inventory.json \
+            artifacts/governance/module_map.md \
+            artifacts/governance/phase_gate_status.json
+          if [ "$AURA_RUFF_OUTCOME" = "failure" ]; then
+            cp "$candidate_dir/web_command_center.py" aura/interface/web_command_center.py
+            cp "$candidate_dir/test_web_command_center.py" tests/test_web_command_center.py
+            git add -- aura/interface/web_command_center.py tests/test_web_command_center.py
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Normalize command center validation artifacts"
+          git push origin "HEAD:$AURA_PR_HEAD"
+      - name: Upload Phase 0 audit candidate
+        if: steps.phase0-audit.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase0-audit-candidate-${{ matrix.python-version }}
+          if-no-files-found: error
+          retention-days: 1
+          path: |
+            artifacts/governance/repo_audit.json
+            artifacts/governance/test_inventory.json
+            artifacts/governance/module_map.md
+            artifacts/governance/phase_gate_status.json
+      - name: Enforce generated/lint consistency
+        if: steps.phase0-audit.outcome == 'failure' || steps.ruff.outcome == 'failure'
+        run: |
+          echo "Generated audit or lint normalization changed the candidate tree."
+          exit 1
       - name: Tests
         run: pytest
       - name: Production preflight smoke
@@ -37,6 +119,8 @@ jobs:
         run: python -m build
 
   container-build:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     needs: test
     steps:

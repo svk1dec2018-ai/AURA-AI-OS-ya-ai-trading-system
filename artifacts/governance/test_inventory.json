@@ -1,0 +1,2455 @@
+{
+  "discovery": {
+    "configured_addopts": "-q",
+    "configured_testpaths": [
+      "tests"
+    ],
+    "framework": "pytest",
+    "method": "static AST inventory; runtime collection is separately validated by CI"
+  },
+  "files": [
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_adaptive_model_router.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "1c5650a066b6d444f83e1e4bacaf665e1f888d9afadceeaccb1f8f3b15564259",
+      "source_dependencies": [
+        "aura/agents/adaptive_model_router.py",
+        "aura/agents/models.py",
+        "aura/agents/providers.py",
+        "aura/agents/reliability.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_routed_specialist_exposes_selected_model_and_route_audit_features",
+        "test_router_exploits_role_specific_forward_reliability",
+        "test_router_gives_under_tested_model_exploration_bonus",
+        "test_router_keeps_multiple_opinion_slots_diverse"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_agent_audit.py",
+      "phase_coverage": [
+        1,
+        2,
+        9
+      ],
+      "sha256": "38feb96f7b3ba08fdd378b99e7075605d65978fd6b2f0cc389f8638e823d3bfc",
+      "source_dependencies": [
+        "aura/agents/audit.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_agent_round_is_persisted_with_context_and_ceo_memo"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_agent_reliability.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "772ae145a2da095c0dee2fe440042b544bf04d1146a64a361d0e4fc439e79700",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/reliability.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_ceo_uses_contextual_reliability_to_break_equal_confidence_vote",
+        "test_persistent_reliability_observation_is_fsynced",
+        "test_reliability_write_failure_does_not_claim_in_memory_success",
+        "test_tracker_learns_good_and_bad_agents_and_persists"
+      ]
+    },
+    {
+      "async_test_functions": 4,
+      "path": "tests/test_agent_risk_policy.py",
+      "phase_coverage": [
+        1,
+        3,
+        7,
+        9,
+        10
+      ],
+      "sha256": "1b50873bf0722ac807a57a9ad7e9cdd4925ff10d272dc780dd1d7a40a051c997",
+      "source_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/risk_policy.py",
+        "aura/agents/service.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_clean_required_evidence_reaches_independent_financial_risk",
+        "test_required_role_warmup_packet_is_present_but_unavailable_and_blocks",
+        "test_required_specialist_failure_blocks_candidate",
+        "test_wide_spread_hard_blocks_even_when_ceo_is_long"
+      ]
+    },
+    {
+      "async_test_functions": 3,
+      "path": "tests/test_agent_service.py",
+      "phase_coverage": [
+        1,
+        3,
+        5,
+        7,
+        9,
+        10
+      ],
+      "sha256": "240c960e4ef8b0ec489c0c7cd3fcf54c36abe68123f265eb45eec62e9d313324",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/providers.py",
+        "aura/agents/service.py",
+        "aura/core/pipeline.py",
+        "aura/data/quality.py",
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_kill_switch_blocks_multi_agent_order_even_when_ceo_is_directional",
+        "test_multi_model_ceo_output_is_resized_by_independent_risk_engine",
+        "test_stale_market_data_blocks_agents_before_ceo_round"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_agent_team.py",
+      "phase_coverage": [
+        1,
+        8,
+        9
+      ],
+      "sha256": "62cfbb5a5ad6a41cc52cebbd57f1f286ec8110fc0283cf6c252ae7eef2b86287",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/team.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_default_team_runs_all_ten_roles_in_one_concurrent_round"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_agents.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "d146c4c3ab27de45de32fcad8a6abaa90fe7784a7bb2ec9795731652262b4287",
+      "source_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_non_point_in_time_evidence_is_rejected",
+        "test_one_agent_failure_does_not_cancel_other_specialists",
+        "test_specialists_run_concurrently_and_ceo_combines_evidence"
+      ]
+    },
+    {
+      "async_test_functions": 3,
+      "path": "tests/test_ai_strategy_architect.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "8448a91bd52a93293043d40f5e2627d3ad4cb1d1771794c5b9abf938e1727918",
+      "source_dependencies": [
+        "aura/research/ai_strategy_architect.py",
+        "aura/research/autonomy.py",
+        "aura/research/lifecycle.py",
+        "aura/research/strategy_factory.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_ai_architect_compiles_model_components_into_research_only_strategy",
+        "test_ai_architect_rejects_extra_risk_fields_from_model",
+        "test_ai_architect_rotates_models_across_candidates",
+        "test_safe_compiler_rejects_primitive_used_in_wrong_role"
+      ]
+    },
+    {
+      "async_test_functions": 6,
+      "path": "tests/test_angel_one_adapter.py",
+      "phase_coverage": [
+        1,
+        4
+      ],
+      "sha256": "0d827029863a510a1b282692cca8a6d47231f7aafbdd98e12787448c40bcf782",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/angel_one.py",
+        "aura/execution/demo_guard.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_broker_overfill_is_never_silently_clamped",
+        "test_connect_verifies_profile_identity_and_quote",
+        "test_execution_and_cancellation_are_unconditionally_locked",
+        "test_order_payload_rejects_wrong_venue_route_and_fractional_quantity",
+        "test_order_payload_translation_is_deterministic",
+        "test_reconciliation_snapshots_preserve_external_divergence",
+        "test_response_failure_and_mapping_conflict_fail_closed",
+        "test_session_loader_is_explicit_and_secret_repr_is_redacted",
+        "test_trade_fills_are_normalized_and_deduplicated"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_autonomous_paper.py",
+      "phase_coverage": [
+        2,
+        12
+      ],
+      "sha256": "cc46dfd138fc2c1353d725427d606cce973f497aeb31b26be0a1f6d0dc895151",
+      "source_dependencies": [
+        "aura/execution/reconciliation.py",
+        "aura/runtime/autonomous_paper.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_supervisor_runs_batches_and_reconciles_automatically",
+        "test_supervisor_stops_when_reconciliation_becomes_unsafe"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_autonomous_research.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "6c2639ff8e00ccfe49fd79616eee753f56ca0b4e2a42bcb4850d25105da38950",
+      "source_dependencies": [
+        "aura/research/autonomy.py",
+        "aura/research/lifecycle.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_human_approval_is_still_required_after_autonomous_paper_validation",
+        "test_loop_learns_from_failed_candidate_then_reaches_paper_validated"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_autonomous_strategy_lab.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "2acbe29171215061048e38ee912f188bcbbaba912da5c8f03f8e0cbbc4310676",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/evolution/core.py",
+        "aura/research/autonomous_strategy_lab.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_autonomous_dsl_can_create_directional_strategy_signal",
+        "test_autonomous_gene_space_contains_no_risk_engine_controls",
+        "test_pro_trader_objective_rewards_accuracy_only_with_enough_samples"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_backtest.py",
+      "phase_coverage": [
+        1,
+        3,
+        6,
+        7,
+        10
+      ],
+      "sha256": "235c5424934b0502310958b43cf19f77a0b891044a920d3986af9b31deab0457",
+      "source_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/strategy/base.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_signal_on_close_fills_next_bar_open"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_binance_spot.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "ea5514fc2ac554dd976f3e0d1f59ce9642665a69015e586f79861f9420be2384",
+      "source_dependencies": [
+        "aura/data/binance_spot.py",
+        "aura/data/live_plane.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_book_ticker_maps_best_bid_ask_with_update_sequence",
+        "test_combined_stream_closed_kline_emits_normalized_closed_candle",
+        "test_depth_guard_accepts_bridge_and_detects_gap",
+        "test_open_kline_is_observable_but_not_decision_candle",
+        "test_trade_stream_maps_to_market_tick"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_binance_transport.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "6904d09f0046232bf797249d996ea10b71c652944937b18cde40a57f7778c8f1",
+      "source_dependencies": [
+        "aura/data/binance_transport.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_market_data_only_endpoint_is_supported",
+        "test_production_combined_stream_builds_multiple_streams",
+        "test_subscription_messages_are_normalized_and_have_id",
+        "test_testnet_raw_stream_uses_current_official_endpoint_and_lowercase_symbol",
+        "test_unsafe_stream_delimiters_are_rejected"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_brain_online_evolution.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "24af607f50a81d203a88a53e8005c403e6ba18a5ce4277671c0dc95da11620b2",
+      "source_dependencies": [
+        "aura/evolution/brain_online.py",
+        "aura/evolution/brain_optimizer.py",
+        "aura/evolution/brain_policy.py",
+        "aura/evolution/brain_replay.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_brain_optimizer_uses_sealed_holdout_and_returns_bounded_policy",
+        "test_forward_challenger_requires_new_live_samples_and_never_live_promotes"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_brain_policy.py",
+      "phase_coverage": [
+        1,
+        7,
+        9
+      ],
+      "sha256": "d397ed1a891d8b1a247a681450ac241a1f02add56f73b86ebf83153762e9c6d7",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/evolution/brain_policy.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_brain_policy_blocks_low_confidence_or_excess_disagreement",
+        "test_brain_policy_gene_space_contains_no_financial_risk_authority",
+        "test_brain_policy_roundtrips_through_immutable_genome"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_candle_aggregation.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "7c894d764ceb634632b6b222a274f4922555e35b0928f12c17ec7d17915e8fc4",
+      "source_dependencies": [
+        "aura/data/candle_aggregation.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_flush_closes_existing_bucket_without_fabricating_gap_bars",
+        "test_india_session_5m_buckets_anchor_from_0915_ist",
+        "test_second_level_research_buckets_are_causal",
+        "test_three_minute_timeframe_is_supported"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_checkpoint.py",
+      "phase_coverage": [
+        1,
+        2
+      ],
+      "sha256": "0a184f1fc71c12e4b39acecd5559dc962c62f0ce3ddb89ef9269cf520485ca84",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/persistence/checkpoint.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_checkpoint_checksum_tampering_is_detected",
+        "test_checkpoint_plus_tail_matches_full_wal_recovery",
+        "test_checkpoint_rejects_wrong_starting_cash",
+        "test_duplicate_fill_after_checkpoint_remains_idempotent"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_cognitive_memory.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "e25d15fc4b471a3abcb390c5b59db4dfa89036a83861c854b013439c6e9e5d45",
+      "source_dependencies": [
+        "aura/memory/cognitive.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_expired_working_memory_is_not_retrieved",
+        "test_memory_creation_before_observation_is_rejected",
+        "test_memory_retrieval_is_point_in_time_safe",
+        "test_negative_and_incident_memories_get_attention_boost"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_cognitive_router.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "5e738ead593d3079cca98a8407839d33f6d1961d1ccea735155cd83c8c159c54",
+      "source_dependencies": [
+        "aura/models/cognitive_router.py",
+        "aura/models/performance.py",
+        "aura/models/registry.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_future_performance_cannot_reorder_past_route",
+        "test_router_promotes_model_with_good_regime_specific_paper_history"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "896a5be3ae70b4a9703069665e355f2edfa150c7ffcf2b579045c0e86ee7eb97",
+      "source_dependencies": [
+        "aura/interface/command_center.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_even_enabled_live_command_only_routes_to_handler",
+        "test_live_command_is_denied_by_default",
+        "test_router_parses_market_scan_without_broker_privilege"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_connector_catalog.py",
+      "phase_coverage": [
+        4
+      ],
+      "sha256": "5b6625d74a70e96e994483474da5a0e4685f47506d02ce736954f7e85457dd63",
+      "source_dependencies": [
+        "aura/connectors/catalog.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_connector_catalog_tracks_truthful_maturity_and_cost",
+        "test_free_live_data_filter_excludes_paid_data_connectors",
+        "test_missing_environment_is_explicit_not_validation_claim"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_context_enrichment.py",
+      "phase_coverage": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "sha256": "940e75f2613bfd1df04d8ef7d50171b04825236a15f1ce8353affbe92e3a4c5e",
+      "source_dependencies": [
+        "aura/agents/context_enrichment.py",
+        "aura/agents/models.py",
+        "aura/data/live_plane.py",
+        "aura/domain/models.py",
+        "aura/forecast/ensemble.py",
+        "aura/memory/cognitive.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_enricher_combines_only_point_in_time_memory_live_data_and_forecast"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_contract_accounting.py",
+      "phase_coverage": [
+        1,
+        2,
+        3
+      ],
+      "sha256": "f7b88fef78560f926f2e56ea047f9595519cc411feca92be171060b4acafabe3",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/portfolio/instruments.py",
+        "aura/portfolio/ledger.py",
+        "aura/risk/engine.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_derivative_ledger_uses_multiplier_without_exchanging_full_principal",
+        "test_premium_instrument_exchanges_premium_times_lot_multiplier",
+        "test_risk_engine_sizes_against_contract_notional"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_corporate_actions.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "7bfed90ab7dc0b1cc9d10d745cb3ce72510ba529b8072b726d9a87ead133d20b",
+      "source_dependencies": [
+        "aura/data/corporate_actions.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 11,
+      "test_classes": [],
+      "test_functions": [
+        "test_candle_crossing_effective_boundary_is_rejected",
+        "test_duplicate_action_id_is_rejected",
+        "test_future_or_not_yet_observed_action_is_deferred_without_adjustment",
+        "test_future_or_open_candle_cannot_enter_adjustment",
+        "test_hashes_bind_input_actions_and_as_of",
+        "test_mismatched_action_symbol_is_rejected",
+        "test_mixed_or_overlapping_series_is_rejected",
+        "test_multiple_known_splits_compound_deterministically",
+        "test_reverse_split_increases_pre_effective_price_and_reduces_volume",
+        "test_split_requires_valid_provenance_and_timestamps",
+        "test_two_for_one_split_adjusts_only_pre_effective_candles"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_cross_feed.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "31f7e020a404d89fc8a8eee25a89b60e54a87d1ed4e8a5f0d52f534d423cefb0",
+      "source_dependencies": [
+        "aura/data/cross_feed.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_cross_feed_fails_closed_when_only_one_fresh_provider",
+        "test_cross_feed_rejects_large_outlier_and_keeps_consensus"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_data_quality.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "e90ca3e56546ff3cd2ded987f403f1cf64a6fab1547789ecd908f0619aaf873f",
+      "source_dependencies": [
+        "aura/data/quality.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_clean_series_is_safe",
+        "test_duplicate_and_out_of_order_bars_are_blocked",
+        "test_future_bar_is_blocked",
+        "test_gap_and_staleness_are_blocked"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_deliberation.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "35b42616efde2d059e8a4c173a60774b5e179f385317e95a7116d045af1a0124",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_deliberation_preserves_bull_bear_and_counterfactuals",
+        "test_unanimous_direction_still_forces_invalidation_question"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_deployment_assets.py",
+      "phase_coverage": [
+        0
+      ],
+      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba",
+      "source_dependencies": [],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_compose_paper_service_is_fail_closed",
+        "test_service_installers_do_not_enable_live_authority",
+        "test_systemd_service_runs_preflight_before_paper_autonomy"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_dhan_deep_service.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "f5920f50ec379d8582d9e6630eff5927bfdc9016c7bb1ec019659c0b8a028cf0",
+      "source_dependencies": [
+        "aura/data/candle_aggregation.py",
+        "aura/data/dhan_deep_service.py",
+        "aura/data/dhan_live_ticker.py",
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_deep_service_rejects_stale_metadata",
+        "test_deep_service_rotates_and_returns_fresh_metadata"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_history.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "efbb320dbc644cf8d399f68c1447693848a4d08f2ed527e79539fe14cf5acd0b",
+      "source_dependencies": [
+        "aura/data/dhan_history.py",
+        "aura/domain/models.py",
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_dhan_history_normalizer_excludes_not_yet_closed_bar",
+        "test_dhan_history_normalizer_fails_on_inconsistent_arrays",
+        "test_india_session_resample_requires_complete_0915_anchored_bucket"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_instruments.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "1ed352d42305f8af5f36c06c4ebef97935b4bb68011bced36c1cebba622687b5",
+      "source_dependencies": [
+        "aura/data/dhan_instruments.py",
+        "aura/data/dhan_universe_planner.py",
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_dhan_master_builds_index_cash_future_option_and_mcx_contracts",
+        "test_dhan_master_can_limit_segments",
+        "test_dhan_primary_plan_keeps_index_context_without_trading_it"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_live_full.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "32cfb824f1604a4170163db55aebfa6ff53d95a5faa1fd5d502451c378b40177",
+      "source_dependencies": [
+        "aura/data/dhan_live_full.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_decode_dhan_full_packet_with_depth"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_option_context.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "b93bc5d4f93c4b5ba58588659d6418664e6ab1b8b11d36ae68aaaf56c004f654",
+      "source_dependencies": [
+        "aura/data/dhan_option_context.py",
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_option_context_snapshot_uses_real_chain_metrics_without_fake_iv_percentile",
+        "test_option_target_resolver_maps_future_to_exact_index_underlying"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_options.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "fe17506cb4820b6f17014159491a0912928717cf8bc8d4df838decb9e0ca1f28",
+      "source_dependencies": [
+        "aura/data/dhan_options.py",
+        "aura/data/live_plane.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_option_chain_emits_options_greeks_and_oi_events_per_contract",
+        "test_option_chain_parses_call_put_greeks_and_oi"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_radar.py",
+      "phase_coverage": [
+        1,
+        12
+      ],
+      "sha256": "3911fb9d8d695c93c20c50df474729d244324238b3998696cd0f79e1ee445c32",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/markets/universe.py",
+        "aura/runtime/dhan_radar.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_priority_symbol_is_never_dropped_from_deep_shortlist",
+        "test_radar_selects_strongest_tradable_and_keeps_index_context"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_transport.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "b0c92eb3ccdfe27df9fb7883ac433037bac6679ae5471c2d4df35cf289b78bf5",
+      "source_dependencies": [
+        "aura/data/dhan_transport.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_disconnect_message_uses_documented_request_code",
+        "test_more_than_connection_capacity_is_rejected",
+        "test_subscription_batches_at_official_100_instrument_message_limit",
+        "test_websocket_url_contains_runtime_credentials_and_v2_auth_parameters"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_dhan_v2.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "a9da005a4fbb2939a51640159c0d0a3382898bd7e647015eb02e8965f2b3d53a",
+      "source_dependencies": [
+        "aura/data/dhan_v2.py",
+        "aura/data/live_plane.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_full_packet_decodes_trade_oi_and_five_depth_levels",
+        "test_header_message_length_mismatch_is_rejected",
+        "test_oi_packet_maps_to_open_interest_live_domain",
+        "test_quote_packet_decodes_documented_50_byte_layout",
+        "test_ticker_packet_decodes_little_endian_header_and_epoch",
+        "test_unknown_response_code_fails_closed"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_evolution_demo_stack.py",
+      "phase_coverage": [
+        1,
+        4,
+        5,
+        7,
+        12
+      ],
+      "sha256": "da7c8e82caf8d576ab8d1a7761c4359b46337357849a9661dca8426f2028fc3a",
+      "source_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/domain/models.py",
+        "aura/evolution/core.py",
+        "aura/execution/demo_guard.py",
+        "aura/execution/dhan_sandbox.py",
+        "aura/runtime/evolution_supervisor.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_demo_evolution_can_promote_paper_champion_but_never_live",
+        "test_demo_guard_blocks_real_mt5_and_live_urls",
+        "test_dhan_sandbox_broker_can_only_submit_to_sandbox",
+        "test_mt5_demo_gateway_verifies_demo_and_reads_only_closed_bars",
+        "test_population_evolution_is_bounded_and_reproducible"
+      ]
+    },
+    {
+      "async_test_functions": 3,
+      "path": "tests/test_evolution_evaluator.py",
+      "phase_coverage": [
+        1,
+        3,
+        7
+      ],
+      "sha256": "7fcdae04766a31dcad55ee3d6dbdbd3a0eba64f9824b48d4e374043837382c3f",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/evolution/core.py",
+        "aura/evolution/evaluator.py",
+        "aura/evolution/paper_tracker.py",
+        "aura/research/paper_evidence.py",
+        "aura/research/robustness.py",
+        "aura/risk/engine.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_evaluator_keeps_purge_out_of_training_and_oos_scoring",
+        "test_evaluator_propagates_measured_paper_incidents_to_promotion_gates",
+        "test_evaluator_uses_walk_forward_and_monte_carlo_without_fake_paper"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_evolution_paper_tracker.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "dc97135bb4e35ce85240a4b2f2143fafcadfd5b4f9ef99bf3a9ebb08ab663dcc",
+      "source_dependencies": [
+        "aura/evolution/core.py",
+        "aura/evolution/paper_tracker.py",
+        "aura/research/paper_evidence.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_paper_incidents_are_durable_and_idempotent",
+        "test_paper_journal_rejects_equity_drift_and_corruption",
+        "test_paper_journal_write_precedes_in_memory_trade_state",
+        "test_paper_tracker_uses_only_measured_genome_outcomes",
+        "test_paper_trade_journal_recovers_and_retries_idempotently"
+      ]
+    },
+    {
+      "async_test_functions": 6,
+      "path": "tests/test_external_specialists.py",
+      "phase_coverage": [
+        1,
+        8,
+        9
+      ],
+      "sha256": "9279c8d6f2f6f1f1a91d30e434919908602a9ff3c09e4dc87ab1a12378ae5a3a",
+      "source_dependencies": [
+        "aura/agents/external_specialists.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_cross_market_specialist_combines_trusted_related_market_signals",
+        "test_future_higher_timeframe_bar_forces_abstention",
+        "test_higher_timeframe_bias_uses_only_closed_point_in_time_bars",
+        "test_macro_contradiction_forces_abstention",
+        "test_macro_specialist_uses_trusted_firewall_claims",
+        "test_options_specialist_is_advisory_and_flags_extreme_volatility"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_flattrade.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "bfba482b61b4df60473aa5893cbf33f70de540f1f505da5dfe73b08ee67030ca",
+      "source_dependencies": [
+        "aura/data/flattrade.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_flattrade_touchline_merges_delta_volume",
+        "test_flattrade_tpseries_excludes_forming_candle"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_forecast_baselines.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "e27e9e240956fc251a2da99e4d9eb287a1889529565485dc77da4435c5bf5e39",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/forecast/baselines.py",
+        "aura/forecast/providers.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_causal_baselines_form_conservative_two_model_ensemble",
+        "test_ema_baseline_abstains_through_provider_failure_until_warm"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_forecast_ensemble.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "415bc6952d93432fb5000ad1542ae88b6a69f2a6f31ac0cdbdba792b80151232",
+      "source_dependencies": [
+        "aura/forecast/ensemble.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_ensemble_weights_models_by_measured_quality",
+        "test_low_trust_ensemble_is_rejected",
+        "test_quantile_crossing_is_rejected_at_model_boundary"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_forecast_providers.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "febe12a00936d401f18b10ffe1f955d5a4e68f45d0c1cd3a668a213724d91668",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/forecast/ensemble.py",
+        "aura/forecast/providers.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_multiple_forecasters_run_and_create_calibrated_ensemble",
+        "test_one_forecast_model_failure_does_not_cancel_surviving_ensemble"
+      ]
+    },
+    {
+      "async_test_functions": 3,
+      "path": "tests/test_forecast_specialist.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "2f78e08470f32ed1e48bc03ed2ea83fddbfcf63a02752dbcaf2c1d856578b1e3",
+      "source_dependencies": [
+        "aura/agents/forecast_specialist.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_forecast_distribution_fully_above_price_supports_long",
+        "test_high_model_disagreement_forces_abstention",
+        "test_missing_forecast_abstains_without_fabricating_direction"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_free_intelligence.py",
+      "phase_coverage": [
+        0,
+        5
+      ],
+      "sha256": "774ee503fea375781f7aa9593d8f1b6887339de6d36db0a6d25bcf389ca2a43d",
+      "source_dependencies": [
+        "aura/__init__.py",
+        "aura/data/free_intelligence.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_rss_source_dedupes_and_excludes_future_items"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_free_public_ai_context.py",
+      "phase_coverage": [
+        1,
+        7,
+        9,
+        12
+      ],
+      "sha256": "c715d1a9aeb9ba44ff66bcbb96605881ca6a46a1d5f337ccab813a0270411520",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/evolution/opportunity_audit.py",
+        "aura/runtime/free_public_ai_council.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_history_provider_failure_is_visible_and_non_blocking",
+        "test_runtime_builds_full_causal_public_context",
+        "test_runtime_rebuilds_online_learning_from_durable_opportunity_audit"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_futures_roll.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "7ae66e0d8c4d997159e8b1253b0d860a6c1038d3ae7ef4d731a183668cb85258",
+      "source_dependencies": [
+        "aura/data/futures_roll.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 11,
+      "test_classes": [],
+      "test_functions": [
+        "test_candle_crossing_roll_boundary_is_rejected",
+        "test_future_or_wrong_contract_candle_is_rejected",
+        "test_future_roll_is_deferred_and_future_contract_data_is_not_accepted",
+        "test_missing_roll_after_expiry_fails_closed",
+        "test_non_adjacent_roll_is_rejected",
+        "test_roll_after_expiry_is_rejected",
+        "test_roll_boundary_reports_raw_gap_without_treating_it_as_return",
+        "test_roll_content_hash_is_deterministic_and_price_sensitive",
+        "test_roll_rule_must_be_observed_before_transition",
+        "test_stitch_preserves_actual_contract_prices_and_marks_roll_reset",
+        "test_unobserved_active_contract_metadata_is_rejected"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_instruments.py",
+      "phase_coverage": [
+        1
+      ],
+      "sha256": "a198788b6a9c3a353b4ecc556cc186cb55ce5908d92d18d414b88909746120d3",
+      "source_dependencies": [
+        "aura/domain/instruments.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_option_identity_requires_complete_contract_terms",
+        "test_symbol_mapper_is_bidirectional_and_case_normalized",
+        "test_symbol_mapper_rejects_collisions"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_intelligence_service.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "e39fcc3075cd580416027ebe05c3c7bed675f42feb45af4092ea2d5fd468a860",
+      "source_dependencies": [
+        "aura/data/free_intelligence.py",
+        "aura/data/intelligence_service.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_intelligence_service_filters_by_original_observation_time"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_knowledge_firewall.py",
+      "phase_coverage": [
+        8
+      ],
+      "sha256": "4d45ac75d7c91bf489a317259b09ef189654ee2b013dd88175514b626c3fb43e",
+      "source_dependencies": [
+        "aura/knowledge/firewall.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_conflicting_claims_are_explicit_and_block_safe_bundle",
+        "test_future_or_not_yet_observed_material_is_invisible_to_decision",
+        "test_identical_content_is_deduplicated_and_source_updates_are_versioned",
+        "test_low_trust_source_is_rejected"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_live_data_plane.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "9c46e471b536f14facd1efbb7e195f21cb11af2f34d6404be780aedc4494bd84",
+      "source_dependencies": [
+        "aura/data/live_plane.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_event_received_before_observation_is_rejected",
+        "test_future_or_stale_event_cannot_satisfy_requirement",
+        "test_non_monotonic_stream_sequence_is_rejected",
+        "test_snapshot_returns_latest_fresh_trusted_point_in_time_event"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_live_shadow_strategy_lab.py",
+      "phase_coverage": [
+        1,
+        7,
+        12
+      ],
+      "sha256": "193a1b1594a990e57942c97d7745f383d90d7100b7ef878017a666aee1d235ac",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/evolution/core.py",
+        "aura/research/live_shadow_strategy_lab.py",
+        "aura/research/strategy_mutation.py",
+        "aura/runtime/free_public_strategy_lab.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_existing_journal_rejects_policy_or_initial_population_drift",
+        "test_journal_recovers_evolved_population_and_refresh_counters",
+        "test_journal_replays_forward_history_metrics_and_pending_plans",
+        "test_journal_sync_failure_does_not_claim_in_memory_progress",
+        "test_journaled_candle_recovers_when_processing_crashes_after_append",
+        "test_live_shadow_lab_resolves_forward_only_plans",
+        "test_malformed_journal_record_fails_closed",
+        "test_population_refresh_preserves_elite_metrics_and_market_history",
+        "test_public_strategy_runtime_restores_journal_population_and_counters"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_local_knowledge_corpus.py",
+      "phase_coverage": [
+        8
+      ],
+      "sha256": "a112162713b0511fd249a01cf24588d5666d5edaba0c950c3e95bb2f63c4542b",
+      "source_dependencies": [
+        "aura/knowledge/local_corpus.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_manifest_loads_authorized_book_and_retrieves_point_in_time",
+        "test_manifest_rejects_path_traversal",
+        "test_manifest_rejects_unlisted_license"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_macro_external_intelligence.py",
+      "phase_coverage": [
+        1,
+        8,
+        9
+      ],
+      "sha256": "706ee93e7f843fd6de99ae91fa3c908e7bb0b17347e0493673a4951d2e197aa6",
+      "source_dependencies": [
+        "aura/agents/external_specialists.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_macro_specialist_rejects_future_external_event",
+        "test_macro_specialist_uses_sourced_sentiment_when_firewall_empty"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_market_universe.py",
+      "phase_coverage": [
+        1
+      ],
+      "sha256": "57750c5133d07ed47dfe6b1bc58984558661716d04a51c44cb33c74b437656f1",
+      "source_dependencies": [
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_exness_and_indian_derivatives_coexist_in_one_canonical_universe",
+        "test_future_requires_underlying_and_expiry",
+        "test_non_tradable_or_data_disabled_symbols_do_not_enter_scan_plan",
+        "test_option_requires_underlying_expiry_strike_and_side",
+        "test_scan_plan_expands_every_eligible_instrument_across_all_timeframes"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_model_drift.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "b540855f590f47dd31b0a5350bc3d737e339a120317745f856f6d598f17f7e6f",
+      "source_dependencies": [
+        "aura/models/drift.py",
+        "aura/models/performance.py",
+        "aura/models/registry.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_challenger_promotes_only_after_material_calibrated_improvement",
+        "test_challenger_with_too_few_samples_is_not_promoted",
+        "test_drift_detector_flags_recent_calibration_and_hit_rate_degradation",
+        "test_stable_recent_window_is_not_drifted"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_model_performance.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "83921a54c1cf286d4dcd31bd692611ca599872846d2306198a41ee9824d5f0f1",
+      "source_dependencies": [
+        "aura/models/performance.py",
+        "aura/models/registry.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_descriptor_is_adapted_only_after_minimum_sample_size",
+        "test_future_outcomes_do_not_influence_historical_model_routing",
+        "test_outcome_before_prediction_is_rejected",
+        "test_tracker_learns_calibration_and_reliability"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_model_registry.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "7383b38875eade60d39429a492ba0277bcbf37921897471e0c165121f8c31085",
+      "source_dependencies": [
+        "aura/models/registry.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_research_only_model_can_be_excluded_from_runtime_route",
+        "test_router_can_prefer_open_weight_without_bypassing_minimums",
+        "test_router_prefers_reliable_calibrated_models_for_task"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_mt5_contracts.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "f1cdea6b49294dab0406391da748d41483814e6e63ae104033703669d417aa77",
+      "source_dependencies": [
+        "aura/data/mt5_contracts.py",
+        "aura/markets/universe.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_mt5_contract_metadata_preserves_broker_quantity_rules",
+        "test_mt5_discovery_enumerates_full_connected_symbol_set"
+      ]
+    },
+    {
+      "async_test_functions": 4,
+      "path": "tests/test_mt5_demo_runtime.py",
+      "phase_coverage": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        9,
+        10,
+        12
+      ],
+      "sha256": "aad42b3c437ac9c184b638b41515304e37dbeb6612124b7ccb13b9a95b6f60a1",
+      "source_dependencies": [
+        "aura/agents/audit.py",
+        "aura/core/pipeline.py",
+        "aura/data/mt5_demo.py",
+        "aura/data/mt5_polling.py",
+        "aura/domain/models.py",
+        "aura/execution/mt5_demo_broker.py",
+        "aura/execution/paper.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py",
+        "aura/portfolio/ledger.py",
+        "aura/risk/engine.py",
+        "aura/runtime/allocation.py",
+        "aura/runtime/multi_market_paper.py",
+        "aura/runtime/scanner.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_mt5_demo_broker_checks_sends_and_rebuilds_fill",
+        "test_mt5_demo_broker_rejects_misaligned_volume",
+        "test_mt5_polling_seed_uses_closed_bars_and_tick_volume_fallback",
+        "test_seeded_coordinator_exposes_same_timestamp_htf_without_replay_trades"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_multi_backtest.py",
+      "phase_coverage": [
+        1,
+        3,
+        6,
+        7,
+        10
+      ],
+      "sha256": "ca48ab02a5fd1cac72f7cf86f451ab9a731b6acf299bdc68e16057cf809aad3c",
+      "source_dependencies": [
+        "aura/backtest/multi_engine.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/strategy/base.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_multi_symbol_backtest_requires_one_shared_risk_engine",
+        "test_multi_symbol_backtest_reserves_shared_portfolio_capacity"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_multi_market_paper.py",
+      "phase_coverage": [
+        1,
+        2,
+        3,
+        7,
+        9,
+        10,
+        12
+      ],
+      "sha256": "03c8e22d107925c608bc9b7455c151d8b3dfa191647699bbad0906235442865b",
+      "source_dependencies": [
+        "aura/agents/audit.py",
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/execution/paper.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py",
+        "aura/portfolio/ledger.py",
+        "aura/risk/engine.py",
+        "aura/runtime/allocation.py",
+        "aura/runtime/multi_market_paper.py",
+        "aura/runtime/scanner.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_multi_market_paper_loop_shares_capital_and_reconciles"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_multi_market_scanner.py",
+      "phase_coverage": [
+        1,
+        3,
+        7,
+        9,
+        10,
+        12
+      ],
+      "sha256": "b80a50581faaaa8e4ff37119c0528fd7068e8919063dfc3199497fa51adaf6c6",
+      "source_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/runtime/allocation.py",
+        "aura/runtime/scanner.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_markets_scan_concurrently_then_share_one_reserved_risk_budget"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_oanda.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "ec6240c7337387c71a2c8f07ab45109f64acbe43fdc6f3a6358f8c56ec52cf80",
+      "source_dependencies": [
+        "aura/data/oanda.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_oanda_candles_keep_only_complete_visible_bars",
+        "test_oanda_pricing_normalizes_bid_ask_midpoint"
+      ]
+    },
+    {
+      "async_test_functions": 4,
+      "path": "tests/test_ollama_ai_council.py",
+      "phase_coverage": [
+        1,
+        8,
+        9
+      ],
+      "sha256": "73026782bd8e5ce4e9af14a5f471df532837d99b543435c3383ebaf8ab842e9c",
+      "source_dependencies": [
+        "aura/agents/ai_council.py",
+        "aura/agents/models.py",
+        "aura/agents/ollama_provider.py",
+        "aura/agents/team.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_default_team_auto_adds_env_ai_without_broker_credentials",
+        "test_env_ollama_providers_share_safe_local_defaults",
+        "test_multi_model_council_creates_independent_role_agents",
+        "test_ollama_provider_omits_think_by_default",
+        "test_ollama_provider_retries_http_400_in_compatible_json_mode",
+        "test_ollama_provider_uses_structured_output_and_discards_raw_thinking",
+        "test_ollama_shared_request_limiter_prevents_model_queue_flooding"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_online_bridge.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "d77f8c7fdf92b09f8714bb81115795934a98787be1578aed03f5f0a5708b3f24",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/evolution/online_bridge.py",
+        "aura/evolution/online_learning.py",
+        "aura/evolution/opportunity_audit.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_bridge_replays_records_in_time_order_and_deduplicates",
+        "test_opportunity_bridge_updates_online_outcome_state"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_online_learning.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "8e4c48c97fcdf06fafd11bf779ca61c50cc65f77140c117dc74cb7365116da23",
+      "source_dependencies": [
+        "aura/evolution/online_learning.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_online_learner_rejects_backward_event_time",
+        "test_online_learner_updates_every_event_but_only_emits_research_trigger"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_open_model_catalog.py",
+      "phase_coverage": [
+        9
+      ],
+      "sha256": "95ff207fbc1982a62ff182996a9634b4f7b31fc40b953ecd21aacc896c97abd5",
+      "source_dependencies": [
+        "aura/models/open_catalog.py",
+        "aura/models/registry.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_open_catalog_registers_forecast_and_finance_models_as_research_only",
+        "test_open_forecasters_are_not_eligible_for_runtime_until_validated"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_opportunity_audit.py",
+      "phase_coverage": [
+        1,
+        7,
+        9,
+        12
+      ],
+      "sha256": "2e525ca42b1b16706b7bd02ef3f859910682b0fd080ed08d6920d3ebaaa64a20",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/evolution/opportunity_audit.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_live_auditor_records_captured_directional_move",
+        "test_live_auditor_records_flat_missed_material_move",
+        "test_pending_checkpoint_rejects_policy_change_with_unresolved_records",
+        "test_pending_opportunity_survives_restart_and_counts_each_bar_once"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_option_intelligence.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "888ae8521111af983520c43ebc431d08a42dc5bfd78da6a066c63c61fcccfbf6",
+      "source_dependencies": [
+        "aura/markets/universe.py",
+        "aura/options/intelligence.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_future_observations_cannot_leak_into_point_in_time_chain",
+        "test_option_chain_aggregates_pcr_atm_iv_skew_and_greeks"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_options_replay.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "2389e4c2bd2875d715944f30eb8464387fec7b5e393d530607843ac4b6e03506",
+      "source_dependencies": [
+        "aura/data/options_replay.py",
+        "aura/markets/universe.py",
+        "aura/options/intelligence.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_future_snapshot_cannot_change_earlier_replay_or_hash",
+        "test_incomplete_chain_coverage_fails_closed",
+        "test_insufficient_two_sided_quote_coverage_fails_closed",
+        "test_missing_or_stale_visible_snapshot_fails_closed",
+        "test_replay_is_deterministic_and_recorded_change_updates_hash",
+        "test_replay_rejects_ambiguous_or_invalid_timeline",
+        "test_replay_selects_latest_visible_exact_snapshot",
+        "test_snapshot_rejects_duplicate_contract_and_non_atomic_timestamp",
+        "test_snapshot_rejects_inconsistent_spot_one_sided_quote_and_nonfinite_metric"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_options_volatility_context.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "71a055600fb5eba1c352c8af90fcacdf38b9e3adb7adec4192f39620b43ffa74",
+      "source_dependencies": [
+        "aura/agents/external_specialists.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_options_specialist_accepts_underlying_mapping_without_fake_iv_percentile",
+        "test_options_specialist_still_flags_extreme_pcr_when_percentile_unknown"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_order_state.py",
+      "phase_coverage": [
+        1,
+        2
+      ],
+      "sha256": "354e9dd6393aee7074421905cb04648a5cbdc4d9e087d930b47b5a43fa0fc8f2",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/state.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_overfill_is_rejected",
+        "test_partial_fill_is_idempotent_and_computes_vwap"
+      ]
+    },
+    {
+      "async_test_functions": 4,
+      "path": "tests/test_paper_broker.py",
+      "phase_coverage": [
+        1,
+        12
+      ],
+      "sha256": "bd215716d7f6c8fa871908c24fb4dce6c6c1650a622b94336f207ea24737056c",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/paper.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_cancelled_order_does_not_fill",
+        "test_duplicate_submit_is_idempotent",
+        "test_limit_and_stop_use_deterministic_gap_rules",
+        "test_market_order_fills_next_supplied_candle_with_costs"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_paper_evidence.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "244e15cc7f16f1d7d5de3ca19ceaa8e569a570bf1e182faeb5a030f10b5749cd",
+      "source_dependencies": [
+        "aura/research/lifecycle.py",
+        "aura/research/paper_evidence.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_profitable_stable_paper_run_generates_passed_governance_evidence",
+        "test_reconciliation_incident_blocks_paper_promotion_even_when_pnl_is_positive",
+        "test_too_few_paper_trades_cannot_pass"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_paper_runtime.py",
+      "phase_coverage": [
+        1,
+        2,
+        3,
+        7,
+        9,
+        10,
+        12
+      ],
+      "sha256": "faa09bd0264c493ae1369cefe7379c11dc2fa1e14e151ccea2382876c0dcc71c",
+      "source_dependencies": [
+        "aura/agents/audit.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/providers.py",
+        "aura/agents/service.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/execution/paper.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py",
+        "aura/portfolio/ledger.py",
+        "aura/risk/engine.py",
+        "aura/runtime/paper.py",
+        "aura/strategy/ema.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_runtime_defers_fill_to_next_candle_and_reconciles"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_parameter_stability.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "cb49574dd11b4b5e700a0533be282ee8c8cf9bba2fdda5fe9b596ae85070c5f1",
+      "source_dependencies": [
+        "aura/evolution/core.py",
+        "aura/research/parameter_stability.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_boundary_gene_requires_only_available_local_side",
+        "test_explicit_policy_can_tolerate_bounded_unstable_fraction",
+        "test_neighborhood_is_deterministic_and_changes_one_parameter_at_a_time",
+        "test_numeric_gene_requires_explicit_reproducible_step",
+        "test_stability_approves_complete_measured_neighborhood",
+        "test_stability_fails_closed_when_neighbor_evidence_is_missing",
+        "test_stability_rejects_cherry_picked_or_duplicate_evidence",
+        "test_stability_rejects_local_performance_cliff",
+        "test_stability_requires_neighbors_to_pass_normal_research_gate"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_phase_gates.py",
+      "phase_coverage": [
+        0
+      ],
+      "sha256": "8c5d515813305f223df50edaba468428458d414d5efb5d858b6fe6eb460b2a9c",
+      "source_dependencies": [
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_all_phase_specs_have_complete_non_skippable_contracts",
+        "test_committed_ledger_passes_only_phase_zero",
+        "test_later_phase_cannot_pass_before_previous_phase",
+        "test_phase_gate_evidence_hash_is_tamper_evident"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_portfolio.py",
+      "phase_coverage": [
+        1,
+        2
+      ],
+      "sha256": "751f9f5848515fa773811c109534ad4eddc7ee3c9e9faa2bb1d408994038974a",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/portfolio/ledger.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_long_close_and_duplicate_fill",
+        "test_long_to_short_flip_sets_new_basis"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_portfolio_targets.py",
+      "phase_coverage": [
+        2,
+        3
+      ],
+      "sha256": "0c387ea3ae094600562bcba58524c4515174b0f67d197e74d9de39712d1836e5",
+      "source_dependencies": [
+        "aura/portfolio/targets.py",
+        "aura/risk/quantity.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_target_planner_translates_exposure_to_quantity_delta",
+        "test_target_set_rejects_unbounded_gross_exposure"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_production_ops.py",
+      "phase_coverage": [
+        0,
+        7,
+        15
+      ],
+      "sha256": "39e4cf1fd96fee6ada00d6cab85a60eae412ade353e54f822e4b8c7654d2e234",
+      "source_dependencies": [
+        "aura/ops/health.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/preflight.py",
+        "aura/ops/release_gate.py",
+        "aura/research/lifecycle.py"
+      ],
+      "static_test_functions": 10,
+      "test_classes": [],
+      "test_functions": [
+        "test_demo_preflight_fails_closed_when_credentials_missing",
+        "test_health_report_blocks_new_risk_on_degraded_or_kill_switch",
+        "test_live_preflight_can_pass_only_with_phase_15_and_human_approval",
+        "test_live_preflight_cannot_bypass_phase_15_gate",
+        "test_live_preflight_requires_approved_strategy_and_human_ack",
+        "test_non_live_preflight_rejects_live_acknowledgement",
+        "test_public_paper_preflight_is_ready",
+        "test_release_gate_accepts_strong_forward_broker_evidence",
+        "test_release_gate_rejects_public_or_historical_evidence_for_live",
+        "test_release_gate_rejects_weak_or_operationally_unsafe_candidate"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_public_crypto_feeds.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "91eb74abb062e53f9b064510bdb4ccf63d80e33a2738821f22fac15c1917e19f",
+      "source_dependencies": [
+        "aura/data/public_crypto_feeds.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_bybit_public_ticker_normalizes_without_auth",
+        "test_bybit_public_trade_normalizes_to_trade_tick",
+        "test_coinbase_public_market_trades_normalize_to_trade_ticks",
+        "test_coinbase_public_ticker_normalizes_without_auth",
+        "test_future_provider_timestamp_is_rejected",
+        "test_okx_public_ticker_normalizes_without_auth"
+      ]
+    },
+    {
+      "async_test_functions": 3,
+      "path": "tests/test_public_history.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "sha256": "fa34b4a04ac74eb4b897b7c366de4041c02d35530af922d9be35d14f851f1f84",
+      "source_dependencies": [
+        "aura/data/public_history.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_bybit_history_normalizes_reverse_sorted_rows",
+        "test_bybit_provider_error_is_failure_not_fake_data",
+        "test_coinbase_history_normalizes_sorts_and_excludes_open_bucket",
+        "test_historical_archive_merges_atomically_and_deduplicates"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_public_no_key_connectors.py",
+      "phase_coverage": [
+        4
+      ],
+      "sha256": "c7921b2bbfbe85bf8801b740e59ab23d5298e3882f77fc02f921dc05370bc437",
+      "source_dependencies": [
+        "aura/connectors/catalog.py",
+        "aura/connectors/public_no_key.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_public_no_key_connectors_are_data_only_and_free"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_reconciliation.py",
+      "phase_coverage": [
+        1,
+        2,
+        3
+      ],
+      "sha256": "f60b0c8f3fa2b39676ce6441b6d5103193f4ed1a9ff342eec993266063490582",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/reconciliation.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py",
+        "aura/risk/engine.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_matching_broker_state_is_safe",
+        "test_missing_broker_order_freezes_new_risk",
+        "test_position_mismatch_freezes_new_risk",
+        "test_supervisor_engages_kill_switch_and_never_auto_resets",
+        "test_unknown_broker_order_freezes_new_risk"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_recovery.py",
+      "phase_coverage": [
+        1,
+        2
+      ],
+      "sha256": "61a5c17623093d6e2b36e592d77aaf703a8888022ed4d29a0ab65a8c39642590",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_duplicate_fill_event_is_idempotent_during_replay",
+        "test_kill_switch_reset_is_restored",
+        "test_recovery_rebuilds_orders_portfolio_and_kill_switch",
+        "test_recovery_rejects_fill_for_unknown_order"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_regime_validation.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "a42bad8bbcd22386cd346e62a0155dfe9fe9a0fbc37d640c76ab120636a5a944",
+      "source_dependencies": [
+        "aura/evolution/core.py",
+        "aura/research/regime_validation.py"
+      ],
+      "static_test_functions": 10,
+      "test_classes": [],
+      "test_functions": [
+        "test_balanced_required_regimes_pass_research_gate",
+        "test_duplicate_normalized_regime_is_rejected",
+        "test_extra_regime_does_not_mask_missing_required_regime",
+        "test_invalid_policy_is_rejected",
+        "test_missing_required_regime_fails_closed",
+        "test_non_finite_performance_evidence_is_rejected",
+        "test_policy_defaults_remain_constructible",
+        "test_trade_concentration_cannot_mask_thin_regime",
+        "test_unclassified_regime_evidence_is_rejected",
+        "test_weak_required_segment_reports_each_failed_threshold"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_repository_audit.py",
+      "phase_coverage": [
+        0
+      ],
+      "sha256": "baa80d32ad0aa513377c01f825d7076163172f168682bb7a7a57a7f573395a6b",
+      "source_dependencies": [
+        "aura/ops/repository_audit.py"
+      ],
+      "static_test_functions": 5,
+      "test_classes": [],
+      "test_functions": [
+        "test_audit_exposes_stub_candidates_without_calling_them_completed",
+        "test_audit_includes_git_tracked_runtime_despite_generic_ignore_rule",
+        "test_generated_phase_zero_artifacts_are_current",
+        "test_packaging_outputs_are_excluded_but_source_is_not",
+        "test_repository_audit_classifies_every_module_and_asset"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_research_evidence.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "8d37acbb3d37573fe2e055dfb41765bfd59aeae418b83b23c2e718853b8d8a5b",
+      "source_dependencies": [
+        "aura/research/evidence.py",
+        "aura/research/lifecycle.py",
+        "aura/research/robustness.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_stable_metrics_create_passed_evidence_and_allow_robustness_promotion",
+        "test_unstable_metrics_create_failed_evidence_and_block_promotion"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_research_manifest.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "c4f23167cf8a902dcabcdf7679a03db753e3b86187dc60f31b0b8d1284b788f7",
+      "source_dependencies": [
+        "aura/research/manifest.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_dataset_order_does_not_change_experiment_identity",
+        "test_execution_assumption_change_changes_experiment_identity",
+        "test_hash_fields_require_lowercase_sha256_hex",
+        "test_identical_experiment_inputs_produce_same_manifest_hash",
+        "test_manifest_rejects_duplicate_dataset_ids",
+        "test_manifest_rejects_non_canonical_configuration",
+        "test_research_artifact_is_bound_to_exact_manifest"
+      ]
+    },
+    {
+      "async_test_functions": 4,
+      "path": "tests/test_resilience.py",
+      "phase_coverage": [
+        4
+      ],
+      "sha256": "6572be38596cbd3897faf4a3f0ecfcb98149b06f77904093368860811a5d19e6",
+      "source_dependencies": [
+        "aura/execution/resilience.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_circuit_opens_and_allows_single_half_open_probe",
+        "test_failed_half_open_probe_reopens_circuit",
+        "test_idempotent_connector_call_can_retry_and_recover",
+        "test_non_idempotent_connector_call_gets_one_attempt_only",
+        "test_retry_async_does_not_retry_non_transient_failures",
+        "test_retry_async_uses_bounded_exponential_backoff"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_risk.py",
+      "phase_coverage": [
+        1,
+        3
+      ],
+      "sha256": "558d6f4c24bbcaf03ee77cb2d99d2d7bd99cc6a666f25f34fb674a49fe7f80f3",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/risk/engine.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_drawdown_gate_allows_flattening",
+        "test_drawdown_gate_blocks_new_risk",
+        "test_kill_switch_blocks_new_risk",
+        "test_kill_switch_still_allows_position_reduction",
+        "test_order_is_resized_to_notional_limit",
+        "test_short_disabled_allows_close_but_blocks_flip_short"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_risk_overlays.py",
+      "phase_coverage": [
+        1,
+        3
+      ],
+      "sha256": "26240bbe86c0f0c2e9f5480c33e3c201a6103be2ee20d93661014914248fd820",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/risk/engine.py",
+        "aura/risk/overlays.py",
+        "aura/risk/statistics.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_stale_statistical_state_blocks_new_risk",
+        "test_statistical_overlay_blocks_new_risk_when_cvar_exceeds_limit",
+        "test_statistical_overlay_never_blocks_pure_flattening",
+        "test_symbol_concentration_cap_resizes_order"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_risk_statistics.py",
+      "phase_coverage": [
+        3
+      ],
+      "sha256": "4754db9d52f179734ebb9872ed99feeff489c26cceb4447dc7070bc807fc0e15",
+      "source_dependencies": [
+        "aura/risk/statistics.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_pairwise_correlation_detects_positive_and_negative_relationships",
+        "test_stress_scenarios_use_signed_market_values",
+        "test_var_cvar_volatility_and_drawdown_are_computed_deterministically"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_robustness.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "6ae386342e9e4d2a53557c59911cbbef90de467cc62001f6b3a2885096af6a83",
+      "source_dependencies": [
+        "aura/research/robustness.py"
+      ],
+      "static_test_functions": 8,
+      "test_classes": [],
+      "test_functions": [
+        "test_expanding_walk_forward_keeps_past_and_never_uses_future",
+        "test_expanding_walk_forward_preserves_purge_gap",
+        "test_monte_carlo_is_deterministic_for_fixed_seed",
+        "test_purged_walk_forward_excludes_forward_label_boundary",
+        "test_robustness_gate_approves_stable_positive_oos_profile",
+        "test_robustness_gate_rejects_unstable_negative_profile",
+        "test_walk_forward_rejects_invalid_purge_and_split_chronology",
+        "test_walk_forward_splits_never_train_on_test_or_future_data"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_sealed_holdout.py",
+      "phase_coverage": [
+        2,
+        7
+      ],
+      "sha256": "ff3859f464c2b7f12d4894fc7a2710b33366086317ccadd228e797c7a7e9e481",
+      "source_dependencies": [
+        "aura/persistence/wal.py",
+        "aura/research/holdout.py",
+        "aura/research/manifest.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_consumed_holdout_rejects_a_different_second_result",
+        "test_corrupt_or_semantically_rewritten_journal_cannot_recover",
+        "test_invalid_boundaries_and_non_numeric_metrics_fail_closed",
+        "test_result_must_match_seal_and_be_evaluated_after_declaration",
+        "test_same_chronological_slice_cannot_be_reused_for_another_candidate",
+        "test_seal_and_single_result_survive_restart"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_shadow_outcomes.py",
+      "phase_coverage": [
+        1,
+        7,
+        9,
+        12
+      ],
+      "sha256": "2fd4b4911ba7551b2086b0d13f547dd37662c36894503781d03603a2bc4abbf5",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/reliability.py",
+        "aura/domain/models.py",
+        "aura/evolution/brain_online.py",
+        "aura/evolution/brain_replay.py",
+        "aura/evolution/shadow_outcomes.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 8,
+      "test_classes": [],
+      "test_functions": [
+        "test_agent_reliability_updates_only_from_material_live_broker_outcomes",
+        "test_checkpoint_failure_must_recover_before_resolution_outputs",
+        "test_pending_shadow_checkpoint_rejects_configuration_change",
+        "test_public_live_origin_learns_reliability_without_claiming_broker_origin",
+        "test_ready_resolution_recovers_exactly_after_output_write_failure",
+        "test_shadow_and_agent_horizons_resume_after_restart_without_double_counting",
+        "test_shadow_outcome_waits_for_future_horizon_and_persists_sample",
+        "test_skipped_ceo_trade_still_teaches_directional_agent_reliability"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_shoonya.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "0cbb7010f61958968061f95d3bce870819fca655f8f4f4fbbc17f54dc79126bb",
+      "source_dependencies": [
+        "aura/data/shoonya.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_shoonya_time_price_series_is_point_in_time_safe",
+        "test_shoonya_touchline_merges_delta_packets_and_volume"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_specialists.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "884233f8d8cbd8faccfbc50945754d28becefda2ba7c04f7371c7b582aece72c",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/specialists.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_causal_specialists_work_together_in_one_ceo_round",
+        "test_smc_specialist_detects_causal_sweep_without_future_bars"
+      ]
+    },
+    {
+      "async_test_functions": 1,
+      "path": "tests/test_strategy_farm.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "a208a02908eacabf11a01a6e028c4d97a580cfa7b53e356ef2ba679f2513601d",
+      "source_dependencies": [
+        "aura/evolution/core.py",
+        "aura/research/autonomous_strategy_lab.py",
+        "aura/research/strategy_farm.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_strategy_farm_evaluates_population_and_counts_virtual_trades"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_strategy_governance.py",
+      "phase_coverage": [
+        2,
+        7
+      ],
+      "sha256": "250433b1e092ec0e81441db9edcbb5b2445fb614bec013b2a0a994ab84b0c2bc",
+      "source_dependencies": [
+        "aura/persistence/wal.py",
+        "aura/research/lifecycle.py"
+      ],
+      "static_test_functions": 8,
+      "test_classes": [],
+      "test_functions": [
+        "test_ai_cannot_approve_strategy_for_live_deployment",
+        "test_human_approval_receipt_survives_restart_and_is_revoked_on_retirement",
+        "test_missing_validation_evidence_blocks_promotion",
+        "test_registry_fails_closed_on_corrupt_journal",
+        "test_registry_fails_closed_on_invalid_evidence_type_with_valid_checksum",
+        "test_registry_prevents_code_replacement_under_same_version",
+        "test_registry_rejects_mutated_historical_evidence",
+        "test_registry_revalidates_actor_and_transition_path"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_strategy_mutation.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "8a527839a807c8ca6d53e0cc954faf7077d404cd421abbf4004364b912fadc89",
+      "source_dependencies": [
+        "aura/evolution/core.py",
+        "aura/research/autonomous_strategy_lab.py",
+        "aura/research/strategy_mutation.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_autonomous_mutation_creates_distinct_child_without_risk_genes"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_supervisor.py",
+      "phase_coverage": [
+        2,
+        3,
+        12
+      ],
+      "sha256": "856e833b3615cb959a63b8ec39abac2ae7304ff61408eaac44c0321cbb30024b",
+      "source_dependencies": [
+        "aura/execution/reconciliation.py",
+        "aura/risk/engine.py",
+        "aura/runtime/supervisor.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_clean_reconciliation_is_healthy_without_clearing_manual_freeze",
+        "test_future_feed_timestamp_is_critical",
+        "test_stale_feed_engages_kill_switch_and_clean_feed_does_not_auto_reset"
+      ]
+    },
+    {
+      "async_test_functions": 6,
+      "path": "tests/test_telegram_alerts.py",
+      "phase_coverage": [
+        2,
+        13
+      ],
+      "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337",
+      "source_dependencies": [
+        "aura/interface/alerts.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_alert_timestamps_must_be_timezone_aware",
+        "test_credentials_are_env_only_and_repr_is_redacted",
+        "test_invalid_provider_response_fails_closed",
+        "test_message_is_normalized_and_truncated_to_configured_limit",
+        "test_non_retriable_failure_is_recorded_and_can_be_retried",
+        "test_rate_limit_honors_retry_after_then_succeeds",
+        "test_reused_alert_id_with_different_content_is_rejected",
+        "test_success_is_durable_secret_free_and_deduplicated",
+        "test_unknown_journal_event_blocks_recovery"
+      ]
+    },
+    {
+      "async_test_functions": 2,
+      "path": "tests/test_voice_alerts.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "3a9cdf87ef7e71cd0497b153bebeb80369b5ea22b42dc5e6bb414c3a0cb1f4e1",
+      "source_dependencies": [
+        "aura/interface/voice_alerts.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_voice_monitor_announces_each_actionable_decision_once",
+        "test_windows_voice_uses_environment_not_shell_interpolation"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_wal.py",
+      "phase_coverage": [
+        2
+      ],
+      "sha256": "2f730f84494637013766ca82628e2b50994a48182021690d1c09d692a639a318",
+      "source_dependencies": [
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_wal_detects_checksum_tampering",
+        "test_wal_detects_truncated_final_record",
+        "test_wal_rejects_duplicate_event_id",
+        "test_wal_round_trip_and_monotonic_sequence"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_web_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0",
+      "source_dependencies": [
+        "aura/interface/web_command_center.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_http_status_research_and_live_boundary",
+        "test_live_and_paper_commands_are_blocked_before_execution",
+        "test_non_loopback_binding_requires_strong_token",
+        "test_pwa_assets_are_served_with_security_headers",
+        "test_queue_corruption_fails_closed",
+        "test_research_queue_is_restart_safe_and_idempotent",
+        "test_unattached_market_source_returns_no_fabricated_data"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "summary": {
+    "async_test_functions": 84,
+    "modules_without_static_tests": [],
+    "static_test_functions": 418,
+    "test_modules": 111
+  }
+}
