@@ -4,8 +4,10 @@ from decimal import Decimal
 import pytest
 
 from aura.domain.models import NormalizedCandle
-from aura.evolution.core import StrategyGenome
+from aura.evolution.core import FitnessPolicy, StrategyGenome
 from aura.evolution.evaluator import CausalBacktestEvolutionEvaluator
+from aura.evolution.paper_tracker import PaperGenomePerformanceTracker
+from aura.research.paper_evidence import PaperTradeOutcome
 from aura.research.robustness import WalkForwardPlan
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.strategy.ema import EmaCrossStrategy
@@ -76,3 +78,39 @@ async def test_evaluator_uses_walk_forward_and_monte_carlo_without_fake_paper() 
     assert result.paper is None
     assert result.in_sample.trades >= 0
     assert result.monte_carlo_p95_drawdown_pct >= 0
+
+
+@pytest.mark.asyncio
+async def test_evaluator_propagates_measured_paper_incidents_to_promotion_gates() -> None:
+    genome = StrategyGenome(family="ema", parameters={"fast": 3, "gap": 4})
+    tracker = PaperGenomePerformanceTracker(starting_equity=Decimal(10000))
+    tracker.record_trade(
+        genome,
+        PaperTradeOutcome(
+            trade_id="paper-1",
+            symbol="TEST",
+            gross_pnl=Decimal(25),
+        ),
+    )
+    tracker.record_reconciliation_incident(genome, incident_id="reconcile-1")
+    tracker.record_operational_incident(genome, incident_id="feed-gap-1")
+    evaluator = CausalBacktestEvolutionEvaluator(
+        candles=_candles(),
+        strategy_factory=_strategy,
+        risk_engine_factory=_risk,
+        walk_forward_plan=WalkForwardPlan(train_size=30, test_size=10, step_size=10),
+        starting_cash=Decimal(10000),
+        requested_quantity=Decimal(1),
+        monte_carlo_paths=50,
+        monte_carlo_block_size=3,
+        paper_provider=tracker,
+    )
+
+    result = await evaluator.evaluate(genome)
+
+    assert result.paper is not None
+    assert result.reconciliation_incidents == 1
+    assert result.operational_incidents == 1
+    failures = FitnessPolicy().paper_failures(result)
+    assert "reconciliation_incident" in failures
+    assert "operational_incident" in failures
