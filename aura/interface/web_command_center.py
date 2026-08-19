@@ -5,12 +5,13 @@ import hmac
 import json
 import os
 import threading
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 from urllib.parse import urlparse
 
 from aura.interface.command_center import AssistantCommand, AssistantIntent, CommandRouter
@@ -274,7 +275,7 @@ class CommandCenterService:
                 supplied = self.headers.get("Authorization", "")
                 return hmac.compare_digest(supplied, f"Bearer {expected}")
 
-            def do_GET(self) -> None:  # noqa: N802
+            def do_GET(self) -> None:
                 path = urlparse(self.path).path
                 if path.startswith("/api/") and not self._authorized():
                     self._json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
@@ -298,7 +299,7 @@ class CommandCenterService:
                     return
                 self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
 
-            def do_POST(self) -> None:  # noqa: N802
+            def do_POST(self) -> None:
                 path = urlparse(self.path).path
                 if path != "/api/command":
                     self._json(HTTPStatus.NOT_FOUND, {"error": "not_found"})
