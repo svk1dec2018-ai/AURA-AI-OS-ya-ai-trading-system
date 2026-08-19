@@ -15,7 +15,7 @@ This roadmap is ordered by financial safety and dependency, not by visual appeal
 - event-driven single-series backtest engine
 - public Kraken closed-candle feed adapter
 - structured JSON logging
-- strategy validation/promotion firewall
+- durable strategy validation/promotion registry with replayed human-approval receipts
 - Python 3.11/3.12 CI with lint and regression tests
 
 ## Phase 1 — Durable execution foundation: substantially implemented
