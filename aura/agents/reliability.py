@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -102,10 +103,12 @@ class AgentReliabilityTracker:
                     f"reliability observation_id collision: {observation.observation_id}"
                 )
             return False
-        self._observations[observation.observation_id] = observation
         if self.path is not None:
             with self.path.open("a", encoding="utf-8") as handle:
                 handle.write(observation.model_dump_json() + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+        self._observations[observation.observation_id] = observation
         return True
 
     def record_evidence_outcome(

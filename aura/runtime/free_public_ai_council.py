@@ -152,6 +152,7 @@ class FreePublicAICouncilRuntime:
             self.online_learner,
             market=f"{self.config.provider}_public",
         )
+        self.online_bridge.replay_records(self.opportunity_store.read_all())
         self.knowledge_load_error: str | None = None
         self.knowledge_ingest_errors: list[str] = []
         self.knowledge_index = LocalKnowledgeIndex()
@@ -344,6 +345,12 @@ class FreePublicAICouncilRuntime:
             "agent_reliability_observations": self.reliability_tracker.observation_count,
             "pending_shadow_outcomes": self.recorder.pending_count,
             "pending_opportunity_audits": self.opportunity_auditor.pending_count,
+            "recovered_pending_opportunity_audits": (
+                self.opportunity_auditor.recovered_pending_count
+            ),
+            "opportunity_pending_checkpoint": str(
+                self.opportunity_auditor.pending_checkpoint_path
+            ),
             "context_services": {
                 "historical": {
                     "enabled": self.config.enable_public_history,
