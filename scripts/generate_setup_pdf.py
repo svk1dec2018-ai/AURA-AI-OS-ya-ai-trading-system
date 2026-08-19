@@ -303,7 +303,7 @@ def build_story() -> list:
         Table(
             [
                 [p("RELEASE CLASS", "small"), p("PAPER / DEMO RESEARCH CANDIDATE", "small_white")],
-                [p("VALIDATION", "small"), p("398 tests + CI + CodeQL passed", "small_white")],
+                [p("VALIDATION", "small"), p("398 LOCAL TESTS PASS; CI GATED", "small_white")],
                 [p("LIVE MONEY", "small"), p("DISABLED BY DEFAULT", "small_white")],
                 [p("PRIMARY START", "small"), p("START_AURA_OLLAMA.cmd", "small_white")],
             ],

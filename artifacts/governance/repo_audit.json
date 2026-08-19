@@ -4480,7 +4480,7 @@
       "asset_class": "repository_asset",
       "bytes": 26804,
       "path": "output/pdf/AURA_SETUP_AND_OPERATIONS.pdf",
-      "sha256": "d85a0be6395e29d520975c77280787a185ecb5ec4125596d5b50fd919e8fb68d"
+      "sha256": "49dbd9d0cf3d2ffec569fb5d19d1a2ae11699ab2e7d5fc570f68b6538099f39c"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -4498,7 +4498,7 @@
       "asset_class": "python_module",
       "bytes": 28280,
       "path": "scripts/generate_setup_pdf.py",
-      "sha256": "a98298bf3fe963d9ab6b45202f2282ec8a18885e3136e92bf5254a4a242a0934"
+      "sha256": "a620bf66161da6494cf9f873d0c0988efbf687d4c5b26df03f22673c2f146cf8"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -10065,7 +10065,7 @@
       ],
       "primary_phase": 0,
       "role": "tooling",
-      "sha256": "a98298bf3fe963d9ab6b45202f2282ec8a18885e3136e92bf5254a4a242a0934",
+      "sha256": "a620bf66161da6494cf9f873d0c0988efbf687d4c5b26df03f22673c2f146cf8",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -12937,7 +12937,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "0a5e50b7045a82bd688e77b6b78e33072718e630d75971ed37f90564c920ade7",
+  "repository_tree_sha256": "a69e1c19fc6033a3767f53733a1dd55b740247f4e91f2c4e8bb30ba6fe17279e",
   "schema_version": 1,
   "scope": {
     "excluded": [
