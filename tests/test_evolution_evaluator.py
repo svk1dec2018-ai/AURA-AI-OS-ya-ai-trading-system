@@ -76,3 +76,45 @@ async def test_evaluator_uses_walk_forward_and_monte_carlo_without_fake_paper() 
     assert result.paper is None
     assert result.in_sample.trades >= 0
     assert result.monte_carlo_p95_drawdown_pct >= 0
+
+
+@pytest.mark.asyncio
+async def test_evaluator_keeps_purge_out_of_training_and_oos_scoring(monkeypatch) -> None:
+    candles = _candles(55)
+    evaluator = CausalBacktestEvolutionEvaluator(
+        candles=candles,
+        strategy_factory=_strategy,
+        risk_engine_factory=_risk,
+        walk_forward_plan=WalkForwardPlan(
+            train_size=30,
+            test_size=10,
+            step_size=10,
+            purge_size=5,
+        ),
+        starting_cash=Decimal(10000),
+        requested_quantity=Decimal(1),
+        monte_carlo_paths=50,
+        monte_carlo_block_size=3,
+    )
+    calls: list[tuple[list[NormalizedCandle], int]] = []
+    original_run_backtest = evaluator._run_backtest
+
+    def record_run_backtest(genome, window, *, signal_start_index):
+        calls.append((window, signal_start_index))
+        return original_run_backtest(
+            genome,
+            window,
+            signal_start_index=signal_start_index,
+        )
+
+    monkeypatch.setattr(evaluator, "_run_backtest", record_run_backtest)
+    result = await evaluator.evaluate(
+        StrategyGenome(family="ema", parameters={"fast": 3, "gap": 4})
+    )
+
+    in_sample, first_oos = calls[:2]
+    assert in_sample == (list(candles[:30]), 0)
+    first_oos_window, signal_start = first_oos
+    assert first_oos_window[signal_start] == candles[35]
+    assert first_oos_window[signal_start - 5 : signal_start] == list(candles[30:35])
+    assert len(result.walk_forward) == 2

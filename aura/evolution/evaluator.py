@@ -29,7 +29,9 @@ class CausalBacktestEvolutionEvaluator:
 
     Each candidate is evaluated with fresh Strategy/RiskEngine instances. Rolling
     OOS windows receive only prior candles as warm-up and trading starts exactly
-    at the test boundary. Monte Carlo is bootstrapped from aggregated OOS period
+    at the test boundary. A configured walk-forward purge is excluded from the
+    in-sample slice; its already-observed candles may only warm causal indicators
+    before OOS scoring. Monte Carlo is bootstrapped from aggregated OOS period
     returns. Paper evidence is supplied separately from real AURA paper/demo runs;
     missing paper evidence deliberately prevents paper-champion promotion.
     """
