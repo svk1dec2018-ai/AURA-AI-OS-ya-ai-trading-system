@@ -303,7 +303,7 @@ def build_story() -> list:
         Table(
             [
                 [p("RELEASE CLASS", "small"), p("PAPER / DEMO RESEARCH CANDIDATE", "small_white")],
-                [p("VALIDATION", "small"), p("398 LOCAL TESTS PASS; CI GATED", "small_white")],
+                [p("VALIDATION", "small"), p("407 LOCAL TESTS PASS; CI GATED", "small_white")],
                 [p("LIVE MONEY", "small"), p("DISABLED BY DEFAULT", "small_white")],
                 [p("PRIMARY START", "small"), p("START_AURA_OLLAMA.cmd", "small_white")],
             ],
@@ -361,17 +361,18 @@ def build_story() -> list:
                 ("Linux systemd user service", "READY", "24x7 VPS/laptop paper research with persistent runtime state."),
                 ("Dhan paper", "ACCOUNT GATE", "Requires user-owned Dhan credentials and eligible data access."),
                 ("MT5 demo", "ACCOUNT GATE", "Requires Windows MT5 terminal and verified DEMO account."),
-                ("Angel One", "PENDING", "Concrete SmartAPI adapter is not yet in this release."),
+                ("Angel One", "READ-ONLY READY", "Account/quote/reconciliation adapter; order submit/cancel locked."),
                 ("Live money", "BLOCKED", "Requires Phase 15, broker-origin forward evidence and human approval."),
             ]
         ),
         p("Recommended demonstration path", "h2"),
         bullet("Use Windows one-click when showing local Multi-AI plus voice."),
         bullet("Use Docker Compose or Linux systemd for unattended public-data shadow training."),
-        bullet("Use Dhan or MT5 only after the public stack is healthy and credentials stay outside Git."),
+        bullet("Use Dhan, Angel One or MT5 only after the public stack is healthy and credentials stay outside Git."),
         p(
             "No setup mode in this guide sends live-money orders. Public autonomy sends no broker "
-            "orders. Dhan self-evolution uses internal paper execution. MT5 must remain DEMO.",
+            "orders. Dhan self-evolution uses internal paper execution. Angel One execution is locked. "
+            "MT5 must remain DEMO.",
             "callout",
         ),
         PageBreak(),
@@ -499,13 +500,36 @@ def build_story() -> list:
         bullet("Confirm the instrument master, data subscription and option access."),
         bullet("The runtime uses broad radar selection before expensive deep analysis."),
         bullet("Orders remain internal paper orders; do not reinterpret them as broker fills."),
+        PageBreak(),
+        p("8. Angel One SmartAPI account and reconciliation", "h1"),
         p(
-            "Angel One SmartAPI is not silently substituted for Dhan. A separate official adapter, "
-            "static-IP/rate-rule review and account validation are still required.",
+            "AURA includes an official-SDK adapter for profile verification, LTP, order/trade "
+            "books, positions, symbol routing and restart reconciliation. It does not store a "
+            "PIN/TOTP seed and cannot submit or cancel orders in this release."
+        ),
+        p("Create a short-lived official session", "h2"),
+        bullet("Use the Angel One developer portal and official SmartAPI authentication flow."),
+        bullet("Keep the registered static IP and current account/API eligibility requirements in scope."),
+        bullet("Inject only session tokens into the process; never commit them to `.env` or GitHub."),
+        p("Run the read-only account preflight", "h2"),
+        code(
+            ".venv\\Scripts\\python.exe -m pip install smartapi-python\n"
+            "$env:AURA_ANGEL_ONE_API_KEY='YOUR_API_KEY'\n"
+            "$env:AURA_ANGEL_ONE_CLIENT_CODE='YOUR_CLIENT_CODE'\n"
+            "$env:AURA_ANGEL_ONE_JWT_TOKEN='YOUR_SHORT_LIVED_JWT'\n"
+            "$env:AURA_ANGEL_ONE_REFRESH_TOKEN='YOUR_REFRESH_TOKEN'\n"
+            "$env:AURA_ANGEL_ONE_FEED_TOKEN='YOUR_FEED_TOKEN'\n"
+            "python examples/check_angel_one_account.py"
+        ),
+        bullet("The preflight prints profile readiness plus open-order/position counts only."),
+        bullet("Unknown broker-side orders/positions remain visible for reconciliation and risk freeze."),
+        p(
+            "Order payload translation is unit-tested, but submit/cancel are unconditionally locked "
+            "until static-IP, acknowledgement, fill, restart and risk-gate evidence is approved.",
             "callout",
         ),
         PageBreak(),
-        p("8. MT5 forex and metals demo setup", "h1"),
+        p("9. MT5 forex and metals demo setup", "h1"),
         p("Prerequisites", "h2"),
         bullet("Windows MetaTrader 5 installed and logged into a DEMO account."),
         bullet("Python package `MetaTrader5` installed in AURA's `.venv`."),
@@ -527,7 +551,7 @@ def build_story() -> list:
             "callout",
         ),
         PageBreak(),
-        p("9. Knowledge, news and authorized content", "h1"),
+        p("10. Knowledge, news and authorized content", "h1"),
         p("Included sources", "h2"),
         bullet("Official RBI and SEBI feeds where available."),
         bullet("GDELT news context."),
@@ -550,7 +574,7 @@ def build_story() -> list:
             "callout",
         ),
         PageBreak(),
-        p("10. Daily operations and health checks", "h1"),
+        p("11. Daily operations and health checks", "h1"),
         p("Before startup", "h2"),
         bullet("Run production preflight for the selected paper/demo connector."),
         bullet("Confirm live approval variables are empty."),
@@ -579,7 +603,7 @@ def build_story() -> list:
             ]
         ),
         PageBreak(),
-        p("11. Troubleshooting", "h1"),
+        p("12. Troubleshooting", "h1"),
         status_table(
             [
                 ("Ollama unreachable", "CHECK", "Open Ollama, run `ollama serve`, verify `/api/tags` and firewall."),
@@ -591,6 +615,7 @@ def build_story() -> list:
                 ("systemd restart loop", "CHECK", "Use `journalctl --user -u aura-paper.service -n 200`."),
                 ("Docker cannot reach Ollama", "CHECK", "Verify host address, Ollama bind policy and firewall."),
                 ("Dhan unauthorized", "STOP", "Use official refresh flow; never copy another person's token."),
+                ("Angel One mismatch", "STOP", "Refresh the official session; never bypass client/static-IP checks."),
                 ("MT5 mismatch", "STOP", "Use a verified DEMO account; do not bypass the demo guard."),
             ]
         ),
@@ -600,7 +625,7 @@ def build_story() -> list:
         bullet("Restart in public paper mode and confirm recovery/reconciliation state."),
         bullet("Never fix a failure by enabling live authority or disabling RiskEngine."),
         PageBreak(),
-        p("12. Security and final acceptance", "h1"),
+        p("13. Security and final acceptance", "h1"),
         p("Never commit", "h2"),
         bullet("Broker usernames, passwords, tokens, TOTP seeds or sessions."),
         bullet("`.env` files containing real values."),

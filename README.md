@@ -268,6 +268,31 @@ python examples/run_production_preflight.py --mode paper --connector dhan
 python examples/run_dhan_self_evolving_paper.py
 ```
 
+## Angel One SmartAPI read-only + reconciliation
+
+AURA includes a concrete SmartAPI adapter for profile verification, LTP queries,
+order/trade books, position snapshots, symbol routing and restart reconciliation.
+Because SmartAPI order eligibility depends on the operator's current account and
+static-IP requirements, submit/cancel remain deliberately locked until broker-origin
+validation and the controlled-live phase gates pass.
+
+Generate short-lived session tokens using Angel One's official login flow; AURA does
+not accept or store your PIN/TOTP seed. Then run the account preflight:
+
+```powershell
+pip install smartapi-python
+$env:AURA_ANGEL_ONE_API_KEY="..."
+$env:AURA_ANGEL_ONE_CLIENT_CODE="..."
+$env:AURA_ANGEL_ONE_JWT_TOKEN="..."
+$env:AURA_ANGEL_ONE_REFRESH_TOKEN="..."
+$env:AURA_ANGEL_ONE_FEED_TOKEN="..."  # optional for REST-only check
+
+python examples/check_angel_one_account.py
+```
+
+The command prints only non-secret readiness/count information. It cannot place or
+cancel an Angel One order.
+
 ## Docker
 
 For public-data and HTTP/WebSocket services that do not require the Windows MT5 bridge:

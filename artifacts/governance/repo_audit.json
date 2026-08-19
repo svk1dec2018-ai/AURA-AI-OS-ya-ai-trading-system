@@ -710,6 +710,22 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "aura/execution/angel_one.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/execution/angel_one.py",
+        "to": "aura/execution/broker.py"
+      },
+      {
+        "from": "aura/execution/angel_one.py",
+        "to": "aura/execution/demo_guard.py"
+      },
+      {
+        "from": "aura/execution/angel_one.py",
+        "to": "aura/execution/reconciliation.py"
+      },
+      {
         "from": "aura/execution/broker.py",
         "to": "aura/domain/models.py"
       },
@@ -1602,6 +1618,10 @@
         "to": "aura/strategy/base.py"
       },
       {
+        "from": "examples/check_angel_one_account.py",
+        "to": "aura/execution/angel_one.py"
+      },
+      {
         "from": "examples/check_dhan_universe.py",
         "to": "aura/data/dhan_instruments.py"
       },
@@ -1916,6 +1936,18 @@
       {
         "from": "tests/test_ai_strategy_architect.py",
         "to": "aura/research/strategy_factory.py"
+      },
+      {
+        "from": "tests/test_angel_one_adapter.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_angel_one_adapter.py",
+        "to": "aura/execution/angel_one.py"
+      },
+      {
+        "from": "tests/test_angel_one_adapter.py",
+        "to": "aura/execution/demo_guard.py"
       },
       {
         "from": "tests/test_autonomous_paper.py",
@@ -3149,6 +3181,7 @@
       "zoneinfo"
     ],
     "third_party_packages": [
+      "SmartApi",
       "pydantic",
       "pytest",
       "reportlab",
@@ -3167,6 +3200,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/repository_audit.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "examples/check_angel_one_account.py"
     },
     {
       "kind": "python-main",
@@ -3242,9 +3279,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 1453,
+      "bytes": 1794,
       "path": ".env.example",
-      "sha256": "aed5a89e750e768d8bb270f26f30b174390bbf6d7771c5d986dee6aa880c0f5d"
+      "sha256": "c72b053698ceea3a5f1eb499e7b4d204bb20b4c5681025a0ef5692a7ebfb533e"
     },
     {
       "asset_class": "repository_asset",
@@ -3284,9 +3321,9 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 10985,
+      "bytes": 11995,
       "path": "README.md",
-      "sha256": "efeb7e1e7ea3d5771df48027bd3b77c8d01637621fdbbb1594a0e48d30f763f8"
+      "sha256": "35643644a85357e1dc7292c8afc143d44bfa4d01f0af06557b4054a589af66a3"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -3440,9 +3477,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 16288,
+      "bytes": 16654,
       "path": "aura/connectors/catalog.py",
-      "sha256": "40f352606fc1bc1d5f250fc0afb8e0d181e41b624e9a380dcfee330e5e08c731"
+      "sha256": "8ff730d2fbf4188895e31e98ade300e3581d8cbf1520da2784645c91ce70afbc"
     },
     {
       "asset_class": "python_module",
@@ -3731,6 +3768,12 @@
       "bytes": 24186,
       "path": "aura/evolution/shadow_outcomes.py",
       "sha256": "19f109b7976cfca0cfa3c347dedeb8bb068d9b2f3ea8a80384a1ff3816ccb7db"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 17779,
+      "path": "aura/execution/angel_one.py",
+      "sha256": "6db74f6476c86ff5f7f227c1be025c2742c8662cd0137afe3c68d7b9984202f8"
     },
     {
       "asset_class": "python_module",
@@ -4226,9 +4269,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 5807,
+      "bytes": 6008,
       "path": "docs/AURA_VISION_COVERAGE.md",
-      "sha256": "b231bb9e2e01c937bbbb8f83268f8d1db6093e81cf7fb5793790c618bca127e6"
+      "sha256": "74f6f72a9c329f2b5d33fc9ef6b6ff38eb142907b402e9ed421122cde87e1b5a"
     },
     {
       "asset_class": "documentation",
@@ -4370,6 +4413,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 990,
+      "path": "examples/check_angel_one_account.py",
+      "sha256": "72a7a8818e2348cafa947096c8fc58c5ca8fdb1450c7d03e42860e70399ccaa7"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 1744,
       "path": "examples/check_dhan_universe.py",
       "sha256": "6700fd90fef49b7defe94f9cff5b012bde25571676cf5c6f30f0b81057e05e6e"
@@ -4478,9 +4527,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 26804,
+      "bytes": 28697,
       "path": "output/pdf/AURA_SETUP_AND_OPERATIONS.pdf",
-      "sha256": "49dbd9d0cf3d2ffec569fb5d19d1a2ae11699ab2e7d5fc570f68b6538099f39c"
+      "sha256": "a1b7629e375d56501a8cc7c7f8554eda59fd7be0570c8a1cba324db486d258f0"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -4496,9 +4545,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 28280,
+      "bytes": 29988,
       "path": "scripts/generate_setup_pdf.py",
-      "sha256": "a620bf66161da6494cf9f873d0c0988efbf687d4c5b26df03f22673c2f146cf8"
+      "sha256": "0936498f589d86995acd790b80a05dbb3badb32fd2da39d7c8895e88bf00ed8c"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -4580,6 +4629,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 10545,
+      "path": "tests/test_angel_one_adapter.py",
+      "sha256": "0d827029863a510a1b282692cca8a6d47231f7aafbdd98e12787448c40bcf782"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 3156,
       "path": "tests/test_autonomous_paper.py",
       "sha256": "cc46dfd138fc2c1353d725427d606cce973f497aeb31b26be0a1f6d0dc895151"
@@ -4658,9 +4713,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 1280,
+      "bytes": 1624,
       "path": "tests/test_connector_catalog.py",
-      "sha256": "28df8d366b907b6ac18c02ff9b007155e026a3b6717f1cd5a39f70e531f93365"
+      "sha256": "5b6625d74a70e96e994483474da5a0e4685f47506d02ce736954f7e85457dd63"
     },
     {
       "asset_class": "python_module",
@@ -5943,7 +5998,7 @@
         "tests/test_public_no_key_connectors.py"
       ],
       "internal_dependencies": [],
-      "lines": 370,
+      "lines": 379,
       "module": "aura.connectors.catalog",
       "parsed": true,
       "path": "aura/connectors/catalog.py",
@@ -5952,7 +6007,7 @@
       ],
       "primary_phase": 4,
       "role": "source",
-      "sha256": "40f352606fc1bc1d5f250fc0afb8e0d181e41b624e9a380dcfee330e5e08c731",
+      "sha256": "8ff730d2fbf4188895e31e98ade300e3581d8cbf1520da2784645c91ce70afbc",
       "standard_library_dependencies": [
         "__future__",
         "enum",
@@ -7049,6 +7104,7 @@
         "tests/test_agent_service.py",
         "tests/test_agent_team.py",
         "tests/test_agents.py",
+        "tests/test_angel_one_adapter.py",
         "tests/test_autonomous_strategy_lab.py",
         "tests/test_backtest.py",
         "tests/test_brain_policy.py",
@@ -7473,6 +7529,42 @@
     },
     {
       "component": "execution",
+      "direct_test_files": [
+        "tests/test_angel_one_adapter.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/demo_guard.py",
+        "aura/execution/reconciliation.py"
+      ],
+      "lines": 434,
+      "module": "aura.execution.angel_one",
+      "parsed": true,
+      "path": "aura/execution/angel_one.py",
+      "phase_coverage": [
+        4
+      ],
+      "primary_phase": 4,
+      "role": "source",
+      "sha256": "6db74f6476c86ff5f7f227c1be025c2742c8662cd0137afe3c68d7b9984202f8",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "collections",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "os",
+        "typing",
+        "zoneinfo"
+      ],
+      "third_party_dependencies": [
+        "SmartApi"
+      ]
+    },
+    {
+      "component": "execution",
       "direct_test_files": [],
       "internal_dependencies": [
         "aura/domain/models.py"
@@ -7497,6 +7589,7 @@
     {
       "component": "execution",
       "direct_test_files": [
+        "tests/test_angel_one_adapter.py",
         "tests/test_evolution_demo_stack.py"
       ],
       "internal_dependencies": [],
@@ -9730,6 +9823,29 @@
       "component": "examples",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/execution/angel_one.py"
+      ],
+      "lines": 41,
+      "module": "examples.check_angel_one_account",
+      "parsed": true,
+      "path": "examples/check_angel_one_account.py",
+      "phase_coverage": [
+        4
+      ],
+      "primary_phase": 4,
+      "role": "entrypoint",
+      "sha256": "72a7a8818e2348cafa947096c8fc58c5ca8fdb1450c7d03e42860e70399ccaa7",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "json"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "examples",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/data/dhan_instruments.py",
         "aura/data/dhan_universe_planner.py"
       ],
@@ -10056,7 +10172,7 @@
       "component": "repository_tooling",
       "direct_test_files": [],
       "internal_dependencies": [],
-      "lines": 642,
+      "lines": 667,
       "module": "scripts.generate_setup_pdf",
       "parsed": true,
       "path": "scripts/generate_setup_pdf.py",
@@ -10065,7 +10181,7 @@
       ],
       "primary_phase": 0,
       "role": "tooling",
-      "sha256": "a620bf66161da6494cf9f873d0c0988efbf687d4c5b26df03f22673c2f146cf8",
+      "sha256": "0936498f589d86995acd790b80a05dbb3badb32fd2da39d7c8895e88bf00ed8c",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -10319,6 +10435,33 @@
       "standard_library_dependencies": [
         "datetime",
         "json"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/angel_one.py",
+        "aura/execution/demo_guard.py"
+      ],
+      "lines": 312,
+      "module": "tests.test_angel_one_adapter",
+      "parsed": true,
+      "path": "tests/test_angel_one_adapter.py",
+      "phase_coverage": [
+        1,
+        4
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "0d827029863a510a1b282692cca8a6d47231f7aafbdd98e12787448c40bcf782",
+      "standard_library_dependencies": [
+        "__future__",
+        "decimal"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -10653,7 +10796,7 @@
       "internal_dependencies": [
         "aura/connectors/catalog.py"
       ],
-      "lines": 39,
+      "lines": 48,
       "module": "tests.test_connector_catalog",
       "parsed": true,
       "path": "tests/test_connector_catalog.py",
@@ -10662,7 +10805,7 @@
       ],
       "primary_phase": 4,
       "role": "test",
-      "sha256": "28df8d366b907b6ac18c02ff9b007155e026a3b6717f1cd5a39f70e531f93365",
+      "sha256": "5b6625d74a70e96e994483474da5a0e4685f47506d02ce736954f7e85457dd63",
       "standard_library_dependencies": [],
       "third_party_dependencies": []
     },
@@ -12937,7 +13080,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "a69e1c19fc6033a3767f53733a1dd55b740247f4e91f2c4e8bb30ba6fe17279e",
+  "repository_tree_sha256": "7e2fbff9f334ab942db8e4e26e99e3ac35d91b2904135ed875e0ece3de889e29",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13180,6 +13323,36 @@
     },
     {
       "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 21,
+      "path": "aura/execution/angel_one.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 23,
+      "path": "aura/execution/angel_one.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 25,
+      "path": "aura/execution/angel_one.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 27,
+      "path": "aura/execution/angel_one.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 29,
+      "path": "aura/execution/angel_one.py"
+    },
+    {
+      "classification": "intentional",
       "kind": "abstract-contract",
       "line": 20,
       "path": "aura/execution/broker.py"
@@ -13390,15 +13563,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 128,
-    "entrypoints": 19,
+    "directly_tested_source_modules": 129,
+    "entrypoints": 20,
     "parse_errors": 0,
-    "python_modules": 267,
-    "repository_files": 324,
-    "source_modules": 142,
-    "static_test_functions": 393,
-    "stub_candidates": 73,
-    "test_modules": 108,
+    "python_modules": 270,
+    "repository_files": 327,
+    "source_modules": 143,
+    "static_test_functions": 402,
+    "stub_candidates": 78,
+    "test_modules": 109,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

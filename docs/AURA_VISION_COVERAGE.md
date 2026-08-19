@@ -32,7 +32,7 @@ or human approval and cannot be manufactured in source code.
 | Telegram/WhatsApp delivery | PENDING | Alert contracts/voice exist. | Provider adapter, user destination and delivery receipts are required. |
 | Dhan Indian-market paper runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/dhan_learning_daemon.py`, Dhan data modules | Requires user-owned Dhan credentials and subscription validation. |
 | MT5 forex/metals demo runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/mt5_learning_daemon.py`, `aura/execution/mt5_demo_broker.py` | Requires Windows MT5 DEMO credentials and terminal validation. |
-| Angel One adapter | PENDING | Broker-neutral interfaces already exist. | Official SmartAPI adapter and account validation remain. |
+| Angel One adapter | IMPLEMENTED, READ-ONLY/UNVALIDATED ACCOUNT | `aura/execution/angel_one.py`, `examples/check_angel_one_account.py` | Profile, quote, order/trade book, positions, routing and reconciliation are implemented. Submit/cancel stay locked pending static-IP and broker-origin validation. |
 | Unrestricted live-money readiness | EXTERNAL GATE | `aura/ops/release_gate.py`, `aura/ops/preflight.py` | Sequential phases, broker-origin evidence and explicit human approval are mandatory. |
 
 ## Truthful conclusion
@@ -40,6 +40,6 @@ or human approval and cannot be manufactured in source code.
 The core AURA vision - governed multi-agent intelligence, a deterministic CEO,
 knowledge grounding, research/evolution, paper execution, learning, auditability
 and risk-first authority - is present. The largest remaining product gaps are a
-full graphical/conversational frontend, external alert delivery, Angel One, and
-credential-backed long-duration broker validation. Those gaps do not justify
+full graphical/conversational frontend, external alert delivery, controlled Angel One
+execution validation, and credential-backed long-duration broker validation. Those gaps do not justify
 removing the existing safety gates or claiming guaranteed trading accuracy.

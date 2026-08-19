@@ -37,3 +37,12 @@ def test_missing_environment_is_explicit_not_validation_claim() -> None:
         "AURA_SHOONYA_ACCOUNT_ID",
         "AURA_SHOONYA_SESSION_TOKEN",
     )
+
+    angel_one = DEFAULT_CONNECTOR_CATALOG.get("angel_one_smartapi")
+    assert angel_one.maturity == ConnectorMaturity.ADAPTER_IMPLEMENTED
+    assert angel_one.missing_environment({}) == (
+        "AURA_ANGEL_ONE_API_KEY",
+        "AURA_ANGEL_ONE_CLIENT_CODE",
+        "AURA_ANGEL_ONE_JWT_TOKEN",
+        "AURA_ANGEL_ONE_REFRESH_TOKEN",
+    )

@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 324
-- Python modules: 267
-- Source modules: 142
-- Test modules: 108
-- Static test functions: 393
-- Entrypoints: 19
-- Known stub/incomplete candidates: 73
+- Repository files: 327
+- Python modules: 270
+- Source modules: 143
+- Test modules: 109
+- Static test functions: 402
+- Entrypoints: 20
+- Known stub/incomplete candidates: 78
 
 ## Repository structure
 
@@ -28,14 +28,14 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 146 |
+| `aura` | 147 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
 | `contextual_reliability_validation.txt` | 1 |
 | `deploy` | 1 |
 | `docs` | 27 |
-| `examples` | 12 |
+| `examples` | 13 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 108 |
+| `tests` | 109 |
 
 ## Entrypoints
 
@@ -56,6 +56,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `Dockerfile` | container-entrypoint |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `aura/ops/repository_audit.py` | python-main |
+| `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
 | `examples/evaluate_production_release.py` | python-main |
 | `examples/run_backtest.py` | python-main |
@@ -137,7 +138,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 47 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 48 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
 | `aura/evolution/brain_policy.py` | source | evolution | 7 | 8 | 2 |
@@ -149,8 +150,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/opportunity_audit.py` | source | evolution | 7 | 2 | 3 |
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
+| `aura/execution/angel_one.py` | source | execution | 4 | 4 | 1 |
 | `aura/execution/broker.py` | source | execution | 4 | 1 | 0 |
-| `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 1 |
+| `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 1 |
 | `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 1 |
 | `aura/execution/paper.py` | source | execution | 12 | 4 | 4 |
@@ -223,6 +225,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/supervisor.py` | source | runtime | 12 | 2 | 1 |
 | `aura/strategy/base.py` | source | strategy | 7 | 1 | 2 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 2 | 7 |
+| `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 1 | 0 |
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 2 | 0 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_backtest.py` | entrypoint | examples | 1 | 5 | 0 |
@@ -244,6 +247,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_agent_team.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agents.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_ai_strategy_architect.py` | test | validation | 7 | 4 | 0 |
+| `tests/test_angel_one_adapter.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_autonomous_paper.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_autonomous_research.py` | test | validation | 7 | 2 | 0 |
 | `tests/test_autonomous_strategy_lab.py` | test | validation | 1 | 3 | 0 |
