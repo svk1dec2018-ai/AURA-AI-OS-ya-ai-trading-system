@@ -6,7 +6,12 @@ import pytest
 
 import aura.runtime.free_public_ai_council as runtime_module
 from aura.agents.models import AgentContext
-from aura.domain.models import NormalizedCandle
+from aura.domain.models import NormalizedCandle, SignalIntent
+from aura.evolution.opportunity_audit import (
+    OpportunityAuditRecord,
+    OpportunityAuditStore,
+    OpportunityOutcome,
+)
 from aura.runtime.free_public_ai_council import (
     FreePublicAICouncilConfig,
     FreePublicAICouncilRuntime,
@@ -217,3 +222,52 @@ async def test_history_provider_failure_is_visible_and_non_blocking(tmp_path, mo
 
     assert runtime.history_seed_counts["BTC-USD:5m"] == 0
     assert "provider unavailable" in runtime.history_seed_errors["BTC-USD:5m"]
+
+
+def test_runtime_rebuilds_online_learning_from_durable_opportunity_audit(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    _patch_ai_team(monkeypatch)
+    decision_time = datetime(2026, 8, 18, 4, 0, tzinfo=UTC)
+    audit_store = OpportunityAuditStore(tmp_path / "brain" / "opportunity_audit.jsonl")
+    audit_store.append(
+        OpportunityAuditRecord(
+            record_id="durable-outcome-1",
+            decision_time=decision_time,
+            resolved_time=decision_time + timedelta(minutes=5),
+            symbol="BTC-USD",
+            timeframe="1s",
+            raw_intent=SignalIntent.LONG,
+            realized_direction=SignalIntent.LONG,
+            move_atr_multiple=1.5,
+            outcome=OpportunityOutcome.CAPTURED,
+            memo_confidence=0.8,
+        )
+    )
+
+    runtime = FreePublicAICouncilRuntime(
+        FreePublicAICouncilConfig(
+            symbols=("BTC-USD",),
+            timeframes=("1s", "5m"),
+            decision_timeframe="1s",
+            htf_timeframe="5m",
+            min_history_bars=10,
+            max_history_bars=20,
+            history_seed_bars=10,
+            enable_live_intelligence=False,
+            enable_local_knowledge=False,
+            state_dir=tmp_path,
+        ),
+        feed=_Feed(),
+        history_client=_HistoryClient(),
+        intelligence_service=_IntelligenceService(),
+    )
+
+    snapshot = runtime.online_learner.snapshot(
+        market="COINBASE_PUBLIC",
+        symbol="BTC-USD",
+    )
+    assert snapshot.outcomes_seen == 1
+    assert snapshot.ewma_capture_rate > 0
+    assert runtime.online_bridge.status()["replayed_records"] == 1

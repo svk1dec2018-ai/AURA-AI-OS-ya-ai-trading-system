@@ -2,6 +2,8 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.evolution.opportunity_audit import (
@@ -126,3 +128,52 @@ def test_live_auditor_records_captured_directional_move(tmp_path: Path) -> None:
     metrics = store.metrics()
     assert metrics.captured == 1
     assert metrics.capture_rate == 1.0
+
+
+def test_pending_opportunity_survives_restart_and_counts_each_bar_once(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 18, 9, 0, tzinfo=UTC)
+    path = tmp_path / "opportunities.jsonl"
+    policy = OpportunityAuditPolicy(horizon_bars=2, min_move_atr_multiple=1.0)
+    auditor = MissedOpportunityAuditor(OpportunityAuditStore(path), policy=policy)
+    scan = MarketScanResult(candidates=(_candidate(now, SignalIntent.FLAT, "restart-1"),))
+
+    assert auditor.register_scan(scan) == 1
+    first_future_bar = _future(now, 1, "2005")
+    assert auditor.on_closed_candles((first_future_bar,)) == ()
+
+    recovered = MissedOpportunityAuditor(OpportunityAuditStore(path), policy=policy)
+    assert recovered.recovered_pending_count == 1
+    assert recovered.pending_count == 1
+    assert recovered.on_closed_candles((first_future_bar,)) == ()
+    assert recovered.pending_count == 1
+
+    resolved = recovered.on_closed_candles((_future(now, 2, "2012"),))
+    assert len(resolved) == 1
+    assert resolved[0].record_id.endswith("restart-1:2026-08-18T09:00:00+00:00")
+    assert resolved[0].outcome == OpportunityOutcome.MISSED_FLAT
+
+    final = MissedOpportunityAuditor(OpportunityAuditStore(path), policy=policy)
+    assert final.pending_count == 0
+    assert len(final.store.read_all()) == 1
+
+
+def test_pending_checkpoint_rejects_policy_change_with_unresolved_records(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 18, 9, 0, tzinfo=UTC)
+    path = tmp_path / "opportunities.jsonl"
+    auditor = MissedOpportunityAuditor(
+        OpportunityAuditStore(path),
+        policy=OpportunityAuditPolicy(horizon_bars=2),
+    )
+    auditor.register_scan(
+        MarketScanResult(candidates=(_candidate(now, SignalIntent.LONG, "policy-1"),))
+    )
+
+    with pytest.raises(RuntimeError, match="policy changed"):
+        MissedOpportunityAuditor(
+            OpportunityAuditStore(path),
+            policy=OpportunityAuditPolicy(horizon_bars=3),
+        )

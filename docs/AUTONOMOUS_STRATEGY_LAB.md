@@ -61,9 +61,23 @@ runtime/free_public_strategy_lab/
 Important files:
 
 ```text
+live_shadow_journal.jsonl
 status.json
 top_research_seeds.json
 ```
+
+`live_shadow_journal.jsonl` is the durable, versioned source of truth for the
+forward-only lab. Each closed candle and population refresh is appended and fsynced
+before the corresponding in-memory state change. On restart AURA replays the journal
+to reconstruct causal price history, bar indices, unresolved plans, resolved metrics,
+the active evolved population and refresh counters. An exact retry of the latest
+closed candle is idempotent; conflicting, out-of-order, malformed or unknown-version
+records fail closed.
+
+The journal header binds the initial strategy population and shadow policy. Changing
+the population size or horizon against an existing state directory is rejected rather
+than mixing incompatible evidence. Start a separately reviewed research run in a new
+state directory when those parameters intentionally change.
 
 `status.json` includes:
 
@@ -75,6 +89,7 @@ top_research_seeds.json
 - total strategies created;
 - pending plans;
 - discarded pending plans during population refresh;
+- journal events replayed during restart recovery;
 - top strategies with resolved sample count, wins/losses/flats, win rate, expectancy bps, profit factor and score.
 
 `top_research_seeds.json` contains the strongest current research genomes for formal validation. It always remains `research_only=true` and `live_approved=false`.

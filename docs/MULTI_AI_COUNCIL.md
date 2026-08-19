@@ -114,6 +114,13 @@ python examples/run_free_public_autonomy.py --provider coinbase `
 Runtime audit state is written below `runtime/free_public_autonomy/`. Broker orders,
 real-money execution and automatic research promotion remain disabled.
 
+The council persists resolved opportunity labels in an append-only JSONL audit and
+atomically checkpoints labels still waiting for their causal horizon. On restart,
+duplicate closed bars cannot advance a horizon twice, unresolved labels resume, and
+the safe online-learning EWMAs are deterministically rebuilt from the resolved audit.
+Checkpoint policy changes fail closed while unresolved labels exist. This recovery
+restores research measurements only; it grants no strategy, risk or broker authority.
+
 ## AI mandates
 
 AURA can create independent AI specialists for:
