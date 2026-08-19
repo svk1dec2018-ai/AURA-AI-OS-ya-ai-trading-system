@@ -33,7 +33,7 @@ jobs:
         run: python -m aura.ops.repository_audit --check
       - name: Generate Phase 0 audit candidate
         if: steps.phase0-audit.outcome == 'failure'
-        run: python -m aura.ops.repository_audit
+        run: python -m aura.ops.repository_audit --write
       - name: Upload Phase 0 audit candidate
         if: steps.phase0-audit.outcome == 'failure'
         uses: actions/upload-artifact@v4
