@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 315
-- Python modules: 265
+- Repository files: 324
+- Python modules: 267
 - Source modules: 142
-- Test modules: 107
-- Static test functions: 390
-- Entrypoints: 16
+- Test modules: 108
+- Static test functions: 393
+- Entrypoints: 19
 - Known stub/incomplete candidates: 73
 
 ## Repository structure
@@ -21,6 +21,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---:|
 | `.dockerignore` | 1 |
 | `.env.example` | 1 |
+| `.gitattributes` | 1 |
 | `.github` | 3 |
 | `.gitignore` | 1 |
 | `Dockerfile` | 1 |
@@ -30,20 +31,23 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura` | 146 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
+| `compose.paper.yml` | 1 |
 | `contextual_reliability_validation.txt` | 1 |
-| `docs` | 26 |
+| `deploy` | 1 |
+| `docs` | 27 |
 | `examples` | 12 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
 | `knowledge` | 2 |
 | `multi_ai_validation.txt` | 1 |
+| `output` | 1 |
 | `public_multi_ai_validation.txt` | 1 |
 | `pyproject.toml` | 1 |
-| `scripts` | 1 |
+| `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 107 |
+| `tests` | 108 |
 
 ## Entrypoints
 
@@ -64,6 +68,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_mt5_self_evolving_paper.py` | python-main |
 | `examples/run_production_preflight.py` | python-main |
 | `examples/run_public_crypto_live.py` | python-main |
+| `scripts/generate_setup_pdf.py` | python-main |
+| `scripts/install_aura_user_service.sh` | shell-launcher |
+| `scripts/install_aura_windows_task.ps1` | shell-launcher |
 | `scripts/start_aura_ollama.ps1` | shell-launcher |
 
 ## Module inventory
@@ -228,6 +235,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_mt5_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_production_preflight.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_public_crypto_live.py` | entrypoint | examples | 5 | 1 | 0 |
+| `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_reliability.py` | test | validation | 1 | 4 | 0 |
@@ -256,6 +264,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_cross_feed.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_data_quality.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_deliberation.py` | test | validation | 1 | 3 | 0 |
+| `tests/test_deployment_assets.py` | test | validation | 0 | 0 | 0 |
 | `tests/test_dhan_deep_service.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_dhan_history.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_dhan_instruments.py` | test | validation | 1 | 3 | 0 |

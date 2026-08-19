@@ -212,6 +212,30 @@ On Windows, `START_AURA_OLLAMA.cmd` performs the preflight and starts this combi
 runtime. It uses Coinbase/Bybit public market endpoints, GDELT and official feeds;
 no third-party key is embedded. OS-native voice alerts are local and optional.
 
+Run the same fail-closed stack continuously as a service:
+
+```bash
+# Docker Desktop / Docker Engine (voice disabled inside the container)
+docker compose -f compose.paper.yml up -d --build
+docker compose -f compose.paper.yml logs -f
+
+# Linux systemd user service, after creating .venv and installing AURA
+./scripts/install_aura_user_service.sh
+systemctl --user status aura-paper.service
+```
+
+On Windows, first run `START_AURA_OLLAMA.cmd` successfully once, then register the
+same launcher as a restartable logon task:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_aura_windows_task.ps1 -StartNow
+```
+
+These service modes explicitly clear live-trading authority and run the public
+paper preflight before startup. See `docs/AURA_VISION_COVERAGE.md` for the exact
+vision-to-code audit and `output/pdf/AURA_SETUP_AND_OPERATIONS.pdf` for the complete
+operator guide.
+
 Authorized books and video transcripts can be added through
 `knowledge/public_corpus/manifest.jsonl`; see that directory's README. AURA never
 downloads copyrighted books/transcripts automatically.

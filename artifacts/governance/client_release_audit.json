@@ -7,7 +7,7 @@
     "ruff": "PASS",
     "pytest": {
       "status": "PASS",
-      "tests": 395
+      "tests": 398
     },
     "compileall": "PASS",
     "dependency_consistency": "PASS",
@@ -16,11 +16,11 @@
     "public_paper_preflight": "PASS"
   },
   "inventory": {
-    "repository_files": 315,
-    "python_modules": 265,
+    "repository_files": 324,
+    "python_modules": 267,
     "source_modules": 142,
-    "test_modules": 107,
-    "entrypoints": 16,
+    "test_modules": 108,
+    "entrypoints": 19,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "parse_errors": 0,

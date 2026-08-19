@@ -619,6 +619,22 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_deployment_assets.py",
+      "phase_coverage": [
+        0
+      ],
+      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba",
+      "source_dependencies": [],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_compose_paper_service_is_fail_closed",
+        "test_service_installers_do_not_enable_live_authority",
+        "test_systemd_service_runs_preflight_before_paper_autonomy"
+      ]
+    },
+    {
       "async_test_functions": 1,
       "path": "tests/test_dhan_deep_service.py",
       "phase_coverage": [
@@ -2358,7 +2374,7 @@
   "summary": {
     "async_test_functions": 72,
     "modules_without_static_tests": [],
-    "static_test_functions": 390,
-    "test_modules": 107
+    "static_test_functions": 393,
+    "test_modules": 108
   }
 }

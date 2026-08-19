@@ -3151,6 +3151,7 @@
     "third_party_packages": [
       "pydantic",
       "pytest",
+      "reportlab",
       "websockets"
     ]
   },
@@ -3216,6 +3217,18 @@
       "path": "examples/run_public_crypto_live.py"
     },
     {
+      "kind": "python-main",
+      "path": "scripts/generate_setup_pdf.py"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/install_aura_user_service.sh"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/install_aura_windows_task.ps1"
+    },
+    {
       "kind": "shell-launcher",
       "path": "scripts/start_aura_ollama.ps1"
     }
@@ -3232,6 +3245,12 @@
       "bytes": 1453,
       "path": ".env.example",
       "sha256": "aed5a89e750e768d8bb270f26f30b174390bbf6d7771c5d986dee6aa880c0f5d"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 13,
+      "path": ".gitattributes",
+      "sha256": "547f59603028195ff9f8a87d04c4651551e8bd0d68f075257dfd549cd846b25b"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -3253,9 +3272,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 110,
+      "bytes": 120,
       "path": ".gitignore",
-      "sha256": "1774019e583933a56c4d1a59b32eda84bed516afc755b100a6fb592ea2f160e6"
+      "sha256": "cf1ee93636593d5bfffb259cfac3422cb8fb5a7ac38acc0f75afcf1b52674a8b"
     },
     {
       "asset_class": "container_configuration",
@@ -3265,9 +3284,9 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 10097,
+      "bytes": 10985,
       "path": "README.md",
-      "sha256": "887b5264e200e941ab2e9b0984574f07ade97ff1e166853c632b97d3d033afbc"
+      "sha256": "efeb7e1e7ea3d5771df48027bd3b77c8d01637621fdbbb1594a0e48d30f763f8"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -4170,10 +4189,22 @@
       "sha256": "10729aaa7031c72a676556713b8145403b3fceb6789fd1a57adbfab958547206"
     },
     {
+      "asset_class": "configuration_or_structured_evidence",
+      "bytes": 1239,
+      "path": "compose.paper.yml",
+      "sha256": "7bf5d24f5d10fd5a31850c57d5319779b56f79a5dcf6ce654b5ce8a01b97231f"
+    },
+    {
       "asset_class": "documentation_or_validation_evidence",
       "bytes": 404,
       "path": "contextual_reliability_validation.txt",
       "sha256": "73076c99f3af1e8c3f9f670bc440476865772860fdd3b269324b1671533393c2"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 849,
+      "path": "deploy/systemd/aura-paper.service.in",
+      "sha256": "cbf0ce57b6c38a926b17cdca75d8e9ffcaf0718082149b52e48d5c10c4bd6a29"
     },
     {
       "asset_class": "documentation",
@@ -4192,6 +4223,12 @@
       "bytes": 14850,
       "path": "docs/AURA_MASTER_BLUEPRINT_2026.md",
       "sha256": "5ecfc1e98b41f7e829c26f146b3c567db8cb4da5de407481d4c4d836a454c32c"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 5807,
+      "path": "docs/AURA_VISION_COVERAGE.md",
+      "sha256": "b231bb9e2e01c937bbbb8f83268f8d1db6093e81cf7fb5793790c618bca127e6"
     },
     {
       "asset_class": "documentation",
@@ -4440,6 +4477,12 @@
       "sha256": "d32e6c483363f044c67d2e734b6bf1d40c90a3406114e04bf417287692bfd88c"
     },
     {
+      "asset_class": "repository_asset",
+      "bytes": 26804,
+      "path": "output/pdf/AURA_SETUP_AND_OPERATIONS.pdf",
+      "sha256": "d85a0be6395e29d520975c77280787a185ecb5ec4125596d5b50fd919e8fb68d"
+    },
+    {
       "asset_class": "documentation_or_validation_evidence",
       "bytes": 404,
       "path": "public_multi_ai_validation.txt",
@@ -4450,6 +4493,24 @@
       "bytes": 637,
       "path": "pyproject.toml",
       "sha256": "87afd8a9532088ce389ba84054c43179f34ff87a6d591a39a18cdf31a984d977"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 28280,
+      "path": "scripts/generate_setup_pdf.py",
+      "sha256": "a98298bf3fe963d9ab6b45202f2282ec8a18885e3136e92bf5254a4a242a0934"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 1209,
+      "path": "scripts/install_aura_user_service.sh",
+      "sha256": "84335e1486189bd78d4edf3bffb5dbf08d0450de775ce542bbafa77ff653861a"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 2024,
+      "path": "scripts/install_aura_windows_task.ps1",
+      "sha256": "cf3711501c4149e235bac33658fbf318ee238cf3bcf06c1b7e48ab49fa641587"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -4636,6 +4697,12 @@
       "bytes": 2773,
       "path": "tests/test_deliberation.py",
       "sha256": "35b42616efde2d059e8a4c173a60774b5e179f385317e95a7116d045af1a0124"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 1432,
+      "path": "tests/test_deployment_assets.py",
+      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba"
     },
     {
       "asset_class": "python_module",
@@ -9986,6 +10053,28 @@
       "third_party_dependencies": []
     },
     {
+      "component": "repository_tooling",
+      "direct_test_files": [],
+      "internal_dependencies": [],
+      "lines": 642,
+      "module": "scripts.generate_setup_pdf",
+      "parsed": true,
+      "path": "scripts/generate_setup_pdf.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "tooling",
+      "sha256": "a98298bf3fe963d9ab6b45202f2282ec8a18885e3136e92bf5254a4a242a0934",
+      "standard_library_dependencies": [
+        "__future__",
+        "pathlib"
+      ],
+      "third_party_dependencies": [
+        "reportlab"
+      ]
+    },
+    {
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
@@ -10729,6 +10818,26 @@
       "sha256": "35b42616efde2d059e8a4c173a60774b5e179f385317e95a7116d045af1a0124",
       "standard_library_dependencies": [
         "datetime"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [],
+      "lines": 35,
+      "module": "tests.test_deployment_assets",
+      "parsed": true,
+      "path": "tests/test_deployment_assets.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba",
+      "standard_library_dependencies": [
+        "__future__",
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -12828,7 +12937,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "e6a6b4730060e99a88a4aaf40c80b761c178b0ecb6cd260da1299a5ebb838512",
+  "repository_tree_sha256": "0a5e50b7045a82bd688e77b6b78e33072718e630d75971ed37f90564c920ade7",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13282,14 +13391,14 @@
   ],
   "summary": {
     "directly_tested_source_modules": 128,
-    "entrypoints": 16,
+    "entrypoints": 19,
     "parse_errors": 0,
-    "python_modules": 265,
-    "repository_files": 315,
+    "python_modules": 267,
+    "repository_files": 324,
     "source_modules": 142,
-    "static_test_functions": 390,
+    "static_test_functions": 393,
     "stub_candidates": 73,
-    "test_modules": 107,
+    "test_modules": 108,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
