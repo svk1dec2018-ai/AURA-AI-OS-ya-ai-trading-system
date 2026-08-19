@@ -27,6 +27,8 @@ jobs:
         run: python -m pip check
       - name: Compile smoke
         run: python -m compileall -q aura examples
+      - name: Phase 0 audit drift
+        run: python -m aura.ops.repository_audit --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests
