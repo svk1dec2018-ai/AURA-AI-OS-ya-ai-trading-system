@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import socket
 import threading
 from http import HTTPStatus
 from pathlib import Path
@@ -38,9 +39,15 @@ def _request_json(url: str, *, text: str | None = None, key: str | None = None):
         return response.status, json.loads(response.read())
 
 
+def _free_loopback_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        return int(sock.getsockname()[1])
+
+
 def _running_service(tmp_path: Path):
     service = CommandCenterService(
-        CommandCenterConfig(port=1, queue_path=tmp_path / "queue.jsonl")
+        CommandCenterConfig(port=_free_loopback_port(), queue_path=tmp_path / "queue.jsonl")
     )
     server = service.make_server()
     thread = threading.Thread(target=server.serve_forever, daemon=True)
