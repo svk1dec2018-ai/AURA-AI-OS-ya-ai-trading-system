@@ -26,8 +26,8 @@
     "targeted_local_tests": 7,
     "targeted_local_tests_result": "pass",
     "local_compileall": "pass",
-    "codeql_on_pre_audit_refresh_head": "pass",
     "phase0_refresh": "generated_and_synced_by_ci",
-    "full_ci_recheck": "triggered_by_this_commit"
+    "ruff_normalization": "applied_by_ci_to_new_command_center_file_only",
+    "full_ci_recheck": "triggered_after_source_and_audit_sync"
   }
 }
