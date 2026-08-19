@@ -64,6 +64,16 @@ jobs:
             cp aura/interface/web_command_center.py "$candidate_dir/web_command_center.py"
             cp tests/test_web_command_center.py "$candidate_dir/test_web_command_center.py"
           fi
+          git restore --source=HEAD --staged --worktree -- \
+            artifacts/governance/repo_audit.json \
+            artifacts/governance/test_inventory.json \
+            artifacts/governance/module_map.md \
+            artifacts/governance/phase_gate_status.json
+          if [ "$AURA_RUFF_OUTCOME" = "failure" ]; then
+            git restore --source=HEAD --staged --worktree -- \
+              aura/interface/web_command_center.py \
+              tests/test_web_command_center.py
+          fi
           git fetch --no-tags origin "$AURA_PR_HEAD"
           git checkout -B "$AURA_PR_HEAD" "origin/$AURA_PR_HEAD"
           cp "$candidate_dir/repo_audit.json" artifacts/governance/repo_audit.json
