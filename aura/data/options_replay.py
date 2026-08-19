@@ -6,6 +6,7 @@ import math
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from decimal import Decimal
+from itertools import pairwise
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -154,7 +155,7 @@ def replay_option_chain(
     decisions = tuple(decision_times)
     for decision in decisions:
         _require_aware(decision, field="decision time")
-    if any(current <= previous for previous, current in zip(decisions, decisions[1:])):
+    if any(current <= previous for previous, current in pairwise(decisions)):
         raise ValueError("decision_times must be strictly increasing")
 
     first = snapshots[0]

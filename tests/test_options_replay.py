@@ -13,7 +13,6 @@ from aura.data.options_replay import (
 from aura.markets.universe import OptionType
 from aura.options.intelligence import OptionContractObservation, OptionGreeks
 
-
 START = datetime(2026, 8, 17, 10, 0, tzinfo=UTC)
 EXPIRY = START + timedelta(days=7)
 ARTIFACT_HASH = "a" * 64
@@ -190,7 +189,7 @@ def test_replay_rejects_ambiguous_or_invalid_timeline() -> None:
     with pytest.raises(ValueError, match="timestamps must be unique"):
         replay_option_chain([_snapshot(0), duplicate_time], [START + timedelta(minutes=1)])
     with pytest.raises(ValueError, match="timezone-aware"):
-        replay_option_chain([_snapshot(0)], [datetime(2026, 8, 17, 10, 1)])
+        replay_option_chain([_snapshot(0)], [START.replace(tzinfo=None)])
     with pytest.raises(ValueError, match="strictly increasing"):
         replay_option_chain(
             [_snapshot(0)],
