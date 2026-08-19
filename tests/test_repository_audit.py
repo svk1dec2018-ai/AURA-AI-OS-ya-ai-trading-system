@@ -1,8 +1,12 @@
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
-from aura.ops.repository_audit import build_repository_audit, check_repository_audit
+from aura.ops.repository_audit import (
+    _is_audit_excluded,
+    build_repository_audit,
+    check_repository_audit,
+)
 
 
 def test_repository_audit_classifies_every_module_and_asset() -> None:
@@ -46,3 +50,10 @@ def test_audit_exposes_stub_candidates_without_calling_them_completed() -> None:
 def test_generated_phase_zero_artifacts_are_current() -> None:
     root = Path(__file__).resolve().parents[1]
     assert check_repository_audit(root) == ()
+
+
+def test_packaging_outputs_are_excluded_but_source_is_not() -> None:
+    assert _is_audit_excluded(PurePosixPath("aura_ai_os.egg-info/PKG-INFO")) is True
+    assert _is_audit_excluded(PurePosixPath("build/lib/aura/ops/preflight.py")) is True
+    assert _is_audit_excluded(PurePosixPath("dist/aura_ai_os.whl")) is True
+    assert _is_audit_excluded(PurePosixPath("aura/ops/preflight.py")) is False

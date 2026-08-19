@@ -214,7 +214,12 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
         "scope": {
             "root": ".",
             "source": "git tracked plus non-ignored untracked files",
-            "excluded": [f"{AUDIT_OUTPUT_DIR.as_posix()}/**"],
+            "excluded": [
+                f"{AUDIT_OUTPUT_DIR.as_posix()}/**",
+                "**/*.egg-info/**",
+                "build/**",
+                "dist/**",
+            ],
         },
         "gate": {
             "phase": 0,
@@ -347,7 +352,15 @@ def _repository_paths(root: Path) -> list[PurePosixPath]:
     return sorted(
         path
         for path in paths
-        if not path.is_relative_to(AUDIT_OUTPUT_DIR) and (root / path).is_file()
+        if not _is_audit_excluded(path) and (root / path).is_file()
+    )
+
+
+def _is_audit_excluded(path: PurePosixPath) -> bool:
+    return (
+        path.is_relative_to(AUDIT_OUTPUT_DIR)
+        or path.parts[0] in {"build", "dist"}
+        or any(part.endswith(".egg-info") for part in path.parts)
     )
 
 

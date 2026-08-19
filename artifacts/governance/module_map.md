@@ -11,7 +11,7 @@ It inventories the repository; it does not certify later implementation phases.
 - Python modules: 253
 - Source modules: 136
 - Test modules: 101
-- Static test functions: 298
+- Static test functions: 299
 - Entrypoints: 16
 - Known stub/incomplete candidates: 71
 

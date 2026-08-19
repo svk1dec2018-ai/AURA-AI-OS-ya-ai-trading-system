@@ -1817,16 +1817,17 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "d70433998425f16099950b8208b1babc3c8e39d68ceee67ee182d8f2449f783d",
+      "sha256": "baa80d32ad0aa513377c01f825d7076163172f168682bb7a7a57a7f573395a6b",
       "source_dependencies": [
         "aura/ops/repository_audit.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_audit_exposes_stub_candidates_without_calling_them_completed",
         "test_audit_includes_git_tracked_runtime_despite_generic_ignore_rule",
         "test_generated_phase_zero_artifacts_are_current",
+        "test_packaging_outputs_are_excluded_but_source_is_not",
         "test_repository_audit_classifies_every_module_and_asset"
       ]
     },
@@ -2156,7 +2157,7 @@
   "summary": {
     "async_test_functions": 70,
     "modules_without_static_tests": [],
-    "static_test_functions": 298,
+    "static_test_functions": 299,
     "test_modules": 101
   }
 }
