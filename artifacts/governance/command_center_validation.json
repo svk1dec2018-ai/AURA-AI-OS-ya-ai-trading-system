@@ -26,8 +26,9 @@
     "targeted_local_tests": 7,
     "targeted_local_tests_result": "pass",
     "local_compileall": "pass",
-    "phase0_refresh": "generated_and_synced_by_ci",
-    "ruff_normalization": "applied_by_ci_to_new_command_center_file_only",
-    "full_ci_recheck": "triggered_after_source_and_audit_sync"
+    "phase0_audit_and_ledger": "generated_and_atomically_synced_by_ci",
+    "ruff_normalization": "pass_on_latest_synced_source",
+    "http_test_portability_fix": "uses_unprivileged_ephemeral_loopback_port",
+    "full_ci_recheck": "triggered_after_source_audit_and_ledger_sync"
   }
 }
