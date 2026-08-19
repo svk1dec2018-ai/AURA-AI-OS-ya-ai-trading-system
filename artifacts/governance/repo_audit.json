@@ -3336,9 +3336,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 4441,
+      "bytes": 5536,
       "path": ".github/workflows/ci.yml",
-      "sha256": "f45ff8feabda3d790d175dfb8cef67d58f7369a9b73f3d9ee8c7db5aeb8c6cc2"
+      "sha256": "1daac0a9ac86e190b4c2b601168db1c4e761c9e2aaa79ebd5a45af269997e399"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -13328,7 +13328,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "ac0bd4c55522a303b510c1b5ab49c0a0b8b7bedb653470b8ad20a1511f3fbec1",
+  "repository_tree_sha256": "3beb60af80c6b50c73dcde84792ff95825f7392f0d19e23e7f03ba0caf6c399b",
   "schema_version": 1,
   "scope": {
     "excluded": [
