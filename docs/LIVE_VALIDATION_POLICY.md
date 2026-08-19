@@ -30,6 +30,24 @@ They **cannot** by themselves create a paper champion.
 
 A paper brain challenger is promoted only from outcome samples whose provenance is `LIVE_BROKER`, whose decision timestamp is later than the challenger's creation timestamp, and which pass the configured forward paper gates.
 
+### Sealed historical holdout protocol
+
+Before a historical holdout is evaluated, AURA records the verified experiment
+manifest, immutable strategy and dataset hashes, chronological calibration/holdout
+boundary, exact evaluation protocol and declaration time in a sequenced, checksummed
+journal. The holdout must be the dataset tail. A registry permits that exact tail to
+be claimed by one plan and records at most one result; changing the candidate,
+protocol, result or manifest after exposure fails closed, including after restart.
+
+The resulting artifact is always marked `historical_research_only`,
+`paper_validated = false`, `live_approved = false` and
+`live_money_enabled = false`. The ledger makes pre-commitment and reuse auditable;
+operational separation is still required to ensure researchers did not inspect the
+raw holdout outside AURA. Checksums detect corruption and inconsistent rewrites;
+they are not a signature against a privileged actor who can replace the complete
+journal and recompute every hash, so production operation also requires restricted
+write access and an independently anchored audit copy.
+
 Every paper champion artifact must retain:
 
 ```text
@@ -45,6 +63,12 @@ live_money_enabled = false
 At decision time AURA may consume only data whose observation/close timestamp is visible at that time. Future bars are allowed only later for outcome labeling, missed-opportunity auditing and research evaluation.
 
 Live decisions use closed candles. Historical warm-up excludes forming bars. Missing market bars are not fabricated to make an indicator look complete.
+
+Walk-forward research must set `purge_size` to at least the longest forward label
+or holding horizon used to fit or select a candidate. Purged observations are
+excluded from the training slice so their future labels cannot overlap the OOS
+window. Because they are already observable by the test boundary, they may warm
+causal indicators, but they must never contribute training or fitness evidence.
 
 ## 4. Wrong-trade and missed-trade measurement
 
@@ -133,3 +157,16 @@ Indexes such as NIFTY/SENSEX are market-data context instruments, not direct tra
 ## 9. Real money remains a separate later stage
 
 A paper champion never becomes live-approved automatically. Real-money eligibility requires sustained forward evidence, broker-specific reconciliation and failure testing, margin/contract validation, monitoring/alerts, canary deployment and explicit human approval.
+
+Strategy lifecycle state is recorded in an append-only, sequenced and checksummed
+registry journal when a journal path is configured. Restart replay independently
+revalidates every transition, its actor type, the immutable strategy code hash and the
+append-only evidence history. Unknown schemas, malformed records, sequence gaps and
+checksum failures stop recovery rather than accepting an uncertain approval state.
+
+An `APPROVED` value constructed in memory is not an approval credential. The live
+deployment predicate also requires a journal-backed registry's matching recorded
+`PAPER_VALIDATED -> APPROVED` transition with a `HUMAN` actor. Retiring the exact
+strategy version revokes that receipt. This receipt records governance history; it
+does not enable an execution connector, authenticate a person's identity or replace
+the additional controlled-live requirements above.

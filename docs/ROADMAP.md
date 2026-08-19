@@ -15,7 +15,7 @@ This roadmap is ordered by financial safety and dependency, not by visual appeal
 - event-driven single-series backtest engine
 - public Kraken closed-candle feed adapter
 - structured JSON logging
-- strategy validation/promotion firewall
+- durable strategy validation/promotion registry with replayed human-approval receipts
 - Python 3.11/3.12 CI with lint and regression tests
 
 ## Phase 1 — Durable execution foundation: substantially implemented
@@ -70,6 +70,15 @@ Exit criteria:
 
 ## Phase 3 — Research-grade backtesting
 
+Implemented foundation:
+
+- causal rolling/expanding walk-forward splits and evaluator
+- deterministic block-bootstrap Monte Carlo robustness analysis
+- immutable dataset/experiment manifests and bound research artifacts
+- durable, single-use sealed chronological holdout plans and result receipts
+
+Still required:
+
 - multi-symbol event scheduler
 - historical data adapters and source provenance
 - corporate-action aware equities handling
@@ -78,11 +87,9 @@ Exit criteria:
 - transaction costs, spread, slippage and latency models
 - market-session/calendar handling
 - limit/stop/partial-fill simulation
-- walk-forward runner
-- bootstrap/Monte Carlo robustness analysis
 - parameter stability analysis
 - regime-segmented performance
-- reproducible experiment manifests and hashes
+- complete experiment artifact persistence and cataloguing
 
 Exit criteria:
 - every promoted strategy has reproducible source data, configuration, code hash and validation artifacts

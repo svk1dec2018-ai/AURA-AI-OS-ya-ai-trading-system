@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import hashlib
 from decimal import Decimal
 
 from aura.ops.health import ComponentHealth, HealthReport, HealthStatus
+from aura.ops.phase_gates import (
+    PHASE_GATE_SPECS,
+    GateDecision,
+    GateEvidence,
+    PhaseGateRecord,
+    write_phase_gate_ledger,
+)
 from aura.ops.preflight import DeploymentMode, ProductionPreflight
 from aura.ops.release_gate import ProductionEvidence, ProductionReleaseGate
 from aura.research.lifecycle import StrategyStage
@@ -54,12 +62,52 @@ def test_live_preflight_requires_approved_strategy_and_human_ack(tmp_path) -> No
     assert {"approved-strategy", "human-live-approval", "explicit-live-risk-ack"} <= ids
 
 
-def test_live_preflight_can_pass_only_with_explicit_human_approval(tmp_path) -> None:
+def _all_pass_phase_gate_ledger(tmp_path):
+    evidence_path = tmp_path / "evidence.txt"
+    evidence_path.write_text("externally validated test evidence", encoding="utf-8")
+    digest = hashlib.sha256(evidence_path.read_bytes()).hexdigest()
+    records = tuple(
+        PhaseGateRecord(
+            spec.phase,
+            GateDecision.PASS,
+            evidence=tuple(
+                GateEvidence(output, "evidence.txt", digest)
+                for output in spec.validation_outputs
+            ),
+        )
+        for spec in PHASE_GATE_SPECS
+    )
+    path = tmp_path / "artifacts" / "governance" / "phase_gate_status.json"
+    write_phase_gate_ledger(path, records)
+    return path
+
+
+def test_live_preflight_cannot_bypass_phase_15_gate(tmp_path) -> None:
     report = ProductionPreflight(
         mode=DeploymentMode.LIVE,
         runtime_dir=tmp_path,
         connectors=("public",),
         strategy_stage=StrategyStage.APPROVED,
+        env={
+            "AURA_HUMAN_LIVE_APPROVAL_ID": "approval-2026-001",
+            "AURA_LIVE_TRADING_ENABLED": "I_UNDERSTAND_AND_APPROVE_LIVE_RISK",
+        },
+    ).run()
+    assert report.ready is False
+    assert any(
+        item.check_id == "phase-15-live-readiness" for item in report.blocking_failures
+    )
+
+
+def test_live_preflight_can_pass_only_with_phase_15_and_human_approval(tmp_path) -> None:
+    ledger = _all_pass_phase_gate_ledger(tmp_path)
+    report = ProductionPreflight(
+        mode=DeploymentMode.LIVE,
+        runtime_dir=tmp_path,
+        connectors=("public",),
+        strategy_stage=StrategyStage.APPROVED,
+        phase_gate_status_path=ledger,
+        repository_root=tmp_path,
         env={
             "AURA_HUMAN_LIVE_APPROVAL_ID": "approval-2026-001",
             "AURA_LIVE_TRADING_ENABLED": "I_UNDERSTAND_AND_APPROVE_LIVE_RISK",
