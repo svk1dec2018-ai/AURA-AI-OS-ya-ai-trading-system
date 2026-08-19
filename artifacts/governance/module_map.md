@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 327
-- Python modules: 270
-- Source modules: 143
-- Test modules: 109
-- Static test functions: 402
-- Entrypoints: 20
-- Known stub/incomplete candidates: 78
+- Repository files: 330
+- Python modules: 273
+- Source modules: 144
+- Test modules: 110
+- Static test functions: 411
+- Entrypoints: 21
+- Known stub/incomplete candidates: 79
 
 ## Repository structure
 
@@ -28,14 +28,14 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 147 |
+| `aura` | 148 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
 | `contextual_reliability_validation.txt` | 1 |
 | `deploy` | 1 |
 | `docs` | 27 |
-| `examples` | 13 |
+| `examples` | 14 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 109 |
+| `tests` | 110 |
 
 ## Entrypoints
 
@@ -69,6 +69,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_mt5_self_evolving_paper.py` | python-main |
 | `examples/run_production_preflight.py` | python-main |
 | `examples/run_public_crypto_live.py` | python-main |
+| `examples/send_telegram_test_alert.py` | python-main |
 | `scripts/generate_setup_pdf.py` | python-main |
 | `scripts/install_aura_user_service.sh` | shell-launcher |
 | `scripts/install_aura_windows_task.ps1` | shell-launcher |
@@ -163,6 +164,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/forecast/ensemble.py` | source | forecast | 7 | 0 | 3 |
 | `aura/forecast/providers.py` | source | forecast | 7 | 2 | 2 |
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
+| `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
@@ -184,7 +186,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 5 | 6 |
-| `aura/persistence/wal.py` | source | persistence | 2 | 0 | 10 |
+| `aura/persistence/wal.py` | source | persistence | 2 | 0 | 11 |
 | `aura/portfolio/instruments.py` | source | portfolio | 2 | 0 | 1 |
 | `aura/portfolio/ledger.py` | source | portfolio | 2 | 2 | 5 |
 | `aura/portfolio/targets.py` | source | portfolio | 2 | 1 | 1 |
@@ -238,6 +240,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_mt5_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_production_preflight.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_public_crypto_live.py` | entrypoint | examples | 5 | 1 | 0 |
+| `examples/send_telegram_test_alert.py` | entrypoint | examples | 13 | 1 | 0 |
 | `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 4 | 0 |
@@ -346,6 +349,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_strategy_governance.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_strategy_mutation.py` | test | validation | 7 | 3 | 0 |
 | `tests/test_supervisor.py` | test | validation | 2 | 3 | 0 |
+| `tests/test_telegram_alerts.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_voice_alerts.py` | test | validation | 13 | 1 | 0 |
 | `tests/test_wal.py` | test | validation | 2 | 1 | 0 |
 

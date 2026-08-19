@@ -818,6 +818,10 @@
         "to": "aura/interface/command_center.py"
       },
       {
+        "from": "aura/interface/alerts.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
         "from": "aura/knowledge/local_corpus.py",
         "to": "aura/knowledge/firewall.py"
       },
@@ -1764,6 +1768,10 @@
       {
         "from": "examples/run_public_crypto_live.py",
         "to": "aura/data/public_crypto_feeds.py"
+      },
+      {
+        "from": "examples/send_telegram_test_alert.py",
+        "to": "aura/interface/alerts.py"
       },
       {
         "from": "tests/test_adaptive_model_router.py",
@@ -3130,6 +3138,14 @@
         "to": "aura/runtime/supervisor.py"
       },
       {
+        "from": "tests/test_telegram_alerts.py",
+        "to": "aura/interface/alerts.py"
+      },
+      {
+        "from": "tests/test_telegram_alerts.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
         "from": "tests/test_voice_alerts.py",
         "to": "aura/interface/voice_alerts.py"
       },
@@ -3255,6 +3271,10 @@
     },
     {
       "kind": "python-main",
+      "path": "examples/send_telegram_test_alert.py"
+    },
+    {
+      "kind": "python-main",
       "path": "scripts/generate_setup_pdf.py"
     },
     {
@@ -3279,9 +3299,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 1794,
+      "bytes": 1992,
       "path": ".env.example",
-      "sha256": "c72b053698ceea3a5f1eb499e7b4d204bb20b4c5681025a0ef5692a7ebfb533e"
+      "sha256": "b0aebc253f1aded29203ad759c97570ec9bec1d2ad7d01f2a7c8f329b703be70"
     },
     {
       "asset_class": "repository_asset",
@@ -3321,9 +3341,9 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 11995,
+      "bytes": 12650,
       "path": "README.md",
-      "sha256": "35643644a85357e1dc7292c8afc143d44bfa4d01f0af06557b4054a589af66a3"
+      "sha256": "34646d9c2e8f28db377f8b9fa7a03ee81e450e52c6eab16e922056e084579bf1"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -3849,6 +3869,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 13116,
+      "path": "aura/interface/alerts.py",
+      "sha256": "4a1c4190a0c5437d722774b622ceb7f2e6a685a9cfde4f20fe3e0c22fa0ab02d"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 7778,
       "path": "aura/interface/command_center.py",
       "sha256": "49bb3a2d62e8e61eb9b21f65dd6745d8bf746cc7c59241192d8607c13706638c"
@@ -4269,9 +4295,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 6008,
+      "bytes": 6318,
       "path": "docs/AURA_VISION_COVERAGE.md",
-      "sha256": "74f6f72a9c329f2b5d33fc9ef6b6ff38eb142907b402e9ed421122cde87e1b5a"
+      "sha256": "83ce7b4d4c1091bc345be24aebfad0702ca9ecfed52c5515292790caf8ce03ab"
     },
     {
       "asset_class": "documentation",
@@ -4490,6 +4516,12 @@
       "sha256": "fa5137dabcc7a85128c13cdde06c33992257ed44a0822c889c994bfab73a3b3b"
     },
     {
+      "asset_class": "python_module",
+      "bytes": 880,
+      "path": "examples/send_telegram_test_alert.py",
+      "sha256": "6dbd3983d371fc9a8caf0c7477b6de4d5b5eda05254496b0598bc6067d0cdd15"
+    },
+    {
       "asset_class": "documentation_or_validation_evidence",
       "bytes": 846,
       "path": "final_adaptive_intelligence_validation.txt",
@@ -4527,9 +4559,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 28697,
+      "bytes": 30673,
       "path": "output/pdf/AURA_SETUP_AND_OPERATIONS.pdf",
-      "sha256": "a1b7629e375d56501a8cc7c7f8554eda59fd7be0570c8a1cba324db486d258f0"
+      "sha256": "4ba715dbbf199cd2af492540a2c0b21aa26a4cb84f7f469f5b1afb1cc0dfdd7c"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -4545,9 +4577,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 29988,
+      "bytes": 31673,
       "path": "scripts/generate_setup_pdf.py",
-      "sha256": "0936498f589d86995acd790b80a05dbb3badb32fd2da39d7c8895e88bf00ed8c"
+      "sha256": "486850a97f80e98aaf66082943304ae3b77314a5354be682180e330d4c1373cc"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -5220,6 +5252,12 @@
       "bytes": 2197,
       "path": "tests/test_supervisor.py",
       "sha256": "856e833b3615cb959a63b8ec39abac2ae7304ff61408eaac44c0321cbb30024b"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6849,
+      "path": "tests/test_telegram_alerts.py",
+      "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337"
     },
     {
       "asset_class": "python_module",
@@ -7903,6 +7941,42 @@
     {
       "component": "interface",
       "direct_test_files": [
+        "tests/test_telegram_alerts.py"
+      ],
+      "internal_dependencies": [
+        "aura/persistence/wal.py"
+      ],
+      "lines": 362,
+      "module": "aura.interface.alerts",
+      "parsed": true,
+      "path": "aura/interface/alerts.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "4a1c4190a0c5437d722774b622ceb7f2e6a685a9cfde4f20fe3e0c22fa0ab02d",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "typing",
+        "urllib",
+        "uuid"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [
         "tests/test_command_center.py"
       ],
       "internal_dependencies": [],
@@ -8532,6 +8606,7 @@
         "tests/test_recovery.py",
         "tests/test_sealed_holdout.py",
         "tests/test_strategy_governance.py",
+        "tests/test_telegram_alerts.py",
         "tests/test_wal.py"
       ],
       "internal_dependencies": [],
@@ -10169,10 +10244,32 @@
       "third_party_dependencies": []
     },
     {
+      "component": "examples",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/alerts.py"
+      ],
+      "lines": 33,
+      "module": "examples.send_telegram_test_alert",
+      "parsed": true,
+      "path": "examples/send_telegram_test_alert.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "entrypoint",
+      "sha256": "6dbd3983d371fc9a8caf0c7477b6de4d5b5eda05254496b0598bc6067d0cdd15",
+      "standard_library_dependencies": [
+        "asyncio",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
       "component": "repository_tooling",
       "direct_test_files": [],
       "internal_dependencies": [],
-      "lines": 667,
+      "lines": 694,
       "module": "scripts.generate_setup_pdf",
       "parsed": true,
       "path": "scripts/generate_setup_pdf.py",
@@ -10181,7 +10278,7 @@
       ],
       "primary_phase": 0,
       "role": "tooling",
-      "sha256": "0936498f589d86995acd790b80a05dbb3badb32fd2da39d7c8895e88bf00ed8c",
+      "sha256": "486850a97f80e98aaf66082943304ae3b77314a5354be682180e330d4c1373cc",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -13035,6 +13132,33 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/interface/alerts.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 198,
+      "module": "tests.test_telegram_alerts",
+      "parsed": true,
+      "path": "tests/test_telegram_alerts.py",
+      "phase_coverage": [
+        2,
+        13
+      ],
+      "primary_phase": 2,
+      "role": "test",
+      "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/interface/voice_alerts.py"
       ],
       "lines": 54,
@@ -13080,7 +13204,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "7e2fbff9f334ab942db8e4e26e99e3ac35d91b2904135ed875e0ece3de889e29",
+  "repository_tree_sha256": "993b727c607510670c702c1a875edd2e66d95c74a3e5c8613dfb670b6a89021b",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13420,6 +13544,12 @@
     {
       "classification": "intentional",
       "kind": "protocol-contract",
+      "line": 113,
+      "path": "aura/interface/alerts.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
       "line": 81,
       "path": "aura/interface/command_center.py"
     },
@@ -13563,15 +13693,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 129,
-    "entrypoints": 20,
+    "directly_tested_source_modules": 130,
+    "entrypoints": 21,
     "parse_errors": 0,
-    "python_modules": 270,
-    "repository_files": 327,
-    "source_modules": 143,
-    "static_test_functions": 402,
-    "stub_candidates": 78,
-    "test_modules": 109,
+    "python_modules": 273,
+    "repository_files": 330,
+    "source_modules": 144,
+    "static_test_functions": 411,
+    "stub_candidates": 79,
+    "test_modules": 110,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

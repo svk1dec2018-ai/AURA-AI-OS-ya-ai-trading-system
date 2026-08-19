@@ -242,6 +242,23 @@ downloads copyrighted books/transcripts automatically.
 
 PowerShell uses `$env:NAME="value"` instead of `export`.
 
+## Optional Telegram outbound alerts
+
+Create a bot through Telegram's official BotFather flow, start a conversation with
+that bot (or add it to the intended chat), then keep both values in the process
+environment only:
+
+```bash
+export AURA_TELEGRAM_BOT_TOKEN="..."
+export AURA_TELEGRAM_CHAT_ID="..."
+python examples/send_telegram_test_alert.py
+```
+
+Successful and failed delivery receipts are checksummed and restart-safe at
+`runtime/alerts/telegram_receipts.jsonl`. The journal contains only a hash of the
+destination, never the token or raw chat ID. This adapter sends outbound alerts;
+it does not accept commands and has no order-execution authority.
+
 ## MT5 / Exness demo + internal paper
 
 On Windows with the MetaTrader 5 terminal installed:

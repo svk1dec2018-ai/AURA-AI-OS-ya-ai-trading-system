@@ -2361,6 +2361,32 @@
       ]
     },
     {
+      "async_test_functions": 6,
+      "path": "tests/test_telegram_alerts.py",
+      "phase_coverage": [
+        2,
+        13
+      ],
+      "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337",
+      "source_dependencies": [
+        "aura/interface/alerts.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_alert_timestamps_must_be_timezone_aware",
+        "test_credentials_are_env_only_and_repr_is_redacted",
+        "test_invalid_provider_response_fails_closed",
+        "test_message_is_normalized_and_truncated_to_configured_limit",
+        "test_non_retriable_failure_is_recorded_and_can_be_retried",
+        "test_rate_limit_honors_retry_after_then_succeeds",
+        "test_reused_alert_id_with_different_content_is_rejected",
+        "test_success_is_durable_secret_free_and_deduplicated",
+        "test_unknown_journal_event_blocks_recovery"
+      ]
+    },
+    {
       "async_test_functions": 2,
       "path": "tests/test_voice_alerts.py",
       "phase_coverage": [
@@ -2399,9 +2425,9 @@
   ],
   "schema_version": 1,
   "summary": {
-    "async_test_functions": 78,
+    "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 402,
-    "test_modules": 109
+    "static_test_functions": 411,
+    "test_modules": 110
   }
 }

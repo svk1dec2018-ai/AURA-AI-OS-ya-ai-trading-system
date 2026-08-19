@@ -343,7 +343,8 @@ def build_story() -> list:
                 ("Risk and accounting", "IMPLEMENTED", "Independent risk veto, paper broker, portfolio ledger, WAL and recovery."),
                 ("Local voice", "IMPLEMENTED", "OS-native spoken alerts; no cloud key required."),
                 ("Graphical dashboard", "PARTIAL", "Typed command center and status JSON exist; full GUI remains."),
-                ("Telegram / WhatsApp", "PENDING", "External delivery adapter and verified recipient are required."),
+                ("Telegram alerts", "DESTINATION GATE", "Outbound adapter and durable receipts exist; operator bot/chat validation required."),
+                ("WhatsApp", "PENDING", "Supported provider, credentials and verified recipient are required."),
             ]
         ),
         p(
@@ -574,7 +575,33 @@ def build_story() -> list:
             "callout",
         ),
         PageBreak(),
-        p("11. Daily operations and health checks", "h1"),
+        p("11. Telegram outbound alert setup", "h1"),
+        p(
+            "AURA includes a fail-closed outbound Telegram adapter for system, risk and trade-status "
+            "alerts. It uses Telegram's official HTTPS Bot API, deduplicates delivered alert IDs after "
+            "restart, honors retry guidance, and writes checksummed delivery receipts. It does not "
+            "accept inbound commands and cannot submit orders."
+        ),
+        p("Prepare the destination", "h2"),
+        bullet("Create a bot through Telegram's official BotFather workflow."),
+        bullet("Start the bot chat or add the bot to the intended group, then obtain the chat ID."),
+        bullet("Store the token and chat ID in the service environment or secret manager, never Git."),
+        code(
+            'export AURA_TELEGRAM_BOT_TOKEN="..."\n'
+            'export AURA_TELEGRAM_CHAT_ID="..."\n'
+            "python examples/send_telegram_test_alert.py"
+        ),
+        p("Verify the receipt", "h2"),
+        bullet("The command exits zero only when Telegram returns a sent message ID."),
+        bullet("Inspect runtime/alerts/telegram_receipts.jsonl for the checksummed receipt."),
+        bullet("The receipt stores a destination hash; it never stores the token or raw chat ID."),
+        p(
+            "Until the operator performs this real destination test, Telegram remains an external "
+            "destination gate even though its adapter and automated tests are implemented.",
+            "callout",
+        ),
+        PageBreak(),
+        p("12. Daily operations and health checks", "h1"),
         p("Before startup", "h2"),
         bullet("Run production preflight for the selected paper/demo connector."),
         bullet("Confirm live approval variables are empty."),
@@ -603,7 +630,7 @@ def build_story() -> list:
             ]
         ),
         PageBreak(),
-        p("12. Troubleshooting", "h1"),
+        p("13. Troubleshooting", "h1"),
         status_table(
             [
                 ("Ollama unreachable", "CHECK", "Open Ollama, run `ollama serve`, verify `/api/tags` and firewall."),
@@ -625,7 +652,7 @@ def build_story() -> list:
         bullet("Restart in public paper mode and confirm recovery/reconciliation state."),
         bullet("Never fix a failure by enabling live authority or disabling RiskEngine."),
         PageBreak(),
-        p("13. Security and final acceptance", "h1"),
+        p("14. Security and final acceptance", "h1"),
         p("Never commit", "h2"),
         bullet("Broker usernames, passwords, tokens, TOTP seeds or sessions."),
         bullet("`.env` files containing real values."),
