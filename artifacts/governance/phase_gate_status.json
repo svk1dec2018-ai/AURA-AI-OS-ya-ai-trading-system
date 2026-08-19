@@ -1,0 +1,429 @@
+{
+  "ledger_sha256": "9c4002863e4bcda2d04f2d0887f5fdba41363f65dc39914f3f6133c88a55d30b",
+  "policy": "AURA mandatory sequential phase gates 0-15",
+  "records": [
+    {
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "module_map.md",
+          "path": "artifacts/governance/module_map.md",
+          "sha256": "681513089d6cfbe22e03ec20dd909428ae675ef88ecd3b0b2945e7f30f8727bf"
+        },
+        {
+          "output": "repo_audit.json",
+          "path": "artifacts/governance/repo_audit.json",
+          "sha256": "34486cd83452e0e9304384934b0feed998f9374f2b8ed6af9621d95c914435b5"
+        },
+        {
+          "output": "test_inventory.json",
+          "path": "artifacts/governance/test_inventory.json",
+          "sha256": "a8e00b952f3f6fd145d6ce40229dcfe567f25c34f968bfbf7818ac6f95030196"
+        }
+      ],
+      "phase": 0,
+      "reasons": []
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 1,
+      "reasons": [
+        "Phase 1 validation evidence has not been produced or accepted; Phase 0 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 2,
+      "reasons": [
+        "Phase 2 validation evidence has not been produced or accepted; Phase 1 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 3,
+      "reasons": [
+        "Phase 3 validation evidence has not been produced or accepted; Phase 2 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 4,
+      "reasons": [
+        "Phase 4 validation evidence has not been produced or accepted; Phase 3 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 5,
+      "reasons": [
+        "Phase 5 validation evidence has not been produced or accepted; Phase 4 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 6,
+      "reasons": [
+        "Phase 6 validation evidence has not been produced or accepted; Phase 5 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 7,
+      "reasons": [
+        "Phase 7 validation evidence has not been produced or accepted; Phase 6 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 8,
+      "reasons": [
+        "Phase 8 validation evidence has not been produced or accepted; Phase 7 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 9,
+      "reasons": [
+        "Phase 9 validation evidence has not been produced or accepted; Phase 8 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 10,
+      "reasons": [
+        "Phase 10 validation evidence has not been produced or accepted; Phase 9 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 11,
+      "reasons": [
+        "Phase 11 validation evidence has not been produced or accepted; Phase 10 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 12,
+      "reasons": [
+        "Phase 12 validation evidence has not been produced or accepted; Phase 11 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 13,
+      "reasons": [
+        "Phase 13 validation evidence has not been produced or accepted; Phase 12 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 14,
+      "reasons": [
+        "Phase 14 validation evidence has not been produced or accepted; Phase 13 must remain PASS before this gate can pass."
+      ]
+    },
+    {
+      "decision": "BLOCKED",
+      "evidence": [],
+      "phase": 15,
+      "reasons": [
+        "Phase 15 validation evidence has not been produced or accepted; Phase 14 must remain PASS before this gate can pass."
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "specs": [
+    {
+      "deliverables": [
+        "Full repository structure map",
+        "Module inventory",
+        "Dependency graph",
+        "Test discovery report",
+        "Stub and broken-code list"
+      ],
+      "name": "Repository audit and baseline",
+      "phase": 0,
+      "stop_condition": "If any module is unclassified, the phase fails.",
+      "success_criteria": [
+        "100% of modules are classified",
+        "All entrypoints are identified",
+        "No unknown components remain"
+      ],
+      "validation_outputs": [
+        "repo_audit.json",
+        "module_map.md",
+        "test_inventory.json"
+      ]
+    },
+    {
+      "deliverables": [
+        "Unified Tick, Candle, Order, Fill, Position and portfolio models",
+        "Typed schemas",
+        "Serialization layer"
+      ],
+      "name": "Core data contracts",
+      "phase": 1,
+      "stop_condition": "Any missing core entity blocks the phase.",
+      "success_criteria": [
+        "All core entities pass schema tests",
+        "No ambiguous schema fields remain"
+      ],
+      "validation_outputs": [
+        "Schema test report",
+        "Contract validation suite"
+      ]
+    },
+    {
+      "deliverables": [
+        "Portfolio state manager",
+        "Order lifecycle state machine",
+        "Fill reconciliation logic"
+      ],
+      "name": "Portfolio and order state engine",
+      "phase": 2,
+      "stop_condition": "Any broker/internal state mismatch fails the phase.",
+      "success_criteria": [
+        "State transitions are deterministic",
+        "Restart recovery passes"
+      ],
+      "validation_outputs": [
+        "State transition logs",
+        "Reconciliation test report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Risk rules engine",
+        "Position sizing engine",
+        "Portfolio exposure controls",
+        "Kill switch logic"
+      ],
+      "name": "Risk engine",
+      "phase": 3,
+      "stop_condition": "Any risk-engine bypass immediately fails the phase.",
+      "success_criteria": [
+        "Risk veto always overrides a trade",
+        "Outputs are fully deterministic"
+      ],
+      "validation_outputs": [
+        "Risk stress test report",
+        "Violation simulation logs"
+      ]
+    },
+    {
+      "deliverables": [
+        "Broker interface",
+        "Angel One adapter",
+        "MT5 adapter skeleton",
+        "Reconciliation system"
+      ],
+      "name": "Broker abstraction layer",
+      "phase": 4,
+      "stop_condition": "Broker-specific logic in a strategy fails the phase.",
+      "success_criteria": [
+        "Broker swaps do not affect strategies",
+        "Adapter conformance tests pass"
+      ],
+      "validation_outputs": [
+        "Adapter conformance report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Data ingestion",
+        "Normalization engine",
+        "Quality validation layer"
+      ],
+      "name": "Market data pipeline",
+      "phase": 5,
+      "stop_condition": "Any unvalidated data entering the pipeline fails the phase.",
+      "success_criteria": [
+        "Corrupt data cannot reach strategies",
+        "Data lag is measured"
+      ],
+      "validation_outputs": [
+        "Data quality report",
+        "Anomaly detection logs"
+      ]
+    },
+    {
+      "deliverables": [
+        "Unified backtest/live engine",
+        "Slippage model",
+        "Cost model"
+      ],
+      "name": "Backtest engine",
+      "phase": 6,
+      "stop_condition": "Any backtest/live divergence fails the phase.",
+      "success_criteria": [
+        "Backtest uses live execution logic",
+        "Look-ahead bias checks pass"
+      ],
+      "validation_outputs": [
+        "Backtest report",
+        "Bias detection report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Strategy factory",
+        "Hypothesis generator",
+        "Evaluation engine"
+      ],
+      "name": "Strategy research lab",
+      "phase": 7,
+      "stop_condition": "Promotion of any untested strategy fails the phase.",
+      "success_criteria": [
+        "Strategies are reproducible",
+        "Overfitting controls pass"
+      ],
+      "validation_outputs": [
+        "Strategy evaluation report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Document ingestion",
+        "Retrieval engine",
+        "Metadata tagging"
+      ],
+      "name": "Knowledge and RAG engine",
+      "phase": 8,
+      "stop_condition": "Use of unverified knowledge in trading fails the phase.",
+      "success_criteria": [
+        "Retrieval benchmark passes",
+        "No hallucinated knowledge is used"
+      ],
+      "validation_outputs": [
+        "Retrieval benchmark report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Specialist agents",
+        "Structured output schema",
+        "Agent registry"
+      ],
+      "name": "Multi-agent system",
+      "phase": 9,
+      "stop_condition": "Any agent bypassing its schema fails the phase.",
+      "success_criteria": [
+        "Agent outputs are deterministic and structured",
+        "No free-form authority path exists"
+      ],
+      "validation_outputs": [
+        "Agent consistency report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Evidence fusion",
+        "Decision aggregation",
+        "Explainability layer"
+      ],
+      "name": "CEO decision engine",
+      "phase": 10,
+      "stop_condition": "Any non-reproducible decision fails the phase.",
+      "success_criteria": [
+        "Decisions are reproducible",
+        "Decision outputs are explainable"
+      ],
+      "validation_outputs": [
+        "Decision trace logs"
+      ]
+    },
+    {
+      "deliverables": [
+        "Angel One integration",
+        "MT5 integration"
+      ],
+      "name": "Broker integration live readiness",
+      "phase": 11,
+      "stop_condition": "Any unverified order execution fails the phase.",
+      "success_criteria": [
+        "Order execution is externally verified",
+        "Reconciliation is stable"
+      ],
+      "validation_outputs": [
+        "Live execution logs"
+      ]
+    },
+    {
+      "deliverables": [
+        "Simulated execution engine",
+        "Live-data paper mode"
+      ],
+      "name": "Paper trading system",
+      "phase": 12,
+      "stop_condition": "Any behavior mismatch fails the phase.",
+      "success_criteria": "Paper behavior is demonstrably identical to the live engine",
+      "validation_outputs": [
+        "Paper versus live parity report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Alert system",
+        "Dashboard",
+        "Voice interface"
+      ],
+      "name": "Alerting, UI and voice",
+      "phase": 13,
+      "stop_condition": "Any missed critical event fails the phase.",
+      "success_criteria": [
+        "Updates are real-time",
+        "No critical alerts are missed"
+      ],
+      "validation_outputs": [
+        "Alert delivery logs"
+      ]
+    },
+    {
+      "deliverables": [
+        "Full-system simulation",
+        "Chaos test suite"
+      ],
+      "name": "End-to-end system validation",
+      "phase": 14,
+      "stop_condition": "Any critical failure fails the phase.",
+      "success_criteria": [
+        "The system survives tested failures",
+        "No data corruption occurs"
+      ],
+      "validation_outputs": [
+        "Full system audit report"
+      ]
+    },
+    {
+      "deliverables": [
+        "Production readiness report",
+        "Risk certification",
+        "Monitoring dashboard"
+      ],
+      "name": "Controlled live deployment readiness",
+      "phase": 15,
+      "stop_condition": "Any unresolved risk blocks live deployment.",
+      "success_criteria": [
+        "Every earlier phase is PASS",
+        "Zero critical issues remain"
+      ],
+      "validation_outputs": [
+        "Final readiness certificate"
+      ]
+    }
+  ]
+}

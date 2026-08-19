@@ -2,6 +2,13 @@
 
 This document is the current source of truth for what is implemented in code versus what remains externally gated. See `PRODUCTION_READINESS.md` for deployment and release procedures.
 
+> **Mandatory governance status:** Code presence is no longer a phase-completion
+> claim. The machine-readable authority is
+> `artifacts/governance/phase_gate_status.json`. Phase 0 is PASS; Phases 1–15
+> remain BLOCKED until their named validation evidence is produced and accepted.
+> Existing later-phase code is preserved as implementation inventory, not
+> retroactive gate certification.
+
 ## Current classification
 
 **AURA is a production-deployable paper/demo research service candidate.**
