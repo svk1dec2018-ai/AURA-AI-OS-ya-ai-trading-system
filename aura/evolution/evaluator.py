@@ -23,6 +23,10 @@ RiskEngineFactory = Callable[[], RiskEngine]
 class PaperPerformanceProvider(Protocol):
     def performance_for(self, genome: StrategyGenome) -> PerformanceSlice | None: ...
 
+    def reconciliation_incidents_for(self, genome: StrategyGenome) -> int: ...
+
+    def operational_incidents_for(self, genome: StrategyGenome) -> int: ...
+
 
 class CausalBacktestEvolutionEvaluator:
     """Build measured evolution evidence from AURA's shared causal backtest path.
@@ -118,6 +122,16 @@ class CausalBacktestEvolutionEvaluator:
             seed=self.monte_carlo_seed,
         )
         paper = self.paper_provider.performance_for(genome) if self.paper_provider else None
+        reconciliation_incidents = (
+            self.paper_provider.reconciliation_incidents_for(genome)
+            if self.paper_provider
+            else 0
+        )
+        operational_incidents = (
+            self.paper_provider.operational_incidents_for(genome)
+            if self.paper_provider
+            else 0
+        )
         return CandidateEvaluation(
             genome=genome,
             in_sample=in_sample,
@@ -125,6 +139,8 @@ class CausalBacktestEvolutionEvaluator:
             monte_carlo_p05_return_pct=monte_carlo.p05_terminal_return * 100.0,
             monte_carlo_p95_drawdown_pct=monte_carlo.p95_max_drawdown * 100.0,
             paper=paper,
+            reconciliation_incidents=reconciliation_incidents,
+            operational_incidents=operational_incidents,
         )
 
     def _run_slice(
