@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 330
-- Python modules: 273
-- Source modules: 144
-- Test modules: 110
-- Static test functions: 411
-- Entrypoints: 21
+- Repository files: 333
+- Python modules: 276
+- Source modules: 145
+- Test modules: 111
+- Static test functions: 418
+- Entrypoints: 22
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,14 +28,14 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 148 |
+| `aura` | 149 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
 | `contextual_reliability_validation.txt` | 1 |
 | `deploy` | 1 |
 | `docs` | 27 |
-| `examples` | 14 |
+| `examples` | 15 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 110 |
+| `tests` | 111 |
 
 ## Entrypoints
 
@@ -60,6 +60,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/check_dhan_universe.py` | python-main |
 | `examples/evaluate_production_release.py` | python-main |
 | `examples/run_backtest.py` | python-main |
+| `examples/run_command_center.py` | python-main |
 | `examples/run_dhan_self_evolving_paper.py` | python-main |
 | `examples/run_free_public_ai_council.py` | python-main |
 | `examples/run_free_public_autonomy.py` | python-main |
@@ -167,6 +168,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
+| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/markets/universe.py` | source | markets | 1 | 0 | 9 |
@@ -231,6 +233,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 2 | 0 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_backtest.py` | entrypoint | examples | 1 | 5 | 0 |
+| `examples/run_command_center.py` | entrypoint | examples | 13 | 1 | 0 |
 | `examples/run_dhan_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_free_public_ai_council.py` | entrypoint | examples | 12 | 1 | 0 |
 | `examples/run_free_public_autonomy.py` | entrypoint | examples | 12 | 3 | 0 |
@@ -352,6 +355,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_telegram_alerts.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_voice_alerts.py` | test | validation | 13 | 1 | 0 |
 | `tests/test_wal.py` | test | validation | 2 | 1 | 0 |
+| `tests/test_web_command_center.py` | test | validation | 13 | 1 | 0 |
 
 ## Interpretation limits
 

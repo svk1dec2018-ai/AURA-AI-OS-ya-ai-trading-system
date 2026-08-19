@@ -2421,13 +2421,35 @@
         "test_wal_rejects_duplicate_event_id",
         "test_wal_round_trip_and_monotonic_sequence"
       ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_web_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "7ebb964651ad4e825a679ef13cc97367bc444bddd35f9e52d2c7f0527c91bb93",
+      "source_dependencies": [
+        "aura/interface/web_command_center.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_http_status_research_and_live_boundary",
+        "test_live_and_paper_commands_are_blocked_before_execution",
+        "test_non_loopback_binding_requires_strong_token",
+        "test_pwa_assets_are_served_with_security_headers",
+        "test_queue_corruption_fails_closed",
+        "test_research_queue_is_restart_safe_and_idempotent",
+        "test_unattached_market_source_returns_no_fabricated_data"
+      ]
     }
   ],
   "schema_version": 1,
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 411,
-    "test_modules": 110
+    "static_test_functions": 418,
+    "test_modules": 111
   }
 }

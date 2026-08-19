@@ -822,6 +822,10 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "aura/interface/web_command_center.py",
+        "to": "aura/interface/command_center.py"
+      },
+      {
         "from": "aura/knowledge/local_corpus.py",
         "to": "aura/knowledge/firewall.py"
       },
@@ -1660,6 +1664,10 @@
       {
         "from": "examples/run_backtest.py",
         "to": "aura/strategy/ema.py"
+      },
+      {
+        "from": "examples/run_command_center.py",
+        "to": "aura/interface/web_command_center.py"
       },
       {
         "from": "examples/run_dhan_self_evolving_paper.py",
@@ -3152,6 +3160,10 @@
       {
         "from": "tests/test_wal.py",
         "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "tests/test_web_command_center.py",
+        "to": "aura/interface/web_command_center.py"
       }
     ],
     "standard_library_packages": [
@@ -3168,6 +3180,8 @@
       "email",
       "enum",
       "hashlib",
+      "hmac",
+      "http",
       "importlib",
       "io",
       "itertools",
@@ -3232,6 +3246,10 @@
     {
       "kind": "python-main",
       "path": "examples/run_backtest.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "examples/run_command_center.py"
     },
     {
       "kind": "python-main",
@@ -3317,9 +3335,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 1226,
+      "bytes": 3631,
       "path": ".github/workflows/ci.yml",
-      "sha256": "c5359dd17b4e5977e659eabbf31d64339791a9968096d85303b1cf905c8c7a76"
+      "sha256": "b1aaa4ebcc0bc55fea1ad1e3b5727eed489892f6c7cfbaf091e56989da6f0d11"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -3887,6 +3905,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 21079,
+      "path": "aura/interface/web_command_center.py",
+      "sha256": "5b807dfa858fa3c0d26bc23d2691c20478fb8b6da6d797b0201f5fe686923245"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 6543,
       "path": "aura/knowledge/firewall.py",
       "sha256": "be0c0a3cca0feb6da3c0a628d2e2002baa3bcc529af50a9bbfbc5c58a0438e3b"
@@ -4319,9 +4343,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 878,
+      "bytes": 3171,
       "path": "docs/COMMAND_CENTER.md",
-      "sha256": "f3dce3b0cfd55bcf4210111a92c4e843f614c68b365cf7a6be6e45d3f52ab564"
+      "sha256": "112bbe703b2135b6cc65e540712fccaf0b435e3731cfcecf727f8bc7b41f0dac"
     },
     {
       "asset_class": "documentation",
@@ -4460,6 +4484,12 @@
       "bytes": 2105,
       "path": "examples/run_backtest.py",
       "sha256": "940ed1e883e92d918ed007626df79259ac2c1bf7b3cd541c14391ee4f8b0a694"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 860,
+      "path": "examples/run_command_center.py",
+      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc"
     },
     {
       "asset_class": "python_module",
@@ -5270,6 +5300,12 @@
       "bytes": 2318,
       "path": "tests/test_wal.py",
       "sha256": "2f730f84494637013766ca82628e2b50994a48182021690d1c09d692a639a318"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 5515,
+      "path": "tests/test_web_command_center.py",
+      "sha256": "7ebb964651ad4e825a679ef13cc97367bc444bddd35f9e52d2c7f0527c91bb93"
     }
   ],
   "gate": {
@@ -8034,6 +8070,40 @@
       "third_party_dependencies": []
     },
     {
+      "component": "interface",
+      "direct_test_files": [
+        "tests/test_web_command_center.py"
+      ],
+      "internal_dependencies": [
+        "aura/interface/command_center.py"
+      ],
+      "lines": 417,
+      "module": "aura.interface.web_command_center",
+      "parsed": true,
+      "path": "aura/interface/web_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "5b807dfa858fa3c0d26bc23d2691c20478fb8b6da6d797b0201f5fe686923245",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "hashlib",
+        "hmac",
+        "http",
+        "json",
+        "os",
+        "pathlib",
+        "threading",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
       "component": "knowledge",
       "direct_test_files": [
         "tests/test_agent_team.py",
@@ -9995,6 +10065,29 @@
       "standard_library_dependencies": [
         "datetime",
         "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "examples",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/web_command_center.py"
+      ],
+      "lines": 27,
+      "module": "examples.run_command_center",
+      "parsed": true,
+      "path": "examples/run_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "entrypoint",
+      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc",
+      "standard_library_dependencies": [
+        "__future__",
+        "os",
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -13202,9 +13295,37 @@
       "third_party_dependencies": [
         "pytest"
       ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/web_command_center.py"
+      ],
+      "lines": 153,
+      "module": "tests.test_web_command_center",
+      "parsed": true,
+      "path": "tests/test_web_command_center.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "test",
+      "sha256": "7ebb964651ad4e825a679ef13cc97367bc444bddd35f9e52d2c7f0527c91bb93",
+      "standard_library_dependencies": [
+        "__future__",
+        "http",
+        "json",
+        "pathlib",
+        "threading",
+        "urllib"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
     }
   ],
-  "repository_tree_sha256": "993b727c607510670c702c1a875edd2e66d95c74a3e5c8613dfb670b6a89021b",
+  "repository_tree_sha256": "16c211efa978612f027480c4491645729cfb21a0d83b16265fdeac1b469b9205",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13693,15 +13814,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 130,
-    "entrypoints": 21,
+    "directly_tested_source_modules": 131,
+    "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 273,
-    "repository_files": 330,
-    "source_modules": 144,
-    "static_test_functions": 411,
+    "python_modules": 276,
+    "repository_files": 333,
+    "source_modules": 145,
+    "static_test_functions": 418,
     "stub_candidates": 79,
-    "test_modules": 110,
+    "test_modules": 111,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
