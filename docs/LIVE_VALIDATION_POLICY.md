@@ -30,6 +30,24 @@ They **cannot** by themselves create a paper champion.
 
 A paper brain challenger is promoted only from outcome samples whose provenance is `LIVE_BROKER`, whose decision timestamp is later than the challenger's creation timestamp, and which pass the configured forward paper gates.
 
+### Sealed historical holdout protocol
+
+Before a historical holdout is evaluated, AURA records the verified experiment
+manifest, immutable strategy and dataset hashes, chronological calibration/holdout
+boundary, exact evaluation protocol and declaration time in a sequenced, checksummed
+journal. The holdout must be the dataset tail. A registry permits that exact tail to
+be claimed by one plan and records at most one result; changing the candidate,
+protocol, result or manifest after exposure fails closed, including after restart.
+
+The resulting artifact is always marked `historical_research_only`,
+`paper_validated = false`, `live_approved = false` and
+`live_money_enabled = false`. The ledger makes pre-commitment and reuse auditable;
+operational separation is still required to ensure researchers did not inspect the
+raw holdout outside AURA. Checksums detect corruption and inconsistent rewrites;
+they are not a signature against a privileged actor who can replace the complete
+journal and recompute every hash, so production operation also requires restricted
+write access and an independently anchored audit copy.
+
 Every paper champion artifact must retain:
 
 ```text
