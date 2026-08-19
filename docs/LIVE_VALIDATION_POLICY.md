@@ -133,3 +133,16 @@ Indexes such as NIFTY/SENSEX are market-data context instruments, not direct tra
 ## 9. Real money remains a separate later stage
 
 A paper champion never becomes live-approved automatically. Real-money eligibility requires sustained forward evidence, broker-specific reconciliation and failure testing, margin/contract validation, monitoring/alerts, canary deployment and explicit human approval.
+
+Strategy lifecycle state is recorded in an append-only, sequenced and checksummed
+registry journal when a journal path is configured. Restart replay independently
+revalidates every transition, its actor type, the immutable strategy code hash and the
+append-only evidence history. Unknown schemas, malformed records, sequence gaps and
+checksum failures stop recovery rather than accepting an uncertain approval state.
+
+An `APPROVED` value constructed in memory is not an approval credential. The live
+deployment predicate also requires a journal-backed registry's matching recorded
+`PAPER_VALIDATED -> APPROVED` transition with a `HUMAN` actor. Retiring the exact
+strategy version revokes that receipt. This receipt records governance history; it
+does not enable an execution connector, authenticate a person's identity or replace
+the additional controlled-live requirements above.
