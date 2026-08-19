@@ -2428,7 +2428,7 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "7ebb964651ad4e825a679ef13cc97367bc444bddd35f9e52d2c7f0527c91bb93",
+      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0",
       "source_dependencies": [
         "aura/interface/web_command_center.py"
       ],
