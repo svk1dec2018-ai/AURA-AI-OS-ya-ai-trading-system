@@ -46,6 +46,12 @@ At decision time AURA may consume only data whose observation/close timestamp is
 
 Live decisions use closed candles. Historical warm-up excludes forming bars. Missing market bars are not fabricated to make an indicator look complete.
 
+Walk-forward research must set `purge_size` to at least the longest forward label
+or holding horizon used to fit or select a candidate. Purged observations are
+excluded from the training slice so their future labels cannot overlap the OOS
+window. Because they are already observable by the test boundary, they may warm
+causal indicators, but they must never contribute training or fitness evidence.
+
 ## 4. Wrong-trade and missed-trade measurement
 
 AURA's live opportunity audit classifies future material moves as:

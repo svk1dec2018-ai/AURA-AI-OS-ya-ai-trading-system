@@ -78,7 +78,7 @@ Exit criteria:
 - transaction costs, spread, slippage and latency models
 - market-session/calendar handling
 - limit/stop/partial-fill simulation
-- walk-forward runner
+- walk-forward runner with explicit label-horizon purge
 - bootstrap/Monte Carlo robustness analysis
 - parameter stability analysis
 - regime-segmented performance
