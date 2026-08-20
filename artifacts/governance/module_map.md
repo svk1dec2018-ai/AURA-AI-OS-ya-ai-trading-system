@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 346
-- Python modules: 289
-- Source modules: 151
-- Test modules: 117
-- Static test functions: 452
-- Entrypoints: 23
+- Repository files: 349
+- Python modules: 292
+- Source modules: 153
+- Test modules: 118
+- Static test functions: 456
+- Entrypoints: 24
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 155 |
+| `aura` | 157 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 117 |
+| `tests` | 118 |
 
 ## Entrypoints
 
@@ -55,6 +55,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `Dockerfile` | container-entrypoint |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
+| `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
 | `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
@@ -141,7 +142,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 52 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 53 |
+| `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
 | `aura/evolution/brain_policy.py` | source | evolution | 7 | 8 | 2 |
@@ -184,6 +186,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/models/registry.py` | source | models | 9 | 0 | 5 |
 | `aura/observability/logging.py` | source | observability | 14 | 0 | 0 |
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
+| `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
 | `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 2 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
@@ -278,6 +281,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_connector_catalog.py` | test | validation | 4 | 1 | 0 |
 | `tests/test_context_enrichment.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_contract_accounting.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_core_contracts.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_corporate_actions.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_cross_feed.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_data_quality.py` | test | validation | 1 | 2 | 0 |

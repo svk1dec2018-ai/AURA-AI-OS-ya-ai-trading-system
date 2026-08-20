@@ -56,6 +56,7 @@ _FILE_PHASE_OVERRIDES = {
     "aura/execution/paper.py": 12,
     "aura/ops/phase_gates.py": 0,
     "aura/ops/repository_audit.py": 0,
+    "aura/ops/core_contracts.py": 1,
     "aura/ops/health.py": 15,
     "aura/ops/preflight.py": 15,
     "aura/ops/release_gate.py": 15,

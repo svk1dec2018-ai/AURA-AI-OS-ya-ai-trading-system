@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from decimal import Decimal
+
+from pydantic import BaseModel, ConfigDict, Field
 
 from aura.domain.models import Fill, PortfolioSnapshot, Side
 from aura.portfolio.instruments import (
@@ -11,14 +12,17 @@ from aura.portfolio.instruments import (
 )
 
 
-@dataclass(slots=True)
-class Position:
-    symbol: str
+class Position(BaseModel):
+    """Validated mutable position state with deterministic serialization."""
+
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
+
+    symbol: str = Field(min_length=1, max_length=120)
     quantity: Decimal = Decimal(0)
-    average_price: Decimal = Decimal(0)
+    average_price: Decimal = Field(default=Decimal(0), ge=0)
     realized_pnl: Decimal = Decimal(0)
     accounting: AccountingMode = AccountingMode.SPOT
-    contract_multiplier: Decimal = Decimal(1)
+    contract_multiplier: Decimal = Field(default=Decimal(1), gt=0)
 
     def unrealized_pnl(self, mark: Decimal) -> Decimal:
         if self.quantity == 0:

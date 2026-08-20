@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "e5ca328711cea1b544283f8f06439312c53b15e55141c224fb4905124f6f163d",
+  "ledger_sha256": "bd3502701794cc81590ef4ddb746432335ea08a68b748d813ce63b322b2c5826",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,29 +8,38 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "75658bee2aaddb8573f9ea49df56e4ef179da85a43471eb196d16240792eb028"
+          "sha256": "41afbbe0e14a3196172a40f9e31901b700ee613c8271ee7c422e9def1785c2d4"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "72774d86b6ebf52a5027e6180526e266cab73ba6e0c680872eacbffb89252f44"
+          "sha256": "9ce9b27c6bd5254445bf9a7713a4b100acb466763235dae541395db9540d59d7"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "007a60c70441c08e2a202764873a4df23cd18dca6a826beaec95ff6f5a3c8710"
+          "sha256": "000022c2322f314cc1dd8300d1d445caaa01f369d1c8001bf56d0a346194dda1"
         }
       ],
       "phase": 0,
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Contract validation suite",
+          "path": "artifacts/governance/core_contract_validation_suite.json",
+          "sha256": "38167cc5d56d93121c40a216126fe6e7e36c7b6c9ac4f4563113afeac800cdcf"
+        },
+        {
+          "output": "Schema test report",
+          "path": "artifacts/governance/core_contract_schema_report.json",
+          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
+        }
+      ],
       "phase": 1,
-      "reasons": [
-        "Phase 1 validation evidence has not been produced or accepted; Phase 0 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",

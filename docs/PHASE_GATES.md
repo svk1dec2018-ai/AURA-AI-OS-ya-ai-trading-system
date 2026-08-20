@@ -23,7 +23,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | Phase | Gate | Meaning |
 |---:|---|---|
 | 0 | PASS | Repository baseline is fully inventoried by generated evidence. |
-| 1–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 1 | PASS | Six mandatory core entities have strict schemas and canonical, versioned serialization evidence. |
+| 2–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -43,6 +44,27 @@ Regenerate and verify it with:
 python -m aura.ops.repository_audit --write
 python -m aura.ops.repository_audit --check
 ```
+
+## Phase 1 evidence
+
+- `artifacts/governance/core_contract_schema_report.json`
+- `artifacts/governance/core_contract_validation_suite.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The contract suite covers Tick, Candle, Order, Fill, Position, and Portfolio. It
+verifies strict unknown-field rejection, timezone and order-price semantics, and
+canonical round trips through a versioned JSON envelope. Regenerate and verify the
+sequential evidence with:
+
+```bash
+python -m aura.ops.repository_audit --write
+python -m aura.ops.core_contracts --write
+python -m aura.ops.repository_audit --check
+python -m aura.ops.core_contracts --check
+```
+
+Phase 1 is a data-contract gate only. It grants no broker, deployment, or live-money
+authority.
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
