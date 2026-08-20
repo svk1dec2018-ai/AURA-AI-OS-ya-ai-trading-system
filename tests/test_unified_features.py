@@ -9,10 +9,10 @@ from aura.domain.models import NormalizedCandle
 from aura.strategy.features import FeatureConfig, UnifiedFeatureEngine
 
 
-def _candles(count: int, *, step: Decimal = Decimal("1"), volume: Decimal = Decimal("100")):
+def _candles(count: int, *, step: Decimal = Decimal(1), volume: Decimal = Decimal(100)):
     start = datetime(2026, 1, 1, tzinfo=UTC)
     candles: list[NormalizedCandle] = []
-    previous = Decimal("100")
+    previous = Decimal(100)
     for index in range(count):
         close = previous + step
         open_time = start + timedelta(minutes=5 * index)
@@ -24,8 +24,8 @@ def _candles(count: int, *, step: Decimal = Decimal("1"), volume: Decimal = Deci
                 open_time=open_time,
                 close_time=open_time + timedelta(minutes=5),
                 open=previous,
-                high=max(previous, close) + Decimal("1"),
-                low=min(previous, close) - Decimal("1"),
+                high=max(previous, close) + Decimal(1),
+                low=min(previous, close) - Decimal(1),
                 close=close,
                 volume=volume,
                 closed=True,
