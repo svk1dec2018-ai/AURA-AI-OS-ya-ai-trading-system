@@ -316,6 +316,25 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_backtest_gate.py",
+      "phase_coverage": [
+        0,
+        6
+      ],
+      "sha256": "6e4e4a1014e3e7a97df72a1a82e933b287e2602dd111caa0de7afac9564e74c3",
+      "source_dependencies": [
+        "aura/ops/backtest_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_six_evidence_is_current",
+        "test_phase_six_proves_execution_parity_and_bias_guards"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_binance_spot.py",
       "phase_coverage": [
         5
@@ -983,6 +1002,34 @@
       ]
     },
     {
+      "async_test_functions": 1,
+      "path": "tests/test_execution_parity.py",
+      "phase_coverage": [
+        1,
+        3,
+        6,
+        7,
+        10,
+        12
+      ],
+      "sha256": "27a9998e692633d554e3da87688dcfeb2184d62988c5a9ed31fa5a1051daaa8a",
+      "source_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/execution/paper.py",
+        "aura/risk/engine.py",
+        "aura/strategy/base.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_backtest_and_paper_share_identical_fill_and_cost_math",
+        "test_future_dated_strategy_signal_is_rejected",
+        "test_out_of_order_or_overlapping_series_is_rejected"
+      ]
+    },
+    {
       "async_test_functions": 6,
       "path": "tests/test_external_specialists.py",
       "phase_coverage": [
@@ -1504,7 +1551,7 @@
         7,
         10
       ],
-      "sha256": "ca48ab02a5fd1cac72f7cf86f451ab9a731b6acf299bdc68e16057cf809aad3c",
+      "sha256": "c97f73de0674702fcda12ce6ec033e57915c862704f88f26fd62995ee258c777",
       "source_dependencies": [
         "aura/backtest/multi_engine.py",
         "aura/core/pipeline.py",
@@ -1512,9 +1559,10 @@
         "aura/risk/engine.py",
         "aura/strategy/base.py"
       ],
-      "static_test_functions": 2,
+      "static_test_functions": 3,
       "test_classes": [],
       "test_functions": [
+        "test_multi_symbol_backtest_applies_shared_adverse_slippage_and_fees",
         "test_multi_symbol_backtest_requires_one_shared_risk_engine",
         "test_multi_symbol_backtest_reserves_shared_portfolio_capacity"
       ]
@@ -1982,7 +2030,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "74b0bfe9c81624402ad0ffdb72c64b69af1480c13be4b0a52129ca2c051e4aec",
+      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1990,7 +2038,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_market_data_only",
+        "test_committed_ledger_passes_through_backtest_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2755,9 +2803,9 @@
   ],
   "schema_version": 1,
   "summary": {
-    "async_test_functions": 86,
+    "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 476,
-    "test_modules": 124
+    "static_test_functions": 482,
+    "test_modules": 126
   }
 }

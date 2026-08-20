@@ -4,7 +4,7 @@ This document is the current source of truth for what is implemented in code ver
 
 > **Mandatory governance status:** Code presence is no longer a phase-completion
 > claim. The machine-readable authority is
-> `artifacts/governance/phase_gate_status.json`. Phases 0–5 are PASS; Phases 6–15
+> `artifacts/governance/phase_gate_status.json`. Phases 0–6 are PASS; Phases 7–15
 > remain BLOCKED until their named validation evidence is produced and accepted.
 > Existing later-phase code is preserved as implementation inventory, not
 > retroactive gate certification.
@@ -21,6 +21,9 @@ No backtest, LLM opinion, public-data shadow result, paper champion or code-only
 
 ### Financial and execution core
 
+- one deterministic candle fill/cost model shared by backtest and paper execution
+- market/limit/stop gap rules, adverse slippage, fees and contract multipliers
+  use that shared model rather than duplicated simulator math
 - canonical candles, orders, fills and portfolio snapshots
 - broker-neutral instruments and venue symbol mapping
 - shared signal -> independent RiskEngine -> order path

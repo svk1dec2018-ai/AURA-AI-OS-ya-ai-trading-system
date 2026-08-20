@@ -4,9 +4,11 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from aura.backtest.scheduler import MultiSymbolEventScheduler
-from aura.core.pipeline import DecisionPipeline
+from aura.core.pipeline import DecisionPipeline, validate_strategy_signal_causality
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, SignalIntent, StrategySignal
+from aura.execution.fill_model import CandleExecutionModel, ExecutionCostModel
 from aura.execution.state import OrderState
+from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.portfolio.ledger import PortfolioLedger
 
 
@@ -21,6 +23,7 @@ class MultiSymbolBacktestResult:
     fills: int
     rejected_signals: int
     symbols: tuple[str, ...]
+    fill_records: tuple[Fill, ...] = ()
 
 
 class MultiSymbolBacktestEngine:
@@ -39,13 +42,15 @@ class MultiSymbolBacktestEngine:
         starting_cash: Decimal,
         requested_quantities: dict[str, Decimal],
         fee_bps: Decimal = Decimal(0),
+        slippage_bps: Decimal = Decimal(0),
+        instrument_specs: dict[str, InstrumentLedgerSpec] | None = None,
     ) -> None:
         if not pipelines:
             raise ValueError("multi-symbol backtest requires at least one pipeline")
         if starting_cash <= 0:
             raise ValueError("starting_cash must be positive")
-        if fee_bps < 0:
-            raise ValueError("fee_bps cannot be negative")
+        if fee_bps < 0 or slippage_bps < 0:
+            raise ValueError("fee/slippage bps cannot be negative")
         if set(pipelines) != set(requested_quantities):
             raise ValueError("pipelines and requested_quantities must have identical symbols")
         if any(quantity <= 0 for quantity in requested_quantities.values()):
@@ -55,8 +60,12 @@ class MultiSymbolBacktestEngine:
             raise ValueError("all multi-symbol pipelines must share one RiskEngine instance")
         self.pipelines = dict(pipelines)
         self.requested_quantities = dict(requested_quantities)
-        self.ledger = PortfolioLedger(starting_cash)
+        self.ledger = PortfolioLedger(starting_cash, instrument_specs=instrument_specs)
         self.fee_bps = fee_bps
+        self.slippage_bps = slippage_bps
+        self.execution_model = CandleExecutionModel(
+            ExecutionCostModel(fee_bps=fee_bps, slippage_bps=slippage_bps)
+        )
 
     def run(
         self,
@@ -76,6 +85,7 @@ class MultiSymbolBacktestEngine:
         day_start_equity = self.ledger.starting_cash
         current_date = batches[0].close_time.date()
         previous_batch_equity = self.ledger.starting_cash
+        fill_records: list[Fill] = []
 
         for batch in batches:
             batch_date = batch.close_time.date()
@@ -89,20 +99,28 @@ class MultiSymbolBacktestEngine:
                     continue
                 state = OrderState(order)
                 state.submit()
-                notional = order.quantity * candle.open
-                fee = notional * self.fee_bps / Decimal(10000)
+                spec = self.ledger.instrument_spec(order.symbol)
+                quote = self.execution_model.quote(
+                    order,
+                    candle,
+                    contract_multiplier=spec.contract_multiplier,
+                )
+                if quote is None:
+                    pending[candle.symbol] = order
+                    continue
                 fill = Fill(
                     fill_id=f"multi-bt:{order.order_id}:{candle.open_time.isoformat()}",
                     order_id=order.order_id,
                     symbol=order.symbol,
                     side=order.side,
-                    quantity=order.quantity,
-                    price=candle.open,
-                    fee=fee,
+                    quantity=quote.quantity,
+                    price=quote.price,
+                    fee=quote.fee,
                     timestamp=candle.open_time,
                 )
                 state.apply_fill(fill)
                 self.ledger.apply_fill(fill)
+                fill_records.append(fill)
                 fills += 1
 
             for candle in batch.candles:
@@ -113,10 +131,13 @@ class MultiSymbolBacktestEngine:
             max_drawdown = max(max_drawdown, portfolio.drawdown_pct)
             candidates: list[tuple[str, StrategySignal]] = []
             for candle in batch.candles:
+                if candle.symbol in pending:
+                    continue
                 pipeline = self.pipelines[candle.symbol]
                 signal = pipeline.strategy.on_closed_candle(histories[candle.symbol])
                 if signal is None or signal.intent == SignalIntent.FLAT:
                     continue
+                validate_strategy_signal_causality(signal, candle)
                 candidates.append((candle.symbol, signal))
 
             candidates.sort(key=lambda item: (-item[1].confidence, item[0]))
@@ -142,7 +163,12 @@ class MultiSymbolBacktestEngine:
                     rejected += 1
                     continue
                 pending[symbol] = decision.order
-                reserved_gross += decision.order.quantity * signal.reference_price
+                spec = self.ledger.instrument_spec(symbol)
+                reserved_gross += (
+                    decision.order.quantity
+                    * signal.reference_price
+                    * spec.contract_multiplier
+                )
                 orders += 1
 
             previous_batch_equity = portfolio.equity
@@ -159,4 +185,5 @@ class MultiSymbolBacktestEngine:
             fills=fills,
             rejected_signals=rejected,
             symbols=tuple(sorted(series)),
+            fill_records=tuple(fill_records),
         )

@@ -299,6 +299,10 @@
       },
       {
         "from": "aura/backtest/engine.py",
+        "to": "aura/execution/fill_model.py"
+      },
+      {
+        "from": "aura/backtest/engine.py",
         "to": "aura/execution/state.py"
       },
       {
@@ -323,7 +327,15 @@
       },
       {
         "from": "aura/backtest/multi_engine.py",
+        "to": "aura/execution/fill_model.py"
+      },
+      {
+        "from": "aura/backtest/multi_engine.py",
         "to": "aura/execution/state.py"
+      },
+      {
+        "from": "aura/backtest/multi_engine.py",
+        "to": "aura/portfolio/instruments.py"
       },
       {
         "from": "aura/backtest/multi_engine.py",
@@ -766,6 +778,10 @@
         "to": "aura/execution/demo_guard.py"
       },
       {
+        "from": "aura/execution/fill_model.py",
+        "to": "aura/domain/models.py"
+      },
+      {
         "from": "aura/execution/mt5_demo_broker.py",
         "to": "aura/data/mt5_demo.py"
       },
@@ -792,6 +808,10 @@
       {
         "from": "aura/execution/paper.py",
         "to": "aura/execution/broker.py"
+      },
+      {
+        "from": "aura/execution/paper.py",
+        "to": "aura/execution/fill_model.py"
       },
       {
         "from": "aura/execution/paper.py",
@@ -928,6 +948,62 @@
       {
         "from": "aura/ops/__init__.py",
         "to": "aura/ops/release_gate.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/backtest/engine.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/core/pipeline.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/execution/fill_model.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/execution/paper.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "aura/ops/backtest_gate.py",
+        "to": "aura/strategy/base.py"
       },
       {
         "from": "aura/ops/broker_conformance_gate.py",
@@ -2314,6 +2390,14 @@
         "to": "aura/strategy/base.py"
       },
       {
+        "from": "tests/test_backtest_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "tests/test_backtest_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
         "from": "tests/test_binance_spot.py",
         "to": "aura/data/binance_spot.py"
       },
@@ -2664,6 +2748,30 @@
       {
         "from": "tests/test_evolution_paper_tracker.py",
         "to": "aura/research/paper_evidence.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/backtest/engine.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/core/pipeline.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/execution/paper.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "tests/test_execution_parity.py",
+        "to": "aura/strategy/base.py"
       },
       {
         "from": "tests/test_external_specialists.py",
@@ -3724,6 +3832,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/backtest_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/broker_conformance_gate.py"
     },
     {
@@ -3854,9 +3966,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 4927,
+      "bytes": 5027,
       "path": ".github/workflows/ci.yml",
-      "sha256": "cc58b943f1ebc28baaaefc5b9ea08f8a988170966df12bd50d4bb1b48492187b"
+      "sha256": "99792ff964c5df1e60b3ad5697b64b280b5d7da11ee61a04e418ed120eefbaea"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4010,15 +4122,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 7544,
+      "bytes": 8677,
       "path": "aura/backtest/engine.py",
-      "sha256": "10bde31dbac6ce70dcb3848dc5bd6cb00ecc7682405b81c15bcd8bd2cf0ea661"
+      "sha256": "fb6eb3cf0690242b5bff14dda2d46ce48e5f855ca5e425d794f9e653066c27e8"
     },
     {
       "asset_class": "python_module",
-      "bytes": 6810,
+      "bytes": 8075,
       "path": "aura/backtest/multi_engine.py",
-      "sha256": "6a30deee952914cf637f4752f6c6ef9bf3728cf2cd0f1c444ac37788cfd16f07"
+      "sha256": "f9772e58153c1a42e6bd90077318a66b4f1f6307028d847fbead7a557092e917"
     },
     {
       "asset_class": "python_module",
@@ -4046,9 +4158,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 4675,
+      "bytes": 5336,
       "path": "aura/core/pipeline.py",
-      "sha256": "9efbe5254c51304a23a0ae6fc3711a4966a5a2834131b026df24b3aee8a458fd"
+      "sha256": "717db30e98a1556136bd4b3d7dfde60b7ad1fd0719e8d6546b50d7d7eb59df04"
     },
     {
       "asset_class": "python_module",
@@ -4364,15 +4476,21 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 3838,
+      "path": "aura/execution/fill_model.py",
+      "sha256": "f6e6d34d6c2b09b2030a719328f4587c3d7625b3c9f6e3c84c4448873124e135"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 16973,
       "path": "aura/execution/mt5_demo_broker.py",
       "sha256": "724cfe590842b95936c4482b5139160b347db097fa1875b42797699cad4506b8"
     },
     {
       "asset_class": "python_module",
-      "bytes": 7779,
+      "bytes": 6525,
       "path": "aura/execution/paper.py",
-      "sha256": "3784161041b30fd42c7c2ee93c8d35917801826bf0ec6fbe9f0cf11967307cd5"
+      "sha256": "fddfedb7af5bbaf6ac895d0973eee3aa6235331405cf15004d31778f155a3935"
     },
     {
       "asset_class": "python_module",
@@ -4526,6 +4644,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 11244,
+      "path": "aura/ops/backtest_gate.py",
+      "sha256": "1a8c20f69f70a9ceffc93b542b371ec6ee509e356cf88141f754903a73d8d298"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 8782,
       "path": "aura/ops/broker_conformance_gate.py",
       "sha256": "06b0f585528bd1486082d85454ec77024565d51fd4ae321fa51464a0797068c7"
@@ -4568,9 +4692,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30814,
+      "bytes": 30850,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "3a179bee0ba6bd06ad1293636abdfc44d458515b38ff73049ce49034c1a71c8a"
+      "sha256": "c2679f5bf0c7f5748f7a0c7e3e292d7e0bcf8956b5dadce860cbaa8e86942a46"
     },
     {
       "asset_class": "python_module",
@@ -4988,9 +5112,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 10415,
+      "bytes": 10638,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "96c1ad7ce07820b035f6bb1a3700c49e827c59dcf370bb0ac3602750f5fdf94d"
+      "sha256": "cea712afdde606a2e931d1c9c32e5ccd175988606783ee5c4c4bbc5ccf0be25c"
     },
     {
       "asset_class": "documentation",
@@ -5024,9 +5148,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 6398,
+      "bytes": 7200,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "f9773767ea1386a8606a81fff62f2941a68f90028dabe56009acb4f20c19df56"
+      "sha256": "62e2d0bf03195833a14cf8e4cf318ad4637f5ab6e466d714923818c265df838e"
     },
     {
       "asset_class": "documentation",
@@ -5324,6 +5448,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 871,
+      "path": "tests/test_backtest_gate.py",
+      "sha256": "6e4e4a1014e3e7a97df72a1a82e933b287e2602dd111caa0de7afac9564e74c3"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 4500,
       "path": "tests/test_binance_spot.py",
       "sha256": "ea5514fc2ac554dd976f3e0d1f59ce9642665a69015e586f79861f9420be2384"
@@ -5516,6 +5646,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 4302,
+      "path": "tests/test_execution_parity.py",
+      "sha256": "27a9998e692633d554e3da87688dcfeb2184d62988c5a9ed31fa5a1051daaa8a"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 7108,
       "path": "tests/test_external_specialists.py",
       "sha256": "9279c8d6f2f6f1f1a91d30e434919908602a9ff3c09e4dc87ab1a12378ae5a3a"
@@ -5660,9 +5796,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3407,
+      "bytes": 4123,
       "path": "tests/test_multi_backtest.py",
-      "sha256": "ca48ab02a5fd1cac72f7cf86f451ab9a731b6acf299bdc68e16057cf809aad3c"
+      "sha256": "c97f73de0674702fcda12ce6ec033e57915c862704f88f26fd62995ee258c777"
     },
     {
       "asset_class": "python_module",
@@ -5780,9 +5916,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3245,
+      "bytes": 3290,
       "path": "tests/test_phase_gates.py",
-      "sha256": "74b0bfe9c81624402ad0ffdb72c64b69af1480c13be4b0a52129ca2c051e4aec"
+      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d"
     },
     {
       "asset_class": "python_module",
@@ -6048,6 +6184,7 @@
       "aura/data/intelligence_bridge.py",
       "aura/data/kraken.py",
       "aura/data/normalization.py",
+      "aura/execution/fill_model.py",
       "aura/observability/logging.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
@@ -6653,16 +6790,18 @@
     {
       "component": "backtest",
       "direct_test_files": [
-        "tests/test_backtest.py"
+        "tests/test_backtest.py",
+        "tests/test_execution_parity.py"
       ],
       "internal_dependencies": [
         "aura/core/pipeline.py",
         "aura/domain/models.py",
+        "aura/execution/fill_model.py",
         "aura/execution/state.py",
         "aura/portfolio/instruments.py",
         "aura/portfolio/ledger.py"
       ],
-      "lines": 184,
+      "lines": 209,
       "module": "aura.backtest.engine",
       "parsed": true,
       "path": "aura/backtest/engine.py",
@@ -6671,7 +6810,7 @@
       ],
       "primary_phase": 6,
       "role": "source",
-      "sha256": "10bde31dbac6ce70dcb3848dc5bd6cb00ecc7682405b81c15bcd8bd2cf0ea661",
+      "sha256": "fb6eb3cf0690242b5bff14dda2d46ce48e5f855ca5e425d794f9e653066c27e8",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -6688,10 +6827,12 @@
         "aura/backtest/scheduler.py",
         "aura/core/pipeline.py",
         "aura/domain/models.py",
+        "aura/execution/fill_model.py",
         "aura/execution/state.py",
+        "aura/portfolio/instruments.py",
         "aura/portfolio/ledger.py"
       ],
-      "lines": 162,
+      "lines": 189,
       "module": "aura.backtest.multi_engine",
       "parsed": true,
       "path": "aura/backtest/multi_engine.py",
@@ -6700,7 +6841,7 @@
       ],
       "primary_phase": 6,
       "role": "source",
-      "sha256": "6a30deee952914cf637f4752f6c6ef9bf3728cf2cd0f1c444ac37788cfd16f07",
+      "sha256": "f9772e58153c1a42e6bd90077318a66b4f1f6307028d847fbead7a557092e917",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -6806,6 +6947,7 @@
         "tests/test_agent_risk_policy.py",
         "tests/test_agent_service.py",
         "tests/test_backtest.py",
+        "tests/test_execution_parity.py",
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_backtest.py",
         "tests/test_multi_market_paper.py",
@@ -6817,7 +6959,7 @@
         "aura/risk/engine.py",
         "aura/strategy/base.py"
       ],
-      "lines": 127,
+      "lines": 142,
       "module": "aura.core.pipeline",
       "parsed": true,
       "path": "aura/core/pipeline.py",
@@ -6826,7 +6968,7 @@
       ],
       "primary_phase": 10,
       "role": "source",
-      "sha256": "9efbe5254c51304a23a0ae6fc3711a4966a5a2834131b026df24b3aee8a458fd",
+      "sha256": "717db30e98a1556136bd4b3d7dfde60b7ad1fd0719e8d6546b50d7d7eb59df04",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -7912,6 +8054,7 @@
         "tests/test_dhan_radar.py",
         "tests/test_evolution_demo_stack.py",
         "tests/test_evolution_evaluator.py",
+        "tests/test_execution_parity.py",
         "tests/test_external_specialists.py",
         "tests/test_forecast_baselines.py",
         "tests/test_forecast_providers.py",
@@ -8483,6 +8626,29 @@
     },
     {
       "component": "execution",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/domain/models.py"
+      ],
+      "lines": 96,
+      "module": "aura.execution.fill_model",
+      "parsed": true,
+      "path": "aura/execution/fill_model.py",
+      "phase_coverage": [
+        4
+      ],
+      "primary_phase": 4,
+      "role": "source",
+      "sha256": "f6e6d34d6c2b09b2030a719328f4587c3d7625b3c9f6e3c84c4448873124e135",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "execution",
       "direct_test_files": [
         "tests/test_broker_contract.py",
         "tests/test_mt5_demo_runtime.py"
@@ -8519,6 +8685,7 @@
       "component": "execution",
       "direct_test_files": [
         "tests/test_broker_contract.py",
+        "tests/test_execution_parity.py",
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_market_paper.py",
         "tests/test_paper_broker.py",
@@ -8527,10 +8694,11 @@
       "internal_dependencies": [
         "aura/domain/models.py",
         "aura/execution/broker.py",
+        "aura/execution/fill_model.py",
         "aura/execution/reconciliation.py",
         "aura/execution/state.py"
       ],
-      "lines": 185,
+      "lines": 163,
       "module": "aura.execution.paper",
       "parsed": true,
       "path": "aura/execution/paper.py",
@@ -8539,7 +8707,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "3784161041b30fd42c7c2ee93c8d35917801826bf0ec6fbe9f0cf11967307cd5",
+      "sha256": "fddfedb7af5bbaf6ac895d0973eee3aa6235331405cf15004d31778f155a3935",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -9277,6 +9445,50 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_backtest_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/execution/fill_model.py",
+        "aura/execution/paper.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/risk/engine.py",
+        "aura/strategy/base.py"
+      ],
+      "lines": 330,
+      "module": "aura.ops.backtest_gate",
+      "parsed": true,
+      "path": "aura/ops/backtest_gate.py",
+      "phase_coverage": [
+        6
+      ],
+      "primary_phase": 6,
+      "role": "source",
+      "sha256": "1a8c20f69f70a9ceffc93b542b371ec6ee509e356cf88141f754903a73d8d298",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_broker_conformance_gate.py"
       ],
       "internal_dependencies": [
@@ -9420,6 +9632,7 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_backtest_gate.py",
         "tests/test_broker_conformance_gate.py",
         "tests/test_market_data_gate.py",
         "tests/test_phase_gates.py",
@@ -9518,7 +9731,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 815,
+      "lines": 816,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -9527,7 +9740,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "3a179bee0ba6bd06ad1293636abdfc44d458515b38ff73049ce49034c1a71c8a",
+      "sha256": "c2679f5bf0c7f5748f7a0c7e3e292d7e0bcf8956b5dadce860cbaa8e86942a46",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -10338,6 +10551,7 @@
         "tests/test_backtest.py",
         "tests/test_contract_accounting.py",
         "tests/test_evolution_evaluator.py",
+        "tests/test_execution_parity.py",
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_backtest.py",
         "tests/test_multi_market_paper.py",
@@ -11034,6 +11248,7 @@
       "component": "strategy",
       "direct_test_files": [
         "tests/test_backtest.py",
+        "tests/test_execution_parity.py",
         "tests/test_multi_backtest.py"
       ],
       "internal_dependencies": [
@@ -11955,6 +12170,29 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/backtest_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "lines": 21,
+      "module": "tests.test_backtest_gate",
+      "parsed": true,
+      "path": "tests/test_backtest_gate.py",
+      "phase_coverage": [
+        0,
+        6
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "6e4e4a1014e3e7a97df72a1a82e933b287e2602dd111caa0de7afac9564e74c3",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/data/binance_spot.py",
         "aura/data/live_plane.py"
       ],
@@ -12765,6 +13003,41 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/domain/models.py",
+        "aura/execution/paper.py",
+        "aura/risk/engine.py",
+        "aura/strategy/base.py"
+      ],
+      "lines": 133,
+      "module": "tests.test_execution_parity",
+      "parsed": true,
+      "path": "tests/test_execution_parity.py",
+      "phase_coverage": [
+        1,
+        3,
+        6,
+        7,
+        10,
+        12
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "27a9998e692633d554e3da87688dcfeb2184d62988c5a9ed31fa5a1051daaa8a",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/external_specialists.py",
         "aura/agents/models.py",
         "aura/domain/models.py",
@@ -13393,7 +13666,7 @@
         "aura/risk/engine.py",
         "aura/strategy/base.py"
       ],
-      "lines": 97,
+      "lines": 119,
       "module": "tests.test_multi_backtest",
       "parsed": true,
       "path": "tests/test_multi_backtest.py",
@@ -13406,7 +13679,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "ca48ab02a5fd1cac72f7cf86f451ab9a731b6acf299bdc68e16057cf809aad3c",
+      "sha256": "c97f73de0674702fcda12ce6ec033e57915c862704f88f26fd62995ee258c777",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -13981,7 +14254,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 95,
+      "lines": 96,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -13990,7 +14263,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "74b0bfe9c81624402ad0ffdb72c64b69af1480c13be4b0a52129ca2c051e4aec",
+      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -14877,7 +15150,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "82f65b73809176093ddbf32bc141e13dad7b889614cc14a68825a2574189c25f",
+  "repository_tree_sha256": "b49941c91f8874878a21a74f1d2c6d4173ac8bd15f73a2e7fc4bcab4f62c0566",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -15366,15 +15639,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 145,
-    "entrypoints": 28,
+    "directly_tested_source_modules": 146,
+    "entrypoints": 29,
     "parse_errors": 0,
-    "python_modules": 303,
-    "repository_files": 360,
-    "source_modules": 158,
-    "static_test_functions": 476,
+    "python_modules": 307,
+    "repository_files": 364,
+    "source_modules": 160,
+    "static_test_functions": 482,
     "stub_candidates": 79,
-    "test_modules": 124,
+    "test_modules": 126,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

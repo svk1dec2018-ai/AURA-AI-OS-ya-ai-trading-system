@@ -101,6 +101,8 @@ jobs:
         run: python -m aura.ops.broker_conformance_gate --check
       - name: Phase 5 market-data evidence drift
         run: python -m aura.ops.market_data_gate --check
+      - name: Phase 6 backtest evidence drift
+        run: python -m aura.ops.backtest_gate --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests
