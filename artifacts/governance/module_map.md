@@ -7,9 +7,9 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 337
-- Python modules: 280
-- Source modules: 147
+- Repository files: 338
+- Python modules: 281
+- Source modules: 148
 - Test modules: 113
 - Static test functions: 428
 - Entrypoints: 22
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 151 |
+| `aura` | 152 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -167,6 +167,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
+| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 0 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |

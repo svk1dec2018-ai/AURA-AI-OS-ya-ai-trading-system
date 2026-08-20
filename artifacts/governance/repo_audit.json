@@ -822,6 +822,10 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "aura/interface/operator_read_model.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
         "from": "aura/interface/web_command_center.py",
         "to": "aura/interface/command_center.py"
       },
@@ -3221,6 +3225,7 @@
       "ast",
       "asyncio",
       "collections",
+      "copy",
       "csv",
       "dataclasses",
       "datetime",
@@ -3945,6 +3950,12 @@
       "bytes": 7778,
       "path": "aura/interface/command_center.py",
       "sha256": "49bb3a2d62e8e61eb9b21f65dd6745d8bf746cc7c59241192d8607c13706638c"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 7285,
+      "path": "aura/interface/operator_read_model.py",
+      "sha256": "98e29804151ee8fc24567abdb69d7ab6447d4ffd3fd0472d888fdf551c3ad284"
     },
     {
       "asset_class": "python_module",
@@ -5441,6 +5452,7 @@
       "aura/data/kraken.py",
       "aura/data/normalization.py",
       "aura/execution/broker.py",
+      "aura/interface/operator_read_model.py",
       "aura/observability/logging.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
@@ -8115,6 +8127,35 @@
       "third_party_dependencies": [
         "pydantic"
       ]
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "lines": 216,
+      "module": "aura.interface.operator_read_model",
+      "parsed": true,
+      "path": "aura/interface/operator_read_model.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "98e29804151ee8fc24567abdb69d7ab6447d4ffd3fd0472d888fdf551c3ad284",
+      "standard_library_dependencies": [
+        "__future__",
+        "copy",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "hashlib",
+        "json",
+        "threading",
+        "typing"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "interface",
@@ -13518,7 +13559,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "871c80d38169990948845aa6e041bbd86f2b5595cb25fcc77c944232ca3e16d1",
+  "repository_tree_sha256": "5ce510143e9288030a2f6499c8083f63644182a24122208f56b351dca8061194",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14010,9 +14051,9 @@
     "directly_tested_source_modules": 133,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 280,
-    "repository_files": 337,
-    "source_modules": 147,
+    "python_modules": 281,
+    "repository_files": 338,
+    "source_modules": 148,
     "static_test_functions": 428,
     "stub_candidates": 79,
     "test_modules": 113,
