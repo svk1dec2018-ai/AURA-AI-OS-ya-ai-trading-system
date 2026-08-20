@@ -4,7 +4,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 
 from aura.core.pipeline import DecisionPipeline, DecisionResult
-from aura.domain.models import Fill, NormalizedCandle, OrderRequest, Side
+from aura.domain.models import Fill, NormalizedCandle, OrderRequest
+from aura.execution.fill_model import CandleExecutionModel, ExecutionCostModel
 from aura.execution.state import OrderState
 from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.portfolio.ledger import PortfolioLedger
@@ -22,6 +23,7 @@ class BacktestResult:
     rejected_signals: int
     equity_curve: tuple[Decimal, ...] = ()
     period_returns: tuple[Decimal, ...] = ()
+    fill_records: tuple[Fill, ...] = ()
 
 
 class BacktestEngine:
@@ -51,6 +53,9 @@ class BacktestEngine:
         self.requested_quantity = requested_quantity
         self.fee_bps = fee_bps
         self.slippage_bps = slippage_bps
+        self.execution_model = CandleExecutionModel(
+            ExecutionCostModel(fee_bps=fee_bps, slippage_bps=slippage_bps)
+        )
 
     def run(
         self,
@@ -64,6 +69,7 @@ class BacktestEngine:
             raise ValueError("backtest accepts only closed candles")
         if len({candle.symbol for candle in candles}) != 1:
             raise ValueError("BacktestEngine accepts one symbol; use a portfolio event runner")
+        _validate_causal_series(candles)
         if not 0 <= signal_start_index < len(candles):
             raise ValueError("signal_start_index must identify a candle in the series")
 
@@ -78,8 +84,10 @@ class BacktestEngine:
         equity_curve: list[Decimal] = [self.ledger.starting_cash]
         period_returns: list[Decimal] = []
         position_entry_index: int | None = None
+        fill_records: list[Fill] = []
 
         for index, candle in enumerate(candles):
+            pending_unfilled = False
             if candle.open_time.date() != last_date:
                 marks = {candle.symbol: candle.open}
                 day_start_equity = self.ledger.snapshot(marks).equity
@@ -92,30 +100,36 @@ class BacktestEngine:
                 )
                 state = OrderState(pending)
                 state.submit()
-                fill_price = self._apply_slippage(candle.open, pending.side)
                 spec = self.ledger.instrument_spec(pending.symbol)
-                notional = pending.quantity * fill_price * spec.contract_multiplier
-                fee = notional * self.fee_bps / Decimal(10000)
-                fill = Fill(
-                    fill_id=f"bt:{pending.order_id}:{candle.open_time.isoformat()}",
-                    order_id=pending.order_id,
-                    symbol=pending.symbol,
-                    side=pending.side,
-                    quantity=pending.quantity,
-                    price=fill_price,
-                    fee=fee,
-                    timestamp=candle.open_time,
+                quote = self.execution_model.quote(
+                    pending,
+                    candle,
+                    contract_multiplier=spec.contract_multiplier,
                 )
-                state.apply_fill(fill)
-                self.ledger.apply_fill(fill)
-                position = self.ledger.positions.get(pending.symbol)
-                new_qty = position.quantity if position is not None else Decimal(0)
-                if new_qty == 0:
-                    position_entry_index = None
-                elif old_qty == 0 or (old_qty > 0 > new_qty) or (old_qty < 0 < new_qty):
-                    position_entry_index = index
-                fills += 1
-                pending = None
+                if quote is None:
+                    pending_unfilled = True
+                else:
+                    fill = Fill(
+                        fill_id=f"bt:{pending.order_id}:{candle.open_time.isoformat()}",
+                        order_id=pending.order_id,
+                        symbol=pending.symbol,
+                        side=pending.side,
+                        quantity=quote.quantity,
+                        price=quote.price,
+                        fee=quote.fee,
+                        timestamp=candle.open_time,
+                    )
+                    state.apply_fill(fill)
+                    self.ledger.apply_fill(fill)
+                    fill_records.append(fill)
+                    position = self.ledger.positions.get(pending.symbol)
+                    new_qty = position.quantity if position is not None else Decimal(0)
+                    if new_qty == 0:
+                        position_entry_index = None
+                    elif old_qty == 0 or (old_qty > 0 > new_qty) or (old_qty < 0 < new_qty):
+                        position_entry_index = index
+                    fills += 1
+                    pending = None
 
             history.append(candle)
             marks = {candle.symbol: candle.close}
@@ -129,7 +143,7 @@ class BacktestEngine:
                 else Decimal(0)
             )
 
-            if index < signal_start_index:
+            if pending_unfilled or index < signal_start_index:
                 continue
 
             position = self.ledger.positions.get(candle.symbol)
@@ -176,9 +190,20 @@ class BacktestEngine:
             rejected_signals=rejected,
             equity_curve=tuple(equity_curve),
             period_returns=tuple(period_returns),
+            fill_records=tuple(fill_records),
         )
 
-    def _apply_slippage(self, price: Decimal, side: Side) -> Decimal:
-        slippage = self.slippage_bps / Decimal(10000)
-        multiplier = Decimal(1) + slippage if side == Side.BUY else Decimal(1) - slippage
-        return price * multiplier
+
+def _validate_causal_series(candles: list[NormalizedCandle]) -> None:
+    if len({candle.venue for candle in candles}) != 1:
+        raise ValueError("backtest series must use one venue")
+    if len({candle.timeframe for candle in candles}) != 1:
+        raise ValueError("backtest series must use one timeframe")
+    previous: NormalizedCandle | None = None
+    for candle in candles:
+        if previous is not None:
+            if candle.open_time <= previous.open_time or candle.close_time <= previous.close_time:
+                raise ValueError("backtest series must be strictly increasing")
+            if candle.open_time < previous.close_time:
+                raise ValueError("backtest candles cannot overlap")
+        previous = candle

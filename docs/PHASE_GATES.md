@@ -138,6 +138,25 @@ python -m aura.ops.market_data_gate --write
 python -m aura.ops.market_data_gate --check
 ```
 
+## Phase 6 evidence
+
+- `artifacts/governance/backtest_report.json`
+- `artifacts/governance/bias_detection_report.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The backtest gate moves the existing single- and multi-symbol engines onto the
+same deterministic candle fill/cost model used by PaperBroker. Market, limit and
+stop gap rules, adverse slippage, fees and contract multipliers therefore have one
+implementation. Causal checks reject out-of-order/overlapping series and
+future-dated strategy signals; orders created from a closed candle cannot fill on
+that same candle. Evidence is a deterministic internal parity fixture, not a
+strategy-performance, external-broker or live-readiness claim.
+
+```bash
+python -m aura.ops.backtest_gate --write
+python -m aura.ops.backtest_gate --check
+```
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own

@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from decimal import Decimal
 from uuid import uuid4
 
-from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, OrderType, Side
+from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, Side
 from aura.execution.broker import BrokerAdapter, BrokerCapabilities, BrokerExecutionMode
+from aura.execution.fill_model import CandleExecutionModel, ExecutionCostModel
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
 from aura.execution.state import OrderState, is_terminal_order_status
 
@@ -43,6 +44,12 @@ class PaperBroker(BrokerAdapter):
         self.contract_multipliers = dict(contract_multipliers or {})
         if any(value <= 0 for value in self.contract_multipliers.values()):
             raise ValueError("paper broker contract multipliers must be positive")
+        self.execution_model = CandleExecutionModel(
+            ExecutionCostModel(
+                fee_bps=self.config.fee_bps,
+                slippage_bps=self.config.slippage_bps,
+            )
+        )
         self._connected = False
         self._orders: dict[str, OrderState] = {}
         self._broker_ids_by_client_id: dict[str, str] = {}
@@ -101,25 +108,26 @@ class PaperBroker(BrokerAdapter):
                 continue
             if state.status not in {OrderStatus.SUBMITTED, OrderStatus.PARTIALLY_FILLED}:
                 continue
-            fill_price = self._eligible_fill_price(state.request, candle)
-            if fill_price is None:
+            quote = self.execution_model.quote(
+                state.request,
+                candle,
+                quantity=state.remaining_quantity,
+                contract_multiplier=self.contract_multiplier(state.request.symbol),
+            )
+            if quote is None:
                 continue
-            fill_price = self._apply_slippage(fill_price, state.request.side)
-            quantity = state.remaining_quantity
-            notional = quantity * fill_price * self.contract_multiplier(state.request.symbol)
-            fee = notional * self.config.fee_bps / Decimal(10000)
             fill = Fill(
                 fill_id=f"paper-fill-{uuid4()}",
                 order_id=state.request.order_id,
                 symbol=state.request.symbol,
                 side=state.request.side,
-                quantity=quantity,
-                price=fill_price,
-                fee=fee,
+                quantity=quote.quantity,
+                price=quote.price,
+                fee=quote.fee,
                 timestamp=candle.open_time,
             )
             state.apply_fill(fill)
-            signed = quantity if fill.side == Side.BUY else -quantity
+            signed = quote.quantity if fill.side == Side.BUY else -quote.quantity
             self._positions[fill.symbol] = self._positions.get(fill.symbol, Decimal(0)) + signed
             await self._fill_queue.put(fill)
             produced.append(fill)
@@ -149,36 +157,6 @@ class PaperBroker(BrokerAdapter):
             for symbol, quantity in sorted(self._positions.items())
             if quantity != 0
         ]
-
-    def _eligible_fill_price(
-        self,
-        order: OrderRequest,
-        candle: NormalizedCandle,
-    ) -> Decimal | None:
-        if order.order_type == OrderType.MARKET:
-            return candle.open
-        if order.order_type == OrderType.LIMIT:
-            if order.limit_price is None:
-                raise ValueError("limit order missing limit_price")
-            if order.side == Side.BUY and candle.low <= order.limit_price:
-                return min(candle.open, order.limit_price)
-            if order.side == Side.SELL and candle.high >= order.limit_price:
-                return max(candle.open, order.limit_price)
-            return None
-        if order.order_type == OrderType.STOP:
-            if order.stop_price is None:
-                raise ValueError("stop order missing stop_price")
-            if order.side == Side.BUY and candle.high >= order.stop_price:
-                return max(candle.open, order.stop_price)
-            if order.side == Side.SELL and candle.low <= order.stop_price:
-                return min(candle.open, order.stop_price)
-            return None
-        raise ValueError(f"unsupported paper order type: {order.order_type}")
-
-    def _apply_slippage(self, price: Decimal, side: Side) -> Decimal:
-        slippage = self.config.slippage_bps / Decimal(10000)
-        multiplier = Decimal(1) + slippage if side == Side.BUY else Decimal(1) - slippage
-        return price * multiplier
 
     def _require_connected(self) -> None:
         if not self._connected:

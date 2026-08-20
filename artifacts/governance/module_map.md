@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 360
-- Python modules: 303
-- Source modules: 158
-- Test modules: 124
-- Static test functions: 476
-- Entrypoints: 28
+- Repository files: 364
+- Python modules: 307
+- Source modules: 160
+- Test modules: 126
+- Static test functions: 482
+- Entrypoints: 29
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 162 |
+| `aura` | 164 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 124 |
+| `tests` | 126 |
 
 ## Entrypoints
 
@@ -55,6 +55,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `Dockerfile` | container-entrypoint |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
+| `aura/ops/backtest_gate.py` | python-main |
 | `aura/ops/broker_conformance_gate.py` | python-main |
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/market_data_gate.py` | python-main |
@@ -105,13 +106,13 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/service.py` | source | agents | 9 | 7 | 3 |
 | `aura/agents/specialists.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/team.py` | source | agents | 9 | 10 | 2 |
-| `aura/backtest/engine.py` | source | backtest | 6 | 5 | 1 |
-| `aura/backtest/multi_engine.py` | source | backtest | 6 | 5 | 1 |
+| `aura/backtest/engine.py` | source | backtest | 6 | 6 | 2 |
+| `aura/backtest/multi_engine.py` | source | backtest | 6 | 7 | 1 |
 | `aura/backtest/scheduler.py` | source | backtest | 6 | 1 | 0 |
 | `aura/connectors/__init__.py` | package_marker | connectors | 4 | 1 | 0 |
 | `aura/connectors/catalog.py` | source | connectors | 4 | 0 | 2 |
 | `aura/connectors/public_no_key.py` | source | connectors | 4 | 1 | 1 |
-| `aura/core/pipeline.py` | source | core | 10 | 3 | 8 |
+| `aura/core/pipeline.py` | source | core | 10 | 3 | 9 |
 | `aura/data/binance_spot.py` | source | data | 5 | 2 | 1 |
 | `aura/data/binance_transport.py` | source | data | 5 | 0 | 1 |
 | `aura/data/candle_aggregation.py` | source | data | 5 | 1 | 2 |
@@ -147,7 +148,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 53 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 54 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -164,8 +165,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/execution/broker.py` | source | execution | 4 | 1 | 1 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
+| `aura/execution/fill_model.py` | source | execution | 4 | 1 | 0 |
 | `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 2 |
-| `aura/execution/paper.py` | source | execution | 12 | 4 | 5 |
+| `aura/execution/paper.py` | source | execution | 12 | 5 | 6 |
 | `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 3 |
 | `aura/execution/resilience.py` | source | execution | 4 | 0 | 1 |
 | `aura/execution/state.py` | source | execution | 2 | 1 | 1 |
@@ -191,11 +193,12 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/models/registry.py` | source | models | 9 | 0 | 5 |
 | `aura/observability/logging.py` | source | observability | 14 | 0 | 0 |
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
+| `aura/ops/backtest_gate.py` | source | ops | 6 | 14 | 1 |
 | `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 6 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 7 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -224,7 +227,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/research/strategy_factory.py` | source | research | 7 | 2 | 1 |
 | `aura/research/strategy_farm.py` | source | research | 7 | 2 | 1 |
 | `aura/research/strategy_mutation.py` | source | research | 7 | 2 | 2 |
-| `aura/risk/engine.py` | source | risk | 3 | 3 | 15 |
+| `aura/risk/engine.py` | source | risk | 3 | 3 | 16 |
 | `aura/risk/overlays.py` | source | risk | 3 | 2 | 1 |
 | `aura/risk/quantity.py` | source | risk | 3 | 0 | 1 |
 | `aura/risk/statistics.py` | source | risk | 3 | 0 | 2 |
@@ -245,7 +248,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/paper.py` | source | runtime | 12 | 9 | 1 |
 | `aura/runtime/scanner.py` | source | runtime | 12 | 6 | 8 |
 | `aura/runtime/supervisor.py` | source | runtime | 12 | 2 | 1 |
-| `aura/strategy/base.py` | source | strategy | 7 | 1 | 2 |
+| `aura/strategy/base.py` | source | strategy | 7 | 1 | 3 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 2 | 7 |
 | `aura/strategy/features.py` | source | strategy | 7 | 1 | 1 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 1 | 0 |
@@ -278,6 +281,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_autonomous_research.py` | test | validation | 7 | 2 | 0 |
 | `tests/test_autonomous_strategy_lab.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_backtest.py` | test | validation | 1 | 5 | 0 |
+| `tests/test_backtest_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_binance_spot.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_binance_transport.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_brain_online_evolution.py` | test | validation | 7 | 4 | 0 |
@@ -310,6 +314,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_evolution_demo_stack.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_evolution_evaluator.py` | test | validation | 1 | 8 | 0 |
 | `tests/test_evolution_paper_tracker.py` | test | validation | 7 | 3 | 0 |
+| `tests/test_execution_parity.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_external_specialists.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_flattrade.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_forecast_baselines.py` | test | validation | 1 | 3 | 0 |

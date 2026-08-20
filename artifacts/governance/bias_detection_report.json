@@ -1,0 +1,21 @@
+{
+  "decision": "PASS",
+  "deterministic_fingerprint": "9e6878b93aa81d0f13f255b9684d9bf28d6a7eba1cc09b1b3464ae831b8d5b6d",
+  "external_market_data_claimed": false,
+  "fixture_type": "deterministic_internal_backtest_fixture",
+  "phase": 6,
+  "probes": {
+    "fill_candle_index": 2,
+    "fill_timestamp_not_before_signal": true,
+    "future_dated_signal_blocked": true,
+    "out_of_order_series_blocked": true,
+    "same_candle_fill_forbidden": true,
+    "signal_candle_index": 1,
+    "strategy_received_incremental_history_lengths": [
+      1,
+      2,
+      3
+    ]
+  },
+  "schema_version": 1
+}
