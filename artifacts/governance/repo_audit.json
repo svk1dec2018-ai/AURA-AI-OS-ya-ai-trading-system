@@ -3989,9 +3989,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 7285,
+      "bytes": 7311,
       "path": "aura/interface/operator_read_model.py",
-      "sha256": "98e29804151ee8fc24567abdb69d7ab6447d4ffd3fd0472d888fdf551c3ad284"
+      "sha256": "563c92c7ae2ced74295efe903b816d6825b8ffca7caf091e17dd9462f72ae3eb"
     },
     {
       "asset_class": "python_module",
@@ -8190,7 +8190,7 @@
       "internal_dependencies": [
         "aura/runtime/opportunity_radar.py"
       ],
-      "lines": 216,
+      "lines": 217,
       "module": "aura.interface.operator_read_model",
       "parsed": true,
       "path": "aura/interface/operator_read_model.py",
@@ -8199,9 +8199,10 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "98e29804151ee8fc24567abdb69d7ab6447d4ffd3fd0472d888fdf551c3ad284",
+      "sha256": "563c92c7ae2ced74295efe903b816d6825b8ffca7caf091e17dd9462f72ae3eb",
       "standard_library_dependencies": [
         "__future__",
+        "collections",
         "copy",
         "dataclasses",
         "datetime",
@@ -13705,7 +13706,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "a6469dbfa6bbd3d4d5b495d376b1b36b37aeedffa530b31de9c773e4aa19d55b",
+  "repository_tree_sha256": "a661728b15f0ac68ea4d7fbe13eaa63da5de200ad62747593ac7bdc89979a281",
   "schema_version": 1,
   "scope": {
     "excluded": [
