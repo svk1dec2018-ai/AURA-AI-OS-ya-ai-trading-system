@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "49c0f7f8505c4a63aa4f4bfd0b86031d81710069c1aad5cfada5c92a48ed2482",
+  "ledger_sha256": "a95c2a80a51cd0a96bad716e4cfc1ad33cb11cff9824859af06726efdc668ad1",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "91dd971723ea458f20c5845b5711adb47287af657aacbdcb1a1e0048384630ce"
+          "sha256": "54f6cf74af0a7b3567f76ce4fcdcdf1856f96e160299eaf190b289f213c715f0"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "a020c2808d72326e01926a70f2295ef1e9cc67b8b301d0142b3ba1d0dc4da407"
+          "sha256": "c773fedf312b9d5be66345851e20f9344cd141235fba91309bcdebfb6d71605b"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "3cf2c2d80d72f2e7984aab565e2b9e1b83cfa956bbc9f5676ee27f70df65ad9b"
+          "sha256": "626eb8942ddef82d2fcaf0fc5c0b712156889a1c1ccdfacce94d19d814ad439f"
         }
       ],
       "phase": 0,

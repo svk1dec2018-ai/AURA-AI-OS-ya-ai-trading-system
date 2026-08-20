@@ -242,6 +242,18 @@ downloads copyrighted books/transcripts automatically.
 
 PowerShell uses `$env:NAME="value"` instead of `export`.
 
+## Local mobile Command Center
+
+```bash
+export AURA_COMMAND_CENTER_OWNER_ID="owner"
+export AURA_COMMAND_CENTER_TOKEN="use-at-least-32-random-characters"
+python examples/run_command_center.py
+```
+
+Open `http://127.0.0.1:8765`. Read-only loopback status works without a token,
+but research/self-upgrade requests require authenticated owner access and remain
+queued for human review. The browser keeps the token in session storage only.
+
 ## Optional Telegram outbound alerts
 
 Create a bot through Telegram's official BotFather flow, start a conversation with
