@@ -4457,9 +4457,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 3171,
+      "bytes": 4802,
       "path": "docs/COMMAND_CENTER.md",
-      "sha256": "112bbe703b2135b6cc65e540712fccaf0b435e3731cfcecf727f8bc7b41f0dac"
+      "sha256": "648094a0f4c52d6b9caf34468216092d86ea9f23debb619a132d66eaaf72cc01"
     },
     {
       "asset_class": "documentation",
@@ -13705,7 +13705,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "552dc27358fbb642d36d93a407ca66ad627ab481baa9d5f9f4e763b77a58385d",
+  "repository_tree_sha256": "a6469dbfa6bbd3d4d5b495d376b1b36b37aeedffa530b31de9c773e4aa19d55b",
   "schema_version": 1,
   "scope": {
     "excluded": [
