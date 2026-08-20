@@ -4,10 +4,11 @@ import copy
 import hashlib
 import json
 import threading
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any, Mapping
+from typing import Any
 
 from aura.runtime.opportunity_radar import OpportunityRadarSnapshot
 
@@ -212,5 +213,5 @@ def _json_copy(payload: Mapping[str, Any]) -> dict[str, Any]:
         raise ValueError("read-model payload must be finite JSON data") from exc
     decoded = json.loads(encoded)
     if not isinstance(decoded, dict):
-        raise ValueError("read-model payload must be a JSON object")
+        raise TypeError("read-model payload must be a JSON object")
     return decoded
