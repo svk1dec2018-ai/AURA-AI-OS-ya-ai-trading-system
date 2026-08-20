@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 349
-- Python modules: 292
-- Source modules: 153
-- Test modules: 118
-- Static test functions: 456
-- Entrypoints: 24
+- Repository files: 351
+- Python modules: 294
+- Source modules: 154
+- Test modules: 119
+- Static test functions: 461
+- Entrypoints: 25
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 157 |
+| `aura` | 158 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 118 |
+| `tests` | 119 |
 
 ## Entrypoints
 
@@ -57,6 +57,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
+| `aura/ops/state_engine_gate.py` | python-main |
 | `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
 | `examples/evaluate_production_release.py` | python-main |
@@ -155,13 +156,13 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/opportunity_audit.py` | source | evolution | 7 | 2 | 3 |
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
-| `aura/execution/angel_one.py` | source | execution | 4 | 4 | 1 |
+| `aura/execution/angel_one.py` | source | execution | 4 | 5 | 1 |
 | `aura/execution/broker.py` | source | execution | 4 | 1 | 0 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 1 |
 | `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 1 |
 | `aura/execution/paper.py` | source | execution | 12 | 4 | 4 |
-| `aura/execution/reconciliation.py` | source | execution | 2 | 3 | 3 |
+| `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 3 |
 | `aura/execution/resilience.py` | source | execution | 4 | 0 | 1 |
 | `aura/execution/state.py` | source | execution | 2 | 1 | 1 |
 | `aura/forecast/baselines.py` | source | forecast | 7 | 3 | 1 |
@@ -188,10 +189,11 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 2 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 3 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
+| `aura/ops/state_engine_gate.py` | source | ops | 2 | 9 | 1 |
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 5 | 6 |
@@ -364,6 +366,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_shadow_outcomes.py` | test | validation | 1 | 8 | 0 |
 | `tests/test_shoonya.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_specialists.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_state_engine_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_strategy_farm.py` | test | validation | 7 | 3 | 0 |
 | `tests/test_strategy_governance.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_strategy_mutation.py` | test | validation | 7 | 3 | 0 |

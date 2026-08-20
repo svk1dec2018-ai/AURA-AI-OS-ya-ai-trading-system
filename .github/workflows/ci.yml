@@ -93,6 +93,8 @@ jobs:
           exit 1
       - name: Phase 1 contract evidence drift
         run: python -m aura.ops.core_contracts --check
+      - name: Phase 2 state engine evidence drift
+        run: python -m aura.ops.state_engine_gate --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests

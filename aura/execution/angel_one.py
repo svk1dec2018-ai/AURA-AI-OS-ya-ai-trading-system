@@ -13,6 +13,7 @@ from aura.domain.models import Fill, OrderRequest, OrderStatus, OrderType, Side,
 from aura.execution.broker import BrokerAdapter
 from aura.execution.demo_guard import LiveTradingDisabledError
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
+from aura.execution.state import is_terminal_order_status
 
 
 class SmartApiClient(Protocol):
@@ -236,10 +237,9 @@ class AngelOneReadOnlyBroker(BrokerAdapter):
         self._require_connected()
         rows = _response_rows(self.client.orderBook(), "Angel One order book")
         snapshots: list[BrokerOrderSnapshot] = []
-        terminal = {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
         for row in rows:
             status = _order_status(row.get("orderstatus") or row.get("status"))
-            if status in terminal:
+            if is_terminal_order_status(status):
                 continue
             broker_order_id = str(row.get("orderid", "")).strip()
             quantity = Decimal(str(row.get("quantity", 0)))
@@ -416,6 +416,7 @@ def _order_status(raw: Any) -> OrderStatus:
         "CANCELLED": OrderStatus.CANCELLED,
         "CANCELED": OrderStatus.CANCELLED,
         "REJECTED": OrderStatus.REJECTED,
+        "EXPIRED": OrderStatus.EXPIRED,
     }
     if value not in mapping:
         raise RuntimeError(f"unknown Angel One order status: {raw!r}")

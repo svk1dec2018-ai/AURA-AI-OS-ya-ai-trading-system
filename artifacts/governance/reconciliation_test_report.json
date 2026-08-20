@@ -1,0 +1,25 @@
+{
+  "checkpoint_recovery_fingerprint": "504cec3f35ae91ba5f8c85b7f4c09b77cd94e29a8f10de66075b3ce795f31444",
+  "checkpoint_tail_replay_events": 1,
+  "clean_reconciliation": {
+    "issue_count": 0,
+    "safe_for_new_risk": true
+  },
+  "decision": "PASS",
+  "expired_order_excluded_from_open_orders": true,
+  "external_broker_claimed": false,
+  "full_recovery_fingerprint": "504cec3f35ae91ba5f8c85b7f4c09b77cd94e29a8f10de66075b3ce795f31444",
+  "live_money_enabled": false,
+  "mismatch_simulation": {
+    "fixture_only": true,
+    "freezes_new_orders": true,
+    "issue_types": [
+      "local_open_order_missing_at_broker"
+    ]
+  },
+  "phase": 2,
+  "restart_recovery_matches": true,
+  "schema_version": 1,
+  "strategy_promotion_authority": false,
+  "wal_event_count": 8
+}

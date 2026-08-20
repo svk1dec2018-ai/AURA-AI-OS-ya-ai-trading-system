@@ -7,8 +7,13 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
-from aura.domain.models import Fill, OrderRequest, OrderStatus
-from aura.execution.state import InvalidOrderTransition, OrderState, OverfillError
+from aura.domain.models import Fill, OrderRequest
+from aura.execution.state import (
+    InvalidOrderTransition,
+    OrderState,
+    OverfillError,
+    is_terminal_order_status,
+)
 from aura.persistence.wal import JsonlWriteAheadLog, WalEvent
 from aura.portfolio.instruments import InstrumentLedgerSpec
 from aura.portfolio.ledger import PortfolioLedger
@@ -21,8 +26,10 @@ class RecoveryError(RuntimeError):
 class FinancialEventType(str, Enum):
     ORDER_CREATED = "order.created"
     ORDER_SUBMITTED = "order.submitted"
+    ORDER_ACKNOWLEDGED = "order.acknowledged"
     ORDER_CANCELLED = "order.cancelled"
     ORDER_REJECTED = "order.rejected"
+    ORDER_EXPIRED = "order.expired"
     FILL_APPLIED = "fill.applied"
     KILL_SWITCH_ENGAGED = "risk.kill_switch.engaged"
     KILL_SWITCH_RESET = "risk.kill_switch.reset"
@@ -57,9 +64,19 @@ class FinancialEventJournal:
             FinancialEventType.ORDER_CANCELLED, order_id, correlation_id
         )
 
+    def record_order_acknowledged(self, order_id: str, *, correlation_id: str) -> WalEvent:
+        return self._record_order_transition(
+            FinancialEventType.ORDER_ACKNOWLEDGED, order_id, correlation_id
+        )
+
     def record_order_rejected(self, order_id: str, *, correlation_id: str) -> WalEvent:
         return self._record_order_transition(
             FinancialEventType.ORDER_REJECTED, order_id, correlation_id
+        )
+
+    def record_order_expired(self, order_id: str, *, correlation_id: str) -> WalEvent:
+        return self._record_order_transition(
+            FinancialEventType.ORDER_EXPIRED, order_id, correlation_id
         )
 
     def _record_order_transition(
@@ -110,11 +127,10 @@ class RecoveredFinancialState:
 
     @property
     def open_orders(self) -> dict[str, OrderState]:
-        terminal = {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
         return {
             order_id: state
             for order_id, state in self.orders.items()
-            if state.status not in terminal
+            if not is_terminal_order_status(state.status)
         }
 
 
@@ -147,10 +163,14 @@ def recover_financial_state(
                 orders[order.order_id] = OrderState(order)
             elif event_type == FinancialEventType.ORDER_SUBMITTED:
                 _order_state(orders, event).submit()
+            elif event_type == FinancialEventType.ORDER_ACKNOWLEDGED:
+                _order_state(orders, event).acknowledge()
             elif event_type == FinancialEventType.ORDER_CANCELLED:
                 _order_state(orders, event).cancel()
             elif event_type == FinancialEventType.ORDER_REJECTED:
                 _order_state(orders, event).reject()
+            elif event_type == FinancialEventType.ORDER_EXPIRED:
+                _order_state(orders, event).expire()
             elif event_type == FinancialEventType.FILL_APPLIED:
                 fill = Fill.model_validate(_required(event.payload, "fill"))
                 state = orders.get(fill.order_id)

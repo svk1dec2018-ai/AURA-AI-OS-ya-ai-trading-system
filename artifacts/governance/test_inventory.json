@@ -422,19 +422,20 @@
         1,
         2
       ],
-      "sha256": "0a184f1fc71c12e4b39acecd5559dc962c62f0ce3ddb89ef9269cf520485ca84",
+      "sha256": "508688d34c4d5152c4c2dcaa25c7d74328ba07949e6afc3a81cd3943f88585c5",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/persistence/checkpoint.py",
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_checkpoint_checksum_tampering_is_detected",
         "test_checkpoint_plus_tail_matches_full_wal_recovery",
         "test_checkpoint_rejects_wrong_starting_cash",
+        "test_checkpoint_tail_replays_expiry",
         "test_duplicate_fill_after_checkpoint_remains_idempotent"
       ]
     },
@@ -1774,14 +1775,15 @@
         1,
         2
       ],
-      "sha256": "354e9dd6393aee7074421905cb04648a5cbdc4d9e087d930b47b5a43fa0fc8f2",
+      "sha256": "a4710bd52d006f2e1b49be09363316f9d2e6f18b118fc79a41d6c221440d7514",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/execution/state.py"
       ],
-      "static_test_functions": 2,
+      "static_test_functions": 3,
       "test_classes": [],
       "test_functions": [
+        "test_acknowledged_order_can_fill_and_expired_order_is_terminal",
         "test_overfill_is_rejected",
         "test_partial_fill_is_idempotent_and_computes_vwap"
       ]
@@ -1892,7 +1894,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536",
+      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1900,7 +1902,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_phase_zero_and_core_contracts_only",
+        "test_committed_ledger_passes_through_state_engine_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2066,19 +2068,20 @@
         1,
         2
       ],
-      "sha256": "61a5c17623093d6e2b36e592d77aaf703a8888022ed4d29a0ab65a8c39642590",
+      "sha256": "e3ffd8628de247bea3d4d125ac54c4885e87ca0ac9fd3316019ce8ed1393436d",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_duplicate_fill_event_is_idempotent_during_replay",
         "test_kill_switch_reset_is_restored",
         "test_recovery_rebuilds_orders_portfolio_and_kill_switch",
-        "test_recovery_rejects_fill_for_unknown_order"
+        "test_recovery_rejects_fill_for_unknown_order",
+        "test_recovery_replays_acknowledgement_and_expiry"
       ]
     },
     {
@@ -2403,6 +2406,25 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_state_engine_gate.py",
+      "phase_coverage": [
+        0,
+        2
+      ],
+      "sha256": "69820ec4922a2c5dbc6134bd4750dfa0a652063d71fe13e10c8c3ddbc1899361",
+      "source_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/state_engine_gate.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_two_evidence_is_current",
+        "test_phase_two_evidence_exercises_restart_and_mismatch_safety"
+      ]
+    },
+    {
       "async_test_functions": 1,
       "path": "tests/test_strategy_farm.py",
       "phase_coverage": [
@@ -2625,7 +2647,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 456,
-    "test_modules": 118
+    "static_test_functions": 461,
+    "test_modules": 119
   }
 }

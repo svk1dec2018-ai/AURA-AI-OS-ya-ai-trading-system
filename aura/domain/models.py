@@ -22,10 +22,12 @@ class OrderType(str, Enum):
 class OrderStatus(str, Enum):
     CREATED = "CREATED"
     SUBMITTED = "SUBMITTED"
+    ACKNOWLEDGED = "ACKNOWLEDGED"
     PARTIALLY_FILLED = "PARTIALLY_FILLED"
     FILLED = "FILLED"
     CANCELLED = "CANCELLED"
     REJECTED = "REJECTED"
+    EXPIRED = "EXPIRED"
 
 
 class TimeInForce(str, Enum):

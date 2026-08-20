@@ -123,3 +123,17 @@ def test_kill_switch_reset_is_restored(tmp_path: Path) -> None:
     recovered = recover_financial_state(wal, starting_cash=Decimal(1000))
     assert not recovered.kill_switch
     assert recovered.kill_switch_reason == ""
+
+
+def test_recovery_replays_acknowledgement_and_expiry(tmp_path: Path) -> None:
+    wal = JsonlWriteAheadLog(tmp_path / "financial.wal", fsync=False)
+    journal = FinancialEventJournal(wal)
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1))
+    journal.record_order_created(order, correlation_id="decision-1")
+    journal.record_order_submitted(order.order_id, correlation_id="decision-1")
+    journal.record_order_acknowledged(order.order_id, correlation_id="decision-1")
+    journal.record_order_expired(order.order_id, correlation_id="decision-1")
+
+    recovered = recover_financial_state(wal, starting_cash=Decimal(1000))
+    assert recovered.orders[order.order_id].status == OrderStatus.EXPIRED
+    assert recovered.open_orders == {}
