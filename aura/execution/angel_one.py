@@ -10,7 +10,7 @@ from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
 from aura.domain.models import Fill, OrderRequest, OrderStatus, OrderType, Side, TimeInForce
-from aura.execution.broker import BrokerAdapter
+from aura.execution.broker import BrokerAdapter, BrokerCapabilities, BrokerExecutionMode
 from aura.execution.demo_guard import LiveTradingDisabledError
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
 from aura.execution.state import is_terminal_order_status
@@ -125,6 +125,13 @@ class AngelOneReadOnlyBroker(BrokerAdapter):
     """
 
     name = "ANGEL_ONE_SMARTAPI_READ_ONLY"
+    capabilities = BrokerCapabilities(
+        mode=BrokerExecutionMode.READ_ONLY,
+        supports_order_submission=False,
+        supports_order_cancellation=False,
+        supports_fill_stream=True,
+        supports_reconciliation=True,
+    )
 
     def __init__(
         self,

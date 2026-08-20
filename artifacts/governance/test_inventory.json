@@ -398,6 +398,48 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_broker_conformance_gate.py",
+      "phase_coverage": [
+        0,
+        4
+      ],
+      "sha256": "7d8bb506fbf778a8bc890702d182d728922585b82597c451bce24c2499bc938d",
+      "source_dependencies": [
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_four_evidence_is_current",
+        "test_phase_four_report_is_truthful_and_strategy_isolated"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_broker_contract.py",
+      "phase_coverage": [
+        4,
+        12
+      ],
+      "sha256": "fdf3b57d5c76fe89715c8dc6a54784b3dd3b0e7182a09df8db9f926b99d27e48",
+      "source_dependencies": [
+        "aura/execution/angel_one.py",
+        "aura/execution/broker.py",
+        "aura/execution/dhan_sandbox.py",
+        "aura/execution/mt5_demo_broker.py",
+        "aura/execution/paper.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_declared_broker_adapters_conform_to_common_contract",
+        "test_non_live_mode_cannot_enable_live_money",
+        "test_read_only_capabilities_cannot_advertise_order_mutation"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_candle_aggregation.py",
       "phase_coverage": [
         5
@@ -1894,7 +1936,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "1087fdcc7500b88f775c57d1540a035586e6d9a1b3b39806bc33499d1f591c6b",
+      "sha256": "a3e8ad78eb5f6d97813202ac1a54b5344ff77292ec29616bc72fab3464619788",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1902,7 +1944,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_risk_engine_only",
+        "test_committed_ledger_passes_through_broker_conformance_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2669,7 +2711,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 466,
-    "test_modules": 120
+    "static_test_functions": 471,
+    "test_modules": 122
   }
 }
