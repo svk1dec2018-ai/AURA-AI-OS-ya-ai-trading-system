@@ -3240,6 +3240,18 @@
       {
         "from": "tests/test_web_command_center.py",
         "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/web_command_center_v2.py"
       }
     ],
     "standard_library_packages": [
@@ -5426,6 +5438,12 @@
       "bytes": 5731,
       "path": "tests/test_web_command_center.py",
       "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6651,
+      "path": "tests/test_web_command_center_v2.py",
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4"
     }
   ],
   "gate": {
@@ -5488,7 +5506,6 @@
       "aura/data/kraken.py",
       "aura/data/normalization.py",
       "aura/execution/broker.py",
-      "aura/interface/web_command_center_v2.py",
       "aura/observability/logging.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
@@ -8167,7 +8184,8 @@
     {
       "component": "interface",
       "direct_test_files": [
-        "tests/test_operator_read_model.py"
+        "tests/test_operator_read_model.py",
+        "tests/test_web_command_center_v2.py"
       ],
       "internal_dependencies": [
         "aura/runtime/opportunity_radar.py"
@@ -8229,7 +8247,8 @@
     {
       "component": "interface",
       "direct_test_files": [
-        "tests/test_web_command_center.py"
+        "tests/test_web_command_center.py",
+        "tests/test_web_command_center_v2.py"
       ],
       "internal_dependencies": [
         "aura/interface/command_center.py"
@@ -8263,7 +8282,9 @@
     },
     {
       "component": "interface",
-      "direct_test_files": [],
+      "direct_test_files": [
+        "tests/test_web_command_center_v2.py"
+      ],
       "internal_dependencies": [
         "aura/interface/command_center.py",
         "aura/interface/operator_read_model.py",
@@ -13652,9 +13673,39 @@
       "third_party_dependencies": [
         "pytest"
       ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
+      ],
+      "lines": 191,
+      "module": "tests.test_web_command_center_v2",
+      "parsed": true,
+      "path": "tests/test_web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "test",
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "http",
+        "json",
+        "pathlib",
+        "socket",
+        "threading",
+        "urllib"
+      ],
+      "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "d3195ef57ff1e09f8f9f99ed7f0f6bc1d2d7846c422c0842a8721341e69e499e",
+  "repository_tree_sha256": "552dc27358fbb642d36d93a407ca66ad627ab481baa9d5f9f4e763b77a58385d",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14143,15 +14194,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 134,
+    "directly_tested_source_modules": 135,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 283,
-    "repository_files": 340,
+    "python_modules": 284,
+    "repository_files": 341,
     "source_modules": 149,
-    "static_test_functions": 435,
+    "static_test_functions": 441,
     "stub_candidates": 79,
-    "test_modules": 114,
+    "test_modules": 115,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

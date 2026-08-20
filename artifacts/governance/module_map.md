@@ -7,11 +7,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 340
-- Python modules: 283
+- Repository files: 341
+- Python modules: 284
 - Source modules: 149
-- Test modules: 114
-- Static test functions: 435
+- Test modules: 115
+- Static test functions: 441
 - Entrypoints: 22
 - Known stub/incomplete candidates: 79
 
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 114 |
+| `tests` | 115 |
 
 ## Entrypoints
 
@@ -167,10 +167,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
-| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 1 |
+| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 2 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
-| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
-| `aura/interface/web_command_center_v2.py` | source | interface | 13 | 3 | 0 |
+| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 2 |
+| `aura/interface/web_command_center_v2.py` | source | interface | 13 | 3 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/markets/universe.py` | source | markets | 1 | 0 | 9 |
@@ -363,6 +363,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_voice_alerts.py` | test | validation | 13 | 1 | 0 |
 | `tests/test_wal.py` | test | validation | 2 | 1 | 0 |
 | `tests/test_web_command_center.py` | test | validation | 13 | 1 | 0 |
+| `tests/test_web_command_center_v2.py` | test | validation | 13 | 3 | 0 |
 
 ## Interpretation limits
 

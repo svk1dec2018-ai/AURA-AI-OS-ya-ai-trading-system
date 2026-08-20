@@ -2516,13 +2516,36 @@
         "test_research_queue_is_restart_safe_and_idempotent",
         "test_unattached_market_source_returns_no_fabricated_data"
       ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4",
+      "source_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_v2_explain_is_deterministic_from_current_radar",
+        "test_v2_http_exposes_read_model_and_cockpit_assets",
+        "test_v2_returns_only_fresh_governed_domain_snapshots",
+        "test_v2_status_reports_domain_sources_without_fabricating_data",
+        "test_v2_still_hard_blocks_paper_and_live_control",
+        "test_v2_unattached_domains_fail_closed"
+      ]
     }
   ],
   "schema_version": 1,
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 435,
-    "test_modules": 114
+    "static_test_functions": 441,
+    "test_modules": 115
   }
 }
