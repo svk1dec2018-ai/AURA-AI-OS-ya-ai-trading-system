@@ -9,7 +9,7 @@ from typing import Any
 
 from aura.data.mt5_demo import OfficialMT5Gateway
 from aura.domain.models import Fill, OrderRequest, OrderStatus, OrderType, Side
-from aura.execution.broker import BrokerAdapter
+from aura.execution.broker import BrokerAdapter, BrokerCapabilities, BrokerExecutionMode
 from aura.execution.demo_guard import DemoExecutionGuard
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
 
@@ -37,6 +37,13 @@ class MT5DemoBroker(BrokerAdapter):
     """Market-order BrokerAdapter for a verified MetaTrader 5 DEMO account."""
 
     name = "MT5_DEMO"
+    capabilities = BrokerCapabilities(
+        mode=BrokerExecutionMode.DEMO,
+        supports_order_submission=True,
+        supports_order_cancellation=True,
+        supports_fill_stream=True,
+        supports_reconciliation=True,
+    )
 
     def __init__(
         self,

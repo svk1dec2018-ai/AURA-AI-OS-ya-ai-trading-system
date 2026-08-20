@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 353
-- Python modules: 296
-- Source modules: 155
-- Test modules: 120
-- Static test functions: 466
-- Entrypoints: 26
+- Repository files: 356
+- Python modules: 299
+- Source modules: 156
+- Test modules: 122
+- Static test functions: 471
+- Entrypoints: 27
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 159 |
+| `aura` | 160 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 120 |
+| `tests` | 122 |
 
 ## Entrypoints
 
@@ -55,6 +55,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `Dockerfile` | container-entrypoint |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
+| `aura/ops/broker_conformance_gate.py` | python-main |
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
 | `aura/ops/risk_engine_gate.py` | python-main |
@@ -157,12 +158,12 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/opportunity_audit.py` | source | evolution | 7 | 2 | 3 |
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
-| `aura/execution/angel_one.py` | source | execution | 4 | 5 | 1 |
-| `aura/execution/broker.py` | source | execution | 4 | 1 | 0 |
+| `aura/execution/angel_one.py` | source | execution | 4 | 5 | 2 |
+| `aura/execution/broker.py` | source | execution | 4 | 1 | 1 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
-| `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 1 |
-| `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 1 |
-| `aura/execution/paper.py` | source | execution | 12 | 4 | 4 |
+| `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
+| `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 2 |
+| `aura/execution/paper.py` | source | execution | 12 | 4 | 5 |
 | `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 3 |
 | `aura/execution/resilience.py` | source | execution | 4 | 0 | 1 |
 | `aura/execution/state.py` | source | execution | 2 | 1 | 1 |
@@ -188,9 +189,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/models/registry.py` | source | models | 9 | 0 | 5 |
 | `aura/observability/logging.py` | source | observability | 14 | 0 | 0 |
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
+| `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 4 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 5 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -277,6 +279,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_binance_transport.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_brain_online_evolution.py` | test | validation | 7 | 4 | 0 |
 | `tests/test_brain_policy.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_broker_conformance_gate.py` | test | validation | 0 | 2 | 0 |
+| `tests/test_broker_contract.py` | test | validation | 4 | 5 | 0 |
 | `tests/test_candle_aggregation.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_checkpoint.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_cognitive_memory.py` | test | validation | 9 | 1 | 0 |

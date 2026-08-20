@@ -26,7 +26,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 1 | PASS | Six mandatory core entities have strict schemas and canonical, versioned serialization evidence. |
 | 2 | PASS | Order lifecycle, restart recovery, and fail-closed reconciliation have deterministic evidence. |
 | 3 | PASS | Risk veto, stop-distance sizing, exposure controls, stress overlays, and kill-switch behavior have deterministic evidence. |
-| 4–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 4 | PASS | Broker capabilities, common-interface conformance, reconciliation support, and strategy isolation have deterministic evidence. |
+| 5–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -100,6 +101,22 @@ market or broker claims, and grant no live-money authority.
 ```bash
 python -m aura.ops.risk_engine_gate --write
 python -m aura.ops.risk_engine_gate --check
+```
+
+## Phase 4 evidence
+
+- `artifacts/governance/broker_adapter_conformance_report.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The broker gate declares machine-readable capabilities for Paper, Angel One
+read-only, MT5 demo, and Dhan sandbox adapters. It verifies their common contract,
+proves the strategy package has no broker/SDK imports, and explicitly records when
+an adapter does not support reconciliation. This code-only gate claims no
+credential-backed order execution and enables no live money.
+
+```bash
+python -m aura.ops.broker_conformance_gate --write
+python -m aura.ops.broker_conformance_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

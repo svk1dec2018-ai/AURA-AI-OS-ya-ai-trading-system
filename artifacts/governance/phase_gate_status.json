@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "e3479a825f0d8190165ec06fd4debce2c109e6da5227adda169cd461ad013e61",
+  "ledger_sha256": "78762fc88d32f003a8273fa78985382479b133478dc60397375384386410a167",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "63b349e97e8b2df443b1c15c3f794f4ac10d8b96e3d71860b144af6f7e587cf0"
+          "sha256": "923666f1f5baa90f3c57989dd73f7e8e060abff614fc4309a15af45b6ccbaec5"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "074c8ab8d79068a94f3c745c639a6c8cce5192a548cd7dfaebaeca7b2d79f196"
+          "sha256": "685c3532416f586dc37b103c15cebb54139b71d55b3969dbcdbb9cda6c1bb41a"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "c9277d831aad08cf2d2d2437fdb211e8a58d092afbd22aa5b2471438dffa1a5e"
+          "sha256": "16691289777858321655fad5ee746cdbf30acc37203968d71e32ff3bb8bb9a94"
         }
       ],
       "phase": 0,
@@ -76,12 +76,16 @@
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Adapter conformance report",
+          "path": "artifacts/governance/broker_adapter_conformance_report.json",
+          "sha256": "3c5796385234a3dc8e1001d8a2735bf57f74db775f2efdd34ce9685191d6de1c"
+        }
+      ],
       "phase": 4,
-      "reasons": [
-        "Phase 4 validation evidence has not been produced or accepted; Phase 3 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",

@@ -6,7 +6,7 @@ from decimal import Decimal
 from uuid import uuid4
 
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, OrderType, Side
-from aura.execution.broker import BrokerAdapter
+from aura.execution.broker import BrokerAdapter, BrokerCapabilities, BrokerExecutionMode
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
 from aura.execution.state import OrderState, is_terminal_order_status
 
@@ -25,6 +25,13 @@ class PaperBroker(BrokerAdapter):
     """Deterministic paper broker using contract-aware fees and adverse slippage."""
 
     name = "AURA_PAPER"
+    capabilities = BrokerCapabilities(
+        mode=BrokerExecutionMode.PAPER,
+        supports_order_submission=True,
+        supports_order_cancellation=True,
+        supports_fill_stream=True,
+        supports_reconciliation=True,
+    )
 
     def __init__(
         self,
