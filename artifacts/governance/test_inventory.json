@@ -2443,7 +2443,7 @@
         1,
         7
       ],
-      "sha256": "8a38e01d974fdfeb87685507f19befec47092634a5f1f40d70c0d86b12823661",
+      "sha256": "3c319f115199efa179a902cddd7d490cccd49cfa7472087d06517c35ecc9aca2",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/strategy/features.py"
