@@ -1546,6 +1546,18 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
         "from": "aura/runtime/paper.py",
         "to": "aura/agents/audit.py"
       },
@@ -1624,6 +1636,10 @@
       {
         "from": "aura/strategy/ema.py",
         "to": "aura/strategy/base.py"
+      },
+      {
+        "from": "aura/strategy/features.py",
+        "to": "aura/domain/models.py"
       },
       {
         "from": "examples/check_angel_one_account.py",
@@ -2762,6 +2778,30 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/deliberation.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
         "from": "tests/test_option_intelligence.py",
         "to": "aura/markets/universe.py"
       },
@@ -3152,6 +3192,14 @@
       {
         "from": "tests/test_telegram_alerts.py",
         "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "tests/test_unified_features.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_unified_features.py",
+        "to": "aura/strategy/features.py"
       },
       {
         "from": "tests/test_voice_alerts.py",
@@ -4242,6 +4290,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 8613,
+      "path": "aura/runtime/opportunity_radar.py",
+      "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 7208,
       "path": "aura/runtime/paper.py",
       "sha256": "502feec7274c33e4d1aba9c0f0366bea026c895576def45066392354ab90d373"
@@ -4269,6 +4323,12 @@
       "bytes": 2552,
       "path": "aura/strategy/ema.py",
       "sha256": "b9aedd5c5f28e06a3609b37393a3d0c457a18d13d736abafd1eb99ef8f36ed7e"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 14842,
+      "path": "aura/strategy/features.py",
+      "sha256": "f8b6adad2282a5d41644b57df837041b87e48a79505456c8caf49a29d736a78d"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -5082,6 +5142,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 6174,
+      "path": "tests/test_opportunity_radar.py",
+      "sha256": "59429fdfb692b5403e580d0a2d418b4176f7820c4f8b551a26c97dd122a469c8"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 2504,
       "path": "tests/test_option_intelligence.py",
       "sha256": "888ae8521111af983520c43ebc431d08a42dc5bfd78da6a066c63c61fcccfbf6"
@@ -5289,6 +5355,12 @@
       "bytes": 6849,
       "path": "tests/test_telegram_alerts.py",
       "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 4636,
+      "path": "tests/test_unified_features.py",
+      "sha256": "8a38e01d974fdfeb87685507f19befec47092634a5f1f40d70c0d86b12823661"
     },
     {
       "asset_class": "python_module",
@@ -5577,6 +5649,7 @@
       "direct_test_files": [
         "tests/test_brain_policy.py",
         "tests/test_deliberation.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_shadow_outcomes.py"
       ],
       "internal_dependencies": [
@@ -5683,6 +5756,7 @@
         "tests/test_multi_market_scanner.py",
         "tests/test_ollama_ai_council.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
         "tests/test_paper_runtime.py",
         "tests/test_shadow_outcomes.py",
@@ -5846,7 +5920,8 @@
     {
       "component": "agents",
       "direct_test_files": [
-        "tests/test_agent_risk_policy.py"
+        "tests/test_agent_risk_policy.py",
+        "tests/test_opportunity_radar.py"
       ],
       "internal_dependencies": [
         "aura/agents/models.py",
@@ -7208,6 +7283,7 @@
         "tests/test_ollama_ai_council.py",
         "tests/test_online_bridge.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
         "tests/test_order_state.py",
         "tests/test_paper_broker.py",
@@ -7219,7 +7295,8 @@
         "tests/test_risk.py",
         "tests/test_risk_overlays.py",
         "tests/test_shadow_outcomes.py",
-        "tests/test_specialists.py"
+        "tests/test_specialists.py",
+        "tests/test_unified_features.py"
       ],
       "internal_dependencies": [],
       "lines": 158,
@@ -9811,6 +9888,34 @@
     {
       "component": "runtime",
       "direct_test_files": [
+        "tests/test_opportunity_radar.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/runtime/scanner.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 224,
+      "module": "aura.runtime.opportunity_radar",
+      "parsed": true,
+      "path": "aura/runtime/opportunity_radar.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "runtime",
+      "direct_test_files": [
         "tests/test_paper_runtime.py"
       ],
       "internal_dependencies": [
@@ -9850,6 +9955,7 @@
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_shadow_outcomes.py"
       ],
       "internal_dependencies": [
@@ -9963,6 +10069,33 @@
         "__future__",
         "collections",
         "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "strategy",
+      "direct_test_files": [
+        "tests/test_unified_features.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py"
+      ],
+      "lines": 428,
+      "module": "aura.strategy.features",
+      "parsed": true,
+      "path": "aura/strategy/features.py",
+      "phase_coverage": [
+        7
+      ],
+      "primary_phase": 7,
+      "role": "source",
+      "sha256": "f8b6adad2282a5d41644b57df837041b87e48a79505456c8caf49a29d736a78d",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "typing"
       ],
       "third_party_dependencies": []
     },
@@ -12346,6 +12479,36 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/runtime/opportunity_radar.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 183,
+      "module": "tests.test_opportunity_radar",
+      "parsed": true,
+      "path": "tests/test_opportunity_radar.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "59429fdfb692b5403e580d0a2d418b4176f7820c4f8b551a26c97dd122a469c8",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/markets/universe.py",
         "aura/options/intelligence.py"
       ],
@@ -13254,6 +13417,33 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 125,
+      "module": "tests.test_unified_features",
+      "parsed": true,
+      "path": "tests/test_unified_features.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "8a38e01d974fdfeb87685507f19befec47092634a5f1f40d70c0d86b12823661",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/interface/voice_alerts.py"
       ],
       "lines": 54,
@@ -13328,7 +13518,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "3beb60af80c6b50c73dcde84792ff95825f7392f0d19e23e7f03ba0caf6c399b",
+  "repository_tree_sha256": "871c80d38169990948845aa6e041bbd86f2b5595cb25fcc77c944232ca3e16d1",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13817,15 +14007,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 131,
+    "directly_tested_source_modules": 133,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 276,
-    "repository_files": 333,
-    "source_modules": 145,
-    "static_test_functions": 418,
+    "python_modules": 280,
+    "repository_files": 337,
+    "source_modules": 147,
+    "static_test_functions": 428,
     "stub_candidates": 79,
-    "test_modules": 111,
+    "test_modules": 113,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

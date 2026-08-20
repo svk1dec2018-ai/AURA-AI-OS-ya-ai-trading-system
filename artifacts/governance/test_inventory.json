@@ -1609,6 +1609,32 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_opportunity_radar.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "sha256": "59429fdfb692b5403e580d0a2d418b4176f7820c4f8b551a26c97dd122a469c8",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/runtime/opportunity_radar.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_empty_scan_has_explicit_empty_snapshot",
+        "test_flat_candidate_is_visible_but_not_an_opportunity",
+        "test_radar_ranks_actionable_candidates_before_blocked_candidates",
+        "test_radar_uses_directional_feature_alignment_without_creating_trade_levels"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_option_intelligence.py",
       "phase_coverage": [
         1,
@@ -2387,6 +2413,29 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_unified_features.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "8a38e01d974fdfeb87685507f19befec47092634a5f1f40d70c0d86b12823661",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/strategy/features.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_feature_config_rejects_invalid_periods",
+        "test_feature_engine_does_not_invent_vwap_without_volume",
+        "test_feature_engine_is_deterministic",
+        "test_feature_engine_produces_full_closed_candle_snapshot",
+        "test_feature_engine_rejects_open_or_future_candles",
+        "test_feature_engine_warmup_is_explicit_not_fabricated"
+      ]
+    },
+    {
       "async_test_functions": 2,
       "path": "tests/test_voice_alerts.py",
       "phase_coverage": [
@@ -2449,7 +2498,7 @@
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 418,
-    "test_modules": 111
+    "static_test_functions": 428,
+    "test_modules": 113
   }
 }
