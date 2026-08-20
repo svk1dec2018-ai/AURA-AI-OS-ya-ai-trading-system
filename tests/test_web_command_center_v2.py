@@ -13,6 +13,8 @@ from aura.interface.operator_read_model import OperatorReadModel, ReadDomain
 from aura.interface.web_command_center import CommandCenterConfig
 from aura.interface.web_command_center_v2 import CommandCenterV2Service
 
+OWNER_TOKEN = "owner-token-with-at-least-32-characters"
+
 
 def _free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -20,9 +22,16 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def _request_json(url: str, *, text: str | None = None):
+def _request_json(
+    url: str,
+    *,
+    text: str | None = None,
+    token: str | None = None,
+):
     data = None
     headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     method = "GET"
     if text is not None:
         data = json.dumps({"text": text}).encode()
@@ -37,11 +46,17 @@ def _request_json(url: str, *, text: str | None = None):
         return response.status, json.loads(response.read())
 
 
-def _service(tmp_path: Path, read_model: OperatorReadModel | None = None):
+def _service(
+    tmp_path: Path,
+    read_model: OperatorReadModel | None = None,
+    *,
+    token: str | None = None,
+):
     service = CommandCenterV2Service(
         CommandCenterConfig(
             port=_free_port(),
             queue_path=tmp_path / "research.jsonl",
+            api_token=token,
         ),
         read_model=read_model,
     )
@@ -189,3 +204,63 @@ def test_v2_status_reports_domain_sources_without_fabricating_data(tmp_path: Pat
     assert status["market_data_source"] == "not_attached"
     assert status["portfolio_source"] == "not_attached"
     assert status["live_money_enabled"] is False
+
+
+def test_v2_requires_owner_auth_for_research_but_not_read_commands(tmp_path: Path) -> None:
+    service = CommandCenterV2Service(
+        CommandCenterConfig(
+            queue_path=tmp_path / "research.jsonl",
+            api_token=OWNER_TOKEN,
+            owner_id="primary-owner",
+        )
+    )
+
+    read_status, _ = service.handle_command("system status")
+    denied_status, denied = service.handle_command("research NIFTY breadth")
+    accepted_status, accepted = service.handle_command(
+        "research NIFTY breadth",
+        owner_authenticated=True,
+    )
+
+    assert read_status == HTTPStatus.OK
+    assert denied_status == HTTPStatus.UNAUTHORIZED
+    assert denied["accepted"] is False
+    assert accepted_status == HTTPStatus.ACCEPTED
+    assert accepted["payload"]["auto_promotion_allowed"] is False
+    queued = (tmp_path / "research.jsonl").read_text(encoding="utf-8")
+    assert '"authenticated_owner_id":"primary-owner"' in queued
+    assert OWNER_TOKEN not in queued
+
+
+def test_v2_http_owner_token_and_session_only_pwa(tmp_path: Path) -> None:
+    _svc, server, thread = _service(tmp_path, token=OWNER_TOKEN)
+    try:
+        base = f"http://127.0.0.1:{server.server_port}"
+        missing, _ = _request_json(base + "/api/command", text="research BTC")
+        wrong, _ = _request_json(
+            base + "/api/command",
+            text="research BTC",
+            token="wrong-token-with-at-least-32-characters",
+        )
+        accepted, result = _request_json(
+            base + "/api/command",
+            text="research BTC",
+            token=OWNER_TOKEN,
+        )
+        assert missing == HTTPStatus.UNAUTHORIZED
+        assert wrong == HTTPStatus.UNAUTHORIZED
+        assert accepted == HTTPStatus.ACCEPTED
+        assert result["payload"]["status"] == "pending_human_review"
+
+        with urlopen(base + "/", timeout=3) as response:
+            html = response.read().decode()
+        with urlopen(base + "/v2-app.js", timeout=3) as response:
+            javascript = response.read().decode()
+        assert 'id="owner-token"' in html
+        assert "sessionStorage" in javascript
+        assert "localStorage" not in javascript
+        assert "Authorization" in javascript
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)

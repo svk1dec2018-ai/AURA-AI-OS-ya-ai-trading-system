@@ -18,6 +18,7 @@ def main() -> None:
             )
         ),
         api_token=os.getenv("AURA_COMMAND_CENTER_TOKEN") or None,
+        owner_id=os.getenv("AURA_COMMAND_CENTER_OWNER_ID", "owner"),
     )
     print(f"AURA Command Center v2 listening on http://{config.host}:{config.port}")
     print("Safety mode: freshness-gated observation + governed research")

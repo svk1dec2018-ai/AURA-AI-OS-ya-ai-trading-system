@@ -26,9 +26,9 @@ or human approval and cannot be manufactured in source code.
 | Point-in-time equities/futures/options research | IMPLEMENTED | `aura/data/corporate_actions.py`, `aura/data/futures_roll.py`, `aura/data/options_replay.py` | Reliable licensed option-chain history remains dataset-dependent. |
 | Self-learning from trades and missed opportunities | IMPLEMENTED | `aura/evolution/online_learning.py`, `aura/evolution/opportunity_audit.py`, `aura/evolution/shadow_outcomes.py` | Learning remains advisory/research until governed validation passes. |
 | Strategy versioning and approval lifecycle | IMPLEMENTED | `aura/research/lifecycle.py` | Final approval requires a human actor. |
-| Local voice announcements | IMPLEMENTED | `aura/interface/voice_alerts.py`, `examples/run_free_public_autonomy.py` | Full speech-to-text conversation is not implemented. |
-| Jarvis-style command privilege boundary | IMPLEMENTED | `aura/interface/command_center.py` | A graphical/chat frontend and production handlers remain partial. |
-| Dashboard/command-center UI | PARTIAL | Typed command model and runtime JSON status exist. | Full graphical real-time UI is not included. |
+| Local voice and browser speech input | IMPLEMENTED, BROWSER-DEPENDENT | `aura/interface/voice_alerts.py`, `aura/interface/web_command_center_v2.py` | Always-on/offline wake-word and native STT remain pending. |
+| Jarvis-style command and authenticated-owner boundary | IMPLEMENTED | `aura/interface/command_center.py`, `aura/interface/web_command_center.py`, `aura/interface/web_command_center_v2.py` | Research/change requests require an owner token; paper/live controls remain unavailable from the PWA. |
+| Mobile PWA command-center UI | IMPLEMENTED, LOCAL-FIRST | `aura/interface/web_command_center_v2.py`, `aura/interface/runtime_bridge.py`, `examples/run_public_command_center.py` | Public governed runtime snapshots are wired; broader provider-backed portfolio coverage and native mobile clients remain partial. |
 | Telegram outbound delivery | IMPLEMENTED, UNVALIDATED DESTINATION | `aura/interface/alerts.py`, `examples/send_telegram_test_alert.py` | Requires an operator-owned bot token/chat ID and real destination delivery test. It cannot accept commands or execute orders. |
 | WhatsApp delivery | PENDING | Notification contracts and Telegram delivery exist. | A supported provider/API, credentials, verified recipient and delivery receipts are required. |
 | Dhan Indian-market paper runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/dhan_learning_daemon.py`, Dhan data modules | Requires user-owned Dhan credentials and subscription validation. |
@@ -41,6 +41,6 @@ or human approval and cannot be manufactured in source code.
 The core AURA vision - governed multi-agent intelligence, a deterministic CEO,
 knowledge grounding, research/evolution, paper execution, learning, auditability
 and risk-first authority - is present. The largest remaining product gaps are a
-full graphical/conversational frontend, WhatsApp/mobile-push delivery, controlled Angel One
+always-on/native voice, broader provider-backed portfolio coverage, WhatsApp/mobile-push delivery, controlled Angel One
 execution validation, and credential-backed long-duration broker validation. Those gaps do not justify
 removing the existing safety gates or claiming guaranteed trading accuracy.

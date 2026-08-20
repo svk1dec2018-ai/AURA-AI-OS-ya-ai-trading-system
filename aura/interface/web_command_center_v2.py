@@ -61,6 +61,7 @@ class CommandCenterV2Service(CommandCenterService):
         self,
         text: str,
         *,
+        owner_authenticated: bool = False,
         idempotency_key: str | None = None,
     ) -> tuple[int, dict[str, Any]]:
         command = self.router.parse(text)
@@ -69,7 +70,11 @@ class CommandCenterV2Service(CommandCenterService):
             AssistantIntent.PAPER_CONTROL,
             AssistantIntent.RESEARCH_REQUEST,
         }:
-            return super().handle_command(text, idempotency_key=idempotency_key)
+            return super().handle_command(
+                text,
+                owner_authenticated=owner_authenticated,
+                idempotency_key=idempotency_key,
+            )
         if command.intent is AssistantIntent.STATUS:
             return HTTPStatus.OK, {
                 "accepted": True,
@@ -86,7 +91,11 @@ class CommandCenterV2Service(CommandCenterService):
             return self._read_command(command.command_id, command.intent, ReadDomain.PORTFOLIO)
         if command.intent is AssistantIntent.EXPLAIN:
             return self._explain(command.command_id, command.parameters.get("symbol"))
-        return super().handle_command(text, idempotency_key=idempotency_key)
+        return super().handle_command(
+            text,
+            owner_authenticated=owner_authenticated,
+            idempotency_key=idempotency_key,
+        )
 
     def _read_command(
         self,
@@ -204,6 +213,9 @@ class CommandCenterV2Service(CommandCenterService):
                 supplied = self.headers.get("Authorization", "")
                 return hmac.compare_digest(supplied, f"Bearer {expected}")
 
+            def _owner_authenticated(self) -> bool:
+                return service.config.api_token is not None and self._authorized()
+
             def do_GET(self) -> None:
                 path = urlparse(self.path).path
                 if path.startswith("/api/") and not self._authorized():
@@ -280,6 +292,7 @@ class CommandCenterV2Service(CommandCenterService):
                     return
                 status, result = service.handle_command(
                     text,
+                    owner_authenticated=self._owner_authenticated(),
                     idempotency_key=key,
                 )
                 self._json(status, result)
@@ -340,6 +353,13 @@ _INDEX_HTML = """<!doctype html>
 <article class="panel"><div class="panel-head"><div><p class="eyebrow">PORTFOLIO</p><h2>Positions & P&amp;L</h2></div></div><pre id="portfolio-view">Unavailable.</pre></article>
 </section>
 <section class="panel console">
+<div class="owner-auth">
+<label for="owner-token">Owner token</label>
+<input id="owner-token" type="password" minlength="32" autocomplete="current-password" placeholder="Required for research/change requests">
+<button id="save-token" type="button">Use for this session</button>
+<button id="clear-token" type="button">Clear</button>
+<small>Kept only in this browser tab session; never written to AURA storage.</small>
+</div>
 <div class="panel-head"><div><p class="eyebrow">VOICE / TEXT</p><h2>Talk to AURA</h2><p>Try “scan markets”, “risk status”, “portfolio”, or “explain for BTC/USD”.</p></div><button id="mic" type="button">🎙 Voice</button></div>
 <form id="command-form"><input id="command" maxlength="4000" autocomplete="off" placeholder="Hi AURA, scan markets…"><button type="submit">Send</button></form>
 <pre id="result" aria-live="polite">Ready. Trading controls remain disabled.</pre>
@@ -352,7 +372,39 @@ _INDEX_HTML = """<!doctype html>
 
 _STYLES_CSS = """:root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#e7eef8;background:#050b14;color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 12% 0,#123251 0,transparent 34%),radial-gradient(circle at 90% 12%,#10233b 0,transparent 30%),#050b14}main{width:min(1220px,calc(100% - 28px));margin:auto;padding:28px 0 48px}header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.eyebrow{letter-spacing:.17em;text-transform:uppercase;color:#7dd3fc;font-size:.7rem;margin:0 0 6px}h1{font-size:clamp(2rem,6vw,4.1rem);line-height:.95;margin:0}h1 span{font-size:.32em;color:#7dd3fc;vertical-align:top}h2{margin:0}.sub,.panel p,footer,small{color:#92a6bd}.head-status{display:flex;align-items:flex-end;flex-direction:column;gap:8px}.pill{border:1px solid #2c4d6d;border-radius:999px;padding:7px 11px;color:#9ed9ff}.status-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:12px}.status-card,.panel{background:#0a1522d9;border:1px solid #1e344b;border-radius:18px;box-shadow:0 16px 44px #0007}.status-card{padding:14px;min-height:92px}.status-card span{display:block;color:#8da2ba;font-size:.78rem}.status-card strong{display:block;margin-top:10px;font-size:1rem}.status-card em{display:block;margin-top:5px;font-style:normal;font-size:.72rem;color:#748ba4}.ok{color:#a7f3d0!important}.warn{color:#fde68a!important}.bad{color:#fca5a5!important}.panel{padding:18px;margin-bottom:12px}.panel-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.table-wrap{overflow:auto;margin-top:14px}table{width:100%;border-collapse:collapse;min-width:800px}th,td{text-align:left;padding:11px;border-bottom:1px solid #172b3f;font-size:.84rem}th{color:#86a0bb;font-weight:600}.empty{text-align:center;color:#71869c;padding:28px}.intent-LONG{color:#a7f3d0}.intent-SHORT{color:#fca5a5}.intent-FLAT{color:#fde68a}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.split .panel{margin:0}pre{white-space:pre-wrap;word-break:break-word;background:#050b14;border-radius:12px;padding:13px;min-height:130px;max-height:330px;overflow:auto;color:#c7d9ed}form{display:flex;gap:10px;margin-top:16px}input,button{font:inherit;border-radius:12px;border:1px solid #2b4a68}input{flex:1;min-width:0;background:#06101d;color:#eef6ff;padding:14px}button{cursor:pointer;background:#11304c;color:#eaf6ff;padding:12px 16px}button:hover{background:#184264}footer{text-align:center;margin-top:20px;font-size:.82rem}@media(max-width:980px){.status-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){main{width:min(100% - 18px,1220px);padding-top:18px}header{flex-direction:column}.head-status{align-items:flex-start}.status-grid{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}form{flex-direction:column}.panel-head{align-items:flex-start}}"""
 
+_STYLES_CSS += """.owner-auth{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #1f344a}.owner-auth small{grid-column:2/-1}@media(max-width:720px){.owner-auth{grid-template-columns:1fr}.owner-auth small{grid-column:1}}"""
+
 _APP_JS = """const $=s=>document.querySelector(s);const domains=['opportunities','risk','portfolio','agents','data','brokers'];function esc(v){return String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[c]))}function domainCard(name,v){const state=v.available?'fresh':(v.stale?'stale':'unavailable');const cls=v.available?'ok':(v.stale?'warn':'bad');const age=v.age_seconds==null?'—':Math.round(v.age_seconds)+'s';return `<article class="status-card"><span>${esc(name)}</span><strong class="${cls}">${state}</strong><em>${esc(v.source||'not attached')} · ${age}</em></article>`}async function get(path){const r=await fetch(path,{cache:'no-store'});const p=await r.json();return {ok:r.ok,status:r.status,p}}function renderRadar(view){const body=$('#radar-body');if(!view.available||!view.payload){body.innerHTML='<tr><td colspan="8" class="empty">Fresh governed radar unavailable.</td></tr>';$('#radar-count').textContent='0 actionable';return}const p=view.payload;const items=Array.isArray(p.items)?p.items:[];$('#radar-count').textContent=(p.actionable_count||0)+' actionable';if(!items.length){body.innerHTML='<tr><td colspan="8" class="empty">No ranked candidates in current snapshot.</td></tr>';return}body.innerHTML=items.slice(0,30).map(x=>`<tr><td>${esc(x.rank)}</td><td><strong>${esc(x.symbol)}</strong><br><small>${esc(x.venue)} · ${esc(x.timeframe)}</small></td><td class="intent-${esc(x.intent)}">${esc(x.intent)}</td><td>${esc(x.score)}</td><td>${esc(Math.round((x.ceo_confidence||0)*100))}%</td><td>${esc(Math.round((x.technical_alignment||0)*100))}%</td><td>${x.risk_flags?.length?esc(x.risk_flags.join(', ')):'—'}</td><td>${esc(x.as_of||'—')}</td></tr>`).join('')}async function refresh(){try{const [status,overview]=await Promise.all([get('/api/status'),get('/api/overview')]);if(!status.ok)throw new Error('status '+status.status);$('#health').textContent='online · '+status.p.execution_mode;$('#updated').textContent='updated '+new Date().toLocaleTimeString();const o=overview.p;$('#domain-grid').innerHTML=domains.map(d=>domainCard(d,o[d]||{})).join('');renderRadar(o.opportunities||{});$('#risk-view').textContent=o.risk?.available?JSON.stringify(o.risk.payload,null,2):JSON.stringify(o.risk||{},null,2);$('#portfolio-view').textContent=o.portfolio?.available?JSON.stringify(o.portfolio.payload,null,2):JSON.stringify(o.portfolio||{},null,2)}catch(e){$('#health').textContent='offline';$('#result').textContent='Refresh error: '+e.message}}async function send(text){$('#result').textContent='Working…';const key=crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random();try{const r=await fetch('/api/command',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({text})});const p=await r.json();$('#result').textContent=JSON.stringify(p,null,2);await refresh()}catch(e){$('#result').textContent='Command error: '+e.message}}$('#command-form').addEventListener('submit',e=>{e.preventDefault();const input=$('#command');const text=input.value.trim();if(text)send(text)});const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;const mic=$('#mic');if(SpeechRecognition){mic.addEventListener('click',()=>{const r=new SpeechRecognition();r.lang=navigator.language||'en-IN';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{$('#command').value=e.results[0][0].transcript};r.onerror=e=>{$('#result').textContent='Voice input unavailable: '+e.error};r.start()})}else{mic.disabled=true;mic.textContent='Voice unavailable'}if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/v2-sw.js').catch(()=>{}))}refresh();setInterval(refresh,15000);"""
+
+_APP_JS = _APP_JS.replace(
+    "const domains=",
+    "const token=()=>sessionStorage.getItem('auraOwnerToken')||'';"
+    "const authHeaders=()=>token()?{'Authorization':'Bearer '+token()}:{};"
+    "const domains=",
+    1,
+)
+_APP_JS = _APP_JS.replace(
+    "fetch(path,{cache:'no-store'})",
+    "fetch(path,{cache:'no-store',headers:authHeaders()})",
+    1,
+)
+_APP_JS = _APP_JS.replace(
+    "'Idempotency-Key':key}",
+    "'Idempotency-Key':key,...authHeaders()}",
+    1,
+)
+_APP_JS = _APP_JS.replace(
+    "$('#command-form').addEventListener",
+    "$('#save-token').addEventListener('click',()=>{"
+    "const value=$('#owner-token').value;"
+    "if(value.length<32){$('#result').textContent='Owner token must contain at least 32 characters.';return}"
+    "sessionStorage.setItem('auraOwnerToken',value);$('#owner-token').value='';"
+    "$('#result').textContent='Owner token active for this browser tab session.';refresh()});"
+    "$('#clear-token').addEventListener('click',()=>{sessionStorage.removeItem('auraOwnerToken');"
+    "$('#owner-token').value='';$('#result').textContent='Owner token cleared.';refresh()});"
+    "$('#command-form').addEventListener",
+    1,
+)
 
 _MANIFEST = json.dumps(
     {
