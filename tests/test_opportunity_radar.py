@@ -14,7 +14,7 @@ from aura.runtime.scanner import MarketScanResult, ScanCandidate
 def _context(symbol: str, *, rising: bool = True) -> AgentContext:
     start = datetime(2026, 1, 1, tzinfo=UTC)
     candles: list[NormalizedCandle] = []
-    previous = Decimal("100") if rising else Decimal("200")
+    previous = Decimal(100) if rising else Decimal(200)
     step = Decimal("0.5") if rising else Decimal("-0.5")
     for index in range(80):
         close = previous + step
@@ -27,8 +27,8 @@ def _context(symbol: str, *, rising: bool = True) -> AgentContext:
                 open_time=open_time,
                 close_time=open_time + timedelta(minutes=5),
                 open=previous,
-                high=max(previous, close) + Decimal("1"),
-                low=min(previous, close) - Decimal("1"),
+                high=max(previous, close) + Decimal(1),
+                low=min(previous, close) - Decimal(1),
                 close=close,
                 volume=Decimal(100 + index),
                 closed=True,
