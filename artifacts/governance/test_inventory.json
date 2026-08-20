@@ -496,6 +496,29 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_command_center_runtime_status.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "25118869d9a9260f4fdc49e4125be6aa742cea3ae690c85c2532163195a3294f",
+      "source_dependencies": [
+        "aura/interface/runtime_status.py",
+        "aura/interface/web_command_center.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_command_center_routes_only_available_runtime_domains",
+        "test_domain_without_values_remains_unavailable",
+        "test_fresh_runtime_status_is_validated_and_allowlisted",
+        "test_live_money_status_is_never_exposed",
+        "test_missing_stale_invalid_and_oversized_status_fail_closed",
+        "test_naive_or_missing_required_timestamp_is_invalid",
+        "test_nonfinite_allowlisted_metric_is_omitted"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_connector_catalog.py",
       "phase_coverage": [
         4
@@ -2428,7 +2451,7 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "dda716cd34070a25e032d292bf0f0da8e10c970cebd82a045eab0fed7e3425fe",
+      "sha256": "482666e03f5439dbad15f9adda7b8721f634f33c1175515b694b91e063ea89f8",
       "source_dependencies": [
         "aura/interface/web_command_center.py"
       ],
@@ -2452,7 +2475,7 @@
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 421,
-    "test_modules": 111
+    "static_test_functions": 428,
+    "test_modules": 112
   }
 }

@@ -143,7 +143,8 @@ def test_unattached_market_source_returns_no_fabricated_data(tmp_path: Path) -> 
     )
     status, result = service.handle_command("scan market for XAUUSD")
     assert status == HTTPStatus.SERVICE_UNAVAILABLE
-    assert result["payload"] == {"source_available": False}
+    assert result["payload"]["source_available"] is False
+    assert result["payload"]["source_state"] == "not_attached"
     assert "no market" in result["summary"]
 
 

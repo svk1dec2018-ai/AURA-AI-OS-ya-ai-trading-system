@@ -16,6 +16,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from aura.interface.command_center import AssistantCommand, AssistantIntent, CommandRouter
+from aura.interface.runtime_status import FileRuntimeStatusSource, RuntimeStatusView
 
 _MAX_BODY_BYTES = 16 * 1024
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
@@ -41,6 +42,8 @@ class CommandCenterConfig:
     queue_path: Path = Path("artifacts/operator/research_requests.jsonl")
     api_token: str | None = None
     owner_id: str = "owner"
+    runtime_status_path: Path | None = None
+    runtime_status_max_age_seconds: float = 120.0
     max_body_bytes: int = _MAX_BODY_BYTES
 
     def __post_init__(self) -> None:
@@ -55,6 +58,8 @@ class CommandCenterConfig:
             raise ValueError("non-loopback binding requires an API token of at least 32 characters")
         if _OWNER_ID_PATTERN.fullmatch(self.owner_id) is None:
             raise ValueError("owner_id must contain 1-80 safe identifier characters")
+        if self.runtime_status_max_age_seconds <= 0:
+            raise ValueError("runtime_status_max_age_seconds must be positive")
 
 
 class DurableResearchQueue:
@@ -165,9 +170,27 @@ class CommandCenterService:
             allow_live_control=False,
         )
         self.queue = DurableResearchQueue(self.config.queue_path)
+        self.runtime_status_source = (
+            FileRuntimeStatusSource(
+                self.config.runtime_status_path,
+                max_age_seconds=self.config.runtime_status_max_age_seconds,
+            )
+            if self.config.runtime_status_path is not None
+            else None
+        )
         self.started_at = _now_iso()
 
+    def _runtime_status(self) -> RuntimeStatusView:
+        if self.runtime_status_source is None:
+            return RuntimeStatusView(
+                available=False,
+                state="not_attached",
+                detail="no governed runtime status source is configured",
+            )
+        return self.runtime_status_source.read()
+
     def status(self) -> dict[str, Any]:
+        runtime = self._runtime_status()
         return {
             "service": "aura-command-center",
             "status": "ready",
@@ -175,9 +198,10 @@ class CommandCenterService:
             "live_money_enabled": False,
             "paper_control_exposed": False,
             "owner_auth_configured": self.config.api_token is not None,
-            "market_data_source": "not_attached",
-            "risk_source": "not_attached",
-            "portfolio_source": "not_attached",
+            "runtime_status": runtime.model_dump(mode="json"),
+            "market_data_source": runtime.state if runtime.market else "not_available",
+            "risk_source": runtime.state if runtime.risk else "not_available",
+            "portfolio_source": runtime.state if runtime.portfolio else "not_available",
             "queued_research_requests": self.queue.count,
             "started_at": self.started_at,
             "updated_at": _now_iso(),
@@ -242,6 +266,28 @@ class CommandCenterService:
                 "summary": "command center status",
                 "payload": self.status(),
             }
+        runtime = self._runtime_status()
+        runtime_payload = {
+            AssistantIntent.MARKET_SCAN: runtime.market,
+            AssistantIntent.RISK_STATUS: runtime.risk,
+            AssistantIntent.POSITIONS: runtime.portfolio,
+            AssistantIntent.EXPLAIN: runtime.explanation,
+        }.get(command.intent, {})
+        if runtime.available and runtime_payload:
+            return HTTPStatus.OK, {
+                "accepted": True,
+                "command_id": command.command_id,
+                "intent": command.intent.value,
+                "summary": "validated fresh runtime status",
+                "payload": {
+                    "source_available": True,
+                    "source_mode": runtime.mode,
+                    "source_updated_at": (
+                        runtime.updated_at.isoformat() if runtime.updated_at else None
+                    ),
+                    **runtime_payload,
+                },
+            }
         return HTTPStatus.SERVICE_UNAVAILABLE, {
             "accepted": False,
             "command_id": command.command_id,
@@ -250,7 +296,11 @@ class CommandCenterService:
                 "governed data source is not attached; no market, risk, or portfolio data "
                 "was fabricated"
             ),
-            "payload": {"source_available": False},
+            "payload": {
+                "source_available": False,
+                "source_state": runtime.state,
+                "detail": runtime.detail,
+            },
         }
 
     def make_server(self) -> ThreadingHTTPServer:
