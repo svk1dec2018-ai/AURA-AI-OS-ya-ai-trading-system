@@ -4783,9 +4783,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 6560,
+      "bytes": 7202,
       "path": "examples/run_public_command_center.py",
-      "sha256": "084d025e1ff976cd5f9d075d7273d1b10bc3ca3e734ba8a8694a638a3ebde73a"
+      "sha256": "6a8bfa338134c05e6e8bee9db6ccaeaf2383c928e5209aebe4f04bd33dc88379"
     },
     {
       "asset_class": "python_module",
@@ -10807,7 +10807,7 @@
         "aura/runtime/free_public_ai_council.py",
         "aura/runtime/observable_public_council.py"
       ],
-      "lines": 190,
+      "lines": 214,
       "module": "examples.run_public_command_center",
       "parsed": true,
       "path": "examples/run_public_command_center.py",
@@ -10817,7 +10817,7 @@
       ],
       "primary_phase": 12,
       "role": "entrypoint",
-      "sha256": "084d025e1ff976cd5f9d075d7273d1b10bc3ca3e734ba8a8694a638a3ebde73a",
+      "sha256": "6a8bfa338134c05e6e8bee9db6ccaeaf2383c928e5209aebe4f04bd33dc88379",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -14023,7 +14023,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "87ab0237269d95f0119b006bd9e8082b814c138b8de2ac247241a36f2087da07",
+  "repository_tree_sha256": "17666d6b879dab41043df08153c0e36b8b2e59ca4f6cd5425c299c613b707aaa",
   "schema_version": 1,
   "scope": {
     "excluded": [
