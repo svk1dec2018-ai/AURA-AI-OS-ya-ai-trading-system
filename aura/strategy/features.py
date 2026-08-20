@@ -15,10 +15,10 @@ class FeatureConfig:
     macd_slow: int = 26
     macd_signal: int = 9
     bollinger_period: int = 20
-    bollinger_stddev: Decimal = Decimal("2")
+    bollinger_stddev: Decimal = Decimal(2)
     atr_period: int = 14
     supertrend_period: int = 10
-    supertrend_multiplier: Decimal = Decimal("3")
+    supertrend_multiplier: Decimal = Decimal(3)
     support_resistance_lookback: int = 20
 
     def __post_init__(self) -> None:
@@ -259,14 +259,12 @@ def _macd(
     slow_ema = _ema_aligned(values, slow)
     macd_aligned: list[Decimal | None] = [None] * len(values)
     compact: list[Decimal] = []
-    compact_indices: list[int] = []
     for index, (fast_value, slow_value) in enumerate(zip(fast_ema, slow_ema, strict=True)):
         if fast_value is None or slow_value is None:
             continue
         value = fast_value - slow_value
         macd_aligned[index] = value
         compact.append(value)
-        compact_indices.append(index)
     macd_line = _latest(macd_aligned)
     if len(compact) < signal:
         return macd_line, None, None
