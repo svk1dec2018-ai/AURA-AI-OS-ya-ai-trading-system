@@ -7,6 +7,7 @@ from enum import Enum
 from pydantic import BaseModel, ConfigDict, Field
 
 from aura.domain.models import OrderStatus, Side
+from aura.execution.state import is_terminal_order_status
 from aura.persistence.recovery import RecoveredFinancialState
 from aura.risk.engine import RiskEngine
 
@@ -93,7 +94,7 @@ class ReconciliationEngine:
         broker_open = {
             order.client_order_id: order
             for order in broker_orders
-            if order.status not in {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
+            if not is_terminal_order_status(order.status)
         }
 
         for client_order_id, state in local_open.items():

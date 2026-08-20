@@ -127,3 +127,21 @@ def test_checkpoint_rejects_wrong_starting_cash(tmp_path: Path) -> None:
             store,
             starting_cash=Decimal(2000),
         )
+
+
+def test_checkpoint_tail_replays_expiry(tmp_path: Path) -> None:
+    wal = JsonlWriteAheadLog(tmp_path / "financial.wal", fsync=False)
+    journal = FinancialEventJournal(wal)
+    order = _order("o-expire", "client-expire", quantity="1")
+    journal.record_order_created(order, correlation_id="decision")
+    journal.record_order_submitted(order.order_id, correlation_id="decision")
+    journal.record_order_acknowledged(order.order_id, correlation_id="decision")
+    store = FinancialCheckpointStore(tmp_path / "financial.checkpoint", fsync=False)
+    store.write(recover_financial_state(wal, starting_cash=Decimal(1000)))
+    journal.record_order_expired(order.order_id, correlation_id="decision")
+
+    restored = recover_financial_state_from_checkpoint(
+        wal, store, starting_cash=Decimal(1000)
+    )
+    assert restored.orders[order.order_id].status == OrderStatus.EXPIRED
+    assert restored.open_orders == {}

@@ -734,6 +734,10 @@
         "to": "aura/execution/reconciliation.py"
       },
       {
+        "from": "aura/execution/angel_one.py",
+        "to": "aura/execution/state.py"
+      },
+      {
         "from": "aura/execution/broker.py",
         "to": "aura/domain/models.py"
       },
@@ -788,6 +792,10 @@
       {
         "from": "aura/execution/reconciliation.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/execution/reconciliation.py",
+        "to": "aura/execution/state.py"
       },
       {
         "from": "aura/execution/reconciliation.py",
@@ -944,6 +952,42 @@
       {
         "from": "aura/ops/repository_audit.py",
         "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/execution/reconciliation.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/execution/state.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/persistence/checkpoint.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/persistence/recovery.py"
+      },
+      {
+        "from": "aura/ops/state_engine_gate.py",
+        "to": "aura/persistence/wal.py"
       },
       {
         "from": "aura/options/intelligence.py",
@@ -3322,6 +3366,14 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "tests/test_state_engine_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "tests/test_state_engine_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
         "from": "tests/test_strategy_farm.py",
         "to": "aura/evolution/core.py"
       },
@@ -3479,6 +3531,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/state_engine_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "examples/check_angel_one_account.py"
     },
     {
@@ -3585,9 +3641,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 4487,
+      "bytes": 4595,
       "path": ".github/workflows/ci.yml",
-      "sha256": "6efff9f15a6aea3873ad5e305a5c222b6ef4e797ff3bac9d84ae98fbaf03b373"
+      "sha256": "6f30d3ecffed03072b582b8107442b3634a537972895a160c7247f5c46a4554f"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -3987,9 +4043,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 6677,
+      "bytes": 6735,
       "path": "aura/domain/models.py",
-      "sha256": "74fb077d6ce7f92d61aff14aaba6dcd5b2c28c9a51207b02b88acc42b5bf37b0"
+      "sha256": "db677731afcf1f403926ce1ac5c18a07c656eb0d4a602e2cac1ad5dccf5158c5"
     },
     {
       "asset_class": "python_module",
@@ -4065,9 +4121,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 17779,
+      "bytes": 17806,
       "path": "aura/execution/angel_one.py",
-      "sha256": "6db74f6476c86ff5f7f227c1be025c2742c8662cd0137afe3c68d7b9984202f8"
+      "sha256": "4d7f836a23cd27ef34f4eac2396396fce1515ee8316a432756796691861d9a38"
     },
     {
       "asset_class": "python_module",
@@ -4095,15 +4151,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 7543,
+      "bytes": 7498,
       "path": "aura/execution/paper.py",
-      "sha256": "f0c28a3f717279afdf24595b246d05707de88f2fb43fd687c8fcfabb72615ac6"
+      "sha256": "3ee3f3113be47e2ec90cebe48a56ae43411cd02c3aa3d947ce5b059cdb810e04"
     },
     {
       "asset_class": "python_module",
-      "bytes": 7395,
+      "bytes": 7410,
       "path": "aura/execution/reconciliation.py",
-      "sha256": "c6388ca45fe68c1f5fa7c20ed5ab45c7427cec3c616cf7dc83fb5c1fae03fc75"
+      "sha256": "d9aab72e61cd27deef4a01cf1ac3a3a1276ded307f6b600a3ee2e13a597bd165"
     },
     {
       "asset_class": "python_module",
@@ -4113,9 +4169,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3035,
+      "bytes": 3870,
       "path": "aura/execution/state.py",
-      "sha256": "f328b6d535b19eef551e3de8459de30b8462e6e324c7d0bcf9dd012984e0e484"
+      "sha256": "a0948b98417588117e76a26fbec2f2bdbca66719dd61c69d38679c468bedac0c"
     },
     {
       "asset_class": "python_module",
@@ -4281,9 +4337,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30650,
+      "bytes": 30690,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "47f0916739d720bae1545fdb82137525f1c5c85b20c4d34395985c656b421b04"
+      "sha256": "6d273d5545658022f7661e323a08138a4436f7962ca85db2f768942eb4f596b3"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 11637,
+      "path": "aura/ops/state_engine_gate.py",
+      "sha256": "7cf3f1b87b380ef7afb937c3beacc918d44fca6814ee8f651c74d43bda240788"
     },
     {
       "asset_class": "python_module",
@@ -4293,15 +4355,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 11733,
+      "bytes": 11965,
       "path": "aura/persistence/checkpoint.py",
-      "sha256": "2d14165f3da49699b03950ba99fd2268d72cf5357a9844fd5a191c2a9ccf3f7f"
+      "sha256": "5b343c3bd4f8f73f13657dc8140171062dc664997f25f609ee3e0e47eea9bd67"
     },
     {
       "asset_class": "python_module",
-      "bytes": 7531,
+      "bytes": 8262,
       "path": "aura/persistence/recovery.py",
-      "sha256": "88eb5a743ea3401470f239ec08fa51186296cc61ffa6cfe1404fd921ae14fe44"
+      "sha256": "83a61971a36d3e753f3a7816e0fea8159f512ca972a26d61dc633eef06c18034"
     },
     {
       "asset_class": "python_module",
@@ -4689,9 +4751,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 10111,
+      "bytes": 10117,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "ba3be4b227edba36b2bfd5f4914633e55b6c0a31a1c00cd5f0b86444ccb5f546"
+      "sha256": "2b79abfed9421d746b73a19b363b0cece7aa0e21e87d5c97b5ac0ba9d7668e62"
     },
     {
       "asset_class": "documentation",
@@ -4725,9 +4787,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 3248,
+      "bytes": 4000,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "c9da71314865f27ae80d02715cb1d0894e1a80dde4a5ad14a667ccbad2c3b86d"
+      "sha256": "dbd090122c8916a80ffc20e7f6fc99a11f37ad6b5b3c99a24d0f198c87831078"
     },
     {
       "asset_class": "documentation",
@@ -5055,9 +5117,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5305,
+      "bytes": 6229,
       "path": "tests/test_checkpoint.py",
-      "sha256": "0a184f1fc71c12e4b39acecd5559dc962c62f0ce3ddb89ef9269cf520485ca84"
+      "sha256": "508688d34c4d5152c4c2dcaa25c7d74328ba07949e6afc3a81cd3943f88585c5"
     },
     {
       "asset_class": "python_module",
@@ -5427,9 +5489,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 1529,
+      "bytes": 1986,
       "path": "tests/test_order_state.py",
-      "sha256": "354e9dd6393aee7074421905cb04648a5cbdc4d9e087d930b47b5a43fa0fc8f2"
+      "sha256": "a4710bd52d006f2e1b49be09363316f9d2e6f18b118fc79a41d6c221440d7514"
     },
     {
       "asset_class": "python_module",
@@ -5457,9 +5519,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3063,
+      "bytes": 3102,
       "path": "tests/test_phase_gates.py",
-      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536"
+      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d"
     },
     {
       "asset_class": "python_module",
@@ -5505,9 +5567,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 4420,
+      "bytes": 5196,
       "path": "tests/test_recovery.py",
-      "sha256": "61a5c17623093d6e2b36e592d77aaf703a8888022ed4d29a0ab65a8c39642590"
+      "sha256": "e3ffd8628de247bea3d4d125ac54c4885e87ca0ac9fd3316019ce8ed1393436d"
     },
     {
       "asset_class": "python_module",
@@ -5592,6 +5654,12 @@
       "bytes": 3820,
       "path": "tests/test_specialists.py",
       "sha256": "884233f8d8cbd8faccfbc50945754d28becefda2ba7c04f7371c7b582aece72c"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 970,
+      "path": "tests/test_state_engine_gate.py",
+      "sha256": "69820ec4922a2c5dbc6134bd4750dfa0a652063d71fe13e10c8c3ddbc1899361"
     },
     {
       "asset_class": "python_module",
@@ -7576,7 +7644,7 @@
         "tests/test_unified_features.py"
       ],
       "internal_dependencies": [],
-      "lines": 197,
+      "lines": 199,
       "module": "aura.domain.models",
       "parsed": true,
       "path": "aura/domain/models.py",
@@ -7585,7 +7653,7 @@
       ],
       "primary_phase": 1,
       "role": "source",
-      "sha256": "74fb077d6ce7f92d61aff14aaba6dcd5b2c28c9a51207b02b88acc42b5bf37b0",
+      "sha256": "db677731afcf1f403926ce1ac5c18a07c656eb0d4a602e2cac1ad5dccf5158c5",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -7994,9 +8062,10 @@
         "aura/domain/models.py",
         "aura/execution/broker.py",
         "aura/execution/demo_guard.py",
-        "aura/execution/reconciliation.py"
+        "aura/execution/reconciliation.py",
+        "aura/execution/state.py"
       ],
-      "lines": 434,
+      "lines": 435,
       "module": "aura.execution.angel_one",
       "parsed": true,
       "path": "aura/execution/angel_one.py",
@@ -8005,7 +8074,7 @@
       ],
       "primary_phase": 4,
       "role": "source",
-      "sha256": "6db74f6476c86ff5f7f227c1be025c2742c8662cd0137afe3c68d7b9984202f8",
+      "sha256": "4d7f836a23cd27ef34f4eac2396396fce1515ee8316a432756796691861d9a38",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -8150,7 +8219,7 @@
         "aura/execution/reconciliation.py",
         "aura/execution/state.py"
       ],
-      "lines": 179,
+      "lines": 178,
       "module": "aura.execution.paper",
       "parsed": true,
       "path": "aura/execution/paper.py",
@@ -8159,7 +8228,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "f0c28a3f717279afdf24595b246d05707de88f2fb43fd687c8fcfabb72615ac6",
+      "sha256": "3ee3f3113be47e2ec90cebe48a56ae43411cd02c3aa3d947ce5b059cdb810e04",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -8178,10 +8247,11 @@
       ],
       "internal_dependencies": [
         "aura/domain/models.py",
+        "aura/execution/state.py",
         "aura/persistence/recovery.py",
         "aura/risk/engine.py"
       ],
-      "lines": 201,
+      "lines": 202,
       "module": "aura.execution.reconciliation",
       "parsed": true,
       "path": "aura/execution/reconciliation.py",
@@ -8190,7 +8260,7 @@
       ],
       "primary_phase": 2,
       "role": "source",
-      "sha256": "c6388ca45fe68c1f5fa7c20ed5ab45c7427cec3c616cf7dc83fb5c1fae03fc75",
+      "sha256": "d9aab72e61cd27deef4a01cf1ac3a3a1276ded307f6b600a3ee2e13a597bd165",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -8236,7 +8306,7 @@
       "internal_dependencies": [
         "aura/domain/models.py"
       ],
-      "lines": 89,
+      "lines": 118,
       "module": "aura.execution.state",
       "parsed": true,
       "path": "aura/execution/state.py",
@@ -8245,7 +8315,7 @@
       ],
       "primary_phase": 2,
       "role": "source",
-      "sha256": "f328b6d535b19eef551e3de8459de30b8462e6e324c7d0bcf9dd012984e0e484",
+      "sha256": "a0948b98417588117e76a26fbec2f2bdbca66719dd61c69d38679c468bedac0c",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -8958,7 +9028,8 @@
       "component": "ops",
       "direct_test_files": [
         "tests/test_phase_gates.py",
-        "tests/test_production_ops.py"
+        "tests/test_production_ops.py",
+        "tests/test_state_engine_gate.py"
       ],
       "internal_dependencies": [],
       "lines": 371,
@@ -9051,7 +9122,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 811,
+      "lines": 812,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -9060,7 +9131,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "47f0916739d720bae1545fdb82137525f1c5c85b20c4d34395985c656b421b04",
+      "sha256": "6d273d5545658022f7661e323a08138a4436f7962ca85db2f768942eb4f596b3",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -9075,6 +9146,45 @@
         "sys",
         "tokenize",
         "tomllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
+        "tests/test_state_engine_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/reconciliation.py",
+        "aura/execution/state.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/persistence/checkpoint.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 301,
+      "module": "aura.ops.state_engine_gate",
+      "parsed": true,
+      "path": "aura/ops/state_engine_gate.py",
+      "phase_coverage": [
+        2
+      ],
+      "primary_phase": 2,
+      "role": "source",
+      "sha256": "7cf3f1b87b380ef7afb937c3beacc918d44fca6814ee8f651c74d43bda240788",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "tempfile",
+        "typing"
       ],
       "third_party_dependencies": []
     },
@@ -9120,7 +9230,7 @@
         "aura/persistence/wal.py",
         "aura/portfolio/ledger.py"
       ],
-      "lines": 338,
+      "lines": 344,
       "module": "aura.persistence.checkpoint",
       "parsed": true,
       "path": "aura/persistence/checkpoint.py",
@@ -9129,7 +9239,7 @@
       ],
       "primary_phase": 2,
       "role": "source",
-      "sha256": "2d14165f3da49699b03950ba99fd2268d72cf5357a9844fd5a191c2a9ccf3f7f",
+      "sha256": "5b343c3bd4f8f73f13657dc8140171062dc664997f25f609ee3e0e47eea9bd67",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -9162,7 +9272,7 @@
         "aura/portfolio/instruments.py",
         "aura/portfolio/ledger.py"
       ],
-      "lines": 203,
+      "lines": 223,
       "module": "aura.persistence.recovery",
       "parsed": true,
       "path": "aura/persistence/recovery.py",
@@ -9171,7 +9281,7 @@
       ],
       "primary_phase": 2,
       "role": "source",
-      "sha256": "88eb5a743ea3401470f239ec08fa51186296cc61ffa6cfe1404fd921ae14fe44",
+      "sha256": "83a61971a36d3e753f3a7816e0fea8159f512ca972a26d61dc633eef06c18034",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -11533,7 +11643,7 @@
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py"
       ],
-      "lines": 129,
+      "lines": 147,
       "module": "tests.test_checkpoint",
       "parsed": true,
       "path": "tests/test_checkpoint.py",
@@ -11543,7 +11653,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "0a184f1fc71c12e4b39acecd5559dc962c62f0ce3ddb89ef9269cf520485ca84",
+      "sha256": "508688d34c4d5152c4c2dcaa25c7d74328ba07949e6afc3a81cd3943f88585c5",
       "standard_library_dependencies": [
         "__future__",
         "decimal",
@@ -13189,7 +13299,7 @@
         "aura/domain/models.py",
         "aura/execution/state.py"
       ],
-      "lines": 52,
+      "lines": 64,
       "module": "tests.test_order_state",
       "parsed": true,
       "path": "tests/test_order_state.py",
@@ -13199,7 +13309,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "354e9dd6393aee7074421905cb04648a5cbdc4d9e087d930b47b5a43fa0fc8f2",
+      "sha256": "a4710bd52d006f2e1b49be09363316f9d2e6f18b118fc79a41d6c221440d7514",
       "standard_library_dependencies": [
         "decimal"
       ],
@@ -13332,7 +13442,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 91,
+      "lines": 92,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -13341,7 +13451,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536",
+      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -13532,7 +13642,7 @@
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py"
       ],
-      "lines": 125,
+      "lines": 139,
       "module": "tests.test_recovery",
       "parsed": true,
       "path": "tests/test_recovery.py",
@@ -13542,7 +13652,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "61a5c17623093d6e2b36e592d77aaf703a8888022ed4d29a0ab65a8c39642590",
+      "sha256": "e3ffd8628de247bea3d4d125ac54c4885e87ca0ac9fd3316019ce8ed1393436d",
       "standard_library_dependencies": [
         "__future__",
         "decimal",
@@ -13923,6 +14033,29 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/state_engine_gate.py"
+      ],
+      "lines": 23,
+      "module": "tests.test_state_engine_gate",
+      "parsed": true,
+      "path": "tests/test_state_engine_gate.py",
+      "phase_coverage": [
+        0,
+        2
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "69820ec4922a2c5dbc6134bd4750dfa0a652063d71fe13e10c8c3ddbc1899361",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/evolution/core.py",
         "aura/research/autonomous_strategy_lab.py",
         "aura/research/strategy_farm.py"
@@ -14180,7 +14313,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "2bc7a03df218ae9027bf6d7bf645a658d1967bb989a5b0850e145ce3f82d9219",
+  "repository_tree_sha256": "53eb0b56b8c354a362697065c13407e69b73e9c67a86336f00afd363d23949b5",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14424,31 +14557,31 @@
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 21,
+      "line": 22,
       "path": "aura/execution/angel_one.py"
     },
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 23,
+      "line": 24,
       "path": "aura/execution/angel_one.py"
     },
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 25,
+      "line": 26,
       "path": "aura/execution/angel_one.py"
     },
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 27,
+      "line": 28,
       "path": "aura/execution/angel_one.py"
     },
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 29,
+      "line": 30,
       "path": "aura/execution/angel_one.py"
     },
     {
@@ -14550,7 +14683,7 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 18,
+      "line": 23,
       "path": "aura/persistence/recovery.py"
     },
     {
@@ -14669,15 +14802,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 139,
-    "entrypoints": 24,
+    "directly_tested_source_modules": 140,
+    "entrypoints": 25,
     "parse_errors": 0,
-    "python_modules": 292,
-    "repository_files": 349,
-    "source_modules": 153,
-    "static_test_functions": 456,
+    "python_modules": 294,
+    "repository_files": 351,
+    "source_modules": 154,
+    "static_test_functions": 461,
     "stub_candidates": 79,
-    "test_modules": 118,
+    "test_modules": 119,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

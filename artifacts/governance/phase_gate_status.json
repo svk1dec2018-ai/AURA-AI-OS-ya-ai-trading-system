@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "bd3502701794cc81590ef4ddb746432335ea08a68b748d813ce63b322b2c5826",
+  "ledger_sha256": "4b54b4a5d53a8fbd6a5bb203e355d1f12828265d91c87f53fd1cad95ec9eee1c",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "41afbbe0e14a3196172a40f9e31901b700ee613c8271ee7c422e9def1785c2d4"
+          "sha256": "86f780403f8346a3bfc7680111d201cc260ec24aa2d12d251b44381412ce1981"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "9ce9b27c6bd5254445bf9a7713a4b100acb466763235dae541395db9540d59d7"
+          "sha256": "3e845212dc25f720bb808eff90806464180c04e5e516e97fcceda7e41b65215f"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "000022c2322f314cc1dd8300d1d445caaa01f369d1c8001bf56d0a346194dda1"
+          "sha256": "7661939f8488df31b72611528e231f2ef658e5b865d436ffb13e9e25a044ce2d"
         }
       ],
       "phase": 0,
@@ -42,12 +42,21 @@
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Reconciliation test report",
+          "path": "artifacts/governance/reconciliation_test_report.json",
+          "sha256": "0d08a23ca06db9d1ac7d2f09a39f702d14fed0275d66cc1bfef216dc84584e7f"
+        },
+        {
+          "output": "State transition logs",
+          "path": "artifacts/governance/state_transition_logs.json",
+          "sha256": "84bd8fcbce689ca78cdef8a4da68bef14e46f14b30642aebd23cd4f340871042"
+        }
+      ],
       "phase": 2,
-      "reasons": [
-        "Phase 2 validation evidence has not been produced or accepted; Phase 1 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",

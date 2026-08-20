@@ -8,7 +8,7 @@ from uuid import uuid4
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, OrderType, Side
 from aura.execution.broker import BrokerAdapter
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
-from aura.execution.state import OrderState
+from aura.execution.state import OrderState, is_terminal_order_status
 
 
 @dataclass(slots=True, frozen=True)
@@ -120,9 +120,8 @@ class PaperBroker(BrokerAdapter):
 
     def open_order_snapshots(self) -> list[BrokerOrderSnapshot]:
         snapshots: list[BrokerOrderSnapshot] = []
-        terminal = {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED}
         for client_order_id, state in self._orders.items():
-            if state.status in terminal:
+            if is_terminal_order_status(state.status):
                 continue
             snapshots.append(
                 BrokerOrderSnapshot(
