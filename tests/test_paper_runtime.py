@@ -12,6 +12,7 @@ from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.providers import ProviderAnalysis, ProviderBackedSpecialist, ReasoningProvider
 from aura.agents.service import MultiAgentDecisionService
 from aura.core.pipeline import DecisionPipeline
+from aura.data.quality import CandleQualityGate, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.execution.paper import PaperBroker
 from aura.persistence.recovery import FinancialEventJournal, recover_financial_state
@@ -81,6 +82,12 @@ def _decision_service(risk: RiskEngine) -> MultiAgentDecisionService:
         orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
         ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
         decision_pipeline=DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=1),
+                max_staleness=timedelta(minutes=1),
+            )
+        ),
     )
 
 

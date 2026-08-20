@@ -80,6 +80,13 @@ def _service(
     *,
     data_quality_gate: CandleQualityGate | None = None,
 ) -> MultiAgentDecisionService:
+    if data_quality_gate is None:
+        data_quality_gate = CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=5),
+                max_staleness=timedelta(days=36500),
+            )
+        )
     agents = [
         ProviderBackedSpecialist(
             provider=StaticProvider("provider-a", "model-a", SignalIntent.LONG),

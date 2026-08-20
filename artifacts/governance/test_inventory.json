@@ -82,11 +82,12 @@
       "phase_coverage": [
         1,
         3,
+        5,
         7,
         9,
         10
       ],
-      "sha256": "1b50873bf0722ac807a57a9ad7e9cdd4925ff10d272dc780dd1d7a40a051c997",
+      "sha256": "fd3d7a35a6a8d4a9bfb6a3a635e7d17310deb213dace543c612344cc0f2e759c",
       "source_dependencies": [
         "aura/agents/base.py",
         "aura/agents/models.py",
@@ -94,6 +95,7 @@
         "aura/agents/risk_policy.py",
         "aura/agents/service.py",
         "aura/core/pipeline.py",
+        "aura/data/quality.py",
         "aura/domain/models.py",
         "aura/risk/engine.py",
         "aura/strategy/ema.py"
@@ -118,7 +120,7 @@
         9,
         10
       ],
-      "sha256": "240c960e4ef8b0ec489c0c7cd3fcf54c36abe68123f265eb45eec62e9d313324",
+      "sha256": "484a5baa7e5001bd3a5424aa30de98867dcfdb17c354aaed0888e03f78336fd7",
       "source_dependencies": [
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
@@ -675,7 +677,7 @@
         1,
         5
       ],
-      "sha256": "e90ca3e56546ff3cd2ded987f403f1cf64a6fab1547789ecd908f0619aaf873f",
+      "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e",
       "source_dependencies": [
         "aura/data/quality.py",
         "aura/domain/models.py"
@@ -1317,6 +1319,44 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_market_data_gate.py",
+      "phase_coverage": [
+        0,
+        5
+      ],
+      "sha256": "7f73dbd95ab4e26972d96e01cc56f6a416dc5dd034e127b7c67f2441dc9278e8",
+      "source_dependencies": [
+        "aura/ops/market_data_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_five_evidence_is_current",
+        "test_phase_five_probes_block_every_anomalous_batch"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_market_data_pipeline.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "396665a72e14fdbb92ca9ad80da82d20dcd77185207edbca804126675c43ce1a",
+      "source_dependencies": [
+        "aura/data/pipeline.py",
+        "aura/data/quality.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_malformed_record_rejects_entire_batch_without_exposing_candles",
+        "test_pipeline_normalizes_and_releases_only_validated_batch",
+        "test_stale_series_rejects_entire_batch_and_records_anomaly"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_market_universe.py",
       "phase_coverage": [
         1
@@ -1486,18 +1526,20 @@
         1,
         2,
         3,
+        5,
         7,
         9,
         10,
         12
       ],
-      "sha256": "03c8e22d107925c608bc9b7455c151d8b3dfa191647699bbad0906235442865b",
+      "sha256": "d6fc50a8500fdb1003be339b633fb67c669f931a69393fcf22ad383fb8558fa1",
       "source_dependencies": [
         "aura/agents/audit.py",
         "aura/agents/base.py",
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
         "aura/core/pipeline.py",
+        "aura/data/quality.py",
         "aura/domain/models.py",
         "aura/execution/paper.py",
         "aura/persistence/recovery.py",
@@ -1521,17 +1563,19 @@
       "phase_coverage": [
         1,
         3,
+        5,
         7,
         9,
         10,
         12
       ],
-      "sha256": "b80a50581faaaa8e4ff37119c0528fd7068e8919063dfc3199497fa51adaf6c6",
+      "sha256": "9b037d4082aaf1db3d990f69355fb76bac7b328cb0640672d514c3eb75b86903",
       "source_dependencies": [
         "aura/agents/base.py",
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
         "aura/core/pipeline.py",
+        "aura/data/quality.py",
         "aura/domain/models.py",
         "aura/risk/engine.py",
         "aura/runtime/allocation.py",
@@ -1877,12 +1921,13 @@
         1,
         2,
         3,
+        5,
         7,
         9,
         10,
         12
       ],
-      "sha256": "faa09bd0264c493ae1369cefe7379c11dc2fa1e14e151ccea2382876c0dcc71c",
+      "sha256": "9726e732d7b2a9cd56ae1674676e7262dfb8e7c7ab46d2f0ced8976fdc838f60",
       "source_dependencies": [
         "aura/agents/audit.py",
         "aura/agents/models.py",
@@ -1890,6 +1935,7 @@
         "aura/agents/providers.py",
         "aura/agents/service.py",
         "aura/core/pipeline.py",
+        "aura/data/quality.py",
         "aura/domain/models.py",
         "aura/execution/paper.py",
         "aura/persistence/recovery.py",
@@ -1936,7 +1982,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "a3e8ad78eb5f6d97813202ac1a54b5344ff77292ec29616bc72fab3464619788",
+      "sha256": "74b0bfe9c81624402ad0ffdb72c64b69af1480c13be4b0a52129ca2c051e4aec",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1944,7 +1990,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_broker_conformance_only",
+        "test_committed_ledger_passes_through_market_data_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2711,7 +2757,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 471,
-    "test_modules": 122
+    "static_test_functions": 476,
+    "test_modules": 124
   }
 }

@@ -1,0 +1,53 @@
+{
+  "all_anomalous_batches_blocked": true,
+  "decision": "PASS",
+  "deterministic_fingerprint": "92531dbed04a29a009105c700df5c03d66b3b80774b98b114edb62b012d28291",
+  "external_market_data_claimed": false,
+  "fixture_type": "deterministic_internal_data_fixture",
+  "phase": 5,
+  "records": [
+    {
+      "accepted": false,
+      "anomaly_types": [
+        "duplicate_bar",
+        "out_of_order",
+        "stale"
+      ],
+      "probe": "duplicate_bar",
+      "validated_candles_exposed": 0
+    },
+    {
+      "accepted": false,
+      "anomaly_types": [
+        "future_data"
+      ],
+      "probe": "future_data",
+      "validated_candles_exposed": 0
+    },
+    {
+      "accepted": false,
+      "anomaly_types": [
+        "normalization_error"
+      ],
+      "probe": "normalization_error",
+      "validated_candles_exposed": 0
+    },
+    {
+      "accepted": false,
+      "anomaly_types": [
+        "open_candle"
+      ],
+      "probe": "open_candle",
+      "validated_candles_exposed": 0
+    },
+    {
+      "accepted": false,
+      "anomaly_types": [
+        "stale"
+      ],
+      "probe": "stale",
+      "validated_candles_exposed": 0
+    }
+  ],
+  "schema_version": 1
+}

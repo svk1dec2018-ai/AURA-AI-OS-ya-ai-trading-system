@@ -119,6 +119,25 @@ python -m aura.ops.broker_conformance_gate --write
 python -m aura.ops.broker_conformance_gate --check
 ```
 
+## Phase 5 evidence
+
+- `artifacts/governance/data_quality_report.json`
+- `artifacts/governance/anomaly_detection_logs.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The market-data gate joins the existing normalization and candle-quality modules
+behind a provider-neutral, fail-closed ingestion boundary. A batch is released
+only when every record normalizes and the full series passes closed-candle,
+ordering, duplicate, gap, future-data and staleness checks. Scanner and agent
+decision services now require a quality gate, and accepted reports expose measured
+latest-candle lag in milliseconds. Evidence uses deterministic internal fixtures;
+it claims no external feed availability or live-market correctness.
+
+```bash
+python -m aura.ops.market_data_gate --write
+python -m aura.ops.market_data_gate --check
+```
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own

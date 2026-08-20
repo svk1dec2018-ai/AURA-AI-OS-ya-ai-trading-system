@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 356
-- Python modules: 299
-- Source modules: 156
-- Test modules: 122
-- Static test functions: 471
-- Entrypoints: 27
+- Repository files: 360
+- Python modules: 303
+- Source modules: 158
+- Test modules: 124
+- Static test functions: 476
+- Entrypoints: 28
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 160 |
+| `aura` | 162 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 122 |
+| `tests` | 124 |
 
 ## Entrypoints
 
@@ -57,6 +57,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `aura/ops/broker_conformance_gate.py` | python-main |
 | `aura/ops/core_contracts.py` | python-main |
+| `aura/ops/market_data_gate.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
 | `aura/ops/risk_engine_gate.py` | python-main |
 | `aura/ops/state_engine_gate.py` | python-main |
@@ -140,9 +141,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/normalization.py` | source | data | 5 | 1 | 0 |
 | `aura/data/oanda.py` | source | data | 5 | 2 | 1 |
 | `aura/data/options_replay.py` | source | data | 5 | 2 | 1 |
+| `aura/data/pipeline.py` | source | data | 5 | 3 | 1 |
 | `aura/data/public_crypto_feeds.py` | source | data | 5 | 2 | 1 |
 | `aura/data/public_history.py` | source | data | 5 | 1 | 1 |
-| `aura/data/quality.py` | source | data | 5 | 1 | 2 |
+| `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
 | `aura/domain/models.py` | source | domain | 1 | 0 | 53 |
@@ -192,7 +194,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 5 |
+| `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 6 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -231,7 +234,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/dhan_learning_daemon.py` | source | runtime | 12 | 35 | 0 |
 | `aura/runtime/dhan_radar.py` | source | runtime | 12 | 2 | 1 |
 | `aura/runtime/evolution_supervisor.py` | source | runtime | 12 | 1 | 1 |
-| `aura/runtime/free_public_ai_council.py` | source | runtime | 12 | 19 | 2 |
+| `aura/runtime/free_public_ai_council.py` | source | runtime | 12 | 20 | 2 |
 | `aura/runtime/free_public_strategy_lab.py` | source | runtime | 12 | 6 | 1 |
 | `aura/runtime/learning_scanner.py` | source | runtime | 12 | 4 | 0 |
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 14 | 0 |
@@ -265,7 +268,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_reliability.py` | test | validation | 1 | 4 | 0 |
-| `tests/test_agent_risk_policy.py` | test | validation | 1 | 9 | 0 |
+| `tests/test_agent_risk_policy.py` | test | validation | 1 | 10 | 0 |
 | `tests/test_agent_service.py` | test | validation | 1 | 9 | 0 |
 | `tests/test_agent_team.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agents.py` | test | validation | 1 | 4 | 0 |
@@ -323,6 +326,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_live_shadow_strategy_lab.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_local_knowledge_corpus.py` | test | validation | 8 | 1 | 0 |
 | `tests/test_macro_external_intelligence.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_market_data_gate.py` | test | validation | 0 | 2 | 0 |
+| `tests/test_market_data_pipeline.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_market_universe.py` | test | validation | 1 | 1 | 0 |
 | `tests/test_model_drift.py` | test | validation | 9 | 3 | 0 |
 | `tests/test_model_performance.py` | test | validation | 9 | 2 | 0 |
@@ -330,8 +335,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_contracts.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 15 | 0 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 5 | 0 |
-| `tests/test_multi_market_paper.py` | test | validation | 1 | 15 | 0 |
-| `tests/test_multi_market_scanner.py` | test | validation | 1 | 9 | 0 |
+| `tests/test_multi_market_paper.py` | test | validation | 1 | 16 | 0 |
+| `tests/test_multi_market_scanner.py` | test | validation | 1 | 10 | 0 |
 | `tests/test_oanda.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_observable_public_council.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_ollama_ai_council.py` | test | validation | 1 | 6 | 0 |
@@ -347,7 +352,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_order_state.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_paper_broker.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_paper_evidence.py` | test | validation | 7 | 2 | 0 |
-| `tests/test_paper_runtime.py` | test | validation | 1 | 14 | 0 |
+| `tests/test_paper_runtime.py` | test | validation | 1 | 15 | 0 |
 | `tests/test_parameter_stability.py` | test | validation | 7 | 2 | 0 |
 | `tests/test_phase_gates.py` | test | validation | 0 | 1 | 0 |
 | `tests/test_portfolio.py` | test | validation | 1 | 2 | 0 |
