@@ -247,12 +247,15 @@ PowerShell uses `$env:NAME="value"` instead of `export`.
 ```bash
 export AURA_COMMAND_CENTER_OWNER_ID="owner"
 export AURA_COMMAND_CENTER_TOKEN="use-at-least-32-random-characters"
+export AURA_COMMAND_CENTER_STATUS_PATH="runtime/free_public_autonomy/ai_council/status.json"
 python examples/run_command_center.py
 ```
 
 Open `http://127.0.0.1:8765`. Read-only loopback status works without a token,
 but research/self-upgrade requests require authenticated owner access and remain
 queued for human review. The browser keeps the token in session storage only.
+Configured runtime status is schema-validated and freshness-checked; missing or stale
+market/risk/portfolio values remain explicitly unavailable instead of being invented.
 
 ## Optional Telegram outbound alerts
 

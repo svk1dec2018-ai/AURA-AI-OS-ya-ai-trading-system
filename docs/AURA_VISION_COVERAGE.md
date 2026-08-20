@@ -28,7 +28,7 @@ or human approval and cannot be manufactured in source code.
 | Strategy versioning and approval lifecycle | IMPLEMENTED | `aura/research/lifecycle.py` | Final approval requires a human actor. |
 | Local voice and browser speech input | IMPLEMENTED, BROWSER-DEPENDENT | `aura/interface/voice_alerts.py`, `aura/interface/web_command_center.py` | Always-on/offline wake-word and native STT remain pending. |
 | Jarvis-style command and authenticated-owner boundary | IMPLEMENTED | `aura/interface/command_center.py`, `aura/interface/web_command_center.py` | Research/change requests require an owner token; paper/live controls remain unavailable from the PWA. |
-| Mobile PWA command-center UI | IMPLEMENTED, LOCAL-FIRST | `aura/interface/web_command_center.py`, `examples/run_command_center.py` | Governed market/risk/portfolio providers must be attached before real values appear. |
+| Mobile PWA command-center UI | IMPLEMENTED, LOCAL-FIRST | `aura/interface/web_command_center.py`, `aura/interface/runtime_status.py`, `examples/run_command_center.py` | Fresh schema-valid runtime files expose allowlisted real status; broader charts/watchlists and direct provider services remain partial. |
 | Telegram outbound delivery | IMPLEMENTED, UNVALIDATED DESTINATION | `aura/interface/alerts.py`, `examples/send_telegram_test_alert.py` | Requires an operator-owned bot token/chat ID and real destination delivery test. It cannot accept commands or execute orders. |
 | WhatsApp delivery | PENDING | Notification contracts and Telegram delivery exist. | A supported provider/API, credentials, verified recipient and delivery receipts are required. |
 | Dhan Indian-market paper runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/dhan_learning_daemon.py`, Dhan data modules | Requires user-owned Dhan credentials and subscription validation. |
@@ -41,6 +41,6 @@ or human approval and cannot be manufactured in source code.
 The core AURA vision - governed multi-agent intelligence, a deterministic CEO,
 knowledge grounding, research/evolution, paper execution, learning, auditability
 and risk-first authority - is present. The largest remaining product gaps are a
-always-on/native voice, governed data-provider wiring, WhatsApp/mobile-push delivery, controlled Angel One
+always-on/native voice, broader dashboard charts/watchlists, WhatsApp/mobile-push delivery, controlled Angel One
 execution validation, and credential-backed long-duration broker validation. Those gaps do not justify
 removing the existing safety gates or claiming guaranteed trading accuracy.

@@ -7,11 +7,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 333
-- Python modules: 276
-- Source modules: 145
-- Test modules: 111
-- Static test functions: 421
+- Repository files: 335
+- Python modules: 278
+- Source modules: 146
+- Test modules: 112
+- Static test functions: 428
 - Entrypoints: 22
 - Known stub/incomplete candidates: 79
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 149 |
+| `aura` | 150 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 111 |
+| `tests` | 112 |
 
 ## Entrypoints
 
@@ -167,8 +167,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
+| `aura/interface/runtime_status.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
-| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
+| `aura/interface/web_command_center.py` | source | interface | 13 | 2 | 2 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/markets/universe.py` | source | markets | 1 | 0 | 9 |
@@ -267,6 +268,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_cognitive_memory.py` | test | validation | 9 | 1 | 0 |
 | `tests/test_cognitive_router.py` | test | validation | 9 | 3 | 0 |
 | `tests/test_command_center.py` | test | validation | 13 | 1 | 0 |
+| `tests/test_command_center_runtime_status.py` | test | validation | 13 | 2 | 0 |
 | `tests/test_connector_catalog.py` | test | validation | 4 | 1 | 0 |
 | `tests/test_context_enrichment.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_contract_accounting.py` | test | validation | 1 | 4 | 0 |

@@ -36,6 +36,8 @@ The PWA/API surface is deliberately narrower than the core router:
 - optional idempotency keys are persisted only as SHA-256 digests, not raw keys.
 - research/change requests require an authenticated owner token even on loopback;
 - every queued request records the configured non-secret owner ID, while the token is never persisted.
+- an optional runtime status file is schema-validated, freshness-checked and reduced to an explicit allowlist before market, risk, portfolio or explanation fields reach the UI;
+- missing, stale, oversized, invalid or live-money-enabled status files fail closed and expose no operational values.
 
 ## Network exposure
 
@@ -47,6 +49,8 @@ AURA_COMMAND_CENTER_PORT=8765
 AURA_COMMAND_CENTER_QUEUE=artifacts/operator/research_requests.jsonl
 AURA_COMMAND_CENTER_OWNER_ID=owner
 AURA_COMMAND_CENTER_TOKEN=
+AURA_COMMAND_CENTER_STATUS_PATH=runtime/free_public_autonomy/ai_council/status.json
+AURA_COMMAND_CENTER_STATUS_MAX_AGE_SECONDS=120
 ```
 
 Set `AURA_COMMAND_CENTER_TOKEN` to at least 32 random characters before submitting
@@ -55,6 +59,13 @@ token, but privileged requests fail closed. Binding to a non-loopback address al
 fails closed without this token. API callers send it as `Authorization: Bearer ...`.
 The PWA keeps a supplied token only in browser `sessionStorage`, which is cleared
 when the tab/session ends; it never writes the token into AURA's queue. Never commit it.
+
+`AURA_COMMAND_CENTER_STATUS_PATH` may point to an atomically-written AURA runtime
+`status.json`, such as the free public AI council or a configured Dhan/MT5 paper
+daemon. The file must report a timezone-aware `updated_at`,
+`real_money_enabled=false` and a recognized typed status shape. Only allowlisted
+fields are returned. The UI does not infer missing portfolio positions or market
+values, and a stale file becomes unavailable after the configured maximum age.
 
 ## API
 

@@ -18,6 +18,14 @@ def main() -> None:
         ),
         api_token=os.getenv("AURA_COMMAND_CENTER_TOKEN") or None,
         owner_id=os.getenv("AURA_COMMAND_CENTER_OWNER_ID", "owner"),
+        runtime_status_path=(
+            Path(os.environ["AURA_COMMAND_CENTER_STATUS_PATH"])
+            if os.getenv("AURA_COMMAND_CENTER_STATUS_PATH")
+            else None
+        ),
+        runtime_status_max_age_seconds=float(
+            os.getenv("AURA_COMMAND_CENTER_STATUS_MAX_AGE_SECONDS", "120")
+        ),
     )
     print(f"AURA Command Center listening on http://{config.host}:{config.port}")
     print("Safety mode: observation + governed research; paper/live HTTP controls disabled")
