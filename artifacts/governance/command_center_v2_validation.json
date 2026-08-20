@@ -32,7 +32,8 @@
     "credentials_embedded": false
   },
   "validation": {
-    "phase0_audit_refresh": "synced_after_source_and_docs",
-    "full_ci_recheck": "clean_recheck_triggered_after_audit_sync"
+    "phase0_audit_refresh": "synced_after_all_source_and_ci_changes",
+    "strict_ci_policy": "source_auto_mutation_disabled",
+    "full_ci_recheck": "triggered_on_synced_source_tree"
   }
 }
