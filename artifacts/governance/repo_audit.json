@@ -826,6 +826,26 @@
         "to": "aura/runtime/opportunity_radar.py"
       },
       {
+        "from": "aura/interface/runtime_bridge.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "aura/interface/runtime_bridge.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "aura/interface/runtime_bridge.py",
+        "to": "aura/runtime/multi_market_paper.py"
+      },
+      {
+        "from": "aura/interface/runtime_bridge.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
+        "from": "aura/interface/runtime_bridge.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
         "from": "aura/interface/web_command_center.py",
         "to": "aura/interface/command_center.py"
       },
@@ -1562,6 +1582,18 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "aura/runtime/observable_public_council.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/runtime/observable_public_council.py",
+        "to": "aura/runtime/free_public_ai_council.py"
+      },
+      {
+        "from": "aura/runtime/observable_public_council.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
         "from": "aura/runtime/opportunity_radar.py",
         "to": "aura/domain/models.py"
       },
@@ -1808,6 +1840,30 @@
       {
         "from": "examples/run_production_preflight.py",
         "to": "aura/research/lifecycle.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/interface/runtime_bridge.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/interface/web_command_center_v2.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/runtime/free_public_ai_council.py"
+      },
+      {
+        "from": "examples/run_public_command_center.py",
+        "to": "aura/runtime/observable_public_council.py"
       },
       {
         "from": "examples/run_public_crypto_live.py",
@@ -2730,6 +2786,26 @@
         "to": "aura/data/oanda.py"
       },
       {
+        "from": "tests/test_observable_public_council.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_observable_public_council.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_observable_public_council.py",
+        "to": "aura/runtime/free_public_ai_council.py"
+      },
+      {
+        "from": "tests/test_observable_public_council.py",
+        "to": "aura/runtime/observable_public_council.py"
+      },
+      {
+        "from": "tests/test_observable_public_council.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
         "from": "tests/test_ollama_ai_council.py",
         "to": "aura/agents/ai_council.py"
       },
@@ -3106,6 +3182,42 @@
         "to": "aura/research/robustness.py"
       },
       {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/interface/runtime_bridge.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/runtime/allocation.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/runtime/multi_market_paper.py"
+      },
+      {
+        "from": "tests/test_runtime_bridge.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
         "from": "tests/test_sealed_holdout.py",
         "to": "aura/persistence/wal.py"
       },
@@ -3372,6 +3484,10 @@
     {
       "kind": "python-main",
       "path": "examples/run_production_preflight.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "examples/run_public_command_center.py"
     },
     {
       "kind": "python-main",
@@ -3995,6 +4111,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 11625,
+      "path": "aura/interface/runtime_bridge.py",
+      "sha256": "639b39e5fa3e59660e15db7fcb84df77b8343bccd65668dfc9eb88474d095986"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 5074,
       "path": "aura/interface/voice_alerts.py",
       "sha256": "7d018e24ee281668435f25eae66f93161aa9f674b7e8410eacad9907c3e8cbdd"
@@ -4343,6 +4465,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 1914,
+      "path": "aura/runtime/observable_public_council.py",
+      "sha256": "0ab938da5d533b8b6cfddf6ed873117d4a6fdaee1b915d743b51ad7bce880f07"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 8613,
       "path": "aura/runtime/opportunity_radar.py",
       "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311"
@@ -4652,6 +4780,12 @@
       "bytes": 2141,
       "path": "examples/run_production_preflight.py",
       "sha256": "b5721f6ab510be58ebac3ba476d9e7599eb3ae8971831c313ded7411d3068cd7"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6560,
+      "path": "examples/run_public_command_center.py",
+      "sha256": "084d025e1ff976cd5f9d075d7273d1b10bc3ca3e734ba8a8694a638a3ebde73a"
     },
     {
       "asset_class": "python_module",
@@ -5165,6 +5299,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 3707,
+      "path": "tests/test_observable_public_council.py",
+      "sha256": "36874971d5c9b17fa739027d90fb83de1e0b07ad7f13c944450c0a51765e384e"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 8034,
       "path": "tests/test_ollama_ai_council.py",
       "sha256": "73026782bd8e5ce4e9af14a5f471df532837d99b543435c3383ebaf8ab842e9c"
@@ -5360,6 +5500,12 @@
       "bytes": 4719,
       "path": "tests/test_robustness.py",
       "sha256": "6ae386342e9e4d2a53557c59911cbbef90de467cc62001f6b3a2885096af6a83"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 7078,
+      "path": "tests/test_runtime_bridge.py",
+      "sha256": "b3acf68f5cd0d9a8acbcb9ad38ba456f60f5199ed707b31eee98c1460210099b"
     },
     {
       "asset_class": "python_module",
@@ -5819,11 +5965,13 @@
         "tests/test_macro_external_intelligence.py",
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
+        "tests/test_observable_public_council.py",
         "tests/test_ollama_ai_council.py",
         "tests/test_opportunity_audit.py",
         "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
         "tests/test_paper_runtime.py",
+        "tests/test_runtime_bridge.py",
         "tests/test_shadow_outcomes.py",
         "tests/test_specialists.py"
       ],
@@ -5986,7 +6134,8 @@
       "component": "agents",
       "direct_test_files": [
         "tests/test_agent_risk_policy.py",
-        "tests/test_opportunity_radar.py"
+        "tests/test_opportunity_radar.py",
+        "tests/test_runtime_bridge.py"
       ],
       "internal_dependencies": [
         "aura/agents/models.py",
@@ -7345,6 +7494,7 @@
         "tests/test_multi_backtest.py",
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
+        "tests/test_observable_public_council.py",
         "tests/test_ollama_ai_council.py",
         "tests/test_online_bridge.py",
         "tests/test_opportunity_audit.py",
@@ -7359,6 +7509,7 @@
         "tests/test_recovery.py",
         "tests/test_risk.py",
         "tests/test_risk_overlays.py",
+        "tests/test_runtime_bridge.py",
         "tests/test_shadow_outcomes.py",
         "tests/test_specialists.py",
         "tests/test_unified_features.py"
@@ -8185,6 +8336,7 @@
       "component": "interface",
       "direct_test_files": [
         "tests/test_operator_read_model.py",
+        "tests/test_runtime_bridge.py",
         "tests/test_web_command_center_v2.py"
       ],
       "internal_dependencies": [
@@ -8210,6 +8362,37 @@
         "hashlib",
         "json",
         "threading",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [
+        "tests/test_runtime_bridge.py"
+      ],
+      "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/risk/engine.py",
+        "aura/runtime/multi_market_paper.py",
+        "aura/runtime/opportunity_radar.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 320,
+      "module": "aura.interface.runtime_bridge",
+      "parsed": true,
+      "path": "aura/interface/runtime_bridge.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "639b39e5fa3e59660e15db7fcb84df77b8343bccd65668dfc9eb88474d095986",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "decimal",
         "typing"
       ],
       "third_party_dependencies": []
@@ -9493,6 +9676,7 @@
         "tests/test_reconciliation.py",
         "tests/test_risk.py",
         "tests/test_risk_overlays.py",
+        "tests/test_runtime_bridge.py",
         "tests/test_supervisor.py"
       ],
       "internal_dependencies": [
@@ -9604,7 +9788,8 @@
       "direct_test_files": [
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_market_paper.py",
-        "tests/test_multi_market_scanner.py"
+        "tests/test_multi_market_scanner.py",
+        "tests/test_runtime_bridge.py"
       ],
       "internal_dependencies": [
         "aura/core/pipeline.py",
@@ -9797,7 +9982,8 @@
     {
       "component": "runtime",
       "direct_test_files": [
-        "tests/test_free_public_ai_context.py"
+        "tests/test_free_public_ai_context.py",
+        "tests/test_observable_public_council.py"
       ],
       "internal_dependencies": [
         "aura/agents/models.py",
@@ -9982,7 +10168,8 @@
       "component": "runtime",
       "direct_test_files": [
         "tests/test_mt5_demo_runtime.py",
-        "tests/test_multi_market_paper.py"
+        "tests/test_multi_market_paper.py",
+        "tests/test_runtime_bridge.py"
       ],
       "internal_dependencies": [
         "aura/agents/audit.py",
@@ -10013,6 +10200,32 @@
         "datetime",
         "decimal",
         "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "runtime",
+      "direct_test_files": [
+        "tests/test_observable_public_council.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/runtime/free_public_ai_council.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 52,
+      "module": "aura.runtime.observable_public_council",
+      "parsed": true,
+      "path": "aura/runtime/observable_public_council.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "0ab938da5d533b8b6cfddf6ed873117d4a6fdaee1b915d743b51ad7bce880f07",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections"
       ],
       "third_party_dependencies": []
     },
@@ -10086,8 +10299,10 @@
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
+        "tests/test_observable_public_council.py",
         "tests/test_opportunity_audit.py",
         "tests/test_opportunity_radar.py",
+        "tests/test_runtime_bridge.py",
         "tests/test_shadow_outcomes.py"
       ],
       "internal_dependencies": [
@@ -10578,6 +10793,39 @@
         "argparse",
         "json",
         "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "examples",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/interface/runtime_bridge.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py",
+        "aura/runtime/free_public_ai_council.py",
+        "aura/runtime/observable_public_council.py"
+      ],
+      "lines": 190,
+      "module": "examples.run_public_command_center",
+      "parsed": true,
+      "path": "examples/run_public_command_center.py",
+      "phase_coverage": [
+        12,
+        13
+      ],
+      "primary_phase": 12,
+      "role": "entrypoint",
+      "sha256": "084d025e1ff976cd5f9d075d7273d1b10bc3ca3e734ba8a8694a638a3ebde73a",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "datetime",
+        "os",
+        "pathlib",
+        "threading"
       ],
       "third_party_dependencies": []
     },
@@ -12479,6 +12727,39 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/runtime/free_public_ai_council.py",
+        "aura/runtime/observable_public_council.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 123,
+      "module": "tests.test_observable_public_council",
+      "parsed": true,
+      "path": "tests/test_observable_public_council.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "36874971d5c9b17fa739027d90fb83de1e0b07ad7f13c944450c0a51765e384e",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "datetime",
+        "decimal",
+        "types"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/ai_council.py",
         "aura/agents/models.py",
         "aura/agents/ollama_provider.py",
@@ -13334,6 +13615,41 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/interface/operator_read_model.py",
+        "aura/interface/runtime_bridge.py",
+        "aura/risk/engine.py",
+        "aura/runtime/allocation.py",
+        "aura/runtime/multi_market_paper.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 201,
+      "module": "tests.test_runtime_bridge",
+      "parsed": true,
+      "path": "tests/test_runtime_bridge.py",
+      "phase_coverage": [
+        1,
+        3,
+        9,
+        12,
+        13
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "b3acf68f5cd0d9a8acbcb9ad38ba456f60f5199ed707b31eee98c1460210099b",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/persistence/wal.py",
         "aura/research/holdout.py",
         "aura/research/manifest.py"
@@ -13707,7 +14023,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "1cdbbfe6159c46ad8e3f2c32d6c20b4b95f6e4831bd9c5c24e6606b3bc27533f",
+  "repository_tree_sha256": "87ab0237269d95f0119b006bd9e8082b814c138b8de2ac247241a36f2087da07",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14196,15 +14512,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 135,
-    "entrypoints": 22,
+    "directly_tested_source_modules": 137,
+    "entrypoints": 23,
     "parse_errors": 0,
-    "python_modules": 284,
-    "repository_files": 341,
-    "source_modules": 149,
-    "static_test_functions": 441,
+    "python_modules": 289,
+    "repository_files": 346,
+    "source_modules": 151,
+    "static_test_functions": 447,
     "stub_candidates": 79,
-    "test_modules": 115,
+    "test_modules": 117,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
