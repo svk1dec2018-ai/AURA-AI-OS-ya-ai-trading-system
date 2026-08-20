@@ -1702,6 +1702,10 @@
         "to": "aura/interface/web_command_center.py"
       },
       {
+        "from": "examples/run_command_center.py",
+        "to": "aura/interface/web_command_center_v2.py"
+      },
+      {
         "from": "examples/run_dhan_self_evolving_paper.py",
         "to": "aura/evolution/brain_online.py"
       },
@@ -4585,9 +4589,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 860,
+      "bytes": 978,
       "path": "examples/run_command_center.py",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc"
+      "sha256": "1489b10fce989b96247808cfaeb34bfad3b26ff5fde4e75a29cf24f0912a7069"
     },
     {
       "asset_class": "python_module",
@@ -10312,9 +10316,10 @@
       "component": "examples",
       "direct_test_files": [],
       "internal_dependencies": [
-        "aura/interface/web_command_center.py"
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
       ],
-      "lines": 27,
+      "lines": 29,
       "module": "examples.run_command_center",
       "parsed": true,
       "path": "examples/run_command_center.py",
@@ -10323,7 +10328,7 @@
       ],
       "primary_phase": 13,
       "role": "entrypoint",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc",
+      "sha256": "1489b10fce989b96247808cfaeb34bfad3b26ff5fde4e75a29cf24f0912a7069",
       "standard_library_dependencies": [
         "__future__",
         "os",
@@ -13649,7 +13654,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "91076bc4d440d090bc3965252b37431ffcc7658fddd770c54491396d7ef4dcbc",
+  "repository_tree_sha256": "d3195ef57ff1e09f8f9f99ed7f0f6bc1d2d7846c422c0842a8721341e69e499e",
   "schema_version": 1,
   "scope": {
     "excluded": [

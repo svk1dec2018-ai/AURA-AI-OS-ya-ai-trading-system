@@ -237,7 +237,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 2 | 0 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_backtest.py` | entrypoint | examples | 1 | 5 | 0 |
-| `examples/run_command_center.py` | entrypoint | examples | 13 | 1 | 0 |
+| `examples/run_command_center.py` | entrypoint | examples | 13 | 2 | 0 |
 | `examples/run_dhan_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_free_public_ai_council.py` | entrypoint | examples | 12 | 1 | 0 |
 | `examples/run_free_public_autonomy.py` | entrypoint | examples | 12 | 3 | 0 |
