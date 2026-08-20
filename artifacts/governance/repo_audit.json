@@ -830,6 +830,18 @@
         "to": "aura/interface/command_center.py"
       },
       {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/command_center.py"
+      },
+      {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/web_command_center.py"
+      },
+      {
         "from": "aura/knowledge/local_corpus.py",
         "to": "aura/knowledge/firewall.py"
       },
@@ -3979,6 +3991,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 22925,
+      "path": "aura/interface/web_command_center_v2.py",
+      "sha256": "cc1d4275322bb78ad8a70af86b36971c8ec71d35ad18d4b1169919f1a5740619"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 6543,
       "path": "aura/knowledge/firewall.py",
       "sha256": "be0c0a3cca0feb6da3c0a628d2e2002baa3bcc529af50a9bbfbc5c58a0438e3b"
@@ -5466,6 +5484,7 @@
       "aura/data/kraken.py",
       "aura/data/normalization.py",
       "aura/execution/broker.py",
+      "aura/interface/web_command_center_v2.py",
       "aura/observability/logging.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
@@ -8233,6 +8252,35 @@
         "os",
         "pathlib",
         "threading",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/command_center.py",
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py"
+      ],
+      "lines": 369,
+      "module": "aura.interface.web_command_center_v2",
+      "parsed": true,
+      "path": "aura/interface/web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "cc1d4275322bb78ad8a70af86b36971c8ec71d35ad18d4b1169919f1a5740619",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "hmac",
+        "http",
+        "json",
         "typing",
         "urllib"
       ],
@@ -13601,7 +13649,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "2a626180ac63a2904c244a33f6aad992be8e9d33c2aea8c1ca8d8e58974136f4",
+  "repository_tree_sha256": "91076bc4d440d090bc3965252b37431ffcc7658fddd770c54491396d7ef4dcbc",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14093,9 +14141,9 @@
     "directly_tested_source_modules": 134,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 282,
-    "repository_files": 339,
-    "source_modules": 148,
+    "python_modules": 283,
+    "repository_files": 340,
+    "source_modules": 149,
     "static_test_functions": 435,
     "stub_candidates": 79,
     "test_modules": 114,
