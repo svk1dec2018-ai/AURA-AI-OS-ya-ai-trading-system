@@ -561,6 +561,27 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_core_contracts.py",
+      "phase_coverage": [
+        1
+      ],
+      "sha256": "d34d422e3128f069611544f282736d47649d6a4775eefff08bb86a8347d4ef52",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/domain/serialization.py",
+        "aura/ops/core_contracts.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_core_entities_round_trip_through_versioned_canonical_envelope",
+        "test_fill_and_tick_contracts_reject_unknown_or_naive_input",
+        "test_order_contract_rejects_ambiguous_price_and_timestamp_semantics",
+        "test_phase_one_reports_cover_every_required_entity_and_are_current"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_corporate_actions.py",
       "phase_coverage": [
         1,
@@ -1871,7 +1892,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "8c5d515813305f223df50edaba468428458d414d5efb5d858b6fe6eb460b2a9c",
+      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1879,7 +1900,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_only_phase_zero",
+        "test_committed_ledger_passes_phase_zero_and_core_contracts_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2604,7 +2625,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 452,
-    "test_modules": 117
+    "static_test_functions": 456,
+    "test_modules": 118
   }
 }

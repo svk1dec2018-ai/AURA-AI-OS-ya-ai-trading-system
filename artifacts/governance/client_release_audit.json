@@ -3,11 +3,12 @@
   "live_money_enabled": false,
   "validation": {
     "phase_0_repository_audit": "PASS",
+    "phase_1_core_contracts": "PASS",
     "repository_audit_current": true,
     "ruff": "PASS",
     "pytest": {
       "status": "PASS",
-      "tests": 458
+      "tests": 462
     },
     "compileall": "PASS",
     "dependency_consistency": "PASS",
@@ -16,11 +17,11 @@
     "public_paper_preflight": "PASS"
   },
   "inventory": {
-    "repository_files": 346,
-    "python_modules": 289,
-    "source_modules": 151,
-    "test_modules": 117,
-    "entrypoints": 23,
+    "repository_files": 349,
+    "python_modules": 292,
+    "source_modules": 153,
+    "test_modules": 118,
+    "entrypoints": 24,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "parse_errors": 0,
@@ -34,7 +35,7 @@
     "live_certification_claimed": false
   },
   "external_blockers": [
-    "sequential Phase 1-15 validation evidence",
+    "sequential Phase 2-15 validation evidence",
     "credential-backed broker demo validation",
     "long-duration broker-origin forward evidence",
     "explicit human live approval"

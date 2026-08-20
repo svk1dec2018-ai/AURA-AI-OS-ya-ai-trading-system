@@ -197,15 +197,35 @@ def build_phase_zero_records(
     root: Path,
     evidence_paths: Mapping[str, str],
 ) -> tuple[PhaseGateRecord, ...]:
-    required = set(PHASE_GATE_SPECS[0].validation_outputs)
-    if set(evidence_paths) != required:
-        raise ValueError("phase 0 evidence must exactly match its required outputs")
-    evidence = tuple(
-        GateEvidence(output, path, _file_sha256(_resolve_evidence_path(root, path)))
-        for output, path in sorted(evidence_paths.items())
-    )
-    records = [PhaseGateRecord(0, GateDecision.PASS, evidence=evidence)]
-    for spec in PHASE_GATE_SPECS[1:]:
+    return build_sequential_phase_records(root, {0: evidence_paths})
+
+
+def build_sequential_phase_records(
+    root: Path,
+    evidence_by_phase: Mapping[int, Mapping[str, str]],
+) -> tuple[PhaseGateRecord, ...]:
+    """Build a fail-closed ledger for one contiguous prefix of passed phases."""
+
+    phases = tuple(sorted(evidence_by_phase))
+    if not phases or phases != tuple(range(phases[-1] + 1)):
+        raise ValueError("passed phase evidence must form a contiguous prefix starting at phase 0")
+    if phases[-1] > 15:
+        raise ValueError("phase must be in [0, 15]")
+
+    records: list[PhaseGateRecord] = []
+    for phase in phases:
+        spec = PHASE_GATE_SPECS[phase]
+        evidence_paths = evidence_by_phase[phase]
+        required = set(spec.validation_outputs)
+        if set(evidence_paths) != required:
+            raise ValueError(f"phase {phase} evidence must exactly match its required outputs")
+        evidence = tuple(
+            GateEvidence(output, path, _file_sha256(_resolve_evidence_path(root, path)))
+            for output, path in sorted(evidence_paths.items())
+        )
+        records.append(PhaseGateRecord(phase, GateDecision.PASS, evidence=evidence))
+
+    for spec in PHASE_GATE_SPECS[len(records) :]:
         previous = PHASE_GATE_SPECS[spec.phase - 1]
         reason = (
             f"Phase {spec.phase} validation evidence has not been produced or accepted; "

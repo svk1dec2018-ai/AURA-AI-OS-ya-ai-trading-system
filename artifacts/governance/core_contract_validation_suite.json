@@ -1,0 +1,69 @@
+{
+  "all_cases_passed": true,
+  "decision": "PASS",
+  "phase": 1,
+  "rejection_cases": [
+    {
+      "case": "tick_rejects_naive_timestamp",
+      "passed": true
+    },
+    {
+      "case": "candle_rejects_unknown_field",
+      "passed": true
+    },
+    {
+      "case": "market_order_rejects_limit_price",
+      "passed": true
+    },
+    {
+      "case": "fill_rejects_naive_timestamp",
+      "passed": true
+    },
+    {
+      "case": "position_rejects_unknown_field",
+      "passed": true
+    },
+    {
+      "case": "portfolio_rejects_negative_gross_exposure",
+      "passed": true
+    },
+    {
+      "case": "envelope_rejects_entity_confusion",
+      "passed": true
+    }
+  ],
+  "round_trip_cases": [
+    {
+      "case": "candle_canonical_round_trip",
+      "encoded_sha256": "02c54e168bceadff81c0126184306fc815053ce7ef95da3418204ed3353ceb09",
+      "passed": true
+    },
+    {
+      "case": "fill_canonical_round_trip",
+      "encoded_sha256": "cdf713d093144765f4465ff489695108a0680f28e912980b1a9128146ad3301b",
+      "passed": true
+    },
+    {
+      "case": "order_canonical_round_trip",
+      "encoded_sha256": "c1d4c8a99dbe08271da6785e4859365b6fecf83e6a47656e29a4e86bf4e2b4ca",
+      "passed": true
+    },
+    {
+      "case": "portfolio_canonical_round_trip",
+      "encoded_sha256": "18af64763151e1c93d377916adc1ec906309269761743e19d72c469d0ab34413",
+      "passed": true
+    },
+    {
+      "case": "position_canonical_round_trip",
+      "encoded_sha256": "64f6cacfc684d48c2a5a6e2d190f4c5ea0f6484c5bfa1409dbadcd7724a39f63",
+      "passed": true
+    },
+    {
+      "case": "tick_canonical_round_trip",
+      "encoded_sha256": "028bef7c4a0b28b728ddde747ed6840f0bcd1f769ae8324dbd88aa99efbd968d",
+      "passed": true
+    }
+  ],
+  "schema_version": 1,
+  "serialization": "versioned canonical JSON envelope"
+}

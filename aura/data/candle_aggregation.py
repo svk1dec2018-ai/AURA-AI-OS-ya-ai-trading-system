@@ -5,26 +5,11 @@ from datetime import UTC, datetime, time, timedelta
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from aura.domain.models import NormalizedCandle, Tick
 
-from aura.domain.models import NormalizedCandle
-
-
-class CanonicalTradeTick(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    symbol: str = Field(min_length=1)
-    venue: str = Field(min_length=1)
-    price: Decimal = Field(gt=0)
-    quantity: Decimal = Field(default=Decimal(0), ge=0)
-    timestamp: datetime
-
-    @field_validator("timestamp")
-    @classmethod
-    def timestamp_is_aware(cls, value: datetime) -> datetime:
-        if value.tzinfo is None or value.utcoffset() is None:
-            raise ValueError("tick timestamp must be timezone-aware")
-        return value
+# Backward-compatible public name for existing data adapters. The canonical
+# contract now lives with AURA's other core entities.
+CanonicalTradeTick = Tick
 
 
 @dataclass(slots=True, frozen=True)

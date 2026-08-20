@@ -562,6 +562,14 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/domain/serialization.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/domain/serialization.py",
+        "to": "aura/portfolio/ledger.py"
+      },
+      {
         "from": "aura/evolution/brain_online.py",
         "to": "aura/evolution/brain_replay.py"
       },
@@ -900,6 +908,26 @@
       {
         "from": "aura/ops/__init__.py",
         "to": "aura/ops/release_gate.py"
+      },
+      {
+        "from": "aura/ops/core_contracts.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/core_contracts.py",
+        "to": "aura/domain/serialization.py"
+      },
+      {
+        "from": "aura/ops/core_contracts.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/core_contracts.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/core_contracts.py",
+        "to": "aura/portfolio/ledger.py"
       },
       {
         "from": "aura/ops/preflight.py",
@@ -2234,6 +2262,18 @@
         "to": "aura/risk/engine.py"
       },
       {
+        "from": "tests/test_core_contracts.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_core_contracts.py",
+        "to": "aura/domain/serialization.py"
+      },
+      {
+        "from": "tests/test_core_contracts.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
         "from": "tests/test_corporate_actions.py",
         "to": "aura/data/corporate_actions.py"
       },
@@ -3431,6 +3471,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/core_contracts.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/repository_audit.py"
     },
     {
@@ -3541,9 +3585,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 4386,
+      "bytes": 4487,
       "path": ".github/workflows/ci.yml",
-      "sha256": "ad37261a2ebc97474203f0195ff84d5afe3ccf1acc7c851d4bdc36c4ee9c35d7"
+      "sha256": "6efff9f15a6aea3873ad5e305a5c222b6ef4e797ff3bac9d84ae98fbaf03b373"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -3751,9 +3795,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 6561,
+      "bytes": 6118,
       "path": "aura/data/candle_aggregation.py",
-      "sha256": "85641cb6b53417d7a4836035e81f85c8fca6435a0ea31a4623d684d83f09b91c"
+      "sha256": "73aed7bdad177eee6b47617b096549adf91c00fedcdabf7b729c137e5e733474"
     },
     {
       "asset_class": "python_module",
@@ -3943,9 +3987,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 4528,
+      "bytes": 6677,
       "path": "aura/domain/models.py",
-      "sha256": "406e666bc12f0a4b3bd3589f53979c106f3b9c9f37ffd855a5b21039324f3336"
+      "sha256": "74fb077d6ce7f92d61aff14aaba6dcd5b2c28c9a51207b02b88acc42b5bf37b0"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 2823,
+      "path": "aura/domain/serialization.py",
+      "sha256": "ab8995e50798d8c03d66c039d4d597e0a94c159f6d17cd0b01d61f5e85a4f165"
     },
     {
       "asset_class": "python_module",
@@ -4201,15 +4251,21 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 10646,
+      "path": "aura/ops/core_contracts.py",
+      "sha256": "165fbafe7a61bc4e1c3acb3393a546ed6be7e261d88145c61239ccc1d8f31455"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 2498,
       "path": "aura/ops/health.py",
       "sha256": "53e8aebd54d9db37c663f58b72c0685b54f70338c130aff7ec157bdf8cd408ed"
     },
     {
       "asset_class": "python_module",
-      "bytes": 13958,
+      "bytes": 14737,
       "path": "aura/ops/phase_gates.py",
-      "sha256": "9733e82c4aca49ec14b767d16f454bed4c809b7b996f5e3f71aa2f2aafedf22d"
+      "sha256": "9e37c3630d6fa4c0c350af003603e9fb50d16b2be502d8d7d527ac0b2d5345f6"
     },
     {
       "asset_class": "python_module",
@@ -4225,9 +4281,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30613,
+      "bytes": 30650,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "7551487bd6bd27036169fe16cae380632f08613e5fc42d15a4ce9386f5126586"
+      "sha256": "47f0916739d720bae1545fdb82137525f1c5c85b20c4d34395985c656b421b04"
     },
     {
       "asset_class": "python_module",
@@ -4261,9 +4317,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5885,
+      "bytes": 6121,
       "path": "aura/portfolio/ledger.py",
-      "sha256": "12479954c24304a9c8d053bda8e0d07fbdbff66a1b8b83d4264219c50ad3f02a"
+      "sha256": "23d5cfeb82a5308700793d7af246906969a59bb0bbefad61757a65bded19f9e9"
     },
     {
       "asset_class": "python_module",
@@ -4669,9 +4725,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 2393,
+      "bytes": 3248,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "3e03ff9ba14b51b49e0fab0364048eaff11abfd34c53fb5b5695d9dfec967d4b"
+      "sha256": "c9da71314865f27ae80d02715cb1d0894e1a80dde4a5ad14a667ccbad2c3b86d"
     },
     {
       "asset_class": "documentation",
@@ -5041,6 +5097,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 3322,
+      "path": "tests/test_core_contracts.py",
+      "sha256": "d34d422e3128f069611544f282736d47649d6a4775eefff08bb86a8347d4ef52"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 7670,
       "path": "tests/test_corporate_actions.py",
       "sha256": "7bfed90ab7dc0b1cc9d10d745cb3ce72510ba529b8072b726d9a87ead133d20b"
@@ -5395,9 +5457,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 2996,
+      "bytes": 3063,
       "path": "tests/test_phase_gates.py",
-      "sha256": "8c5d515813305f223df50edaba468428458d414d5efb5d858b6fe6eb460b2a9c"
+      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536"
     },
     {
       "asset_class": "python_module",
@@ -6502,7 +6564,7 @@
       "internal_dependencies": [
         "aura/domain/models.py"
       ],
-      "lines": 185,
+      "lines": 170,
       "module": "aura.data.candle_aggregation",
       "parsed": true,
       "path": "aura/data/candle_aggregation.py",
@@ -6511,7 +6573,7 @@
       ],
       "primary_phase": 5,
       "role": "source",
-      "sha256": "85641cb6b53417d7a4836035e81f85c8fca6435a0ea31a4623d684d83f09b91c",
+      "sha256": "73aed7bdad177eee6b47617b096549adf91c00fedcdabf7b729c137e5e733474",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -6519,9 +6581,7 @@
         "decimal",
         "zoneinfo"
       ],
-      "third_party_dependencies": [
-        "pydantic"
-      ]
+      "third_party_dependencies": []
     },
     {
       "component": "data",
@@ -7475,6 +7535,7 @@
         "tests/test_checkpoint.py",
         "tests/test_context_enrichment.py",
         "tests/test_contract_accounting.py",
+        "tests/test_core_contracts.py",
         "tests/test_corporate_actions.py",
         "tests/test_data_quality.py",
         "tests/test_deliberation.py",
@@ -7515,7 +7576,7 @@
         "tests/test_unified_features.py"
       ],
       "internal_dependencies": [],
-      "lines": 158,
+      "lines": 197,
       "module": "aura.domain.models",
       "parsed": true,
       "path": "aura/domain/models.py",
@@ -7524,13 +7585,42 @@
       ],
       "primary_phase": 1,
       "role": "source",
-      "sha256": "406e666bc12f0a4b3bd3589f53979c106f3b9c9f37ffd855a5b21039324f3336",
+      "sha256": "74fb077d6ce7f92d61aff14aaba6dcd5b2c28c9a51207b02b88acc42b5bf37b0",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
         "decimal",
         "enum",
         "uuid"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "domain",
+      "direct_test_files": [
+        "tests/test_core_contracts.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/portfolio/ledger.py"
+      ],
+      "lines": 92,
+      "module": "aura.domain.serialization",
+      "parsed": true,
+      "path": "aura/domain/serialization.py",
+      "phase_coverage": [
+        1
+      ],
+      "primary_phase": 1,
+      "role": "source",
+      "sha256": "ab8995e50798d8c03d66c039d4d597e0a94c159f6d17cd0b01d61f5e85a4f165",
+      "standard_library_dependencies": [
+        "__future__",
+        "enum",
+        "json",
+        "typing"
       ],
       "third_party_dependencies": [
         "pydantic"
@@ -8806,6 +8896,41 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_core_contracts.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/domain/serialization.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/portfolio/ledger.py"
+      ],
+      "lines": 322,
+      "module": "aura.ops.core_contracts",
+      "parsed": true,
+      "path": "aura/ops/core_contracts.py",
+      "phase_coverage": [
+        1
+      ],
+      "primary_phase": 1,
+      "role": "source",
+      "sha256": "165fbafe7a61bc4e1c3acb3393a546ed6be7e261d88145c61239ccc1d8f31455",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "collections",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_production_ops.py"
       ],
       "internal_dependencies": [],
@@ -8836,7 +8961,7 @@
         "tests/test_production_ops.py"
       ],
       "internal_dependencies": [],
-      "lines": 351,
+      "lines": 371,
       "module": "aura.ops.phase_gates",
       "parsed": true,
       "path": "aura/ops/phase_gates.py",
@@ -8845,7 +8970,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "9733e82c4aca49ec14b767d16f454bed4c809b7b996f5e3f71aa2f2aafedf22d",
+      "sha256": "9e37c3630d6fa4c0c350af003603e9fb50d16b2be502d8d7d527ac0b2d5345f6",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -8926,7 +9051,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 810,
+      "lines": 811,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -8935,7 +9060,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "7551487bd6bd27036169fe16cae380632f08613e5fc42d15a4ce9386f5126586",
+      "sha256": "47f0916739d720bae1545fdb82137525f1c5c85b20c4d34395985c656b421b04",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -9136,7 +9261,7 @@
         "aura/domain/models.py",
         "aura/portfolio/instruments.py"
       ],
-      "lines": 155,
+      "lines": 159,
       "module": "aura.portfolio.ledger",
       "parsed": true,
       "path": "aura/portfolio/ledger.py",
@@ -9145,13 +9270,14 @@
       ],
       "primary_phase": 2,
       "role": "source",
-      "sha256": "12479954c24304a9c8d053bda8e0d07fbdbff66a1b8b83d4264219c50ad3f02a",
+      "sha256": "23d5cfeb82a5308700793d7af246906969a59bb0bbefad61757a65bded19f9e9",
       "standard_library_dependencies": [
         "__future__",
-        "dataclasses",
         "decimal"
       ],
-      "third_party_dependencies": []
+      "third_party_dependencies": [
+        "pydantic"
+      ]
     },
     {
       "component": "portfolio",
@@ -11576,6 +11702,36 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/domain/serialization.py",
+        "aura/ops/core_contracts.py"
+      ],
+      "lines": 98,
+      "module": "tests.test_core_contracts",
+      "parsed": true,
+      "path": "tests/test_core_contracts.py",
+      "phase_coverage": [
+        1
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "d34d422e3128f069611544f282736d47649d6a4775eefff08bb86a8347d4ef52",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/data/corporate_actions.py",
         "aura/domain/models.py"
       ],
@@ -13176,7 +13332,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 90,
+      "lines": 91,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -13185,7 +13341,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "8c5d515813305f223df50edaba468428458d414d5efb5d858b6fe6eb460b2a9c",
+      "sha256": "12eeb9f222d5cdd1ffdd7f144796182007fad3e28368b797c656f162f6a0d536",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -14024,7 +14180,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "4041c8fca536193065636f6e070a5e0d32a1d0f24b956807e46723b367253b0b",
+  "repository_tree_sha256": "2bc7a03df218ae9027bf6d7bf645a658d1967bb989a5b0850e145ce3f82d9219",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14513,15 +14669,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 137,
-    "entrypoints": 23,
+    "directly_tested_source_modules": 139,
+    "entrypoints": 24,
     "parse_errors": 0,
-    "python_modules": 289,
-    "repository_files": 346,
-    "source_modules": 151,
-    "static_test_functions": 452,
+    "python_modules": 292,
+    "repository_files": 349,
+    "source_modules": 153,
+    "static_test_functions": 456,
     "stub_candidates": 79,
-    "test_modules": 117,
+    "test_modules": 118,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
