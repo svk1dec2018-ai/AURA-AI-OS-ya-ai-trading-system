@@ -32,7 +32,7 @@
     "credentials_embedded": false
   },
   "validation": {
-    "phase0_audit_refresh": "synced",
-    "full_ci_recheck": "triggered_by_this_commit"
+    "phase0_audit_refresh": "synced_after_source_and_docs",
+    "full_ci_recheck": "clean_recheck_triggered_after_audit_sync"
   }
 }
