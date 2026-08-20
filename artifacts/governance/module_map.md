@@ -7,11 +7,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 338
-- Python modules: 281
+- Repository files: 339
+- Python modules: 282
 - Source modules: 148
-- Test modules: 113
-- Static test functions: 428
+- Test modules: 114
+- Static test functions: 435
 - Entrypoints: 22
 - Known stub/incomplete candidates: 79
 
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 113 |
+| `tests` | 114 |
 
 ## Entrypoints
 
@@ -167,7 +167,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
-| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 0 |
+| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
@@ -225,7 +225,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 14 | 0 |
 | `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 18 | 0 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 10 | 2 |
-| `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 3 | 1 |
+| `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 3 | 2 |
 | `aura/runtime/paper.py` | source | runtime | 12 | 9 | 1 |
 | `aura/runtime/scanner.py` | source | runtime | 12 | 6 | 6 |
 | `aura/runtime/supervisor.py` | source | runtime | 12 | 2 | 1 |
@@ -320,6 +320,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_online_bridge.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_online_learning.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_open_model_catalog.py` | test | validation | 9 | 2 | 0 |
+| `tests/test_operator_read_model.py` | test | validation | 12 | 2 | 0 |
 | `tests/test_opportunity_audit.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_opportunity_radar.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_option_intelligence.py` | test | validation | 1 | 2 | 0 |

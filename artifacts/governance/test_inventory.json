@@ -1584,6 +1584,30 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_operator_read_model.py",
+      "phase_coverage": [
+        12,
+        13
+      ],
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad",
+      "source_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_missing_domain_is_explicitly_unavailable",
+        "test_opportunity_radar_publisher_preserves_as_of",
+        "test_overview_contains_every_whitelisted_domain",
+        "test_read_model_publishes_fresh_provenance_snapshot",
+        "test_read_model_rejects_future_or_backward_observations",
+        "test_read_model_rejects_non_json_payloads_and_nan",
+        "test_stale_read_model_never_returns_stale_payload"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_opportunity_audit.py",
       "phase_coverage": [
         1,
@@ -2498,7 +2522,7 @@
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 428,
-    "test_modules": 113
+    "static_test_functions": 435,
+    "test_modules": 114
   }
 }

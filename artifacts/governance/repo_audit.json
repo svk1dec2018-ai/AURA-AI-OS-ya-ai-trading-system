@@ -2766,6 +2766,14 @@
         "to": "aura/models/registry.py"
       },
       {
+        "from": "tests/test_operator_read_model.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "tests/test_operator_read_model.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
         "from": "tests/test_opportunity_audit.py",
         "to": "aura/agents/models.py"
       },
@@ -5147,6 +5155,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 4436,
+      "path": "tests/test_operator_read_model.py",
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 6355,
       "path": "tests/test_opportunity_audit.py",
       "sha256": "2e525ca42b1b16706b7bd02ef3f859910682b0fd080ed08d6920d3ebaaa64a20"
@@ -5452,7 +5466,6 @@
       "aura/data/kraken.py",
       "aura/data/normalization.py",
       "aura/execution/broker.py",
-      "aura/interface/operator_read_model.py",
       "aura/observability/logging.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
@@ -8130,7 +8143,9 @@
     },
     {
       "component": "interface",
-      "direct_test_files": [],
+      "direct_test_files": [
+        "tests/test_operator_read_model.py"
+      ],
       "internal_dependencies": [
         "aura/runtime/opportunity_radar.py"
       ],
@@ -9929,6 +9944,7 @@
     {
       "component": "runtime",
       "direct_test_files": [
+        "tests/test_operator_read_model.py",
         "tests/test_opportunity_radar.py"
       ],
       "internal_dependencies": [
@@ -12489,6 +12505,32 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "lines": 138,
+      "module": "tests.test_operator_read_model",
+      "parsed": true,
+      "path": "tests/test_operator_read_model.py",
+      "phase_coverage": [
+        12,
+        13
+      ],
+      "primary_phase": 12,
+      "role": "test",
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/models.py",
         "aura/domain/models.py",
         "aura/evolution/opportunity_audit.py",
@@ -13559,7 +13601,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "5ce510143e9288030a2f6499c8083f63644182a24122208f56b351dca8061194",
+  "repository_tree_sha256": "2a626180ac63a2904c244a33f6aad992be8e9d33c2aea8c1ca8d8e58974136f4",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14048,15 +14090,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 133,
+    "directly_tested_source_modules": 134,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 281,
-    "repository_files": 338,
+    "python_modules": 282,
+    "repository_files": 339,
     "source_modules": 148,
-    "static_test_functions": 428,
+    "static_test_functions": 435,
     "stub_candidates": 79,
-    "test_modules": 113,
+    "test_modules": 114,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
