@@ -2555,19 +2555,22 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0",
+      "sha256": "5dfe7f7997349baef772db5a60affd86630a860963b256875236ca048fdf49b5",
       "source_dependencies": [
         "aura/interface/web_command_center.py"
       ],
-      "static_test_functions": 7,
+      "static_test_functions": 10,
       "test_classes": [],
       "test_functions": [
+        "test_http_rejects_missing_and_wrong_owner_token",
         "test_http_status_research_and_live_boundary",
         "test_live_and_paper_commands_are_blocked_before_execution",
         "test_non_loopback_binding_requires_strong_token",
         "test_pwa_assets_are_served_with_security_headers",
+        "test_pwa_keeps_owner_token_in_session_storage_only",
         "test_queue_corruption_fails_closed",
         "test_research_queue_is_restart_safe_and_idempotent",
+        "test_research_requires_authenticated_owner_even_on_loopback",
         "test_unattached_market_source_returns_no_fabricated_data"
       ]
     },
@@ -2577,17 +2580,19 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4",
+      "sha256": "06eb57f9797460154e036fa28d52284daf47b7cb9582fdd3346a1780db66aeaa",
       "source_dependencies": [
         "aura/interface/operator_read_model.py",
         "aura/interface/web_command_center.py",
         "aura/interface/web_command_center_v2.py"
       ],
-      "static_test_functions": 6,
+      "static_test_functions": 8,
       "test_classes": [],
       "test_functions": [
         "test_v2_explain_is_deterministic_from_current_radar",
         "test_v2_http_exposes_read_model_and_cockpit_assets",
+        "test_v2_http_owner_token_and_session_only_pwa",
+        "test_v2_requires_owner_auth_for_research_but_not_read_commands",
         "test_v2_returns_only_fresh_governed_domain_snapshots",
         "test_v2_status_reports_domain_sources_without_fabricating_data",
         "test_v2_still_hard_blocks_paper_and_live_control",
@@ -2599,7 +2604,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 447,
+    "static_test_functions": 452,
     "test_modules": 117
   }
 }

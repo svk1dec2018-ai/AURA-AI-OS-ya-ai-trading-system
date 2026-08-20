@@ -144,6 +144,7 @@ async def main() -> None:
         port=args.port,
         queue_path=root / "research_requests.jsonl",
         api_token=os.getenv("AURA_COMMAND_CENTER_TOKEN") or None,
+        owner_id=os.getenv("AURA_COMMAND_CENTER_OWNER_ID", "owner"),
     )
     service = CommandCenterV2Service(command_config, read_model=read_model)
     server = service.make_server()

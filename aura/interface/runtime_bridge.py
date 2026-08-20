@@ -186,7 +186,7 @@ def _scan_time(scan: MarketScanResult) -> datetime | None:
 
 
 def _parse_iso(value: str) -> datetime:
-    parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    parsed = datetime.fromisoformat(value)
     if parsed.tzinfo is None or parsed.utcoffset() is None:
         raise ValueError("paper step close time must be timezone-aware")
     return parsed

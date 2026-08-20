@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import threading
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -18,6 +19,7 @@ from aura.interface.command_center import AssistantCommand, AssistantIntent, Com
 
 _MAX_BODY_BYTES = 16 * 1024
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
+_OWNER_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:@-]{1,80}$")
 
 
 def _now_iso() -> str:
@@ -38,6 +40,7 @@ class CommandCenterConfig:
     port: int = 8765
     queue_path: Path = Path("artifacts/operator/research_requests.jsonl")
     api_token: str | None = None
+    owner_id: str = "owner"
     max_body_bytes: int = _MAX_BODY_BYTES
 
     def __post_init__(self) -> None:
@@ -45,10 +48,13 @@ class CommandCenterConfig:
             raise ValueError("port must be between 1 and 65535")
         if self.max_body_bytes < 256 or self.max_body_bytes > 1024 * 1024:
             raise ValueError("max_body_bytes must be between 256 bytes and 1 MiB")
-        if self.host not in _LOOPBACK_HOSTS:
-            token = self.api_token or ""
-            if len(token) < 32:
-                raise ValueError("non-loopback binding requires an API token of at least 32 characters")
+        token = self.api_token or ""
+        if token and len(token) < 32:
+            raise ValueError("configured API token must contain at least 32 characters")
+        if self.host not in _LOOPBACK_HOSTS and not token:
+            raise ValueError("non-loopback binding requires an API token of at least 32 characters")
+        if _OWNER_ID_PATTERN.fullmatch(self.owner_id) is None:
+            raise ValueError("owner_id must contain 1-80 safe identifier characters")
 
 
 class DurableResearchQueue:
@@ -93,6 +99,7 @@ class DurableResearchQueue:
         self,
         command: AssistantCommand,
         *,
+        owner_id: str,
         idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         if command.intent is not AssistantIntent.RESEARCH_REQUEST:
@@ -108,6 +115,7 @@ class DurableResearchQueue:
             body: dict[str, Any] = {
                 "request_id": f"research:{command.command_id.removeprefix('cmd:')}",
                 "command_id": command.command_id,
+                "authenticated_owner_id": owner_id,
                 "raw_text": command.raw_text,
                 "parameters": command.parameters,
                 "created_at": command.created_at.isoformat(),
@@ -166,6 +174,7 @@ class CommandCenterService:
             "execution_mode": "paper_research_only",
             "live_money_enabled": False,
             "paper_control_exposed": False,
+            "owner_auth_configured": self.config.api_token is not None,
             "market_data_source": "not_attached",
             "risk_source": "not_attached",
             "portfolio_source": "not_attached",
@@ -178,6 +187,7 @@ class CommandCenterService:
         self,
         text: str,
         *,
+        owner_authenticated: bool = False,
         idempotency_key: str | None = None,
     ) -> tuple[int, dict[str, Any]]:
         command = self.router.parse(text)
@@ -201,7 +211,18 @@ class CommandCenterService:
                 "risk_gate_required": True,
             }
         if command.intent is AssistantIntent.RESEARCH_REQUEST:
-            record = self.queue.enqueue(command, idempotency_key=idempotency_key)
+            if self.config.api_token is None or not owner_authenticated:
+                return HTTPStatus.UNAUTHORIZED, {
+                    "accepted": False,
+                    "command_id": command.command_id,
+                    "intent": command.intent.value,
+                    "summary": "authenticated owner token required for research requests",
+                }
+            record = self.queue.enqueue(
+                command,
+                owner_id=self.config.owner_id,
+                idempotency_key=idempotency_key,
+            )
             return HTTPStatus.ACCEPTED, {
                 "accepted": True,
                 "command_id": command.command_id,
@@ -275,6 +296,9 @@ class CommandCenterService:
                 supplied = self.headers.get("Authorization", "")
                 return hmac.compare_digest(supplied, f"Bearer {expected}")
 
+            def _owner_authenticated(self) -> bool:
+                return service.config.api_token is not None and self._authorized()
+
             def do_GET(self) -> None:
                 path = urlparse(self.path).path
                 if path.startswith("/api/") and not self._authorized():
@@ -342,6 +366,7 @@ class CommandCenterService:
                     return
                 status, result = service.handle_command(
                     text,
+                    owner_authenticated=self._owner_authenticated(),
                     idempotency_key=key,
                 )
                 self._json(status, result)
@@ -383,6 +408,13 @@ _INDEX_HTML = """<!doctype html>
 <article><span>Risk source</span><strong id="risk">—</strong><small>Independent risk remains authoritative.</small></article>
 </section>
 <section class="console">
+<div class="owner-auth">
+<label for="owner-token">Owner token</label>
+<input id="owner-token" type="password" minlength="32" autocomplete="current-password" placeholder="Required for research/change requests">
+<button id="save-token" type="button">Use for this session</button>
+<button id="clear-token" type="button">Clear</button>
+<small>Kept only in this browser tab session; never written to AURA storage.</small>
+</div>
 <div class="console-head">
 <div><h2>Talk to AURA</h2><p>Try “system status” or “research XAUUSD regime filters”.</p></div>
 <button id="mic" type="button" aria-label="Start voice input">🎙 Voice</button>
@@ -399,9 +431,9 @@ _INDEX_HTML = """<!doctype html>
 </body>
 </html>"""
 
-_STYLES_CSS = """:root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#e7eef8;background:#050b14;color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#132c47 0,transparent 38%),#050b14}main{width:min(1040px,calc(100% - 32px));margin:auto;padding:32px 0 48px}header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px}.eyebrow{letter-spacing:.18em;text-transform:uppercase;color:#7dd3fc;font-size:.75rem;margin:0 0 6px}h1{font-size:clamp(2rem,7vw,4.4rem);line-height:.96;margin:0}.sub{color:#9fb0c7;max-width:620px}.pill{border:1px solid #2b4664;border-radius:999px;padding:8px 12px;color:#93c5fd}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.grid article,.console{background:#0b1522cc;border:1px solid #1f3248;border-radius:18px;box-shadow:0 16px 40px #0006}.grid article{padding:18px;min-height:142px;display:flex;flex-direction:column;gap:8px}.grid span,.grid small,.console p,footer{color:#91a4bb}.grid strong{font-size:1.2rem;margin-top:auto}.console{margin-top:16px;padding:20px}.console-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.console h2{margin:0}.console p{margin:.35rem 0 0}form{display:flex;gap:10px;margin-top:18px}input,button{font:inherit;border-radius:12px;border:1px solid #2b4664}input{flex:1;min-width:0;background:#07111f;color:#eef6ff;padding:14px}button{cursor:pointer;background:#102c46;color:#eaf6ff;padding:12px 16px}button:hover{background:#173b5c}pre{white-space:pre-wrap;word-break:break-word;background:#050b14;border-radius:12px;padding:14px;min-height:112px;color:#c7dbf2;overflow:auto}footer{text-align:center;margin-top:22px;font-size:.85rem}@media(max-width:760px){main{width:min(100% - 20px,1040px);padding-top:18px}.grid{grid-template-columns:repeat(2,1fr)}header{flex-direction:column}.console-head{align-items:flex-start}form{flex-direction:column}}@media(max-width:420px){.grid{grid-template-columns:1fr}}"""
+_STYLES_CSS = """:root{font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#e7eef8;background:#050b14;color-scheme:dark}*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 20% 0,#132c47 0,transparent 38%),#050b14}main{width:min(1040px,calc(100% - 32px));margin:auto;padding:32px 0 48px}header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px}.eyebrow{letter-spacing:.18em;text-transform:uppercase;color:#7dd3fc;font-size:.75rem;margin:0 0 6px}h1{font-size:clamp(2rem,7vw,4.4rem);line-height:.96;margin:0}.sub{color:#9fb0c7;max-width:620px}.pill{border:1px solid #2b4664;border-radius:999px;padding:8px 12px;color:#93c5fd}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.grid article,.console{background:#0b1522cc;border:1px solid #1f3248;border-radius:18px;box-shadow:0 16px 40px #0006}.grid article{padding:18px;min-height:142px;display:flex;flex-direction:column;gap:8px}.grid span,.grid small,.console p,footer,.owner-auth small{color:#91a4bb}.grid strong{font-size:1.2rem;margin-top:auto}.console{margin-top:16px;padding:20px}.owner-auth{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid #1f3248}.owner-auth small{grid-column:2/-1}.console-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.console h2{margin:0}.console p{margin:.35rem 0 0}form{display:flex;gap:10px;margin-top:18px}input,button{font:inherit;border-radius:12px;border:1px solid #2b4664}input{flex:1;min-width:0;background:#07111f;color:#eef6ff;padding:14px}button{cursor:pointer;background:#102c46;color:#eaf6ff;padding:12px 16px}button:hover{background:#173b5c}pre{white-space:pre-wrap;word-break:break-word;background:#050b14;border-radius:12px;padding:14px;min-height:112px;color:#c7dbf2;overflow:auto}footer{text-align:center;margin-top:22px;font-size:.85rem}@media(max-width:760px){main{width:min(100% - 20px,1040px);padding-top:18px}.grid{grid-template-columns:repeat(2,1fr)}header{flex-direction:column}.console-head{align-items:flex-start}.owner-auth{grid-template-columns:1fr}.owner-auth small{grid-column:1}form{flex-direction:column}}@media(max-width:420px){.grid{grid-template-columns:1fr}}"""
 
-_APP_JS = """const $=s=>document.querySelector(s);async function refresh(){try{const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)throw new Error('status '+r.status);const s=await r.json();$('#health').textContent='online';$('#mode').textContent=s.execution_mode;$('#queue').textContent=String(s.queued_research_requests);$('#market').textContent=s.market_data_source;$('#risk').textContent=s.risk_source}catch(e){$('#health').textContent='offline';$('#result').textContent='Status error: '+e.message}}async function send(text){$('#result').textContent='Working…';const key=crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random();try{const r=await fetch('/api/command',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key},body:JSON.stringify({text})});const p=await r.json();$('#result').textContent=JSON.stringify(p,null,2);await refresh()}catch(e){$('#result').textContent='Command error: '+e.message}}$('#command-form').addEventListener('submit',e=>{e.preventDefault();const input=$('#command');const text=input.value.trim();if(text)send(text)});const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;const mic=$('#mic');if(SpeechRecognition){mic.addEventListener('click',()=>{const r=new SpeechRecognition();r.lang=navigator.language||'en-IN';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{$('#command').value=e.results[0][0].transcript};r.onerror=e=>{$('#result').textContent='Voice input unavailable: '+e.error};r.start()})}else{mic.disabled=true;mic.textContent='Voice unavailable'}if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}refresh();setInterval(refresh,30000);"""
+_APP_JS = """const $=s=>document.querySelector(s);const token=()=>sessionStorage.getItem('auraOwnerToken')||'';const authHeaders=()=>token()?{'Authorization':'Bearer '+token()}:{};async function refresh(){try{const r=await fetch('/api/status',{cache:'no-store',headers:authHeaders()});if(!r.ok)throw new Error('status '+r.status);const s=await r.json();$('#health').textContent='online';$('#mode').textContent=s.execution_mode;$('#queue').textContent=String(s.queued_research_requests);$('#market').textContent=s.market_data_source;$('#risk').textContent=s.risk_source}catch(e){$('#health').textContent='locked/offline';$('#result').textContent='Status error: '+e.message}}async function send(text){$('#result').textContent='Working…';const key=crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random();try{const r=await fetch('/api/command',{method:'POST',headers:{'Content-Type':'application/json','Idempotency-Key':key,...authHeaders()},body:JSON.stringify({text})});const p=await r.json();$('#result').textContent=JSON.stringify(p,null,2);await refresh()}catch(e){$('#result').textContent='Command error: '+e.message}}$('#save-token').addEventListener('click',()=>{const value=$('#owner-token').value;if(value.length<32){$('#result').textContent='Owner token must contain at least 32 characters.';return}sessionStorage.setItem('auraOwnerToken',value);$('#owner-token').value='';$('#result').textContent='Owner token active for this browser tab session.';refresh()});$('#clear-token').addEventListener('click',()=>{sessionStorage.removeItem('auraOwnerToken');$('#owner-token').value='';$('#result').textContent='Owner token cleared.';refresh()});$('#command-form').addEventListener('submit',e=>{e.preventDefault();const input=$('#command');const text=input.value.trim();if(text)send(text)});const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;const mic=$('#mic');if(SpeechRecognition){mic.addEventListener('click',()=>{const r=new SpeechRecognition();r.lang=navigator.language||'en-IN';r.interimResults=false;r.maxAlternatives=1;r.onresult=e=>{$('#command').value=e.results[0][0].transcript};r.onerror=e=>{$('#result').textContent='Voice input unavailable: '+e.error};r.start()})}else{mic.disabled=true;mic.textContent='Voice unavailable'}if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}refresh();setInterval(refresh,30000);"""
 
 _MANIFEST = json.dumps(
     {
