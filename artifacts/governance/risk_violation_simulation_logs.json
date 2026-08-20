@@ -1,0 +1,92 @@
+{
+  "ai_override_authority": false,
+  "all_new_risk_violations_vetoed": true,
+  "cases": [
+    {
+      "approved": true,
+      "approved_quantity": "300.0",
+      "case": "stop_risk_sizes_quantity",
+      "expected": "SIZE",
+      "reason": "approved with risk sizing reduction",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "missing_protective_stop",
+      "expected": "VETO",
+      "reason": "protective stop required for per-trade risk sizing",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "drawdown_limit",
+      "expected": "VETO",
+      "reason": "maximum drawdown reached; only risk reduction approved",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "daily_loss_limit",
+      "expected": "VETO",
+      "reason": "maximum daily loss reached; only risk reduction approved",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "gross_exposure_limit",
+      "expected": "VETO",
+      "reason": "risk capacity exhausted",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "symbol_exposure_limit",
+      "expected": "VETO",
+      "reason": "risk capacity exhausted",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "kill_switch_veto",
+      "expected": "VETO",
+      "reason": "kill switch engaged: phase-3 validation",
+      "requested_quantity": "1000"
+    },
+    {
+      "approved": true,
+      "approved_quantity": "5",
+      "case": "kill_switch_allows_flattening",
+      "expected": "ALLOW_REDUCTION",
+      "reason": "approved risk-reducing order",
+      "requested_quantity": "5"
+    },
+    {
+      "approved": false,
+      "approved_quantity": "0",
+      "case": "stress_overlay_veto",
+      "expected": "VETO",
+      "reason": "risk overlay blocked new exposure: stress loss 9.0000% exceeds 6.0000%",
+      "requested_quantity": "1000"
+    }
+  ],
+  "decision": "PASS",
+  "deterministic_replay_matches": true,
+  "live_money_enabled": false,
+  "phase": 3,
+  "policy": {
+    "max_daily_loss_pct": "3",
+    "max_drawdown_pct": "6",
+    "max_gross_exposure_pct": "100",
+    "max_risk_per_trade_pct": "1.5",
+    "max_symbol_exposure_pct": "30"
+  },
+  "risk_reduction_preserved_under_kill_switch": true,
+  "schema_version": 1,
+  "strategy_promotion_authority": false
+}

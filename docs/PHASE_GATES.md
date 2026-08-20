@@ -25,7 +25,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 0 | PASS | Repository baseline is fully inventoried by generated evidence. |
 | 1 | PASS | Six mandatory core entities have strict schemas and canonical, versioned serialization evidence. |
 | 2 | PASS | Order lifecycle, restart recovery, and fail-closed reconciliation have deterministic evidence. |
-| 3–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 3 | PASS | Risk veto, stop-distance sizing, exposure controls, stress overlays, and kill-switch behavior have deterministic evidence. |
+| 4–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -82,6 +83,23 @@ Phase 0 and Phase 1 evidence:
 ```bash
 python -m aura.ops.state_engine_gate --write
 python -m aura.ops.state_engine_gate --check
+```
+
+## Phase 3 evidence
+
+- `artifacts/governance/risk_stress_test_report.json`
+- `artifacts/governance/risk_violation_simulation_logs.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The hard risk gate validates deterministic stop-distance sizing, daily-loss and
+drawdown vetoes, gross/symbol exposure caps, statistical stress vetoes, and the
+global kill switch. It explicitly proves that risk-reducing orders remain possible
+while new risk is frozen. Fixtures are internal deterministic simulations, not
+market or broker claims, and grant no live-money authority.
+
+```bash
+python -m aura.ops.risk_engine_gate --write
+python -m aura.ops.risk_engine_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

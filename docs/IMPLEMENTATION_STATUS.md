@@ -4,7 +4,7 @@ This document is the current source of truth for what is implemented in code ver
 
 > **Mandatory governance status:** Code presence is no longer a phase-completion
 > claim. The machine-readable authority is
-> `artifacts/governance/phase_gate_status.json`. Phases 0–2 are PASS; Phases 3–15
+> `artifacts/governance/phase_gate_status.json`. Phases 0–3 are PASS; Phases 4–15
 > remain BLOCKED until their named validation evidence is produced and accepted.
 > Existing later-phase code is preserved as implementation inventory, not
 > retroactive gate certification.

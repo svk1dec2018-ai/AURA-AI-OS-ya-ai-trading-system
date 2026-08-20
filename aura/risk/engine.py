@@ -11,11 +11,27 @@ from aura.risk.quantity import QuantityRule
 @dataclass(slots=True, frozen=True)
 class RiskLimits:
     max_order_notional_pct: Decimal = Decimal(2)
+    max_risk_per_trade_pct: Decimal | None = None
     max_gross_exposure_pct: Decimal = Decimal(100)
     max_symbol_exposure_pct: Decimal = Decimal(100)
     max_drawdown_pct: Decimal = Decimal(10)
     max_daily_loss_pct: Decimal = Decimal(4)
     allow_short: bool = True
+
+    def __post_init__(self) -> None:
+        percentages = {
+            "max_order_notional_pct": self.max_order_notional_pct,
+            "max_gross_exposure_pct": self.max_gross_exposure_pct,
+            "max_symbol_exposure_pct": self.max_symbol_exposure_pct,
+            "max_drawdown_pct": self.max_drawdown_pct,
+            "max_daily_loss_pct": self.max_daily_loss_pct,
+        }
+        if any(value < 0 for value in percentages.values()):
+            raise ValueError("risk limit percentages cannot be negative")
+        if self.max_risk_per_trade_pct is not None and not (
+            Decimal(0) < self.max_risk_per_trade_pct <= Decimal(100)
+        ):
+            raise ValueError("max_risk_per_trade_pct must be in (0, 100]")
 
 
 class RiskEngine:
@@ -95,6 +111,7 @@ class RiskEngine:
         portfolio: PortfolioSnapshot,
         day_start_equity: Decimal,
         current_position_quantity: Decimal = Decimal(0),
+        protective_stop_price: Decimal | None = None,
     ) -> RiskDecision:
         requested = order.quantity
         if reference_price <= 0:
@@ -180,6 +197,33 @@ class RiskEngine:
         max_order_notional = portfolio.equity * self.limits.max_order_notional_pct / Decimal(100)
         approved_opening = min(opening_requested, max_order_notional / unit_notional)
 
+        if self.limits.max_risk_per_trade_pct is not None:
+            if protective_stop_price is None or protective_stop_price <= 0:
+                return self._decision(
+                    requested=requested,
+                    approved=closing_qty,
+                    reason="protective stop required for per-trade risk sizing",
+                )
+            stop_is_adverse = (
+                order.side == Side.BUY and protective_stop_price < reference_price
+            ) or (order.side == Side.SELL and protective_stop_price > reference_price)
+            if not stop_is_adverse:
+                return self._decision(
+                    requested=requested,
+                    approved=closing_qty,
+                    reason="protective stop must be adverse to the opening direction",
+                )
+            loss_per_unit = (
+                abs(reference_price - protective_stop_price)
+                * self.notional_multiplier(order.symbol)
+            )
+            risk_budget = (
+                portfolio.equity
+                * self.limits.max_risk_per_trade_pct
+                / Decimal(100)
+            )
+            approved_opening = min(approved_opening, risk_budget / loss_per_unit)
+
         gross_after_close = max(
             Decimal(0),
             portfolio.gross_exposure - closing_qty * unit_notional,
@@ -200,6 +244,12 @@ class RiskEngine:
         approved_opening = min(approved_opening, symbol_capacity / unit_notional)
 
         economically_approved = closing_qty + max(Decimal(0), approved_opening)
+        if economically_approved <= 0:
+            return self._decision(
+                requested=requested,
+                approved=Decimal(0),
+                reason="risk capacity exhausted",
+            )
         approved_qty = self._normalize_opening_quantity(
             order.symbol,
             closing_qty=closing_qty,

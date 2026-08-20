@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 351
-- Python modules: 294
-- Source modules: 154
-- Test modules: 119
-- Static test functions: 461
-- Entrypoints: 25
+- Repository files: 353
+- Python modules: 296
+- Source modules: 155
+- Test modules: 120
+- Static test functions: 466
+- Entrypoints: 26
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 158 |
+| `aura` | 159 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 119 |
+| `tests` | 120 |
 
 ## Entrypoints
 
@@ -57,6 +57,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
+| `aura/ops/risk_engine_gate.py` | python-main |
 | `aura/ops/state_engine_gate.py` | python-main |
 | `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
@@ -189,10 +190,11 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 3 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 4 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
+| `aura/ops/risk_engine_gate.py` | source | ops | 3 | 8 | 1 |
 | `aura/ops/state_engine_gate.py` | source | ops | 2 | 9 | 1 |
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
@@ -358,6 +360,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_research_manifest.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_resilience.py` | test | validation | 4 | 1 | 0 |
 | `tests/test_risk.py` | test | validation | 1 | 2 | 0 |
+| `tests/test_risk_engine_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_risk_overlays.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_risk_statistics.py` | test | validation | 3 | 1 | 0 |
 | `tests/test_robustness.py` | test | validation | 7 | 1 | 0 |

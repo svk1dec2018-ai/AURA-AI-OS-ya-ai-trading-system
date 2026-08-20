@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "4b54b4a5d53a8fbd6a5bb203e355d1f12828265d91c87f53fd1cad95ec9eee1c",
+  "ledger_sha256": "e3479a825f0d8190165ec06fd4debce2c109e6da5227adda169cd461ad013e61",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "86f780403f8346a3bfc7680111d201cc260ec24aa2d12d251b44381412ce1981"
+          "sha256": "63b349e97e8b2df443b1c15c3f794f4ac10d8b96e3d71860b144af6f7e587cf0"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "3e845212dc25f720bb808eff90806464180c04e5e516e97fcceda7e41b65215f"
+          "sha256": "074c8ab8d79068a94f3c745c639a6c8cce5192a548cd7dfaebaeca7b2d79f196"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "7661939f8488df31b72611528e231f2ef658e5b865d436ffb13e9e25a044ce2d"
+          "sha256": "c9277d831aad08cf2d2d2437fdb211e8a58d092afbd22aa5b2471438dffa1a5e"
         }
       ],
       "phase": 0,
@@ -59,12 +59,21 @@
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Risk stress test report",
+          "path": "artifacts/governance/risk_stress_test_report.json",
+          "sha256": "db0bbcca5b27214f2071b9e0a19699c73478dea3884bf0f3737dc391548d5456"
+        },
+        {
+          "output": "Violation simulation logs",
+          "path": "artifacts/governance/risk_violation_simulation_logs.json",
+          "sha256": "9293d9b5ed372c3e311dadfe50727c53104821c5efc6bf8501489a6981f7563a"
+        }
+      ],
       "phase": 3,
-      "reasons": [
-        "Phase 3 validation evidence has not been produced or accepted; Phase 2 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",

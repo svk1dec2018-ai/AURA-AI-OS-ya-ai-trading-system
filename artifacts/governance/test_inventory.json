@@ -1894,7 +1894,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d",
+      "sha256": "1087fdcc7500b88f775c57d1540a035586e6d9a1b3b39806bc33499d1f591c6b",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -1902,7 +1902,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_state_engine_only",
+        "test_committed_ledger_passes_through_risk_engine_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2199,20 +2199,42 @@
         1,
         3
       ],
-      "sha256": "558d6f4c24bbcaf03ee77cb2d99d2d7bd99cc6a666f25f34fb674a49fe7f80f3",
+      "sha256": "d87561ba8230b4a9cbdf5bdcc7cf1bc86186738b790b5ba55e5a6887339bc75e",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/risk/engine.py"
       ],
-      "static_test_functions": 6,
+      "static_test_functions": 9,
       "test_classes": [],
       "test_functions": [
         "test_drawdown_gate_allows_flattening",
         "test_drawdown_gate_blocks_new_risk",
+        "test_invalid_risk_limit_configuration_is_rejected",
         "test_kill_switch_blocks_new_risk",
         "test_kill_switch_still_allows_position_reduction",
         "test_order_is_resized_to_notional_limit",
-        "test_short_disabled_allows_close_but_blocks_flip_short"
+        "test_per_trade_risk_policy_fails_closed_without_valid_stop",
+        "test_short_disabled_allows_close_but_blocks_flip_short",
+        "test_stop_distance_caps_opening_quantity_by_risk_budget"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_risk_engine_gate.py",
+      "phase_coverage": [
+        0,
+        3
+      ],
+      "sha256": "82d366dca96d8141094d4925a1d3a85449d4ae1f03e318e832648faf98ef7af5",
+      "source_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/risk_engine_gate.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_three_evidence_is_current",
+        "test_phase_three_evidence_vetoes_all_new_risk_violations"
       ]
     },
     {
@@ -2647,7 +2669,7 @@
   "summary": {
     "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 461,
-    "test_modules": 119
+    "static_test_functions": 466,
+    "test_modules": 120
   }
 }
