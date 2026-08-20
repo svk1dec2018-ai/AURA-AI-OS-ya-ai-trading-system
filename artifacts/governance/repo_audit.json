@@ -954,6 +954,38 @@
         "to": "aura/ops/phase_gates.py"
       },
       {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/risk/overlays.py"
+      },
+      {
+        "from": "aura/ops/risk_engine_gate.py",
+        "to": "aura/risk/statistics.py"
+      },
+      {
         "from": "aura/ops/state_engine_gate.py",
         "to": "aura/domain/models.py"
       },
@@ -3242,6 +3274,14 @@
         "to": "aura/risk/engine.py"
       },
       {
+        "from": "tests/test_risk_engine_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "tests/test_risk_engine_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
         "from": "tests/test_risk_overlays.py",
         "to": "aura/domain/models.py"
       },
@@ -3531,6 +3571,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/risk_engine_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/state_engine_gate.py"
     },
     {
@@ -3641,9 +3685,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 4595,
+      "bytes": 4701,
       "path": ".github/workflows/ci.yml",
-      "sha256": "6f30d3ecffed03072b582b8107442b3634a537972895a160c7247f5c46a4554f"
+      "sha256": "7e675ff486c4e60cdecfe627036e85dc304ae8acd357dac74ce8f4ebf7bc205e"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4337,9 +4381,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30690,
+      "bytes": 30729,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "6d273d5545658022f7661e323a08138a4436f7962ca85db2f768942eb4f596b3"
+      "sha256": "42779c5402097434d36d14c01cc86c0f110af4a11331ff201eb60117bae0e36c"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 11091,
+      "path": "aura/ops/risk_engine_gate.py",
+      "sha256": "e5b47e598b81e6a7a36cbbf0a46e3ab872b263060c4c2cfeaa6f8d4b7ff393b4"
     },
     {
       "asset_class": "python_module",
@@ -4487,9 +4537,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 8110,
+      "bytes": 10391,
       "path": "aura/risk/engine.py",
-      "sha256": "0752c59fb960cb97ad31075740d73ba2d7d42778fd37e0540b96ff1b8f8208e7"
+      "sha256": "996aa820996a4cb665c7cabc3a1758e71d1af8a179bb3730e8034c906adc091a"
     },
     {
       "asset_class": "python_module",
@@ -4753,7 +4803,7 @@
       "asset_class": "documentation",
       "bytes": 10117,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "2b79abfed9421d746b73a19b363b0cece7aa0e21e87d5c97b5ac0ba9d7668e62"
+      "sha256": "2af7b1694fc82aefb540d514a219e498cba4a30722d97d5c722a336fc39e5c5f"
     },
     {
       "asset_class": "documentation",
@@ -4787,9 +4837,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 4000,
+      "bytes": 4807,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "dbd090122c8916a80ffc20e7f6fc99a11f37ad6b5b3c99a24d0f198c87831078"
+      "sha256": "57ef27b34fea90e889d54a312aeea730a12af510f1704569d8a72f218076ae5b"
     },
     {
       "asset_class": "documentation",
@@ -5519,9 +5569,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3102,
+      "bytes": 3149,
       "path": "tests/test_phase_gates.py",
-      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d"
+      "sha256": "1087fdcc7500b88f775c57d1540a035586e6d9a1b3b39806bc33499d1f591c6b"
     },
     {
       "asset_class": "python_module",
@@ -5603,9 +5653,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3214,
+      "bytes": 4922,
       "path": "tests/test_risk.py",
-      "sha256": "558d6f4c24bbcaf03ee77cb2d99d2d7bd99cc6a666f25f34fb674a49fe7f80f3"
+      "sha256": "d87561ba8230b4a9cbdf5bdcc7cf1bc86186738b790b5ba55e5a6887339bc75e"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 1058,
+      "path": "tests/test_risk_engine_gate.py",
+      "sha256": "82d366dca96d8141094d4925a1d3a85449d4ae1f03e318e832648faf98ef7af5"
     },
     {
       "asset_class": "python_module",
@@ -9029,6 +9085,7 @@
       "direct_test_files": [
         "tests/test_phase_gates.py",
         "tests/test_production_ops.py",
+        "tests/test_risk_engine_gate.py",
         "tests/test_state_engine_gate.py"
       ],
       "internal_dependencies": [],
@@ -9122,7 +9179,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 812,
+      "lines": 813,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -9131,7 +9188,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "6d273d5545658022f7661e323a08138a4436f7962ca85db2f768942eb4f596b3",
+      "sha256": "42779c5402097434d36d14c01cc86c0f110af4a11331ff201eb60117bae0e36c",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -9146,6 +9203,43 @@
         "sys",
         "tokenize",
         "tomllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
+        "tests/test_risk_engine_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/risk/engine.py",
+        "aura/risk/overlays.py",
+        "aura/risk/statistics.py"
+      ],
+      "lines": 330,
+      "module": "aura.ops.risk_engine_gate",
+      "parsed": true,
+      "path": "aura/ops/risk_engine_gate.py",
+      "phase_coverage": [
+        3
+      ],
+      "primary_phase": 3,
+      "role": "source",
+      "sha256": "e5b47e598b81e6a7a36cbbf0a46e3ab872b263060c4c2cfeaa6f8d4b7ff393b4",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
       ],
       "third_party_dependencies": []
     },
@@ -9921,7 +10015,7 @@
         "aura/risk/overlays.py",
         "aura/risk/quantity.py"
       ],
-      "lines": 220,
+      "lines": 270,
       "module": "aura.risk.engine",
       "parsed": true,
       "path": "aura/risk/engine.py",
@@ -9930,7 +10024,7 @@
       ],
       "primary_phase": 3,
       "role": "source",
-      "sha256": "0752c59fb960cb97ad31075740d73ba2d7d42778fd37e0540b96ff1b8f8208e7",
+      "sha256": "996aa820996a4cb665c7cabc3a1758e71d1af8a179bb3730e8034c906adc091a",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -13442,7 +13536,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 92,
+      "lines": 93,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -13451,7 +13545,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "fedfe9441d6071448a8cd61d8e2b083db6d80e9982208050643404e631b26b4d",
+      "sha256": "1087fdcc7500b88f775c57d1540a035586e6d9a1b3b39806bc33499d1f591c6b",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -13790,7 +13884,7 @@
         "aura/domain/models.py",
         "aura/risk/engine.py"
       ],
-      "lines": 92,
+      "lines": 143,
       "module": "tests.test_risk",
       "parsed": true,
       "path": "tests/test_risk.py",
@@ -13800,9 +13894,34 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "558d6f4c24bbcaf03ee77cb2d99d2d7bd99cc6a666f25f34fb674a49fe7f80f3",
+      "sha256": "d87561ba8230b4a9cbdf5bdcc7cf1bc86186738b790b5ba55e5a6887339bc75e",
       "standard_library_dependencies": [
         "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/risk_engine_gate.py"
+      ],
+      "lines": 25,
+      "module": "tests.test_risk_engine_gate",
+      "parsed": true,
+      "path": "tests/test_risk_engine_gate.py",
+      "phase_coverage": [
+        0,
+        3
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "82d366dca96d8141094d4925a1d3a85449d4ae1f03e318e832648faf98ef7af5",
+      "standard_library_dependencies": [
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -14313,7 +14432,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "53eb0b56b8c354a362697065c13407e69b73e9c67a86336f00afd363d23949b5",
+  "repository_tree_sha256": "4f3ec520f64d33b59c0eca8e4736b6b3a2e2e505dd9bfd19e64ffb56396af349",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -14802,15 +14921,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 140,
-    "entrypoints": 25,
+    "directly_tested_source_modules": 141,
+    "entrypoints": 26,
     "parse_errors": 0,
-    "python_modules": 294,
-    "repository_files": 351,
-    "source_modules": 154,
-    "static_test_functions": 461,
+    "python_modules": 296,
+    "repository_files": 353,
+    "source_modules": 155,
+    "static_test_functions": 466,
     "stub_candidates": 79,
-    "test_modules": 119,
+    "test_modules": 120,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

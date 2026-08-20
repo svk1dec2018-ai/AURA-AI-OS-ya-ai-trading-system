@@ -81,12 +81,13 @@ def test_phase_gate_evidence_hash_is_tamper_evident(tmp_path) -> None:
     assert phase_is_pass(path, tmp_path, 15) is False
 
 
-def test_committed_ledger_passes_through_state_engine_only() -> None:
+def test_committed_ledger_passes_through_risk_engine_only() -> None:
     root = Path(__file__).resolve().parents[1]
     path = root / "artifacts" / "governance" / "phase_gate_status.json"
     assert validate_phase_gate_ledger(path, root) == ()
     assert phase_is_pass(path, root, 0) is True
     assert phase_is_pass(path, root, 1) is True
     assert phase_is_pass(path, root, 2) is True
-    assert phase_is_pass(path, root, 3) is False
+    assert phase_is_pass(path, root, 3) is True
+    assert phase_is_pass(path, root, 4) is False
     assert phase_is_pass(path, root, 15) is False
