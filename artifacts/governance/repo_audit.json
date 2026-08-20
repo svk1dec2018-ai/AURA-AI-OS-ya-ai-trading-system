@@ -4379,9 +4379,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 14842,
+      "bytes": 14764,
       "path": "aura/strategy/features.py",
-      "sha256": "f8b6adad2282a5d41644b57df837041b87e48a79505456c8caf49a29d736a78d"
+      "sha256": "066d511e1f33b0a26ac1e90f7181241ebe16d1ac67340e18dc0adb81297f4e9c"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -10211,7 +10211,7 @@
       "internal_dependencies": [
         "aura/domain/models.py"
       ],
-      "lines": 428,
+      "lines": 426,
       "module": "aura.strategy.features",
       "parsed": true,
       "path": "aura/strategy/features.py",
@@ -10220,7 +10220,7 @@
       ],
       "primary_phase": 7,
       "role": "source",
-      "sha256": "f8b6adad2282a5d41644b57df837041b87e48a79505456c8caf49a29d736a78d",
+      "sha256": "066d511e1f33b0a26ac1e90f7181241ebe16d1ac67340e18dc0adb81297f4e9c",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -13706,7 +13706,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "a661728b15f0ac68ea4d7fbe13eaa63da5de200ad62747593ac7bdc89979a281",
+  "repository_tree_sha256": "ea1960d68c82105856617a5e0a42928eb5d65cdfbbf290ebef723b38ac816e49",
   "schema_version": 1,
   "scope": {
     "excluded": [
