@@ -1,0 +1,28 @@
+{
+  "accepted_fixture": {
+    "canonical_symbol": "AURA-PHASE5-FIXTURE",
+    "canonical_timeframe": "1m",
+    "canonical_venue": "INTERNAL_FIXTURE",
+    "input_records": 3,
+    "latest_data_lag_ms": 30000,
+    "validated_records": 3
+  },
+  "corrupt_batches_blocked": 5,
+  "corrupt_batches_tested": 5,
+  "decision": "PASS",
+  "decision_boundaries_require_quality_gate": {
+    "multi_agent_decision_service": true,
+    "multi_market_intelligence_scanner": true
+  },
+  "deliverables": {
+    "data_ingestion": "aura.data.pipeline.CandleDataPipeline",
+    "normalization_engine": "aura.data.normalization.normalize_candle",
+    "quality_validation_layer": "aura.data.quality.CandleQualityGate"
+  },
+  "deterministic_fingerprint": "9ba935f5d7664871c31af87a21e94ec73e79991025f64d1f89b2e3510ce8abfc",
+  "external_market_data_claimed": false,
+  "live_money_enabled": false,
+  "partial_batch_release_allowed": false,
+  "phase": 5,
+  "schema_version": 1
+}

@@ -53,6 +53,7 @@ class DataQualityPolicy:
 class DataQualityReport:
     issues: tuple[DataQualityIssue, ...]
     bars_checked: int
+    latest_data_lag_ms: int | None
 
     @property
     def safe_for_decision(self) -> bool:
@@ -83,7 +84,11 @@ class CandleQualityGate:
                     detail="no candles are available for the decision",
                 )
             )
-            return DataQualityReport(issues=tuple(issues), bars_checked=0)
+            return DataQualityReport(
+                issues=tuple(issues),
+                bars_checked=0,
+                latest_data_lag_ms=None,
+            )
 
         if len({candle.symbol for candle in candles}) != 1:
             issues.append(
@@ -177,4 +182,12 @@ class CandleQualityGate:
                 )
             )
 
-        return DataQualityReport(issues=tuple(issues), bars_checked=len(candles))
+        latest_data_lag_ms = max(
+            0,
+            int((decision_time - last.close_time).total_seconds() * 1000),
+        )
+        return DataQualityReport(
+            issues=tuple(issues),
+            bars_checked=len(candles),
+            latest_data_lag_ms=latest_data_lag_ms,
+        )

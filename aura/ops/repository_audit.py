@@ -60,6 +60,7 @@ _FILE_PHASE_OVERRIDES = {
     "aura/ops/state_engine_gate.py": 2,
     "aura/ops/risk_engine_gate.py": 3,
     "aura/ops/broker_conformance_gate.py": 4,
+    "aura/ops/market_data_gate.py": 5,
     "aura/ops/health.py": 15,
     "aura/ops/preflight.py": 15,
     "aura/ops/release_gate.py": 15,

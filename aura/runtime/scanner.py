@@ -52,7 +52,7 @@ class MultiMarketIntelligenceScanner:
         *,
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
-        data_quality_gate: CandleQualityGate | None = None,
+        data_quality_gate: CandleQualityGate,
         agent_risk_policy: AgentRiskPolicy | None = None,
         deliberation_engine: AdversarialDeliberationEngine | None = None,
         max_concurrent_contexts: int = 20,
@@ -91,49 +91,47 @@ class MultiMarketIntelligenceScanner:
         return MarketScanResult(candidates=tuple(candidates))
 
     async def _scan_context(self, context: AgentContext) -> ScanCandidate:
-        quality_report: DataQualityReport | None = None
-        if self.data_quality_gate is not None:
-            quality_report = self.data_quality_gate.assess(
-                context.candles,
-                decision_time=context.created_at,
+        quality_report = self.data_quality_gate.assess(
+            context.candles,
+            decision_time=context.created_at,
+        )
+        if not quality_report.safe_for_decision:
+            empty_round = AgentRound(
+                correlation_id=context.correlation_id,
+                evidence=(),
+                failures=(),
+                started_at=context.created_at,
+                completed_at=context.created_at,
             )
-            if not quality_report.safe_for_decision:
-                empty_round = AgentRound(
-                    correlation_id=context.correlation_id,
-                    evidence=(),
-                    failures=(),
-                    started_at=context.created_at,
-                    completed_at=context.created_at,
-                )
-                issue_names = ", ".join(issue.issue_type.value for issue in quality_report.issues)
-                blocked_memo = CEODecisionMemo(
-                    correlation_id=context.correlation_id,
-                    intent=SignalIntent.FLAT,
-                    confidence=0.0,
-                    supporting_agents=(),
-                    opposing_agents=(),
-                    abstaining_agents=(),
-                    risk_flags=("market_data_quality_block",),
-                    rationale=f"market data quality gate blocked scan: {issue_names}",
-                    quorum_met=False,
-                    generated_at=context.created_at,
-                )
-                policy_decision = (
-                    self.agent_risk_policy.evaluate(
-                        round_result=empty_round,
-                        memo=blocked_memo,
-                    )
-                    if self.agent_risk_policy is not None
-                    else None
-                )
-                return ScanCandidate(
-                    context=context,
-                    round=empty_round,
+            issue_names = ", ".join(issue.issue_type.value for issue in quality_report.issues)
+            blocked_memo = CEODecisionMemo(
+                correlation_id=context.correlation_id,
+                intent=SignalIntent.FLAT,
+                confidence=0.0,
+                supporting_agents=(),
+                opposing_agents=(),
+                abstaining_agents=(),
+                risk_flags=("market_data_quality_block",),
+                rationale=f"market data quality gate blocked scan: {issue_names}",
+                quorum_met=False,
+                generated_at=context.created_at,
+            )
+            policy_decision = (
+                self.agent_risk_policy.evaluate(
+                    round_result=empty_round,
                     memo=blocked_memo,
-                    data_quality=quality_report,
-                    agent_policy=policy_decision,
-                    deliberation=None,
                 )
+                if self.agent_risk_policy is not None
+                else None
+            )
+            return ScanCandidate(
+                context=context,
+                round=empty_round,
+                memo=blocked_memo,
+                data_quality=quality_report,
+                agent_policy=policy_decision,
+                deliberation=None,
+            )
 
         round_result = await self.orchestrator.run_round(context)
         deliberation = self.deliberation_engine.deliberate(round_result)

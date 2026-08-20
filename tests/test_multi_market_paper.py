@@ -17,6 +17,7 @@ from aura.agents.models import (
 )
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.core.pipeline import DecisionPipeline
+from aura.data.quality import CandleQualityGate, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.execution.paper import PaperBroker
 from aura.persistence.recovery import FinancialEventJournal
@@ -88,6 +89,12 @@ async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: P
     scanner = MultiMarketIntelligenceScanner(
         orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
         ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=1),
+                max_staleness=timedelta(days=36500),
+            )
+        ),
         max_concurrent_contexts=2,
     )
     allocator = PortfolioRiskCoordinator(

@@ -4,7 +4,7 @@ This document is the current source of truth for what is implemented in code ver
 
 > **Mandatory governance status:** Code presence is no longer a phase-completion
 > claim. The machine-readable authority is
-> `artifacts/governance/phase_gate_status.json`. Phases 0–4 are PASS; Phases 5–15
+> `artifacts/governance/phase_gate_status.json`. Phases 0–5 are PASS; Phases 6–15
 > remain BLOCKED until their named validation evidence is produced and accepted.
 > Existing later-phase code is preserved as implementation inventory, not
 > retroactive gate certification.
@@ -45,6 +45,10 @@ No backtest, LLM opinion, public-data shadow result, paper champion or code-only
 
 ### Market-data safety and multi-market feeds
 
+- fail-closed provider-neutral candle ingestion boundary: malformed or partial
+  batches expose no candles to decision consumers
+- mandatory quality gates at multi-agent decision and multi-market scanner boundaries
+- machine-readable latest-candle lag measurement in every non-empty quality report
 - duplicate/out-of-order/gap/stale/future-data gates
 - session-aware candle aggregation including second-level research bars
 - cross-feed price sanity/outlier guard

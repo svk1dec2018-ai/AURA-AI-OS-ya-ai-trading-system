@@ -72,6 +72,15 @@ _FIXED_TIMEFRAMES = {
 }
 
 
+def fixed_timeframe_duration(timeframe: str) -> timedelta:
+    """Return the canonical duration for a supported fixed candle timeframe."""
+
+    try:
+        return _FIXED_TIMEFRAMES[timeframe]
+    except KeyError as exc:
+        raise ValueError(f"unsupported fixed timeframe: {timeframe}") from exc
+
+
 class SessionCandleAggregator:
     """Causal trade-tick aggregator anchored to each venue's trading session.
 
@@ -137,7 +146,7 @@ class SessionCandleAggregator:
         return tuple(completed)
 
     def _bucket(self, timestamp: datetime, timeframe: str) -> tuple[datetime, datetime]:
-        duration = _FIXED_TIMEFRAMES[timeframe]
+        duration = fixed_timeframe_duration(timeframe)
         local = timestamp.astimezone(self.session.tz)
         anchor = datetime.combine(local.date(), self.session.session_start, tzinfo=self.session.tz)
         if local < anchor:

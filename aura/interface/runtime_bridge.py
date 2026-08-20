@@ -256,6 +256,7 @@ def _data_payload(scan: MarketScanResult) -> dict[str, Any]:
                 else {
                     "safe_for_decision": quality.safe_for_decision,
                     "bars_checked": quality.bars_checked,
+                    "latest_data_lag_ms": quality.latest_data_lag_ms,
                     "issues": [
                         {
                             "type": issue.issue_type.value,

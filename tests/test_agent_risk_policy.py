@@ -17,6 +17,7 @@ from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.service import MultiAgentDecisionService
 from aura.core.pipeline import DecisionPipeline
+from aura.data.quality import CandleQualityGate, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, PortfolioSnapshot, SignalIntent
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.strategy.ema import EmaCrossStrategy
@@ -130,6 +131,12 @@ def _service(agents: list[SpecialistAgent]) -> MultiAgentDecisionService:
         orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
         ceo=CEOAggregator(min_agents=5, min_distinct_roles=5),
         decision_pipeline=DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=5),
+                max_staleness=timedelta(days=36500),
+            )
+        ),
         agent_risk_policy=AgentRiskPolicy(),
     )
 
