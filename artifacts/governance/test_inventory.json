@@ -1584,6 +1584,30 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_operator_read_model.py",
+      "phase_coverage": [
+        12,
+        13
+      ],
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad",
+      "source_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_missing_domain_is_explicitly_unavailable",
+        "test_opportunity_radar_publisher_preserves_as_of",
+        "test_overview_contains_every_whitelisted_domain",
+        "test_read_model_publishes_fresh_provenance_snapshot",
+        "test_read_model_rejects_future_or_backward_observations",
+        "test_read_model_rejects_non_json_payloads_and_nan",
+        "test_stale_read_model_never_returns_stale_payload"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_opportunity_audit.py",
       "phase_coverage": [
         1,
@@ -1605,6 +1629,32 @@
         "test_live_auditor_records_flat_missed_material_move",
         "test_pending_checkpoint_rejects_policy_change_with_unresolved_records",
         "test_pending_opportunity_survives_restart_and_counts_each_bar_once"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_opportunity_radar.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "sha256": "a43fffcadc058f90fda8ea8c39c7430868d12164239e7ee3de22ab3af1592aed",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/runtime/opportunity_radar.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_empty_scan_has_explicit_empty_snapshot",
+        "test_flat_candidate_is_visible_but_not_an_opportunity",
+        "test_radar_ranks_actionable_candidates_before_blocked_candidates",
+        "test_radar_uses_directional_feature_alignment_without_creating_trade_levels"
       ]
     },
     {
@@ -2387,6 +2437,29 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_unified_features.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "sha256": "3c319f115199efa179a902cddd7d490cccd49cfa7472087d06517c35ecc9aca2",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/strategy/features.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_feature_config_rejects_invalid_periods",
+        "test_feature_engine_does_not_invent_vwap_without_volume",
+        "test_feature_engine_is_deterministic",
+        "test_feature_engine_produces_full_closed_candle_snapshot",
+        "test_feature_engine_rejects_open_or_future_candles",
+        "test_feature_engine_warmup_is_explicit_not_fabricated"
+      ]
+    },
+    {
       "async_test_functions": 2,
       "path": "tests/test_voice_alerts.py",
       "phase_coverage": [
@@ -2443,13 +2516,36 @@
         "test_research_queue_is_restart_safe_and_idempotent",
         "test_unattached_market_source_returns_no_fabricated_data"
       ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4",
+      "source_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_v2_explain_is_deterministic_from_current_radar",
+        "test_v2_http_exposes_read_model_and_cockpit_assets",
+        "test_v2_returns_only_fresh_governed_domain_snapshots",
+        "test_v2_status_reports_domain_sources_without_fabricating_data",
+        "test_v2_still_hard_blocks_paper_and_live_control",
+        "test_v2_unattached_domains_fail_closed"
+      ]
     }
   ],
   "schema_version": 1,
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 418,
-    "test_modules": 111
+    "static_test_functions": 441,
+    "test_modules": 115
   }
 }

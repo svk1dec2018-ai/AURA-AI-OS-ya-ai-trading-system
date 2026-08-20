@@ -3,7 +3,8 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from aura.interface.web_command_center import CommandCenterConfig, CommandCenterService
+from aura.interface.web_command_center import CommandCenterConfig
+from aura.interface.web_command_center_v2 import CommandCenterV2Service
 
 
 def main() -> None:
@@ -18,9 +19,10 @@ def main() -> None:
         ),
         api_token=os.getenv("AURA_COMMAND_CENTER_TOKEN") or None,
     )
-    print(f"AURA Command Center listening on http://{config.host}:{config.port}")
-    print("Safety mode: observation + governed research; paper/live HTTP controls disabled")
-    CommandCenterService(config).run_forever()
+    print(f"AURA Command Center v2 listening on http://{config.host}:{config.port}")
+    print("Safety mode: freshness-gated observation + governed research")
+    print("Paper/live HTTP controls and broker order submission remain disabled")
+    CommandCenterV2Service(config).run_forever()
 
 
 if __name__ == "__main__":

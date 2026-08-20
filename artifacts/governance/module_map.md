@@ -7,11 +7,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 333
-- Python modules: 276
-- Source modules: 145
-- Test modules: 111
-- Static test functions: 418
+- Repository files: 341
+- Python modules: 284
+- Source modules: 149
+- Test modules: 115
+- Static test functions: 441
 - Entrypoints: 22
 - Known stub/incomplete candidates: 79
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 149 |
+| `aura` | 153 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 111 |
+| `tests` | 115 |
 
 ## Entrypoints
 
@@ -87,15 +87,15 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/audit.py` | source | agents | 9 | 3 | 4 |
 | `aura/agents/base.py` | source | agents | 9 | 1 | 4 |
 | `aura/agents/context_enrichment.py` | source | agents | 9 | 5 | 1 |
-| `aura/agents/deliberation.py` | source | agents | 9 | 2 | 3 |
+| `aura/agents/deliberation.py` | source | agents | 9 | 2 | 4 |
 | `aura/agents/external_specialists.py` | source | agents | 9 | 5 | 3 |
 | `aura/agents/forecast_specialist.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/models.py` | source | agents | 9 | 1 | 22 |
+| `aura/agents/models.py` | source | agents | 9 | 1 | 23 |
 | `aura/agents/ollama_provider.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/orchestrator.py` | source | agents | 9 | 4 | 8 |
 | `aura/agents/providers.py` | source | agents | 9 | 3 | 3 |
 | `aura/agents/reliability.py` | source | agents | 9 | 2 | 3 |
-| `aura/agents/risk_policy.py` | source | agents | 9 | 2 | 1 |
+| `aura/agents/risk_policy.py` | source | agents | 9 | 2 | 2 |
 | `aura/agents/service.py` | source | agents | 9 | 7 | 3 |
 | `aura/agents/specialists.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/team.py` | source | agents | 9 | 10 | 2 |
@@ -140,7 +140,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 48 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 50 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
 | `aura/evolution/brain_policy.py` | source | evolution | 7 | 8 | 2 |
@@ -167,8 +167,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/__init__.py` | package_marker | interface | 13 | 1 | 0 |
 | `aura/interface/alerts.py` | source | interface | 13 | 1 | 1 |
 | `aura/interface/command_center.py` | source | interface | 13 | 0 | 1 |
+| `aura/interface/operator_read_model.py` | source | interface | 13 | 1 | 2 |
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
-| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 1 |
+| `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 2 |
+| `aura/interface/web_command_center_v2.py` | source | interface | 13 | 3 | 1 |
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/markets/universe.py` | source | markets | 1 | 0 | 9 |
@@ -224,16 +226,18 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 14 | 0 |
 | `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 18 | 0 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 10 | 2 |
+| `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 3 | 2 |
 | `aura/runtime/paper.py` | source | runtime | 12 | 9 | 1 |
-| `aura/runtime/scanner.py` | source | runtime | 12 | 6 | 5 |
+| `aura/runtime/scanner.py` | source | runtime | 12 | 6 | 6 |
 | `aura/runtime/supervisor.py` | source | runtime | 12 | 2 | 1 |
 | `aura/strategy/base.py` | source | strategy | 7 | 1 | 2 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 2 | 7 |
+| `aura/strategy/features.py` | source | strategy | 7 | 1 | 1 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 1 | 0 |
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 2 | 0 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 2 | 0 |
 | `examples/run_backtest.py` | entrypoint | examples | 1 | 5 | 0 |
-| `examples/run_command_center.py` | entrypoint | examples | 13 | 1 | 0 |
+| `examples/run_command_center.py` | entrypoint | examples | 13 | 2 | 0 |
 | `examples/run_dhan_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_free_public_ai_council.py` | entrypoint | examples | 12 | 1 | 0 |
 | `examples/run_free_public_autonomy.py` | entrypoint | examples | 12 | 3 | 0 |
@@ -317,7 +321,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_online_bridge.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_online_learning.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_open_model_catalog.py` | test | validation | 9 | 2 | 0 |
+| `tests/test_operator_read_model.py` | test | validation | 12 | 2 | 0 |
 | `tests/test_opportunity_audit.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_opportunity_radar.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_option_intelligence.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_options_replay.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_options_volatility_context.py` | test | validation | 1 | 3 | 0 |
@@ -353,9 +359,11 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_strategy_mutation.py` | test | validation | 7 | 3 | 0 |
 | `tests/test_supervisor.py` | test | validation | 2 | 3 | 0 |
 | `tests/test_telegram_alerts.py` | test | validation | 2 | 2 | 0 |
+| `tests/test_unified_features.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_voice_alerts.py` | test | validation | 13 | 1 | 0 |
 | `tests/test_wal.py` | test | validation | 2 | 1 | 0 |
 | `tests/test_web_command_center.py` | test | validation | 13 | 1 | 0 |
+| `tests/test_web_command_center_v2.py` | test | validation | 13 | 3 | 0 |
 
 ## Interpretation limits
 

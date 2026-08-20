@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "milestone": "command_center_v2_opportunity_radar",
+  "classification": "observation_and_governed_research_only",
+  "source_tree_audit_excludes_this_governance_path": true,
+  "implemented": [
+    "unified_closed_candle_feature_engine",
+    "ema_8_21_50_200",
+    "wilder_rsi",
+    "macd",
+    "bollinger_bands",
+    "atr",
+    "supertrend",
+    "vwap",
+    "obv",
+    "vpt",
+    "rolling_support_resistance",
+    "deterministic_opportunity_radar",
+    "freshness_gated_operator_read_model",
+    "command_center_v2_pwa",
+    "market_risk_portfolio_agent_data_broker_read_domains",
+    "deterministic_opportunity_explanation"
+  ],
+  "safety": {
+    "live_money_enabled": false,
+    "paper_execution_control_exposed": false,
+    "broker_order_submit_exposed": false,
+    "stale_payload_returned_as_current": false,
+    "fabricated_market_values_allowed": false,
+    "strategy_auto_promotion_allowed": false,
+    "risk_engine_bypass_added": false,
+    "credentials_embedded": false
+  },
+  "validation": {
+    "phase0_audit_refresh": "synced_after_all_source_and_ci_changes",
+    "strict_ci_policy": "source_auto_mutation_disabled",
+    "full_ci_recheck": "triggered_on_synced_source_tree"
+  }
+}

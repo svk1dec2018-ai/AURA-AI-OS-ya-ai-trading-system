@@ -822,8 +822,24 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "aura/interface/operator_read_model.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
         "from": "aura/interface/web_command_center.py",
         "to": "aura/interface/command_center.py"
+      },
+      {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/command_center.py"
+      },
+      {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "aura/interface/web_command_center_v2.py",
+        "to": "aura/interface/web_command_center.py"
       },
       {
         "from": "aura/knowledge/local_corpus.py",
@@ -1546,6 +1562,18 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
+        "from": "aura/runtime/opportunity_radar.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
         "from": "aura/runtime/paper.py",
         "to": "aura/agents/audit.py"
       },
@@ -1626,6 +1654,10 @@
         "to": "aura/strategy/base.py"
       },
       {
+        "from": "aura/strategy/features.py",
+        "to": "aura/domain/models.py"
+      },
+      {
         "from": "examples/check_angel_one_account.py",
         "to": "aura/execution/angel_one.py"
       },
@@ -1668,6 +1700,10 @@
       {
         "from": "examples/run_command_center.py",
         "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "examples/run_command_center.py",
+        "to": "aura/interface/web_command_center_v2.py"
       },
       {
         "from": "examples/run_dhan_self_evolving_paper.py",
@@ -2746,6 +2782,14 @@
         "to": "aura/models/registry.py"
       },
       {
+        "from": "tests/test_operator_read_model.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "tests/test_operator_read_model.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
         "from": "tests/test_opportunity_audit.py",
         "to": "aura/agents/models.py"
       },
@@ -2759,6 +2803,30 @@
       },
       {
         "from": "tests/test_opportunity_audit.py",
+        "to": "aura/runtime/scanner.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/deliberation.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
+        "to": "aura/runtime/opportunity_radar.py"
+      },
+      {
+        "from": "tests/test_opportunity_radar.py",
         "to": "aura/runtime/scanner.py"
       },
       {
@@ -3154,6 +3222,14 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "tests/test_unified_features.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_unified_features.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
         "from": "tests/test_voice_alerts.py",
         "to": "aura/interface/voice_alerts.py"
       },
@@ -3164,6 +3240,18 @@
       {
         "from": "tests/test_web_command_center.py",
         "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/operator_read_model.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "tests/test_web_command_center_v2.py",
+        "to": "aura/interface/web_command_center_v2.py"
       }
     ],
     "standard_library_packages": [
@@ -3173,6 +3261,7 @@
       "ast",
       "asyncio",
       "collections",
+      "copy",
       "csv",
       "dataclasses",
       "datetime",
@@ -3336,9 +3425,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5536,
+      "bytes": 4386,
       "path": ".github/workflows/ci.yml",
-      "sha256": "1daac0a9ac86e190b4c2b601168db1c4e761c9e2aaa79ebd5a45af269997e399"
+      "sha256": "ad37261a2ebc97474203f0195ff84d5afe3ccf1acc7c851d4bdc36c4ee9c35d7"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -3900,6 +3989,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 7311,
+      "path": "aura/interface/operator_read_model.py",
+      "sha256": "563c92c7ae2ced74295efe903b816d6825b8ffca7caf091e17dd9462f72ae3eb"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 5074,
       "path": "aura/interface/voice_alerts.py",
       "sha256": "7d018e24ee281668435f25eae66f93161aa9f674b7e8410eacad9907c3e8cbdd"
@@ -3909,6 +4004,12 @@
       "bytes": 21078,
       "path": "aura/interface/web_command_center.py",
       "sha256": "6d587e9177fb9e8cf2c77bcc0c613d1cc7aabd7026fbda6a822a7da5340803a4"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 22952,
+      "path": "aura/interface/web_command_center_v2.py",
+      "sha256": "71b69618a96ee170639ee1a71268d5b659c2f391670f5639bd5c60cd0befffd7"
     },
     {
       "asset_class": "python_module",
@@ -4242,6 +4343,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 8613,
+      "path": "aura/runtime/opportunity_radar.py",
+      "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 7208,
       "path": "aura/runtime/paper.py",
       "sha256": "502feec7274c33e4d1aba9c0f0366bea026c895576def45066392354ab90d373"
@@ -4269,6 +4376,12 @@
       "bytes": 2552,
       "path": "aura/strategy/ema.py",
       "sha256": "b9aedd5c5f28e06a3609b37393a3d0c457a18d13d736abafd1eb99ef8f36ed7e"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 14764,
+      "path": "aura/strategy/features.py",
+      "sha256": "066d511e1f33b0a26ac1e90f7181241ebe16d1ac67340e18dc0adb81297f4e9c"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -4344,9 +4457,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 3171,
+      "bytes": 4802,
       "path": "docs/COMMAND_CENTER.md",
-      "sha256": "112bbe703b2135b6cc65e540712fccaf0b435e3731cfcecf727f8bc7b41f0dac"
+      "sha256": "648094a0f4c52d6b9caf34468216092d86ea9f23debb619a132d66eaaf72cc01"
     },
     {
       "asset_class": "documentation",
@@ -4488,9 +4601,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 860,
+      "bytes": 978,
       "path": "examples/run_command_center.py",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc"
+      "sha256": "1489b10fce989b96247808cfaeb34bfad3b26ff5fde4e75a29cf24f0912a7069"
     },
     {
       "asset_class": "python_module",
@@ -5076,9 +5189,21 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 4436,
+      "path": "tests/test_operator_read_model.py",
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 6355,
       "path": "tests/test_opportunity_audit.py",
       "sha256": "2e525ca42b1b16706b7bd02ef3f859910682b0fd080ed08d6920d3ebaaa64a20"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6166,
+      "path": "tests/test_opportunity_radar.py",
+      "sha256": "a43fffcadc058f90fda8ea8c39c7430868d12164239e7ee3de22ab3af1592aed"
     },
     {
       "asset_class": "python_module",
@@ -5292,6 +5417,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 4626,
+      "path": "tests/test_unified_features.py",
+      "sha256": "3c319f115199efa179a902cddd7d490cccd49cfa7472087d06517c35ecc9aca2"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 1686,
       "path": "tests/test_voice_alerts.py",
       "sha256": "3a9cdf87ef7e71cd0497b153bebeb80369b5ea22b42dc5e6bb414c3a0cb1f4e1"
@@ -5307,6 +5438,12 @@
       "bytes": 5731,
       "path": "tests/test_web_command_center.py",
       "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6651,
+      "path": "tests/test_web_command_center_v2.py",
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4"
     }
   ],
   "gate": {
@@ -5577,6 +5714,7 @@
       "direct_test_files": [
         "tests/test_brain_policy.py",
         "tests/test_deliberation.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_shadow_outcomes.py"
       ],
       "internal_dependencies": [
@@ -5683,6 +5821,7 @@
         "tests/test_multi_market_scanner.py",
         "tests/test_ollama_ai_council.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
         "tests/test_paper_runtime.py",
         "tests/test_shadow_outcomes.py",
@@ -5846,7 +5985,8 @@
     {
       "component": "agents",
       "direct_test_files": [
-        "tests/test_agent_risk_policy.py"
+        "tests/test_agent_risk_policy.py",
+        "tests/test_opportunity_radar.py"
       ],
       "internal_dependencies": [
         "aura/agents/models.py",
@@ -7208,6 +7348,7 @@
         "tests/test_ollama_ai_council.py",
         "tests/test_online_bridge.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
         "tests/test_order_state.py",
         "tests/test_paper_broker.py",
@@ -7219,7 +7360,8 @@
         "tests/test_risk.py",
         "tests/test_risk_overlays.py",
         "tests/test_shadow_outcomes.py",
-        "tests/test_specialists.py"
+        "tests/test_specialists.py",
+        "tests/test_unified_features.py"
       ],
       "internal_dependencies": [],
       "lines": 158,
@@ -8042,6 +8184,39 @@
     {
       "component": "interface",
       "direct_test_files": [
+        "tests/test_operator_read_model.py",
+        "tests/test_web_command_center_v2.py"
+      ],
+      "internal_dependencies": [
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "lines": 217,
+      "module": "aura.interface.operator_read_model",
+      "parsed": true,
+      "path": "aura/interface/operator_read_model.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "563c92c7ae2ced74295efe903b816d6825b8ffca7caf091e17dd9462f72ae3eb",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "copy",
+        "dataclasses",
+        "datetime",
+        "enum",
+        "hashlib",
+        "json",
+        "threading",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [
         "tests/test_voice_alerts.py"
       ],
       "internal_dependencies": [],
@@ -8073,7 +8248,8 @@
     {
       "component": "interface",
       "direct_test_files": [
-        "tests/test_web_command_center.py"
+        "tests/test_web_command_center.py",
+        "tests/test_web_command_center_v2.py"
       ],
       "internal_dependencies": [
         "aura/interface/command_center.py"
@@ -8100,6 +8276,38 @@
         "os",
         "pathlib",
         "threading",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "interface",
+      "direct_test_files": [
+        "tests/test_web_command_center_v2.py"
+      ],
+      "internal_dependencies": [
+        "aura/interface/command_center.py",
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py"
+      ],
+      "lines": 370,
+      "module": "aura.interface.web_command_center_v2",
+      "parsed": true,
+      "path": "aura/interface/web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "71b69618a96ee170639ee1a71268d5b659c2f391670f5639bd5c60cd0befffd7",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "datetime",
+        "hmac",
+        "http",
+        "json",
         "typing",
         "urllib"
       ],
@@ -9811,6 +10019,35 @@
     {
       "component": "runtime",
       "direct_test_files": [
+        "tests/test_operator_read_model.py",
+        "tests/test_opportunity_radar.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/runtime/scanner.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 224,
+      "module": "aura.runtime.opportunity_radar",
+      "parsed": true,
+      "path": "aura/runtime/opportunity_radar.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "runtime",
+      "direct_test_files": [
         "tests/test_paper_runtime.py"
       ],
       "internal_dependencies": [
@@ -9850,6 +10087,7 @@
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
         "tests/test_opportunity_audit.py",
+        "tests/test_opportunity_radar.py",
         "tests/test_shadow_outcomes.py"
       ],
       "internal_dependencies": [
@@ -9967,6 +10205,33 @@
       "third_party_dependencies": []
     },
     {
+      "component": "strategy",
+      "direct_test_files": [
+        "tests/test_unified_features.py"
+      ],
+      "internal_dependencies": [
+        "aura/domain/models.py"
+      ],
+      "lines": 426,
+      "module": "aura.strategy.features",
+      "parsed": true,
+      "path": "aura/strategy/features.py",
+      "phase_coverage": [
+        7
+      ],
+      "primary_phase": 7,
+      "role": "source",
+      "sha256": "066d511e1f33b0a26ac1e90f7181241ebe16d1ac67340e18dc0adb81297f4e9c",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
       "component": "examples",
       "direct_test_files": [],
       "internal_dependencies": [
@@ -10074,9 +10339,10 @@
       "component": "examples",
       "direct_test_files": [],
       "internal_dependencies": [
-        "aura/interface/web_command_center.py"
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
       ],
-      "lines": 27,
+      "lines": 29,
       "module": "examples.run_command_center",
       "parsed": true,
       "path": "examples/run_command_center.py",
@@ -10085,7 +10351,7 @@
       ],
       "primary_phase": 13,
       "role": "entrypoint",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc",
+      "sha256": "1489b10fce989b96247808cfaeb34bfad3b26ff5fde4e75a29cf24f0912a7069",
       "standard_library_dependencies": [
         "__future__",
         "os",
@@ -12315,6 +12581,32 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/runtime/opportunity_radar.py"
+      ],
+      "lines": 138,
+      "module": "tests.test_operator_read_model",
+      "parsed": true,
+      "path": "tests/test_operator_read_model.py",
+      "phase_coverage": [
+        12,
+        13
+      ],
+      "primary_phase": 12,
+      "role": "test",
+      "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/models.py",
         "aura/domain/models.py",
         "aura/evolution/opportunity_audit.py",
@@ -12341,6 +12633,36 @@
       "third_party_dependencies": [
         "pytest"
       ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/runtime/opportunity_radar.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 183,
+      "module": "tests.test_opportunity_radar",
+      "parsed": true,
+      "path": "tests/test_opportunity_radar.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "a43fffcadc058f90fda8ea8c39c7430868d12164239e7ee3de22ab3af1592aed",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "validation",
@@ -13254,6 +13576,33 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 125,
+      "module": "tests.test_unified_features",
+      "parsed": true,
+      "path": "tests/test_unified_features.py",
+      "phase_coverage": [
+        1,
+        7
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "3c319f115199efa179a902cddd7d490cccd49cfa7472087d06517c35ecc9aca2",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/interface/voice_alerts.py"
       ],
       "lines": 54,
@@ -13326,9 +13675,39 @@
       "third_party_dependencies": [
         "pytest"
       ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/operator_read_model.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py"
+      ],
+      "lines": 191,
+      "module": "tests.test_web_command_center_v2",
+      "parsed": true,
+      "path": "tests/test_web_command_center_v2.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "test",
+      "sha256": "3762a56c6bef9b1754e885118bb1d88f3434f438ac700314550dd03da913bdf4",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "http",
+        "json",
+        "pathlib",
+        "socket",
+        "threading",
+        "urllib"
+      ],
+      "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "3beb60af80c6b50c73dcde84792ff95825f7392f0d19e23e7f03ba0caf6c399b",
+  "repository_tree_sha256": "1cdbbfe6159c46ad8e3f2c32d6c20b4b95f6e4831bd9c5c24e6606b3bc27533f",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13817,15 +14196,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 131,
+    "directly_tested_source_modules": 135,
     "entrypoints": 22,
     "parse_errors": 0,
-    "python_modules": 276,
-    "repository_files": 333,
-    "source_modules": 145,
-    "static_test_functions": 418,
+    "python_modules": 284,
+    "repository_files": 341,
+    "source_modules": 149,
+    "static_test_functions": 441,
     "stub_candidates": 79,
-    "test_modules": 111,
+    "test_modules": 115,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
