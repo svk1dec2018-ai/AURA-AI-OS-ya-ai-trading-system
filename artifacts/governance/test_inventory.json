@@ -1498,6 +1498,29 @@
       ]
     },
     {
+      "async_test_functions": 2,
+      "path": "tests/test_observable_public_council.py",
+      "phase_coverage": [
+        1,
+        9,
+        12
+      ],
+      "sha256": "36874971d5c9b17fa739027d90fb83de1e0b07ad7f13c944450c0a51765e384e",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/domain/models.py",
+        "aura/runtime/free_public_ai_council.py",
+        "aura/runtime/observable_public_council.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_observer_failure_is_isolated_and_visible",
+        "test_observer_receives_completed_governed_scan"
+      ]
+    },
+    {
       "async_test_functions": 4,
       "path": "tests/test_ollama_ai_council.py",
       "phase_coverage": [
@@ -2234,6 +2257,37 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_runtime_bridge.py",
+      "phase_coverage": [
+        1,
+        3,
+        9,
+        12,
+        13
+      ],
+      "sha256": "b3acf68f5cd0d9a8acbcb9ad38ba456f60f5199ed707b31eee98c1460210099b",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/interface/operator_read_model.py",
+        "aura/interface/runtime_bridge.py",
+        "aura/risk/engine.py",
+        "aura/runtime/allocation.py",
+        "aura/runtime/multi_market_paper.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_bridge_freshness_policy_is_enforced_by_read_model",
+        "test_empty_scan_requires_explicit_observation_time",
+        "test_paper_step_bridge_exposes_portfolio_risk_and_paper_broker_only",
+        "test_scan_bridge_populates_governed_dashboard_domains"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_sealed_holdout.py",
       "phase_coverage": [
         2,
@@ -2543,9 +2597,9 @@
   ],
   "schema_version": 1,
   "summary": {
-    "async_test_functions": 84,
+    "async_test_functions": 86,
     "modules_without_static_tests": [],
-    "static_test_functions": 441,
-    "test_modules": 115
+    "static_test_functions": 447,
+    "test_modules": 117
   }
 }
