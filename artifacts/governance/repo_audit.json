@@ -3318,9 +3318,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 1992,
+      "bytes": 2213,
       "path": ".env.example",
-      "sha256": "b0aebc253f1aded29203ad759c97570ec9bec1d2ad7d01f2a7c8f329b703be70"
+      "sha256": "ba359ef917e7a26e6de60715a33211e33b91e4ec11bb7bb914847145418fa173"
     },
     {
       "asset_class": "repository_asset",
@@ -3360,9 +3360,9 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 12650,
+      "bytes": 13085,
       "path": "README.md",
-      "sha256": "34646d9c2e8f28db377f8b9fa7a03ee81e450e52c6eab16e922056e084579bf1"
+      "sha256": "073aba3f1bd766fbd521e81267e303324497d8572f0b8eb1710004639d4b0edb"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -3906,9 +3906,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 21078,
+      "bytes": 23674,
       "path": "aura/interface/web_command_center.py",
-      "sha256": "6d587e9177fb9e8cf2c77bcc0c613d1cc7aabd7026fbda6a822a7da5340803a4"
+      "sha256": "6ce68ec5349c668464b93b915229ae658c182ef9d332d2f6aa87924e8525a66a"
     },
     {
       "asset_class": "python_module",
@@ -4320,9 +4320,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 6318,
+      "bytes": 6539,
       "path": "docs/AURA_VISION_COVERAGE.md",
-      "sha256": "83ce7b4d4c1091bc345be24aebfad0702ca9ecfed52c5515292790caf8ce03ab"
+      "sha256": "bb0a41290461ff6ba492deaba022e1b763aa235e518b68723fddb6e837c5f029"
     },
     {
       "asset_class": "documentation",
@@ -4344,9 +4344,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 3171,
+      "bytes": 3748,
       "path": "docs/COMMAND_CENTER.md",
-      "sha256": "112bbe703b2135b6cc65e540712fccaf0b435e3731cfcecf727f8bc7b41f0dac"
+      "sha256": "cb0729490399e0ecbf0b6f7342bb59789db6c4b11b4583b10c39924324266c7f"
     },
     {
       "asset_class": "documentation",
@@ -4488,9 +4488,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 860,
+      "bytes": 929,
       "path": "examples/run_command_center.py",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc"
+      "sha256": "ab57e40173c2764c984e7e41e0ae22b9512516f762878afb5c241bcc88be6979"
     },
     {
       "asset_class": "python_module",
@@ -5304,9 +5304,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5731,
+      "bytes": 8401,
       "path": "tests/test_web_command_center.py",
-      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0"
+      "sha256": "dda716cd34070a25e032d292bf0f0da8e10c970cebd82a045eab0fed7e3425fe"
     }
   ],
   "gate": {
@@ -8078,7 +8078,7 @@
       "internal_dependencies": [
         "aura/interface/command_center.py"
       ],
-      "lines": 418,
+      "lines": 450,
       "module": "aura.interface.web_command_center",
       "parsed": true,
       "path": "aura/interface/web_command_center.py",
@@ -8087,7 +8087,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "6d587e9177fb9e8cf2c77bcc0c613d1cc7aabd7026fbda6a822a7da5340803a4",
+      "sha256": "6ce68ec5349c668464b93b915229ae658c182ef9d332d2f6aa87924e8525a66a",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -8099,6 +8099,7 @@
         "json",
         "os",
         "pathlib",
+        "re",
         "threading",
         "typing",
         "urllib"
@@ -10076,7 +10077,7 @@
       "internal_dependencies": [
         "aura/interface/web_command_center.py"
       ],
-      "lines": 27,
+      "lines": 28,
       "module": "examples.run_command_center",
       "parsed": true,
       "path": "examples/run_command_center.py",
@@ -10085,7 +10086,7 @@
       ],
       "primary_phase": 13,
       "role": "entrypoint",
-      "sha256": "fe773f720c2f10e7f0c73d85c6787c5e7d1c64ef12300652299aa475d86481dc",
+      "sha256": "ab57e40173c2764c984e7e41e0ae22b9512516f762878afb5c241bcc88be6979",
       "standard_library_dependencies": [
         "__future__",
         "os",
@@ -13304,7 +13305,7 @@
       "internal_dependencies": [
         "aura/interface/web_command_center.py"
       ],
-      "lines": 160,
+      "lines": 238,
       "module": "tests.test_web_command_center",
       "parsed": true,
       "path": "tests/test_web_command_center.py",
@@ -13313,7 +13314,7 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0",
+      "sha256": "dda716cd34070a25e032d292bf0f0da8e10c970cebd82a045eab0fed7e3425fe",
       "standard_library_dependencies": [
         "__future__",
         "http",
@@ -13328,7 +13329,7 @@
       ]
     }
   ],
-  "repository_tree_sha256": "3beb60af80c6b50c73dcde84792ff95825f7392f0d19e23e7f03ba0caf6c399b",
+  "repository_tree_sha256": "70961bc18061dfcd714b3bee1bfd7cc6941cb646a98a32d23b1de0ed7a5a88b2",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -13823,7 +13824,7 @@
     "python_modules": 276,
     "repository_files": 333,
     "source_modules": 145,
-    "static_test_functions": 418,
+    "static_test_functions": 421,
     "stub_candidates": 79,
     "test_modules": 111,
     "unclassified_modules": 0,

@@ -16,9 +16,19 @@ from aura.interface.web_command_center import (
     DurableResearchQueue,
 )
 
+OWNER_TOKEN = "owner-token-with-at-least-32-characters"
 
-def _request_json(url: str, *, text: str | None = None, key: str | None = None):
+
+def _request_json(
+    url: str,
+    *,
+    text: str | None = None,
+    key: str | None = None,
+    token: str | None = None,
+):
     headers = {}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     data = None
     if text is not None:
         headers["Content-Type"] = "application/json"
@@ -45,9 +55,13 @@ def _free_loopback_port() -> int:
         return int(sock.getsockname()[1])
 
 
-def _running_service(tmp_path: Path):
+def _running_service(tmp_path: Path, *, token: str | None = None):
     service = CommandCenterService(
-        CommandCenterConfig(port=_free_loopback_port(), queue_path=tmp_path / "queue.jsonl")
+        CommandCenterConfig(
+            port=_free_loopback_port(),
+            queue_path=tmp_path / "queue.jsonl",
+            api_token=token,
+        )
     )
     server = service.make_server()
     thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -63,32 +77,46 @@ def test_non_loopback_binding_requires_strong_token(tmp_path: Path) -> None:
         api_token="x" * 32,
         queue_path=tmp_path / "q",
     )
+    with pytest.raises(ValueError, match="at least 32"):
+        CommandCenterConfig(api_token="short", queue_path=tmp_path / "q")
 
 
 def test_research_queue_is_restart_safe_and_idempotent(tmp_path: Path) -> None:
     service = CommandCenterService(
-        CommandCenterConfig(queue_path=tmp_path / "queue.jsonl")
+        CommandCenterConfig(queue_path=tmp_path / "queue.jsonl", api_token=OWNER_TOKEN)
     )
     status1, first = service.handle_command(
         "research XAUUSD regime filters",
+        owner_authenticated=True,
         idempotency_key="same",
     )
     status2, second = service.handle_command(
         "research XAUUSD regime filters",
+        owner_authenticated=True,
         idempotency_key="same",
     )
     assert status1 == HTTPStatus.ACCEPTED
     assert status2 == HTTPStatus.ACCEPTED
     assert first["payload"]["request_id"] == second["payload"]["request_id"]
     assert service.queue.count == 1
+    assert first["payload"]["status"] == "pending_human_review"
+    raw = (tmp_path / "queue.jsonl").read_text(encoding="utf-8")
+    assert '"authenticated_owner_id":"owner"' in raw
+    assert OWNER_TOKEN not in raw
     restarted = DurableResearchQueue(tmp_path / "queue.jsonl")
     assert restarted.count == 1
 
 
 def test_queue_corruption_fails_closed(tmp_path: Path) -> None:
     path = tmp_path / "queue.jsonl"
-    service = CommandCenterService(CommandCenterConfig(queue_path=path))
-    service.handle_command("research BTC regime", idempotency_key="a")
+    service = CommandCenterService(
+        CommandCenterConfig(queue_path=path, api_token=OWNER_TOKEN)
+    )
+    service.handle_command(
+        "research BTC regime",
+        owner_authenticated=True,
+        idempotency_key="a",
+    )
     line = json.loads(path.read_text())
     line["raw_text"] = "tampered"
     path.write_text(json.dumps(line) + "\n")
@@ -120,20 +148,25 @@ def test_unattached_market_source_returns_no_fabricated_data(tmp_path: Path) -> 
 
 
 def test_http_status_research_and_live_boundary(tmp_path: Path) -> None:
-    _service, server, thread = _running_service(tmp_path)
+    _service, server, thread = _running_service(tmp_path, token=OWNER_TOKEN)
     try:
         base = f"http://127.0.0.1:{server.server_port}"
-        status, snapshot = _request_json(base + "/api/status")
+        status, snapshot = _request_json(base + "/api/status", token=OWNER_TOKEN)
         assert status == HTTPStatus.OK
         assert snapshot["live_money_enabled"] is False
         research_status, research = _request_json(
             base + "/api/command",
             text="research NIFTY regime filter",
             key="stable-key",
+            token=OWNER_TOKEN,
         )
         assert research_status == HTTPStatus.ACCEPTED
         assert research["payload"]["auto_promotion_allowed"] is False
-        live_status, live = _request_json(base + "/api/command", text="go live")
+        live_status, live = _request_json(
+            base + "/api/command",
+            text="go live",
+            token=OWNER_TOKEN,
+        )
         assert live_status == HTTPStatus.FORBIDDEN
         assert live["accepted"] is False
     finally:
@@ -154,6 +187,51 @@ def test_pwa_assets_are_served_with_security_headers(tmp_path: Path) -> None:
         with urlopen(base + "/manifest.webmanifest", timeout=3) as response:
             manifest = json.loads(response.read())
             assert manifest["display"] == "standalone"
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
+
+
+def test_research_requires_authenticated_owner_even_on_loopback(tmp_path: Path) -> None:
+    service = CommandCenterService(
+        CommandCenterConfig(queue_path=tmp_path / "queue.jsonl", api_token=OWNER_TOKEN)
+    )
+    status, result = service.handle_command("research NIFTY breadth")
+    assert status == HTTPStatus.UNAUTHORIZED
+    assert result["accepted"] is False
+    assert service.queue.count == 0
+
+
+def test_http_rejects_missing_and_wrong_owner_token(tmp_path: Path) -> None:
+    _service, server, thread = _running_service(tmp_path, token=OWNER_TOKEN)
+    try:
+        base = f"http://127.0.0.1:{server.server_port}"
+        missing, _ = _request_json(base + "/api/command", text="research BTC")
+        wrong, _ = _request_json(
+            base + "/api/command",
+            text="research BTC",
+            token="wrong-token-with-at-least-32-characters",
+        )
+        assert missing == HTTPStatus.UNAUTHORIZED
+        assert wrong == HTTPStatus.UNAUTHORIZED
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
+
+
+def test_pwa_keeps_owner_token_in_session_storage_only(tmp_path: Path) -> None:
+    _service, server, thread = _running_service(tmp_path)
+    try:
+        base = f"http://127.0.0.1:{server.server_port}"
+        with urlopen(base + "/", timeout=3) as response:
+            html = response.read().decode()
+        with urlopen(base + "/app.js", timeout=3) as response:
+            javascript = response.read().decode()
+        assert 'id="owner-token"' in html
+        assert "sessionStorage" in javascript
+        assert "localStorage" not in javascript
     finally:
         server.shutdown()
         server.server_close()

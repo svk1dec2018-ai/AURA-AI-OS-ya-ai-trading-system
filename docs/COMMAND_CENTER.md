@@ -34,6 +34,8 @@ The PWA/API surface is deliberately narrower than the core router:
 - research/change requests are append-only, SHA-256 checksummed, flushed with `fsync`, and revalidated on restart;
 - queued research is marked `pending_human_review` and `auto_promotion_allowed=false`;
 - optional idempotency keys are persisted only as SHA-256 digests, not raw keys.
+- research/change requests require an authenticated owner token even on loopback;
+- every queued request records the configured non-secret owner ID, while the token is never persisted.
 
 ## Network exposure
 
@@ -43,10 +45,16 @@ The default bind is loopback-only:
 AURA_COMMAND_CENTER_HOST=127.0.0.1
 AURA_COMMAND_CENTER_PORT=8765
 AURA_COMMAND_CENTER_QUEUE=artifacts/operator/research_requests.jsonl
+AURA_COMMAND_CENTER_OWNER_ID=owner
 AURA_COMMAND_CENTER_TOKEN=
 ```
 
-Binding to a non-loopback address fails closed unless `AURA_COMMAND_CENTER_TOKEN` contains at least 32 characters. API callers must then send that token as `Authorization: Bearer ...`. Never commit the token.
+Set `AURA_COMMAND_CENTER_TOKEN` to at least 32 random characters before submitting
+research or self-upgrade requests. Read-only loopback status remains usable without a
+token, but privileged requests fail closed. Binding to a non-loopback address also
+fails closed without this token. API callers send it as `Authorization: Bearer ...`.
+The PWA keeps a supplied token only in browser `sessionStorage`, which is cleared
+when the tab/session ends; it never writes the token into AURA's queue. Never commit it.
 
 ## API
 
@@ -60,6 +68,7 @@ Example:
 ```bash
 curl http://127.0.0.1:8765/api/status
 curl -X POST http://127.0.0.1:8765/api/command \
+  -H "Authorization: Bearer $AURA_COMMAND_CENTER_TOKEN" \
   -H 'Content-Type: application/json' \
   -H 'Idempotency-Key: owner-request-001' \
   -d '{"text":"research XAUUSD regime filters"}'

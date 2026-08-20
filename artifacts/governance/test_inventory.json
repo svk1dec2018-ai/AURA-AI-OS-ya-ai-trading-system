@@ -2428,19 +2428,22 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "31ead8a2e55579baf32b8974f764263a57e8cd5dab77dacfb2fd257063b767c0",
+      "sha256": "dda716cd34070a25e032d292bf0f0da8e10c970cebd82a045eab0fed7e3425fe",
       "source_dependencies": [
         "aura/interface/web_command_center.py"
       ],
-      "static_test_functions": 7,
+      "static_test_functions": 10,
       "test_classes": [],
       "test_functions": [
+        "test_http_rejects_missing_and_wrong_owner_token",
         "test_http_status_research_and_live_boundary",
         "test_live_and_paper_commands_are_blocked_before_execution",
         "test_non_loopback_binding_requires_strong_token",
         "test_pwa_assets_are_served_with_security_headers",
+        "test_pwa_keeps_owner_token_in_session_storage_only",
         "test_queue_corruption_fails_closed",
         "test_research_queue_is_restart_safe_and_idempotent",
+        "test_research_requires_authenticated_owner_even_on_loopback",
         "test_unattached_market_source_returns_no_fabricated_data"
       ]
     }
@@ -2449,7 +2452,7 @@
   "summary": {
     "async_test_functions": 84,
     "modules_without_static_tests": [],
-    "static_test_functions": 418,
+    "static_test_functions": 421,
     "test_modules": 111
   }
 }
