@@ -77,6 +77,7 @@ async def main() -> None:
     )
 
     def observe(scan) -> None:
+        received_at = datetime.now(UTC)
         bridge.publish_scan(
             scan,
             source=f"{args.provider}-public-council",
@@ -87,6 +88,14 @@ async def main() -> None:
                 "broker_orders_enabled": False,
                 "real_money_enabled": False,
             },
+            received_at=received_at,
+        )
+        observed_at = max(candidate.context.created_at for candidate in scan.candidates)
+        _publish_no_broker(
+            read_model,
+            observed_at=observed_at,
+            received_at=received_at,
+            max_age=timedelta(minutes=2),
         )
 
     runtime = ObservableFreePublicAICouncilRuntime(
@@ -123,15 +132,8 @@ async def main() -> None:
         received_at=now,
         max_age=timedelta(minutes=5),
     )
-    read_model.publish(
-        ReadDomain.BROKERS,
-        {
-            "attached": False,
-            "execution_mode": "OBSERVATION_ONLY",
-            "broker_order_authority": False,
-            "live_money_enabled": False,
-        },
-        source="public-command-center:no-broker",
+    _publish_no_broker(
+        read_model,
         observed_at=now,
         received_at=now,
         max_age=timedelta(minutes=5),
@@ -165,6 +167,28 @@ async def main() -> None:
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+def _publish_no_broker(
+    read_model: OperatorReadModel,
+    *,
+    observed_at: datetime,
+    received_at: datetime,
+    max_age: timedelta,
+) -> None:
+    read_model.publish(
+        ReadDomain.BROKERS,
+        {
+            "attached": False,
+            "execution_mode": "OBSERVATION_ONLY",
+            "broker_order_authority": False,
+            "live_money_enabled": False,
+        },
+        source="public-command-center:no-broker",
+        observed_at=observed_at,
+        received_at=received_at,
+        max_age=max_age,
+    )
 
 
 def _symbols(provider: str, requested: list[str] | None) -> tuple[str, ...]:
