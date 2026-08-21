@@ -94,7 +94,8 @@ state, stores only the required quantities/status/timestamps plus opaque fingerp
 and never invokes broker APIs itself.
 The restart-safe evidence archive persists only these sealed, credential-free
 exports. It does not persist credentials or raw broker identifiers and cannot grant
-execution or phase-gate authority.
+execution or phase-gate authority. Its checkpoint CLI exports a content-sealed WAL
+prefix anchor for owner-controlled off-host storage and later rollback detection.
 
 Examples:
 

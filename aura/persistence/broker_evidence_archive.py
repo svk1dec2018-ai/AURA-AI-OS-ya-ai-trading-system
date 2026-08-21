@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+import hashlib
+import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 from threading import RLock
+from typing import Literal
+from uuid import uuid4
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from aura.execution.broker_evidence import SealedBrokerEvidence
 from aura.persistence.wal import JsonlWriteAheadLog, WalEvent
@@ -12,6 +19,46 @@ _EVENT_TYPE = "broker.evidence.sealed.v1"
 
 class BrokerEvidenceArchiveError(RuntimeError):
     pass
+
+
+class BrokerEvidenceArchiveCheckpoint(BaseModel):
+    """Credential-free description of one externally anchorable archive prefix."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Literal[1] = 1
+    record_count: int = Field(ge=1)
+    last_sequence: int = Field(ge=1)
+    last_evidence_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    wal_prefix_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    execution_authority: Literal[False] = False
+
+    @model_validator(mode="after")
+    def sequence_must_match_record_count(self) -> BrokerEvidenceArchiveCheckpoint:
+        if self.last_sequence != self.record_count:
+            raise ValueError("archive checkpoint sequence does not match record count")
+        return self
+
+
+class SealedBrokerEvidenceArchiveCheckpoint(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    checkpoint: BrokerEvidenceArchiveCheckpoint
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def verify_content_hash(self) -> SealedBrokerEvidenceArchiveCheckpoint:
+        expected = _checkpoint_sha256(self.checkpoint)
+        if self.sha256 != expected:
+            raise ValueError("broker evidence archive checkpoint hash mismatch")
+        return self
+
+    @classmethod
+    def seal(
+        cls,
+        checkpoint: BrokerEvidenceArchiveCheckpoint,
+    ) -> SealedBrokerEvidenceArchiveCheckpoint:
+        return cls(checkpoint=checkpoint, sha256=_checkpoint_sha256(checkpoint))
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,6 +122,111 @@ class BrokerEvidenceArchive:
         with self._lock:
             return self._records.get(evidence_sha256)
 
+    def checkpoint(self) -> SealedBrokerEvidenceArchiveCheckpoint:
+        """Seal the current WAL prefix for storage in an owner-controlled system."""
+
+        with self._lock:
+            records = self._recover()
+            if not records:
+                raise BrokerEvidenceArchiveError("cannot checkpoint an empty archive")
+            self._records = records
+            last = next(reversed(records.values()))
+            prefix = self._wal_prefix_bytes(len(records))
+            return SealedBrokerEvidenceArchiveCheckpoint.seal(
+                BrokerEvidenceArchiveCheckpoint(
+                    record_count=len(records),
+                    last_sequence=last.sequence,
+                    last_evidence_sha256=last.evidence.sha256,
+                    wal_prefix_sha256=hashlib.sha256(prefix).hexdigest(),
+                )
+            )
+
+    def export_checkpoint(self, path: str | Path) -> SealedBrokerEvidenceArchiveCheckpoint:
+        """Create, fsync and exclusively persist a sealed external-anchor file."""
+
+        checkpoint = self.checkpoint()
+        destination = Path(path)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        temporary = destination.with_name(f".{destination.name}.{uuid4().hex}.tmp")
+        encoded = (
+            json.dumps(
+                checkpoint.model_dump(mode="json"),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            + "\n"
+        ).encode("utf-8")
+        descriptor = os.open(
+            temporary,
+            os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+            0o600,
+        )
+        try:
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(encoded)
+                handle.flush()
+                os.fsync(handle.fileno())
+            try:
+                os.link(temporary, destination)
+            except FileExistsError as exc:
+                raise BrokerEvidenceArchiveError(
+                    f"archive checkpoint already exists: {destination}"
+                ) from exc
+        finally:
+            temporary.unlink(missing_ok=True)
+        return checkpoint
+
+    @staticmethod
+    def load_checkpoint(path: str | Path) -> SealedBrokerEvidenceArchiveCheckpoint:
+        try:
+            return SealedBrokerEvidenceArchiveCheckpoint.model_validate_json(
+                Path(path).read_bytes()
+            )
+        except (OSError, ValueError) as exc:
+            raise BrokerEvidenceArchiveError("invalid broker evidence checkpoint") from exc
+
+    def verify_checkpoint(
+        self,
+        sealed: SealedBrokerEvidenceArchiveCheckpoint,
+    ) -> None:
+        """Fail closed unless the sealed archive prefix remains intact."""
+
+        with self._lock:
+            records = self._recover()
+            checkpoint = sealed.checkpoint
+            if len(records) < checkpoint.record_count:
+                raise BrokerEvidenceArchiveError(
+                    "broker evidence archive is shorter than checkpoint"
+                )
+            anchored = tuple(records.values())[checkpoint.record_count - 1]
+            if anchored.sequence != checkpoint.last_sequence:
+                raise BrokerEvidenceArchiveError(
+                    "broker evidence checkpoint sequence mismatch"
+                )
+            if anchored.evidence.sha256 != checkpoint.last_evidence_sha256:
+                raise BrokerEvidenceArchiveError(
+                    "broker evidence checkpoint tail mismatch"
+                )
+            prefix_sha256 = hashlib.sha256(
+                self._wal_prefix_bytes(checkpoint.record_count)
+            ).hexdigest()
+            if prefix_sha256 != checkpoint.wal_prefix_sha256:
+                raise BrokerEvidenceArchiveError(
+                    "broker evidence checkpoint WAL prefix mismatch"
+                )
+
+    def _wal_prefix_bytes(self, record_count: int) -> bytes:
+        raw = self.path.read_bytes() if self.path.exists() else b""
+        prefix: list[bytes] = []
+        records_seen = 0
+        for line in raw.splitlines(keepends=True):
+            prefix.append(line)
+            if line.strip():
+                records_seen += 1
+            if records_seen == record_count:
+                return b"".join(prefix)
+        raise BrokerEvidenceArchiveError("archive WAL prefix is incomplete")
+
     def _recover(self) -> dict[str, ArchivedBrokerEvidence]:
         records: dict[str, ArchivedBrokerEvidence] = {}
         previous_sha256: str | None = None
@@ -121,3 +273,12 @@ class BrokerEvidenceArchive:
                 "archive correlation ID does not match evidence capture ID"
             )
         return ArchivedBrokerEvidence(sequence=event.sequence, evidence=evidence)
+
+
+def _checkpoint_sha256(checkpoint: BrokerEvidenceArchiveCheckpoint) -> str:
+    canonical = json.dumps(
+        checkpoint.model_dump(mode="json"),
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()

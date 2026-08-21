@@ -512,14 +512,14 @@
         4,
         11
       ],
-      "sha256": "4b77a55a03925cdeb73e9dfa89bd9d2dba2297668a6e528e810d6b421ebe7f5a",
+      "sha256": "ddd5502470aacf25aebb2c98f3f00163adb56234de08680cfcbd638c70bcbbcb",
       "source_dependencies": [
         "aura/execution/broker.py",
         "aura/execution/broker_evidence.py",
         "aura/persistence/broker_evidence_archive.py",
         "aura/persistence/wal.py"
       ],
-      "static_test_functions": 7,
+      "static_test_functions": 12,
       "test_classes": [],
       "test_functions": [
         "test_archive_detects_wal_checksum_tampering",
@@ -528,7 +528,34 @@
         "test_archive_rejects_semantically_invalid_wal_events",
         "test_archive_rejects_valid_checksum_with_wrong_chain_binding",
         "test_archive_rejects_valid_checksum_with_wrong_hash_chain",
+        "test_checkpoint_detects_valid_wal_tail_deletion",
+        "test_checkpoint_export_load_and_exclusive_create",
+        "test_checkpoint_rejects_empty_archive_and_tampered_seal",
+        "test_checkpoint_schema_rejects_sequence_count_mismatch",
+        "test_checkpoint_verifies_anchored_prefix_after_new_appends",
         "test_concurrent_duplicate_append_writes_one_record"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_broker_evidence_checkpoint.py",
+      "phase_coverage": [
+        4,
+        11
+      ],
+      "sha256": "9d803828169440d9ffdec3c97432e13283c0d4905079de9c5ea11e30cf0071d5",
+      "source_dependencies": [
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/ops/broker_evidence_checkpoint.py",
+        "aura/persistence/broker_evidence_archive.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_checkpoint_cli_exports_and_verifies",
+        "test_checkpoint_cli_fails_closed_after_archive_rollback",
+        "test_checkpoint_cli_rejects_tampered_anchor"
       ]
     },
     {
@@ -3080,7 +3107,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 523,
-    "test_modules": 139
+    "static_test_functions": 531,
+    "test_modules": 140
   }
 }

@@ -15,7 +15,9 @@ from aura.execution.broker_evidence import (
 )
 from aura.persistence.broker_evidence_archive import (
     BrokerEvidenceArchive,
+    BrokerEvidenceArchiveCheckpoint,
     BrokerEvidenceArchiveError,
+    SealedBrokerEvidenceArchiveCheckpoint,
 )
 from aura.persistence.wal import CorruptWalError, JsonlWriteAheadLog
 
@@ -150,3 +152,72 @@ def test_archive_rejects_valid_checksum_with_wrong_hash_chain(tmp_path: Path) ->
 
     with pytest.raises(BrokerEvidenceArchiveError, match="hash-chain mismatch"):
         BrokerEvidenceArchive(path, fsync=False)
+
+
+def test_checkpoint_verifies_anchored_prefix_after_new_appends(tmp_path: Path) -> None:
+    archive = BrokerEvidenceArchive(tmp_path / "broker-evidence.wal", fsync=False)
+    first = _evidence("capture:first")
+    archive.append(first)
+
+    checkpoint = archive.checkpoint()
+    archive.append(_evidence("capture:second"))
+    archive.verify_checkpoint(checkpoint)
+
+    assert checkpoint.checkpoint.record_count == 1
+    assert checkpoint.checkpoint.last_sequence == 1
+    assert checkpoint.checkpoint.last_evidence_sha256 == first.sha256
+    assert checkpoint.checkpoint.execution_authority is False
+
+
+def test_checkpoint_detects_valid_wal_tail_deletion(tmp_path: Path) -> None:
+    path = tmp_path / "broker-evidence.wal"
+    archive = BrokerEvidenceArchive(path, fsync=False)
+    archive.append(_evidence("capture:first"))
+    archive.append(_evidence("capture:second"))
+    checkpoint = archive.checkpoint()
+    path.write_bytes(path.read_bytes().splitlines(keepends=True)[0])
+
+    reopened = BrokerEvidenceArchive(path, fsync=False)
+    with pytest.raises(BrokerEvidenceArchiveError, match="shorter than checkpoint"):
+        reopened.verify_checkpoint(checkpoint)
+
+
+def test_checkpoint_export_load_and_exclusive_create(tmp_path: Path) -> None:
+    archive = BrokerEvidenceArchive(tmp_path / "broker-evidence.wal", fsync=False)
+    archive.append(_evidence())
+    destination = tmp_path / "external" / "broker-evidence-anchor.json"
+
+    exported = archive.export_checkpoint(destination)
+    loaded = BrokerEvidenceArchive.load_checkpoint(destination)
+
+    assert loaded == exported
+    archive.verify_checkpoint(loaded)
+    assert destination.stat().st_mode & 0o777 == 0o600
+    with pytest.raises(BrokerEvidenceArchiveError, match="already exists"):
+        archive.export_checkpoint(destination)
+    assert not tuple(destination.parent.glob(".*.tmp"))
+
+
+def test_checkpoint_rejects_empty_archive_and_tampered_seal(tmp_path: Path) -> None:
+    archive = BrokerEvidenceArchive(tmp_path / "broker-evidence.wal", fsync=False)
+    with pytest.raises(BrokerEvidenceArchiveError, match="empty archive"):
+        archive.checkpoint()
+
+    valid = BrokerEvidenceArchiveCheckpoint(
+        record_count=1,
+        last_sequence=1,
+        last_evidence_sha256="a" * 64,
+        wal_prefix_sha256="b" * 64,
+    )
+    with pytest.raises(ValueError, match="checkpoint hash mismatch"):
+        SealedBrokerEvidenceArchiveCheckpoint(checkpoint=valid, sha256="c" * 64)
+
+
+def test_checkpoint_schema_rejects_sequence_count_mismatch() -> None:
+    with pytest.raises(ValueError, match="sequence does not match"):
+        BrokerEvidenceArchiveCheckpoint(
+            record_count=2,
+            last_sequence=1,
+            last_evidence_sha256="a" * 64,
+            wal_prefix_sha256="b" * 64,
+        )
