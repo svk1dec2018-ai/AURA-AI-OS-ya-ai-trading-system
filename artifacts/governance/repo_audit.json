@@ -910,7 +910,19 @@
         "to": "aura/interface/web_command_center.py"
       },
       {
+        "from": "aura/knowledge/firewall.py",
+        "to": "aura/knowledge/retrieval.py"
+      },
+      {
         "from": "aura/knowledge/local_corpus.py",
+        "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/knowledge/local_corpus.py",
+        "to": "aura/knowledge/retrieval.py"
+      },
+      {
+        "from": "aura/knowledge/retrieval.py",
         "to": "aura/knowledge/firewall.py"
       },
       {
@@ -1068,6 +1080,50 @@
       {
         "from": "aura/ops/core_contracts.py",
         "to": "aura/portfolio/ledger.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/knowledge/retrieval.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/knowledge_rag_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
       },
       {
         "from": "aura/ops/market_data_gate.py",
@@ -2938,6 +2994,22 @@
         "to": "aura/knowledge/firewall.py"
       },
       {
+        "from": "tests/test_knowledge_rag_gate.py",
+        "to": "aura/ops/knowledge_rag_gate.py"
+      },
+      {
+        "from": "tests/test_knowledge_rag_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "tests/test_knowledge_retrieval.py",
+        "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "tests/test_knowledge_retrieval.py",
+        "to": "aura/knowledge/retrieval.py"
+      },
+      {
         "from": "tests/test_live_data_plane.py",
         "to": "aura/data/live_plane.py"
       },
@@ -3908,6 +3980,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/knowledge_rag_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/market_data_gate.py"
     },
     {
@@ -4034,9 +4110,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5145,
+      "bytes": 5255,
       "path": ".github/workflows/ci.yml",
-      "sha256": "08408828403eb4bac04e7d79e6253078705dee2dc07590cc4ad8bb60dc696ca3"
+      "sha256": "d56ae1baa06f3e91c80d6a3c1d89844a86fcf88a0a978762466a8da9c47a2a45"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4646,15 +4722,21 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 6543,
+      "bytes": 7410,
       "path": "aura/knowledge/firewall.py",
-      "sha256": "be0c0a3cca0feb6da3c0a628d2e2002baa3bcc529af50a9bbfbc5c58a0438e3b"
+      "sha256": "4f49eec70fd7b9b67577df2dbd4019cf3dc4dabf47938736a99c4b9fd05fe0a0"
     },
     {
       "asset_class": "python_module",
-      "bytes": 7930,
+      "bytes": 7085,
       "path": "aura/knowledge/local_corpus.py",
-      "sha256": "4619ecef9d3dd38fcdaeb233835af976a4141339eac0b28816085ee0c05cadfe"
+      "sha256": "4a7350c9de7c2f9aa4470f02b84a949fb31cb733b2c71e7a35f6452f00454166"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 3174,
+      "path": "aura/knowledge/retrieval.py",
+      "sha256": "fc6e3960e1492fa0fdfdbfaa57864375a219972b4bcb470aa48f6d9a017c4c14"
     },
     {
       "asset_class": "python_module",
@@ -4736,6 +4818,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 10552,
+      "path": "aura/ops/knowledge_rag_gate.py",
+      "sha256": "cb40f42cd532d200ea75d3a891bf961c6c41c55653ea383d31ee38db3e721702"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 8588,
       "path": "aura/ops/market_data_gate.py",
       "sha256": "16176f656e8772176bb0dbb9ecc44eb3961e71a2719e6c9a43f0999919db787e"
@@ -4760,9 +4848,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30895,
+      "bytes": 30936,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "ceb62c7374960526d92422c0196193c63866b3ea70e6771bc32e9430f68f1503"
+      "sha256": "a14f660ab03774cc2f1714f97d1b0b57183ace21852fd744d4bcc437b8e92690"
     },
     {
       "asset_class": "python_module",
@@ -5194,7 +5282,7 @@
       "asset_class": "documentation",
       "bytes": 10638,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "ae9278ff9c68061b7e44d6e6bfe420ce476793e86e17a0ccc13aa9697d46171e"
+      "sha256": "2837f14bc0ba8fae84952a205e151643ff535702a084e7e33cd9df36b9a7ea39"
     },
     {
       "asset_class": "documentation",
@@ -5228,9 +5316,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 8177,
+      "bytes": 8970,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "210ccd5f1cc9bd29e23facd72b1ef364b534b32414e7a1b9133359b9802c8f92"
+      "sha256": "8449bf4061c450abdfdbefff08832add443ee55dbb87d48cedf1a8e4defb9919"
     },
     {
       "asset_class": "documentation",
@@ -5810,6 +5898,18 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 962,
+      "path": "tests/test_knowledge_rag_gate.py",
+      "sha256": "602a76bf399b2a24fb1938a0e462e6571a6947c68bfc4f7115b3a3dd3b14842a"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 2407,
+      "path": "tests/test_knowledge_retrieval.py",
+      "sha256": "567c4679e290c9cb522df1e75c8190692fb3151cccf6f468a22ec31582356e7f"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 2578,
       "path": "tests/test_live_data_plane.py",
       "sha256": "9c46e471b536f14facd1efbb7e195f21cb11af2f34d6404be780aedc4494bd84"
@@ -6002,9 +6102,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3347,
+      "bytes": 3391,
       "path": "tests/test_phase_gates.py",
-      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093"
+      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b"
     },
     {
       "asset_class": "python_module",
@@ -9234,11 +9334,14 @@
         "tests/test_agent_team.py",
         "tests/test_external_specialists.py",
         "tests/test_knowledge_firewall.py",
+        "tests/test_knowledge_retrieval.py",
         "tests/test_macro_external_intelligence.py",
         "tests/test_ollama_ai_council.py"
       ],
-      "internal_dependencies": [],
-      "lines": 196,
+      "internal_dependencies": [
+        "aura/knowledge/retrieval.py"
+      ],
+      "lines": 222,
       "module": "aura.knowledge.firewall",
       "parsed": true,
       "path": "aura/knowledge/firewall.py",
@@ -9247,14 +9350,15 @@
       ],
       "primary_phase": 8,
       "role": "source",
-      "sha256": "be0c0a3cca0feb6da3c0a628d2e2002baa3bcc529af50a9bbfbc5c58a0438e3b",
+      "sha256": "4f49eec70fd7b9b67577df2dbd4019cf3dc4dabf47938736a99c4b9fd05fe0a0",
       "standard_library_dependencies": [
         "__future__",
         "collections",
         "dataclasses",
         "datetime",
         "enum",
-        "hashlib"
+        "hashlib",
+        "typing"
       ],
       "third_party_dependencies": [
         "pydantic"
@@ -9266,9 +9370,10 @@
         "tests/test_local_knowledge_corpus.py"
       ],
       "internal_dependencies": [
-        "aura/knowledge/firewall.py"
+        "aura/knowledge/firewall.py",
+        "aura/knowledge/retrieval.py"
       ],
-      "lines": 204,
+      "lines": 180,
       "module": "aura.knowledge.local_corpus",
       "parsed": true,
       "path": "aura/knowledge/local_corpus.py",
@@ -9277,7 +9382,7 @@
       ],
       "primary_phase": 8,
       "role": "source",
-      "sha256": "4619ecef9d3dd38fcdaeb233835af976a4141339eac0b28816085ee0c05cadfe",
+      "sha256": "4a7350c9de7c2f9aa4470f02b84a949fb31cb733b2c71e7a35f6452f00454166",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -9288,6 +9393,32 @@
       "third_party_dependencies": [
         "pydantic"
       ]
+    },
+    {
+      "component": "knowledge",
+      "direct_test_files": [
+        "tests/test_knowledge_retrieval.py"
+      ],
+      "internal_dependencies": [
+        "aura/knowledge/firewall.py"
+      ],
+      "lines": 98,
+      "module": "aura.knowledge.retrieval",
+      "parsed": true,
+      "path": "aura/knowledge/retrieval.py",
+      "phase_coverage": [
+        8
+      ],
+      "primary_phase": 8,
+      "role": "source",
+      "sha256": "fc6e3960e1492fa0fdfdbfaa57864375a219972b4bcb470aa48f6d9a017c4c14",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "re"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "markets",
@@ -9685,6 +9816,45 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_knowledge_rag_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/knowledge/firewall.py",
+        "aura/knowledge/retrieval.py",
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/ops/strategy_research_gate.py"
+      ],
+      "lines": 302,
+      "module": "aura.ops.knowledge_rag_gate",
+      "parsed": true,
+      "path": "aura/ops/knowledge_rag_gate.py",
+      "phase_coverage": [
+        8
+      ],
+      "primary_phase": 8,
+      "role": "source",
+      "sha256": "cb40f42cd532d200ea75d3a891bf961c6c41c55653ea383d31ee38db3e721702",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "datetime",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_market_data_gate.py"
       ],
       "internal_dependencies": [
@@ -9726,6 +9896,7 @@
       "direct_test_files": [
         "tests/test_backtest_gate.py",
         "tests/test_broker_conformance_gate.py",
+        "tests/test_knowledge_rag_gate.py",
         "tests/test_market_data_gate.py",
         "tests/test_phase_gates.py",
         "tests/test_production_ops.py",
@@ -9824,7 +9995,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 817,
+      "lines": 818,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -9833,7 +10004,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "ceb62c7374960526d92422c0196193c63866b3ea70e6771bc32e9430f68f1503",
+      "sha256": "a14f660ab03774cc2f1714f97d1b0b57183ace21852fd744d4bcc437b8e92690",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -13533,6 +13704,53 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "lines": 27,
+      "module": "tests.test_knowledge_rag_gate",
+      "parsed": true,
+      "path": "tests/test_knowledge_rag_gate.py",
+      "phase_coverage": [
+        0,
+        8
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "602a76bf399b2a24fb1938a0e462e6571a6947c68bfc4f7115b3a3dd3b14842a",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/knowledge/firewall.py",
+        "aura/knowledge/retrieval.py"
+      ],
+      "lines": 66,
+      "module": "tests.test_knowledge_retrieval",
+      "parsed": true,
+      "path": "tests/test_knowledge_retrieval.py",
+      "phase_coverage": [
+        8
+      ],
+      "primary_phase": 8,
+      "role": "test",
+      "sha256": "567c4679e290c9cb522df1e75c8190692fb3151cccf6f468a22ec31582356e7f",
+      "standard_library_dependencies": [
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/data/live_plane.py"
       ],
       "lines": 81,
@@ -14439,7 +14657,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 97,
+      "lines": 98,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -14448,7 +14666,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093",
+      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -15358,7 +15576,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "ae378d2d9b7631f4e677b632d019f9e29e948de8b945fed1bf234109e32bf4ba",
+  "repository_tree_sha256": "a7ce7734c1eea04c3cb497d54de099466aa02bd6ff8637e6349420e4b48b915a",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -15710,13 +15928,13 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 13,
+      "line": 17,
       "path": "aura/knowledge/firewall.py"
     },
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 14,
+      "line": 15,
       "path": "aura/knowledge/local_corpus.py"
     },
     {
@@ -15847,15 +16065,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 148,
-    "entrypoints": 30,
+    "directly_tested_source_modules": 150,
+    "entrypoints": 31,
     "parse_errors": 0,
-    "python_modules": 311,
-    "repository_files": 368,
-    "source_modules": 162,
-    "static_test_functions": 486,
+    "python_modules": 315,
+    "repository_files": 372,
+    "source_modules": 164,
+    "static_test_functions": 490,
     "stub_candidates": 79,
-    "test_modules": 128,
+    "test_modules": 130,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

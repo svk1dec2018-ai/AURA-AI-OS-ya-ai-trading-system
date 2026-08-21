@@ -1,0 +1,46 @@
+{
+  "benchmark": {
+    "expected_item_ranks": [
+      1,
+      1,
+      1
+    ],
+    "mean_reciprocal_rank": 1.0,
+    "queries": 3,
+    "top_1_accuracy": 1.0
+  },
+  "claims": {
+    "copyrighted_material_scraped": false,
+    "external_content_downloaded": false,
+    "live_money_enabled": false,
+    "market_or_strategy_performance_claimed": false,
+    "trading_action_authorized": false
+  },
+  "components": {
+    "document_ingestion": "aura.knowledge.local_corpus.LocalKnowledgeIndex",
+    "metadata_and_trust_firewall": "aura.knowledge.firewall.KnowledgeFirewall",
+    "retrieval_and_citation_verification": "aura.knowledge.retrieval"
+  },
+  "decision": "PASS",
+  "deterministic_fingerprint": "418c16e2e9e51aab88b8e4a930991185f0e826be1b6f91e3385a0f8ad213ab09",
+  "fixture_type": "deterministic_internal_retrieval_fixture",
+  "phase": 8,
+  "safety_probes": {
+    "contradiction_blocked": true,
+    "external_content_has_no_instruction_authority": true,
+    "fabricated_citation_blocked": true,
+    "future_knowledge_hidden": true,
+    "low_trust_rejected": true,
+    "no_evidence_blocked": true
+  },
+  "schema_version": 1,
+  "verified_usage": {
+    "content_hashes": [
+      "463c0c65d6413641374185aa74658afd502c9f831e8d48fac6dd9e9fb7850420"
+    ],
+    "instruction_authority": false,
+    "item_ids": [
+      "risk-policy"
+    ]
+  }
+}
