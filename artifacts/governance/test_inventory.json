@@ -482,6 +482,49 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_broker_evidence.py",
+      "phase_coverage": [
+        1,
+        4
+      ],
+      "sha256": "bbd1f496f7c0394713110670ac6c49ae70dddc52cc8bff8b4a6e5bebfe085dc3",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py"
+      ],
+      "static_test_functions": 6,
+      "test_classes": [],
+      "test_functions": [
+        "test_complete_external_manifests_are_structurally_eligible_only",
+        "test_execution_evidence_rejects_overfill_and_noncausal_time",
+        "test_internal_or_demo_fixture_cannot_pass_phase11",
+        "test_loader_rejects_secret_fields_before_schema_validation",
+        "test_sealed_broker_evidence_is_content_addressed",
+        "test_verifier_rejects_cross_bundle_duplicate_observations"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_broker_evidence_readiness.py",
+      "phase_coverage": [
+        0,
+        11
+      ],
+      "sha256": "469564f63698666de3b3c473c8648557dbf9a86276e12aec4d18cde3d645aef4",
+      "source_dependencies": [
+        "aura/ops/broker_evidence_readiness.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase11_readiness_is_current_but_gate_is_blocked",
+        "test_phase11_readiness_report_refuses_fake_external_success"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_candle_aggregation.py",
       "phase_coverage": [
         5
@@ -2958,7 +3001,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 499,
-    "test_modules": 134
+    "static_test_functions": 507,
+    "test_modules": 136
   }
 }

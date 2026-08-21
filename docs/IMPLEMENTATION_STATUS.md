@@ -4,7 +4,7 @@ This document is the current source of truth for what is implemented in code ver
 
 > **Mandatory governance status:** Code presence is no longer a phase-completion
 > claim. The machine-readable authority is
-> `artifacts/governance/phase_gate_status.json`. Phases 0–9 are PASS; Phases 10–15
+> `artifacts/governance/phase_gate_status.json`. Phases 0–10 are PASS; Phases 11–15
 > remain BLOCKED until their named validation evidence is produced and accepted.
 > Existing later-phase code is preserved as implementation inventory, not
 > retroactive gate certification.
@@ -16,6 +16,12 @@ This document is the current source of truth for what is implemented in code ver
 It is **not yet certified for unrestricted real-money production**. Real-money eligibility intentionally requires broker-origin forward evidence, an APPROVED immutable strategy version, explicit human approval, healthy operational state and a passing `ProductionReleaseGate` manifest.
 
 No backtest, LLM opinion, public-data shadow result, paper champion or code-only test can bypass that boundary.
+
+Phase 11 now has a secret-free external broker evidence schema and read-only
+verifier. It rejects self-attested sources, duplicated observations, tampered
+content, non-causal timestamps, incomplete fills and unstable reconciliation.
+This is readiness infrastructure only: Angel One remains read-only, MT5 remains
+demo-only, and Phase 11 remains BLOCKED pending accepted external evidence.
 
 ## Implemented and wired
 

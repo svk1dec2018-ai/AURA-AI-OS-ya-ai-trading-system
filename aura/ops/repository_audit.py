@@ -66,6 +66,7 @@ _FILE_PHASE_OVERRIDES = {
     "aura/ops/knowledge_rag_gate.py": 8,
     "aura/ops/multi_agent_gate.py": 9,
     "aura/ops/ceo_decision_gate.py": 10,
+    "aura/ops/broker_evidence_readiness.py": 11,
     "aura/ops/health.py": 15,
     "aura/ops/preflight.py": 15,
     "aura/ops/release_gate.py": 15,
