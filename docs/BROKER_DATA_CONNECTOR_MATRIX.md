@@ -96,6 +96,8 @@ The restart-safe evidence archive persists only these sealed, credential-free
 exports. It does not persist credentials or raw broker identifiers and cannot grant
 execution or phase-gate authority. Its checkpoint CLI exports a content-sealed WAL
 prefix anchor for owner-controlled off-host storage and later rollback detection.
+The custody CLI archives only a fully attested, verifier-eligible Angel One/MT5
+batch and emits a sealed review receipt; blocked inputs perform no custody writes.
 
 Examples:
 

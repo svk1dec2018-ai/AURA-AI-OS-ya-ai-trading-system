@@ -37,6 +37,10 @@ bindings, and links records by prior evidence hash. Strong protection against an
 administrator deleting or replacing an archive prefix is available through a
 sealed checkpoint export/verify CLI, provided the checkpoint or printed digest is
 copied to an owner-controlled system outside the archive host.
+A custody CLI now validates an eligible two-broker batch before any write, appends
+it idempotently, anchors the resulting WAL prefix and emits a content-sealed
+receipt. Blocked evidence produces no archive/checkpoint/receipt mutation, and the
+receipt cannot update the phase ledger or grant execution authority.
 
 ## Implemented and wired
 

@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 391
-- Python modules: 334
-- Source modules: 173
-- Test modules: 140
-- Static test functions: 531
-- Entrypoints: 36
-- Known stub/incomplete candidates: 81
+- Repository files: 393
+- Python modules: 336
+- Source modules: 174
+- Test modules: 141
+- Static test functions: 540
+- Entrypoints: 37
+- Known stub/incomplete candidates: 82
 
 ## Repository structure
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 177 |
+| `aura` | 178 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 140 |
+| `tests` | 141 |
 
 ## Entrypoints
 
@@ -58,6 +58,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/backtest_gate.py` | python-main |
 | `aura/ops/broker_conformance_gate.py` | python-main |
 | `aura/ops/broker_evidence_checkpoint.py` | python-main |
+| `aura/ops/broker_evidence_custody.py` | python-main |
 | `aura/ops/broker_evidence_intake.py` | python-main |
 | `aura/ops/broker_evidence_readiness.py` | python-main |
 | `aura/ops/ceo_decision_gate.py` | python-main |
@@ -156,7 +157,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 59 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 60 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -170,8 +171,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
 | `aura/execution/angel_one.py` | source | execution | 4 | 5 | 2 |
-| `aura/execution/broker.py` | source | execution | 4 | 1 | 6 |
-| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 5 |
+| `aura/execution/broker.py` | source | execution | 4 | 1 | 7 |
+| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 6 |
 | `aura/execution/broker_evidence_recorder.py` | source | execution | 11 | 5 | 1 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
@@ -207,6 +208,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/backtest_gate.py` | source | ops | 6 | 14 | 1 |
 | `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
 | `aura/ops/broker_evidence_checkpoint.py` | source | ops | 11 | 1 | 1 |
+| `aura/ops/broker_evidence_custody.py` | source | ops | 11 | 2 | 1 |
 | `aura/ops/broker_evidence_intake.py` | source | ops | 11 | 1 | 1 |
 | `aura/ops/broker_evidence_readiness.py` | source | ops | 11 | 6 | 1 |
 | `aura/ops/ceo_decision_gate.py` | source | ops | 10 | 14 | 1 |
@@ -223,7 +225,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/state_engine_gate.py` | source | ops | 2 | 9 | 1 |
 | `aura/ops/strategy_research_gate.py` | source | ops | 7 | 12 | 1 |
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
-| `aura/persistence/broker_evidence_archive.py` | source | persistence | 11 | 2 | 2 |
+| `aura/persistence/broker_evidence_archive.py` | source | persistence | 11 | 2 | 3 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 5 | 6 |
 | `aura/persistence/wal.py` | source | persistence | 2 | 0 | 12 |
@@ -312,6 +314,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_broker_evidence.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_broker_evidence_archive.py` | test | validation | 2 | 4 | 0 |
 | `tests/test_broker_evidence_checkpoint.py` | test | validation | 4 | 4 | 0 |
+| `tests/test_broker_evidence_custody.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_broker_evidence_intake.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_broker_evidence_readiness.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_broker_evidence_recorder.py` | test | validation | 1 | 6 | 0 |
