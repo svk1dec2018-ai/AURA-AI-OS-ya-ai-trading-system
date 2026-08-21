@@ -1294,6 +1294,43 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_knowledge_rag_gate.py",
+      "phase_coverage": [
+        0,
+        8
+      ],
+      "sha256": "602a76bf399b2a24fb1938a0e462e6571a6947c68bfc4f7115b3a3dd3b14842a",
+      "source_dependencies": [
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_eight_evidence_is_current",
+        "test_phase_eight_report_is_deterministic_and_safe"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_knowledge_retrieval.py",
+      "phase_coverage": [
+        8
+      ],
+      "sha256": "567c4679e290c9cb522df1e75c8190692fb3151cccf6f468a22ec31582356e7f",
+      "source_dependencies": [
+        "aura/knowledge/firewall.py",
+        "aura/knowledge/retrieval.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_empty_or_contradictory_retrieval_cannot_be_verified",
+        "test_retrieval_is_point_in_time_ranked_and_citation_bound"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_live_data_plane.py",
       "phase_coverage": [
         5
@@ -2047,7 +2084,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093",
+      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -2055,7 +2092,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_strategy_research_only",
+        "test_committed_ledger_passes_through_knowledge_rag_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2841,7 +2878,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 486,
-    "test_modules": 128
+    "static_test_functions": 490,
+    "test_modules": 130
   }
 }

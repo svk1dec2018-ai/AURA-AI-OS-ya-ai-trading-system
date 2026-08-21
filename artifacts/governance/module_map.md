@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 368
-- Python modules: 311
-- Source modules: 162
-- Test modules: 128
-- Static test functions: 486
-- Entrypoints: 30
+- Repository files: 372
+- Python modules: 315
+- Source modules: 164
+- Test modules: 130
+- Static test functions: 490
+- Entrypoints: 31
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 166 |
+| `aura` | 168 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 128 |
+| `tests` | 130 |
 
 ## Entrypoints
 
@@ -58,6 +58,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/backtest_gate.py` | python-main |
 | `aura/ops/broker_conformance_gate.py` | python-main |
 | `aura/ops/core_contracts.py` | python-main |
+| `aura/ops/knowledge_rag_gate.py` | python-main |
 | `aura/ops/market_data_gate.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
 | `aura/ops/risk_engine_gate.py` | python-main |
@@ -183,8 +184,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 0 | 1 |
 | `aura/interface/web_command_center.py` | source | interface | 13 | 1 | 2 |
 | `aura/interface/web_command_center_v2.py` | source | interface | 13 | 3 | 1 |
-| `aura/knowledge/firewall.py` | source | knowledge | 8 | 0 | 5 |
-| `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 1 |
+| `aura/knowledge/firewall.py` | source | knowledge | 8 | 1 | 6 |
+| `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 2 | 1 |
+| `aura/knowledge/retrieval.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/markets/universe.py` | source | markets | 1 | 0 | 9 |
 | `aura/memory/cognitive.py` | source | memory | 9 | 0 | 2 |
 | `aura/models/cognitive_router.py` | source | models | 9 | 2 | 1 |
@@ -198,8 +200,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
+| `aura/ops/knowledge_rag_gate.py` | source | ops | 8 | 11 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 8 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 9 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -331,6 +334,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_instruments.py` | test | validation | 1 | 1 | 0 |
 | `tests/test_intelligence_service.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_knowledge_firewall.py` | test | validation | 8 | 1 | 0 |
+| `tests/test_knowledge_rag_gate.py` | test | validation | 0 | 2 | 0 |
+| `tests/test_knowledge_retrieval.py` | test | validation | 8 | 2 | 0 |
 | `tests/test_live_data_plane.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_live_shadow_strategy_lab.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_local_knowledge_corpus.py` | test | validation | 8 | 1 | 0 |

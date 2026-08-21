@@ -105,6 +105,8 @@ jobs:
         run: python -m aura.ops.backtest_gate --check
       - name: Phase 7 strategy research evidence drift
         run: python -m aura.ops.strategy_research_gate --check
+      - name: Phase 8 knowledge/RAG evidence drift
+        run: python -m aura.ops.knowledge_rag_gate --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests

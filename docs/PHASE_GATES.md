@@ -30,7 +30,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 5 | PASS | Provider-neutral ingestion rejects invalid batches and measures data lag. |
 | 6 | PASS | Backtest and paper execution share fill/cost semantics and causal guards. |
 | 7 | PASS | Hypotheses and candidates are reproducible; overfit and untested candidates fail closed. |
-| 8–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 8 | PASS | Retrieval is point-in-time, citation-bound, and external content has no command authority. |
+| 9–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -175,6 +176,23 @@ claim and performs no paper or live promotion.
 ```bash
 python -m aura.ops.strategy_research_gate --write
 python -m aura.ops.strategy_research_gate --check
+```
+
+## Phase 8 evidence
+
+- `artifacts/governance/retrieval_benchmark_report.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The knowledge/RAG gate connects the existing license-gated local ingestion and
+trust firewall to one deterministic retrieval and citation-verification boundary.
+It benchmarks known-answer retrieval and proves that future, low-trust, empty,
+contradictory, and fabricated-citation evidence fails closed. Retrieved text is
+always untrusted data with no owner-command or trading authority. The deterministic
+fixture downloads or scrapes no external content.
+
+```bash
+python -m aura.ops.knowledge_rag_gate --write
+python -m aura.ops.knowledge_rag_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

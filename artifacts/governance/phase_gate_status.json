@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "0d7e56cd7b910ae4394e8d7fafa0ff4abb6affd4c0c97c283198af1c5f7a1a5c",
+  "ledger_sha256": "5f37bf6ac404223d0085692f39f5a5d0f131d32b625fe3a4141a28f163565915",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "a0faf8c96b80bd3a41fda653ac1ade504899d28d2d8accec405df002b164a8ee"
+          "sha256": "85428c35a2bf72307cea5fe998a6a0c5362d71357dc909c55b571a7584f9fcb0"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "09558ff79c251896fb1dcc2e99f592d15306faee3b1af317ab6d0c9dd59ca9ba"
+          "sha256": "74b2f9b58c4c4636fd7f052d4ec5b6d1b530d148457fc7734369b3b0015af656"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "0fe44f7a4e0cfaec4886f5813794c0145b2813ccf59d206f0ca27c2cb5eb9bb9"
+          "sha256": "c06fe996b3452b7b26f286167bcb1201b52d8d3d66da7f5150c3083cd0de4314"
         }
       ],
       "phase": 0,
@@ -134,12 +134,16 @@
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Retrieval benchmark report",
+          "path": "artifacts/governance/retrieval_benchmark_report.json",
+          "sha256": "c6403704410dfc5f02416135d901a6df78b45edb9e0908c25c5ce4066d290bdc"
+        }
+      ],
       "phase": 8,
-      "reasons": [
-        "Phase 8 validation evidence has not been produced or accepted; Phase 7 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",
