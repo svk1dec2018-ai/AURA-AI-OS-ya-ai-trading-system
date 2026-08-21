@@ -506,6 +506,33 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_broker_evidence_archive.py",
+      "phase_coverage": [
+        2,
+        4,
+        11
+      ],
+      "sha256": "4b77a55a03925cdeb73e9dfa89bd9d2dba2297668a6e528e810d6b421ebe7f5a",
+      "source_dependencies": [
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/persistence/broker_evidence_archive.py",
+        "aura/persistence/wal.py"
+      ],
+      "static_test_functions": 7,
+      "test_classes": [],
+      "test_functions": [
+        "test_archive_detects_wal_checksum_tampering",
+        "test_archive_is_restart_safe_and_idempotent",
+        "test_archive_links_sequential_evidence_across_restart",
+        "test_archive_rejects_semantically_invalid_wal_events",
+        "test_archive_rejects_valid_checksum_with_wrong_chain_binding",
+        "test_archive_rejects_valid_checksum_with_wrong_hash_chain",
+        "test_concurrent_duplicate_append_writes_one_record"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_broker_evidence_intake.py",
       "phase_coverage": [
         1,
@@ -3053,7 +3080,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 516,
-    "test_modules": 138
+    "static_test_functions": 523,
+    "test_modules": 139
   }
 }

@@ -293,6 +293,21 @@ reconciliation observations fail closed, including under concurrent recorder use
 It performs no broker call and does not verify that an external fingerprint is
 authentic; the separate owner review/attestation workflow remains mandatory.
 
+### Evidence archive and restart contract
+
+`BrokerEvidenceArchive` durably stores only already-sealed evidence. It reuses the
+existing fsync-capable JSONL write-ahead log and adds semantic event/capture
+binding plus a previous-evidence SHA-256 chain. On every restart/read it verifies
+the WAL checksums and sequence, the sealed bundle content hash, the event and
+capture identifiers, duplicate evidence, and the evidence chain. Concurrent
+duplicate appends are idempotent and produce one record.
+
+The application API is append-only: it exposes no delete, truncate, or mutation
+operation and performs no broker call. This improves local chain of custody but is
+not an external broker attestation or Phase 11 PASS. An owner-controlled backup or
+external digest anchor is still required to detect deletion of the final WAL tail
+by an administrator with filesystem access.
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own
