@@ -141,7 +141,7 @@
         9,
         10
       ],
-      "sha256": "484a5baa7e5001bd3a5424aa30de98867dcfdb17c354aaed0888e03f78336fd7",
+      "sha256": "228787465e7f037483b90c547fe3dd3f37c96a7566090b55e998f927c31151a0",
       "source_dependencies": [
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
@@ -497,6 +497,46 @@
         "test_india_session_5m_buckets_anchor_from_0915_ist",
         "test_second_level_research_buckets_are_causal",
         "test_three_minute_timeframe_is_supported"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_ceo_decision_gate.py",
+      "phase_coverage": [
+        0,
+        10
+      ],
+      "sha256": "1724950ea80e4ab2c7eb78d1af7d58e72e01dbecebbf93a53ca045969ef196a9",
+      "source_dependencies": [
+        "aura/ops/ceo_decision_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase10_evidence_is_current",
+        "test_phase10_report_proves_reproducible_explainable_decisions"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_ceo_decision_trace.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "d9cad866ab0275f68824962cc58f6337ce5835e8e8f5ec01fa3fb7860d25c467",
+      "source_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_ceo_rejects_invalid_role_weights",
+        "test_ceo_trace_explains_fail_closed_no_trade",
+        "test_ceo_trace_is_reproducible_and_order_independent"
       ]
     },
     {
@@ -2124,7 +2164,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "1fb136479c8f731ecf1896c4642684bddddff12a89c053c92e994416f4e59efb",
+      "sha256": "a399d1dfd790a75b8e025649ee6f163d75a1b3703d87d206cf68104c70aa00de",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -2132,7 +2172,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_multi_agent_only",
+        "test_committed_ledger_passes_through_ceo_decision_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2918,7 +2958,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 494,
-    "test_modules": 132
+    "static_test_functions": 499,
+    "test_modules": 134
   }
 }

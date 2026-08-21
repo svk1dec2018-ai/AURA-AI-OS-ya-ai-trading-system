@@ -218,7 +218,7 @@ Deterministic specialists + optional multiple AI models
 Bull / Bear / Counterfactual deliberation
               |
               v
-Reliability-weighted deterministic CEO synthesis
+Reliability-weighted deterministic CEO synthesis + reproducible decision trace
               |
               v
 Agent evidence policy

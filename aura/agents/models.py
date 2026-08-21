@@ -143,6 +143,56 @@ class AgentRound(BaseModel):
     completed_at: datetime
 
 
+class DecisionReasonCode(str, Enum):
+    QUORUM_NOT_MET = "quorum_not_met"
+    NO_DIRECTIONAL_EVIDENCE = "no_directional_evidence"
+    DIRECTIONAL_DISAGREEMENT = "directional_disagreement"
+    WEIGHTED_EVIDENCE = "weighted_evidence"
+
+
+class EvidenceContribution(BaseModel):
+    """One specialist's deterministic contribution to CEO evidence fusion."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    agent_id: str = Field(min_length=1)
+    role: AgentRole
+    intent: SignalIntent
+    confidence: float = Field(ge=0.0, le=1.0)
+    thesis: str = Field(min_length=1)
+    source_trust: float = Field(ge=0.0, le=1.0)
+    role_weight: float = Field(gt=0.0)
+    reliability_weight: float = Field(gt=0.0)
+    effective_score: float = Field(ge=0.0)
+    source_ids: tuple[str, ...]
+    risk_flags: tuple[str, ...] = ()
+
+
+class CEODecisionTrace(BaseModel):
+    """Machine-readable, replayable explanation for one advisory CEO decision."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Literal[1] = 1
+    correlation_id: str = Field(min_length=1)
+    evidence_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    decision_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    market: str = Field(min_length=1)
+    regime: str = Field(min_length=1)
+    evidence_count: int = Field(ge=0)
+    distinct_role_count: int = Field(ge=0)
+    failure_agents: tuple[str, ...]
+    min_agents: int = Field(gt=0)
+    min_distinct_roles: int = Field(gt=0)
+    min_directional_margin: float = Field(ge=0.0, le=1.0)
+    long_score: float = Field(ge=0.0)
+    short_score: float = Field(ge=0.0)
+    directional_margin: float = Field(ge=0.0, le=1.0)
+    reason_code: DecisionReasonCode
+    contributions: tuple[EvidenceContribution, ...]
+    execution_authority: Literal[False] = False
+
+
 class CEODecisionMemo(BaseModel):
     """Advisory multi-agent synthesis; never an executable order."""
 
@@ -157,5 +207,6 @@ class CEODecisionMemo(BaseModel):
     risk_flags: tuple[str, ...]
     rationale: str
     quorum_met: bool
+    decision_trace: CEODecisionTrace | None = None
     execution_authority: Literal[False] = False
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
