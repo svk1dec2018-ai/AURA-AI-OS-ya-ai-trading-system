@@ -127,6 +127,8 @@ async def test_multi_model_ceo_output_is_resized_by_independent_risk_engine() ->
     )
 
     assert outcome.memo.intent == SignalIntent.LONG
+    assert outcome.memo.decision_trace is not None
+    assert outcome.memo.decision_trace.market == "TEST"
     assert outcome.governed_result is not None
     assert outcome.governed_result.risk.approved
     assert outcome.governed_result.order is not None

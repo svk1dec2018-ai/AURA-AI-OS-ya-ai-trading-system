@@ -32,7 +32,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 7 | PASS | Hypotheses and candidates are reproducible; overfit and untested candidates fail closed. |
 | 8 | PASS | Retrieval is point-in-time, citation-bound, and external content has no command authority. |
 | 9 | PASS | Ten registered specialist roles emit deterministic structured advisory evidence. |
-| 10–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 10 | PASS | CEO evidence fusion is deterministic, contribution-traced, explainable, and advisory-only. |
+| 11–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -210,6 +211,24 @@ over identical internal point-in-time context must emit identical structured
 ```bash
 python -m aura.ops.multi_agent_gate --write
 python -m aura.ops.multi_agent_gate --check
+```
+
+## Phase 10 evidence
+
+- `artifacts/governance/decision_trace_logs.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The CEO gate extends the existing deterministic aggregator with a structured trace
+for every specialist contribution, trust/role/reliability weight, quorum threshold,
+directional score, risk flag, support/opposition/abstention set, and explicit
+decision reason. Identical semantic evidence produces the same content fingerprint
+even when packet order changes. Missing quorum and excessive disagreement both
+produce an explainable `FLAT` / no-trade decision. The CEO remains advisory-only
+and cannot size a position, bypass risk, approve a strategy, or submit an order.
+
+```bash
+python -m aura.ops.ceo_decision_gate --write
+python -m aura.ops.ceo_decision_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

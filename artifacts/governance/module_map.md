@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 376
-- Python modules: 319
-- Source modules: 166
-- Test modules: 132
-- Static test functions: 494
-- Entrypoints: 32
+- Repository files: 379
+- Python modules: 322
+- Source modules: 167
+- Test modules: 134
+- Static test functions: 499
+- Entrypoints: 33
 - Known stub/incomplete candidates: 80
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 170 |
+| `aura` | 171 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 132 |
+| `tests` | 134 |
 
 ## Entrypoints
 
@@ -57,6 +57,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `aura/ops/backtest_gate.py` | python-main |
 | `aura/ops/broker_conformance_gate.py` | python-main |
+| `aura/ops/ceo_decision_gate.py` | python-main |
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/knowledge_rag_gate.py` | python-main |
 | `aura/ops/market_data_gate.py` | python-main |
@@ -100,9 +101,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/deliberation.py` | source | agents | 9 | 2 | 4 |
 | `aura/agents/external_specialists.py` | source | agents | 9 | 5 | 3 |
 | `aura/agents/forecast_specialist.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/models.py` | source | agents | 9 | 1 | 26 |
+| `aura/agents/models.py` | source | agents | 9 | 1 | 27 |
 | `aura/agents/ollama_provider.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/orchestrator.py` | source | agents | 9 | 5 | 8 |
+| `aura/agents/orchestrator.py` | source | agents | 9 | 5 | 9 |
 | `aura/agents/providers.py` | source | agents | 9 | 3 | 3 |
 | `aura/agents/registry.py` | source | agents | 9 | 2 | 1 |
 | `aura/agents/reliability.py` | source | agents | 9 | 2 | 3 |
@@ -152,7 +153,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 55 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 56 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -200,12 +201,13 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/__init__.py` | package_marker | ops | 15 | 4 | 0 |
 | `aura/ops/backtest_gate.py` | source | ops | 6 | 14 | 1 |
 | `aura/ops/broker_conformance_gate.py` | source | ops | 4 | 11 | 1 |
+| `aura/ops/ceo_decision_gate.py` | source | ops | 10 | 14 | 1 |
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
 | `aura/ops/knowledge_rag_gate.py` | source | ops | 8 | 11 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
 | `aura/ops/multi_agent_gate.py` | source | ops | 9 | 16 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 10 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 11 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -299,6 +301,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_broker_conformance_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_broker_contract.py` | test | validation | 4 | 5 | 0 |
 | `tests/test_candle_aggregation.py` | test | validation | 5 | 1 | 0 |
+| `tests/test_ceo_decision_gate.py` | test | validation | 0 | 2 | 0 |
+| `tests/test_ceo_decision_trace.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_checkpoint.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_cognitive_memory.py` | test | validation | 9 | 1 | 0 |
 | `tests/test_cognitive_router.py` | test | validation | 9 | 3 | 0 |
