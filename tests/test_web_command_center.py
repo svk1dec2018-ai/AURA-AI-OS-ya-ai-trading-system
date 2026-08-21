@@ -137,6 +137,37 @@ def test_live_and_paper_commands_are_blocked_before_execution(tmp_path: Path) ->
     assert paper["accepted"] is False
 
 
+def test_development_and_correction_queue_need_owner_but_funds_always_blocked(
+    tmp_path: Path,
+) -> None:
+    service = CommandCenterService(
+        CommandCenterConfig(queue_path=tmp_path / "queue.jsonl", api_token=OWNER_TOKEN)
+    )
+    denied_status, _ = service.handle_command("repair system and update code")
+    development_status, development = service.handle_command(
+        "repair system and update code",
+        owner_authenticated=True,
+    )
+    correction_status, correction = service.handle_command(
+        "correct pnl for paper trade",
+        owner_authenticated=True,
+    )
+    fund_status, fund = service.handle_command(
+        "withdraw funds",
+        owner_authenticated=True,
+    )
+
+    assert denied_status == HTTPStatus.UNAUTHORIZED
+    assert development_status == HTTPStatus.ACCEPTED
+    assert development["payload"]["status"] == "pending_sandbox_review"
+    assert development["payload"]["auto_apply_allowed"] is False
+    assert correction_status == HTTPStatus.ACCEPTED
+    assert correction["payload"]["status"] == "pending_typed_correction_review"
+    assert correction["payload"]["fund_movement_allowed"] is False
+    assert fund_status == HTTPStatus.FORBIDDEN
+    assert fund["fund_movement_allowed"] is False
+
+
 def test_unattached_market_source_returns_no_fabricated_data(tmp_path: Path) -> None:
     service = CommandCenterService(
         CommandCenterConfig(queue_path=tmp_path / "queue.jsonl")

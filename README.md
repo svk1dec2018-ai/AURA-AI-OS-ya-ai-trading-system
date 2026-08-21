@@ -78,6 +78,7 @@ The desk supports:
 - concurrent specialist execution
 - multiple local/provider AI agents through structured evidence
 - Ollama multi-model council
+- optional OpenAI Responses API council with strict structured output
 - Bull/Bear/Counterfactual adversarial deliberation
 - deterministic CEO synthesis
 - market/regime/role-specific agent and model reliability learning
@@ -86,6 +87,19 @@ The desk supports:
 - bounded AI in-flight capacity so slow models do not stall market ingestion
 
 Raw private model reasoning is not treated as trading evidence; AURA stores validated conclusions, confidence, factors, provenance and risk flags.
+
+### Controlled maintenance and development AI
+
+- free local Ollama or optional OpenAI system diagnosis and unified-diff repair proposals
+- deterministic AI/developer/owner authority matrix
+- tracked-file-only, credential-free patch sandbox with fixed test commands
+- exact base-commit, patch-hash and owner-approval binding
+- restart-safe proposal, validation, approval and application WAL
+- development worktree apply and exact rollback without automatic commit/push/deploy
+- append-only P&L/trade reporting corrections without rewriting fills or broker truth
+- owner, developer and AI all hard-blocked from deposit, withdrawal, fund transfer, risk bypass and secret disclosure
+
+See `docs/CONTROLLED_SELF_IMPROVEMENT.md` for commands and the complete authority contract.
 
 ### Autonomous strategy research
 
@@ -194,11 +208,44 @@ python examples/run_free_public_strategy_lab.py
 Local multi-AI council with Ollama:
 
 ```bash
-# Example environment
-export AURA_OLLAMA_MODELS="qwen3,deepseek-r1"
+# Five key-free local assistants: Qwen 3.5, DeepSeek-R1, Llama 3.1,
+# Gemma 3 and Phi-4 Mini.
+export AURA_FREE_AI_PRESET="balanced5"
+export AURA_OLLAMA_KEEP_ALIVE="0"
 export AURA_AI_OPINIONS_PER_ROLE="1"
+aura-free-ai catalog
+aura-free-ai probe
 python examples/run_free_public_ai_council.py
 ```
+
+The balanced preset uses local Ollama inference: no API key and no per-token provider
+charge. The five downloads total approximately 20 GB, individual model licenses still
+apply, and no claim is made that small local models match paid ChatGPT or Claude quality.
+Requests are serialized and models unload after each request by default to limit RAM use.
+An explicit `AURA_OLLAMA_MODELS` comma-separated list overrides the preset.
+
+Owner-gated local maintenance developer:
+
+```bash
+export AURA_MAINTENANCE_AI_PROVIDER="ollama"
+export AURA_MAINTENANCE_OLLAMA_MODEL="qwen3.5:4b"
+aura-maintenance policy
+aura-maintenance probe --repository .
+```
+
+Optional OpenAI advisory models and maintenance developer:
+
+```bash
+cp .env.example .env.local
+# securely set OPENAI_API_KEY in .env.local
+export AURA_OPENAI_MODELS="gpt-5.4-mini"
+export AURA_MAINTENANCE_AI_PROVIDER="openai"
+```
+
+All AI models remain advisory inside the trading council. Maintenance patches go through
+proposal -> credential-free sandbox -> tests -> exact owner approval -> development branch;
+they never auto-merge or auto-deploy. Add/withdraw/transfer funds, historical ledger rewrites,
+risk bypass, secret exposure and AI self-approval are unavailable to every provider and role.
 
 Run the complete no-key autonomy stack (Multi-AI council + historical seed + live
 intelligence + deterministic forecasts + missed-opportunity audit + forward-only
@@ -251,8 +298,9 @@ python examples/run_command_center.py
 ```
 
 Open `http://127.0.0.1:8765`. Read-only loopback status works without a token,
-but research/self-upgrade requests require authenticated owner access and remain
-queued for human review. The browser keeps the token in session storage only.
+but research, development and financial-correction requests require authenticated owner access
+and remain queued for governed review. Fund commands are rejected even for the owner. The browser
+keeps the token in session storage only.
 
 ## Optional Telegram outbound alerts
 

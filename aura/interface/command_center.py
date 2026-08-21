@@ -16,15 +16,21 @@ class AssistantIntent(str, Enum):
     POSITIONS = "positions"
     EXPLAIN = "explain"
     RESEARCH_REQUEST = "research_request"
+    DEVELOPMENT_REQUEST = "development_request"
+    FINANCIAL_CORRECTION_REQUEST = "financial_correction_request"
     PAPER_CONTROL = "paper_control"
     LIVE_CONTROL = "live_control"
+    FUND_CONTROL = "fund_control"
 
 
 class CommandPrivilege(str, Enum):
     READ_ONLY = "read_only"
     RESEARCH = "research"
+    DEVELOPMENT = "development"
+    FINANCIAL_CORRECTION = "financial_correction"
     PAPER = "paper"
     LIVE = "live"
+    FUND = "fund"
 
 
 _INTENT_PRIVILEGE = {
@@ -34,8 +40,11 @@ _INTENT_PRIVILEGE = {
     AssistantIntent.POSITIONS: CommandPrivilege.READ_ONLY,
     AssistantIntent.EXPLAIN: CommandPrivilege.READ_ONLY,
     AssistantIntent.RESEARCH_REQUEST: CommandPrivilege.RESEARCH,
+    AssistantIntent.DEVELOPMENT_REQUEST: CommandPrivilege.DEVELOPMENT,
+    AssistantIntent.FINANCIAL_CORRECTION_REQUEST: CommandPrivilege.FINANCIAL_CORRECTION,
     AssistantIntent.PAPER_CONTROL: CommandPrivilege.PAPER,
     AssistantIntent.LIVE_CONTROL: CommandPrivilege.LIVE,
+    AssistantIntent.FUND_CONTROL: CommandPrivilege.FUND,
 }
 
 
@@ -96,11 +105,15 @@ class CommandRouter:
         handlers: dict[AssistantIntent, CommandHandler] | None = None,
         *,
         allow_research: bool = True,
+        allow_development: bool = True,
+        allow_financial_correction: bool = True,
         allow_paper_control: bool = True,
         allow_live_control: bool = False,
     ) -> None:
         self.handlers = dict(handlers or {})
         self.allow_research = allow_research
+        self.allow_development = allow_development
+        self.allow_financial_correction = allow_financial_correction
         self.allow_paper_control = allow_paper_control
         self.allow_live_control = allow_live_control
 
@@ -156,10 +169,19 @@ class CommandRouter:
     def _denial(self, command: AssistantCommand) -> str | None:
         if command.privilege == CommandPrivilege.RESEARCH and not self.allow_research:
             return "research commands are disabled"
+        if command.privilege == CommandPrivilege.DEVELOPMENT and not self.allow_development:
+            return "development commands are disabled"
+        if (
+            command.privilege == CommandPrivilege.FINANCIAL_CORRECTION
+            and not self.allow_financial_correction
+        ):
+            return "financial-correction commands are disabled"
         if command.privilege == CommandPrivilege.PAPER and not self.allow_paper_control:
             return "paper-control commands are disabled"
         if command.privilege == CommandPrivilege.LIVE and not self.allow_live_control:
             return "live-control commands are disabled; explicit live governance is required"
+        if command.privilege == CommandPrivilege.FUND:
+            return "deposit, withdrawal and fund-transfer commands are permanently disabled"
         return None
 
 
@@ -170,6 +192,43 @@ def _classify(text: str) -> tuple[AssistantIntent, dict[str, str]]:
     if symbol_match:
         parameters["symbol"] = symbol_match.group(1).upper()
 
+    if re.search(
+        r"\b(?:withdraw(?:al)?|deposit|"
+        r"add\s+(?:funds?|money|cash)|"
+        r"(?:funds?|money|cash)\s+add|"
+        r"transfer\s+(?:funds?|money|cash)|"
+        r"(?:funds?|money|cash)\s+transfer)\b",
+        normalized,
+    ):
+        return AssistantIntent.FUND_CONTROL, parameters
+    if any(
+        phrase in normalized
+        for phrase in (
+            "correct pnl",
+            "adjust pnl",
+            "modify pnl",
+            "correct trade",
+            "modify trade history",
+            "trade correction",
+        )
+    ):
+        parameters.setdefault("request", text)
+        return AssistantIntent.FINANCIAL_CORRECTION_REQUEST, parameters
+    if any(
+        phrase in normalized
+        for phrase in (
+            "repair system",
+            "repair code",
+            "fix code",
+            "update code",
+            "modify code",
+            "self improve",
+            "self-improve",
+            "development request",
+        )
+    ):
+        parameters.setdefault("request", text)
+        return AssistantIntent.DEVELOPMENT_REQUEST, parameters
     if any(phrase in normalized for phrase in ("live trade", "live order", "real money", "go live")):
         return AssistantIntent.LIVE_CONTROL, parameters
     if any(phrase in normalized for phrase in ("paper start", "paper stop", "paper trade", "demo control")):

@@ -67,6 +67,10 @@
       },
       {
         "from": "aura/agents/ai_council.py",
+        "to": "aura/agents/openai_provider.py"
+      },
+      {
+        "from": "aura/agents/ai_council.py",
         "to": "aura/agents/providers.py"
       },
       {
@@ -163,6 +167,26 @@
       },
       {
         "from": "aura/agents/ollama_provider.py",
+        "to": "aura/ai/free_models.py"
+      },
+      {
+        "from": "aura/agents/ollama_provider.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/agents/openai_provider.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/agents/openai_provider.py",
+        "to": "aura/agents/providers.py"
+      },
+      {
+        "from": "aura/agents/openai_provider.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "aura/agents/openai_provider.py",
         "to": "aura/domain/models.py"
       },
       {
@@ -304,6 +328,34 @@
       {
         "from": "aura/agents/team.py",
         "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/ai/__init__.py",
+        "to": "aura/ai/free_models.py"
+      },
+      {
+        "from": "aura/ai/__init__.py",
+        "to": "aura/ai/ollama_structured.py"
+      },
+      {
+        "from": "aura/ai/__init__.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "aura/ai/free_ai_cli.py",
+        "to": "aura/ai/free_models.py"
+      },
+      {
+        "from": "aura/ai/free_ai_cli.py",
+        "to": "aura/ai/ollama_structured.py"
+      },
+      {
+        "from": "aura/ai/ollama_structured.py",
+        "to": "aura/ai/free_models.py"
+      },
+      {
+        "from": "aura/ai/ollama_structured.py",
+        "to": "aura/ai/openai_responses.py"
       },
       {
         "from": "aura/backtest/engine.py",
@@ -970,6 +1022,94 @@
         "to": "aura/knowledge/firewall.py"
       },
       {
+        "from": "aura/maintenance/__init__.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/change_control.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/change_control.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "aura/maintenance/change_control.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/ai/free_models.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/ai/ollama_structured.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/maintenance/change_control.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/maintenance/financial_corrections.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "aura/maintenance/cli.py",
+        "to": "aura/maintenance/openai_developer.py"
+      },
+      {
+        "from": "aura/maintenance/financial_corrections.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/financial_corrections.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "aura/maintenance/financial_corrections.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "aura/maintenance/monitor.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/monitor.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "aura/maintenance/monitor.py",
+        "to": "aura/ops/health.py"
+      },
+      {
+        "from": "aura/maintenance/monitor.py",
+        "to": "aura/runtime/supervisor.py"
+      },
+      {
+        "from": "aura/maintenance/openai_developer.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "aura/maintenance/openai_developer.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "aura/maintenance/openai_developer.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
         "from": "aura/models/cognitive_router.py",
         "to": "aura/models/performance.py"
       },
@@ -1564,6 +1704,10 @@
       {
         "from": "aura/portfolio/targets.py",
         "to": "aura/risk/quantity.py"
+      },
+      {
+        "from": "aura/research/ai_strategy_architect.py",
+        "to": "aura/ai/free_models.py"
       },
       {
         "from": "aura/research/ai_strategy_architect.py",
@@ -3258,6 +3402,26 @@
         "to": "aura/knowledge/firewall.py"
       },
       {
+        "from": "tests/test_financial_corrections.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_financial_corrections.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "tests/test_financial_corrections.py",
+        "to": "aura/maintenance/financial_corrections.py"
+      },
+      {
+        "from": "tests/test_financial_corrections.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "tests/test_financial_corrections.py",
+        "to": "aura/portfolio/ledger.py"
+      },
+      {
         "from": "tests/test_flattrade.py",
         "to": "aura/data/flattrade.py"
       },
@@ -3300,6 +3464,14 @@
       {
         "from": "tests/test_forecast_specialist.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_free_ai_models.py",
+        "to": "aura/ai/free_ai_cli.py"
+      },
+      {
+        "from": "tests/test_free_ai_models.py",
+        "to": "aura/ai/free_models.py"
       },
       {
         "from": "tests/test_free_intelligence.py",
@@ -3412,6 +3584,50 @@
       {
         "from": "tests/test_macro_external_intelligence.py",
         "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/maintenance/monitor.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/maintenance/openai_developer.py"
+      },
+      {
+        "from": "tests/test_maintenance_authority.py",
+        "to": "aura/ops/health.py"
+      },
+      {
+        "from": "tests/test_maintenance_change_control.py",
+        "to": "aura/maintenance/authority.py"
+      },
+      {
+        "from": "tests/test_maintenance_change_control.py",
+        "to": "aura/maintenance/change_control.py"
+      },
+      {
+        "from": "tests/test_maintenance_change_control.py",
+        "to": "aura/maintenance/models.py"
+      },
+      {
+        "from": "tests/test_maintenance_cli.py",
+        "to": "aura/ai/ollama_structured.py"
+      },
+      {
+        "from": "tests/test_maintenance_cli.py",
+        "to": "aura/maintenance/cli.py"
       },
       {
         "from": "tests/test_market_data_gate.py",
@@ -3706,6 +3922,10 @@
         "to": "aura/knowledge/firewall.py"
       },
       {
+        "from": "tests/test_ollama_structured.py",
+        "to": "aura/ai/ollama_structured.py"
+      },
+      {
         "from": "tests/test_online_bridge.py",
         "to": "aura/domain/models.py"
       },
@@ -3732,6 +3952,30 @@
       {
         "from": "tests/test_open_model_catalog.py",
         "to": "aura/models/registry.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/agents/openai_provider.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/agents/team.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/ai/openai_responses.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_openai_integration.py",
+        "to": "aura/knowledge/firewall.py"
       },
       {
         "from": "tests/test_operator_read_model.py",
@@ -4337,6 +4581,14 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ai/free_ai_cli.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/maintenance/cli.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/backtest_gate.py"
     },
     {
@@ -4460,6 +4712,14 @@
       "path": "examples/send_telegram_test_alert.py"
     },
     {
+      "kind": "console-script:aura-free-ai",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura-maintenance",
+      "path": "pyproject.toml"
+    },
+    {
       "kind": "python-main",
       "path": "scripts/generate_setup_pdf.py"
     },
@@ -4479,15 +4739,15 @@
   "files": [
     {
       "asset_class": "container_configuration",
-      "bytes": 110,
+      "bytes": 125,
       "path": ".dockerignore",
-      "sha256": "7365eec242290647cd1cebebed570a5d1014bf353dc3fe9065ce8883954e83a4"
+      "sha256": "365d8a13661be3d64583ac2183f4c4f99162edc8e8d28752780fc47c4a906fa4"
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 2213,
+      "bytes": 2800,
       "path": ".env.example",
-      "sha256": "ba359ef917e7a26e6de60715a33211e33b91e4ec11bb7bb914847145418fa173"
+      "sha256": "9f5f856d817e2f51919dd369457cb6b16a490106f8c2c0a76704cecbe3751e75"
     },
     {
       "asset_class": "repository_asset",
@@ -4515,9 +4775,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 120,
+      "bytes": 183,
       "path": ".gitignore",
-      "sha256": "cf1ee93636593d5bfffb259cfac3422cb8fb5a7ac38acc0f75afcf1b52674a8b"
+      "sha256": "2d32fd99b3bee007be0d4f94254233c901329f49b0a11ec472fa30ea27f92422"
     },
     {
       "asset_class": "container_configuration",
@@ -4527,15 +4787,15 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 13085,
+      "bytes": 15384,
       "path": "README.md",
-      "sha256": "073aba3f1bd766fbd521e81267e303324497d8572f0b8eb1710004639d4b0edb"
+      "sha256": "80a25b08e129a249764187d10f9039ed6a1f570fa932bf8e6a42679c6afd3a09"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 2158,
+      "bytes": 3319,
       "path": "SECURITY.md",
-      "sha256": "779a6da981fbbad75b30048a0406508fafe2521a93d4cc9362e7eaea747511dd"
+      "sha256": "8c16acbd292658187fc8a229d987afdc3dd47c2791f0b82fdd42415022e45700"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -4563,9 +4823,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 4909,
+      "bytes": 6488,
       "path": "aura/agents/ai_council.py",
-      "sha256": "f95e813749681cb7f5d028a0923671bca7b130d35fa18869e329371a2f129254"
+      "sha256": "110d4dc5a39e3370a7284e70051f6e379b038a02ea613f7597c35fad042e5ec5"
     },
     {
       "asset_class": "python_module",
@@ -4611,9 +4871,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 13683,
+      "bytes": 13932,
       "path": "aura/agents/ollama_provider.py",
-      "sha256": "67dff3fc9de7ae280bc5b434035000043a3e6d387ec376f8dc20e94e59726e47"
+      "sha256": "a66b9ef4e79788cd3dac84904e1b80fa6e48d117ba136e5b8e6a4c509a1dcb96"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 8467,
+      "path": "aura/agents/openai_provider.py",
+      "sha256": "7cf23da7d06e90804018a94037e1b4147b30dcb90ced5a6820e8dcfc0fbf02ec"
     },
     {
       "asset_class": "python_module",
@@ -4659,9 +4925,39 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3424,
+      "bytes": 3419,
       "path": "aura/agents/team.py",
-      "sha256": "d6e000071092daff94dc8ab205fee59fb769ff2b704e1af878fd1da750a59211"
+      "sha256": "c6dc50a6e00237ac60f4303b3704c22c87abbdf15e7c4fc5d82a5321adf257a7"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 681,
+      "path": "aura/ai/__init__.py",
+      "sha256": "ed4f6de9ff97cdb6f5f7f664599e44c6bb09dbecea2f63896d488bbb4467349f"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 4735,
+      "path": "aura/ai/free_ai_cli.py",
+      "sha256": "0221915b04e08e5cadb02143572e758142ede5d02eb45e26d9bba119ec0ad4ef"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 5867,
+      "path": "aura/ai/free_models.py",
+      "sha256": "2154a1c12dcf4496b9afe63b51437893497163c4105c7fb1e269ab68c60c951c"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 9159,
+      "path": "aura/ai/ollama_structured.py",
+      "sha256": "d515e9d8e891a6833bdfca7770602ed7697c9a8acc2114e6fdbd90bdd1df548a"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 8722,
+      "path": "aura/ai/openai_responses.py",
+      "sha256": "a429bac1816964545434eb26347aac50810afdbb8b129c829b88b8c87dd06842"
     },
     {
       "asset_class": "python_module",
@@ -5097,9 +5393,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 7778,
+      "bytes": 10068,
       "path": "aura/interface/command_center.py",
-      "sha256": "49bb3a2d62e8e61eb9b21f65dd6745d8bf746cc7c59241192d8607c13706638c"
+      "sha256": "d4b127bf467e4492618f2d954d85c0078a153b966bcd6aef4c0d36de6c05eb34"
     },
     {
       "asset_class": "python_module",
@@ -5121,15 +5417,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 23707,
+      "bytes": 25241,
       "path": "aura/interface/web_command_center.py",
-      "sha256": "bc78e404626212e926784b10142d7005a7e158f9f2598fa48690a14f110c3f4d"
+      "sha256": "06ffd501de8fcc5ff295b27cca9c81725cfe1b195947db3bb082d9d04e25deca"
     },
     {
       "asset_class": "python_module",
-      "bytes": 25304,
+      "bytes": 25453,
       "path": "aura/interface/web_command_center_v2.py",
-      "sha256": "06a87d85e5fbbd0852b16fac9c27f47dc37e549cd995a0f9b889198c2c27df71"
+      "sha256": "4486a72993ca713d9292c79b06e0fdf9aae29c921ee76b39ab47bac2cf34d0c4"
     },
     {
       "asset_class": "python_module",
@@ -5148,6 +5444,54 @@
       "bytes": 3174,
       "path": "aura/knowledge/retrieval.py",
       "sha256": "fc6e3960e1492fa0fdfdbfaa57864375a219972b4bcb470aa48f6d9a017c4c14"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 335,
+      "path": "aura/maintenance/__init__.py",
+      "sha256": "a29af060f35f75ae54874894b59604a3f816079afe00bb844a2ac51cbd9f30dd"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 4622,
+      "path": "aura/maintenance/authority.py",
+      "sha256": "d0d9eef537d70aa8aa69128317686424c90745fdbf57ba15f8bc52a7014547bd"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 35439,
+      "path": "aura/maintenance/change_control.py",
+      "sha256": "887039843cc94574ff5ec17eb3a26bc28e2b36a53fe7904bafa31f095996fc9e"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 19574,
+      "path": "aura/maintenance/cli.py",
+      "sha256": "d8cc51e8a4d1e7bd6c9f15beab02552ef3d1b49229cb2cd49de7a9dfafe144c5"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 8713,
+      "path": "aura/maintenance/financial_corrections.py",
+      "sha256": "1e0a22260ca900fcb3f8552cf70732776ccb3cb94b83529683c2d8d62e043315"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 16421,
+      "path": "aura/maintenance/models.py",
+      "sha256": "1f246d374478bfbce9a6a01069ea85543f987b1f74794f710068156b510a5687"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 5002,
+      "path": "aura/maintenance/monitor.py",
+      "sha256": "36f2521c60fef96d0032b440a07198820a48c1473cf7d2947566df28097b1e18"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 8340,
+      "path": "aura/maintenance/openai_developer.py",
+      "sha256": "d4101d606c694239143cbab333c57c7eaa1e6bd59dc1c1ecbe404d91a3a1eb01"
     },
     {
       "asset_class": "python_module",
@@ -5295,9 +5639,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 31317,
+      "bytes": 31353,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "c010d460b649e33914d70f25e1cabab6b5d4ac692729b2282092006be3b1ec6c"
+      "sha256": "a498e909ef7cc012cade858b8cdeafa4fc4ac8f00fc199cff95c9bd9e1258fd7"
     },
     {
       "asset_class": "python_module",
@@ -5367,9 +5711,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 10249,
+      "bytes": 10591,
       "path": "aura/research/ai_strategy_architect.py",
-      "sha256": "bb6e039dc5d7def761c44a2c6746c9aa90a2fc9095e480a4e550069e12c8f47a"
+      "sha256": "affa0d52cc38dc54b4f634c21f0944f3e87c4c82483abf3e3606353bcbfb471f"
     },
     {
       "asset_class": "python_module",
@@ -5625,9 +5969,9 @@
     },
     {
       "asset_class": "configuration_or_structured_evidence",
-      "bytes": 1239,
+      "bytes": 1342,
       "path": "compose.paper.yml",
-      "sha256": "7bf5d24f5d10fd5a31850c57d5319779b56f79a5dcf6ce654b5ce8a01b97231f"
+      "sha256": "0774bf34d7e7b32b3ece40a023fdb436e4e5b806039dc47024ec485f9d2b54c6"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -5661,9 +6005,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 6689,
+      "bytes": 7477,
       "path": "docs/AURA_VISION_COVERAGE.md",
-      "sha256": "edb305cca2ae8b5fa896f56a7dfcbd2966b40e086389ef125233d8f8b305bdc5"
+      "sha256": "3423286c1c3543663b2783ac0cebedd43ac2c8f4d2e3da91cc6eb24e30d20ae0"
     },
     {
       "asset_class": "documentation",
@@ -5679,15 +6023,21 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 3487,
+      "bytes": 3653,
       "path": "docs/CLIENT_HANDOFF.md",
-      "sha256": "a2fae7e24aa1666c643a8542cdd92b7ba2b3038c235e8e10dd7770974bc93a76"
+      "sha256": "033bf9e38d8b870ae7f66cf164a9280945d21c35f9ad7823e2f6e91aea95fd8a"
     },
     {
       "asset_class": "documentation",
       "bytes": 5662,
       "path": "docs/COMMAND_CENTER.md",
       "sha256": "35eeb548ec7c58a7844e12dea313c48d7f7c1977a0fd52c7e9f0b8fdf37930fa"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 8172,
+      "path": "docs/CONTROLLED_SELF_IMPROVEMENT.md",
+      "sha256": "e3dd8fa0f8d679b539a8150525036698d050fdc6c9e4aded16d00d8d3ad24117"
     },
     {
       "asset_class": "documentation",
@@ -5733,9 +6083,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 12437,
+      "bytes": 12965,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "3ad4bfd8b5157459ad5ba5e80c1fa952a41a9862b67785e74ed2b05c77cd0216"
+      "sha256": "ded4bc7f6e0f57c9179e671218cd1a41f4041681b42528dcf8053f737cdba3f1"
     },
     {
       "asset_class": "documentation",
@@ -5745,15 +6095,15 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 7782,
+      "bytes": 8417,
       "path": "docs/MULTI_AGENT_CONSTITUTION.md",
-      "sha256": "6b692a17887587991fb7a3f0c8e872b93fd32cca9dbea5dcdf3056ce5a6e2034"
+      "sha256": "ee2916ec6e9700c145ea089a9046c9f037a21319283cfe49c15496309f07c84e"
     },
     {
       "asset_class": "documentation",
-      "bytes": 6238,
+      "bytes": 8557,
       "path": "docs/MULTI_AI_COUNCIL.md",
-      "sha256": "3a522112f6b1e83ec5866d0417190ed7943c6f6410bd043af6c4a21df6b41caf"
+      "sha256": "461a0d42a8a44e0016e624b8ae7a66c643f3b6a5a576cff3a8a71f97fbaf3690"
     },
     {
       "asset_class": "documentation",
@@ -5775,9 +6125,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 7669,
+      "bytes": 7964,
       "path": "docs/PRODUCTION_READINESS.md",
-      "sha256": "97341473054ea43f3e5d6fdc5d74b7e32af46c364d12c9fff633e4b30bb982cc"
+      "sha256": "2393f600946d5468b9c0606d48eb8383a71f2d84c7b3aded3241f7a0c620e0a3"
     },
     {
       "asset_class": "documentation",
@@ -5949,15 +6299,15 @@
     },
     {
       "asset_class": "configuration_or_structured_evidence",
-      "bytes": 637,
+      "bytes": 745,
       "path": "pyproject.toml",
-      "sha256": "87afd8a9532088ce389ba84054c43179f34ff87a6d591a39a18cdf31a984d977"
+      "sha256": "d909187ccab632e81af41d9da9680bd137d97964e861ea003561928e4b7840c7"
     },
     {
       "asset_class": "python_module",
-      "bytes": 31673,
+      "bytes": 31974,
       "path": "scripts/generate_setup_pdf.py",
-      "sha256": "486850a97f80e98aaf66082943304ae3b77314a5354be682180e330d4c1373cc"
+      "sha256": "65a556e61769beb77cfe329ede4f692549bc3fc8024a898e0835f0ef7a549819"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -5973,9 +6323,9 @@
     },
     {
       "asset_class": "automation_entrypoint",
-      "bytes": 5448,
+      "bytes": 5807,
       "path": "scripts/start_aura_ollama.ps1",
-      "sha256": "66cb963ad34609768170132fc11a15325d4b1349a45b9db209763419bee9a27a"
+      "sha256": "04cadf4ebc1ce0829e2c962449593f34445cfb14eb91f4494f8f7726edb52985"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -6039,9 +6389,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 4882,
+      "bytes": 5554,
       "path": "tests/test_ai_strategy_architect.py",
-      "sha256": "8448a91bd52a93293043d40f5e2627d3ad4cb1d1771794c5b9abf938e1727918"
+      "sha256": "6784347f84b0b3d36d3b5db4760dbbdae5517d0c81000aca0f0d4b3bb8a30bbd"
     },
     {
       "asset_class": "python_module",
@@ -6195,9 +6545,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 1574,
+      "bytes": 2494,
       "path": "tests/test_command_center.py",
-      "sha256": "896a5be3ae70b4a9703069665e355f2edfa150c7ffcf2b579045c0e86ee7eb97"
+      "sha256": "f41c3df791c48f6eeca0c620560f6f50c4bdaf0a7bdd6b7a05d56068c4412cb8"
     },
     {
       "asset_class": "python_module",
@@ -6249,9 +6599,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 1432,
+      "bytes": 2813,
       "path": "tests/test_deployment_assets.py",
-      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba"
+      "sha256": "09e31a8d20bde46a23bd31222628ab35a7b2c13407dda0118322c2f191dc5b10"
     },
     {
       "asset_class": "python_module",
@@ -6339,6 +6689,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 7789,
+      "path": "tests/test_financial_corrections.py",
+      "sha256": "db21c954e0d024ef14645ed6e87f0867304987f55903298b81ae725e396dd67b"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 1785,
       "path": "tests/test_flattrade.py",
       "sha256": "bfba482b61b4df60473aa5893cbf33f70de540f1f505da5dfe73b08ee67030ca"
@@ -6366,6 +6722,12 @@
       "bytes": 3110,
       "path": "tests/test_forecast_specialist.py",
       "sha256": "2f78e08470f32ed1e48bc03ed2ea83fddbfcf63a02752dbcaf2c1d856578b1e3"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 3552,
+      "path": "tests/test_free_ai_models.py",
+      "sha256": "49fad725b17e0827676ae69f45db8124928ae0349253ccf955a240cd9b1c60d7"
     },
     {
       "asset_class": "python_module",
@@ -6444,6 +6806,24 @@
       "bytes": 2990,
       "path": "tests/test_macro_external_intelligence.py",
       "sha256": "706ee93e7f843fd6de99ae91fa3c908e7bb0b17347e0493673a4951d2e197aa6"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6539,
+      "path": "tests/test_maintenance_authority.py",
+      "sha256": "cb8ba6a94e13407f29f972edfa17e3bd7f57d0744e842966965ab3044a5f9a63"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 9211,
+      "path": "tests/test_maintenance_change_control.py",
+      "sha256": "009e4195826e16687b4cc3b88a47f0e6fbb98f2255f1ac26230e2f51161395cd"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 5272,
+      "path": "tests/test_maintenance_cli.py",
+      "sha256": "8a3a9a54dc1abb5006de8a58692c23023316aae7bb025b160b3296eba10a9629"
     },
     {
       "asset_class": "python_module",
@@ -6531,9 +6911,15 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 8034,
+      "bytes": 8760,
       "path": "tests/test_ollama_ai_council.py",
-      "sha256": "73026782bd8e5ce4e9af14a5f471df532837d99b543435c3383ebaf8ab842e9c"
+      "sha256": "d6461baf5b199958fa4722d3e05f8d96e8c72e5a50e69cecacc124ee6d791815"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 4018,
+      "path": "tests/test_ollama_structured.py",
+      "sha256": "55374d0a46b5b2c74a358716aa498eb4a7e202e68599715c528c1ba8e36fe58d"
     },
     {
       "asset_class": "python_module",
@@ -6552,6 +6938,12 @@
       "bytes": 966,
       "path": "tests/test_open_model_catalog.py",
       "sha256": "95ff207fbc1982a62ff182996a9634b4f7b31fc40b953ecd21aacc896c97abd5"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6597,
+      "path": "tests/test_openai_integration.py",
+      "sha256": "630cbd8101034aa543adca955d09b12397d1642bef69944b8da06a3cafd126f3"
     },
     {
       "asset_class": "python_module",
@@ -6825,9 +7217,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 8752,
+      "bytes": 10008,
       "path": "tests/test_web_command_center.py",
-      "sha256": "5dfe7f7997349baef772db5a60affd86630a860963b256875236ca048fdf49b5"
+      "sha256": "11b3cfa5105f32562a5b7f4e6579b008660bfc9056bfe02e9045742f770c2a09"
     },
     {
       "asset_class": "python_module",
@@ -7001,10 +7393,11 @@
         "aura/agents/base.py",
         "aura/agents/models.py",
         "aura/agents/ollama_provider.py",
+        "aura/agents/openai_provider.py",
         "aura/agents/providers.py",
         "aura/agents/reliability.py"
       ],
-      "lines": 142,
+      "lines": 191,
       "module": "aura.agents.ai_council",
       "parsed": true,
       "path": "aura/agents/ai_council.py",
@@ -7013,7 +7406,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "f95e813749681cb7f5d028a0923671bca7b130d35fa18869e329371a2f129254",
+      "sha256": "110d4dc5a39e3370a7284e70051f6e379b038a02ea613f7597c35fad042e5ec5",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -7220,6 +7613,7 @@
         "tests/test_multi_market_scanner.py",
         "tests/test_observable_public_council.py",
         "tests/test_ollama_ai_council.py",
+        "tests/test_openai_integration.py",
         "tests/test_opportunity_audit.py",
         "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
@@ -7259,9 +7653,10 @@
       "internal_dependencies": [
         "aura/agents/models.py",
         "aura/agents/providers.py",
+        "aura/ai/free_models.py",
         "aura/domain/models.py"
       ],
-      "lines": 360,
+      "lines": 365,
       "module": "aura.agents.ollama_provider",
       "parsed": true,
       "path": "aura/agents/ollama_provider.py",
@@ -7270,7 +7665,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "67dff3fc9de7ae280bc5b434035000043a3e6d387ec376f8dc20e94e59726e47",
+      "sha256": "a66b9ef4e79788cd3dac84904e1b80fa6e48d117ba136e5b8e6a4c509a1dcb96",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -7279,6 +7674,39 @@
         "os",
         "typing",
         "urllib"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "agents",
+      "direct_test_files": [
+        "tests/test_openai_integration.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/providers.py",
+        "aura/ai/openai_responses.py",
+        "aura/domain/models.py"
+      ],
+      "lines": 226,
+      "module": "aura.agents.openai_provider",
+      "parsed": true,
+      "path": "aura/agents/openai_provider.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "7cf23da7d06e90804018a94037e1b4147b30dcb90ced5a6820e8dcfc0fbf02ec",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "json",
+        "os",
+        "re",
+        "typing"
       ],
       "third_party_dependencies": [
         "pydantic"
@@ -7508,7 +7936,8 @@
       "component": "agents",
       "direct_test_files": [
         "tests/test_agent_team.py",
-        "tests/test_ollama_ai_council.py"
+        "tests/test_ollama_ai_council.py",
+        "tests/test_openai_integration.py"
       ],
       "internal_dependencies": [
         "aura/agents/advisory_specialists.py",
@@ -7532,13 +7961,153 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "d6e000071092daff94dc8ab205fee59fb769ff2b704e1af878fd1da750a59211",
+      "sha256": "c6dc50a6e00237ac60f4303b3704c22c87abbdf15e7c4fc5d82a5321adf257a7",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
         "os"
       ],
       "third_party_dependencies": []
+    },
+    {
+      "component": "ai",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ai/free_models.py",
+        "aura/ai/ollama_structured.py",
+        "aura/ai/openai_responses.py"
+      ],
+      "lines": 29,
+      "module": "aura.ai",
+      "parsed": true,
+      "path": "aura/ai/__init__.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "package_marker",
+      "sha256": "ed4f6de9ff97cdb6f5f7f664599e44c6bb09dbecea2f63896d488bbb4467349f",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ai",
+      "direct_test_files": [
+        "tests/test_free_ai_models.py"
+      ],
+      "internal_dependencies": [
+        "aura/ai/free_models.py",
+        "aura/ai/ollama_structured.py"
+      ],
+      "lines": 136,
+      "module": "aura.ai.free_ai_cli",
+      "parsed": true,
+      "path": "aura/ai/free_ai_cli.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "0221915b04e08e5cadb02143572e758142ede5d02eb45e26d9bba119ec0ad4ef",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "collections",
+        "json",
+        "os",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ai",
+      "direct_test_files": [
+        "tests/test_free_ai_models.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 168,
+      "module": "aura.ai.free_models",
+      "parsed": true,
+      "path": "aura/ai/free_models.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "2154a1c12dcf4496b9afe63b51437893497163c4105c7fb1e269ab68c60c951c",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "dataclasses",
+        "os",
+        "re",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ai",
+      "direct_test_files": [
+        "tests/test_maintenance_cli.py",
+        "tests/test_ollama_structured.py"
+      ],
+      "internal_dependencies": [
+        "aura/ai/free_models.py",
+        "aura/ai/openai_responses.py"
+      ],
+      "lines": 250,
+      "module": "aura.ai.ollama_structured",
+      "parsed": true,
+      "path": "aura/ai/ollama_structured.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "d515e9d8e891a6833bdfca7770602ed7697c9a8acc2114e6fdbd90bdd1df548a",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "collections",
+        "hashlib",
+        "json",
+        "re",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ai",
+      "direct_test_files": [
+        "tests/test_maintenance_authority.py",
+        "tests/test_openai_integration.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 247,
+      "module": "aura.ai.openai_responses",
+      "parsed": true,
+      "path": "aura/ai/openai_responses.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "a429bac1816964545434eb26347aac50810afdbb8b129c829b88b8c87dd06842",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "collections",
+        "json",
+        "os",
+        "re",
+        "typing",
+        "urllib"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
     },
     {
       "component": "backtest",
@@ -8815,6 +9384,7 @@
         "tests/test_evolution_evaluator.py",
         "tests/test_execution_parity.py",
         "tests/test_external_specialists.py",
+        "tests/test_financial_corrections.py",
         "tests/test_forecast_baselines.py",
         "tests/test_forecast_providers.py",
         "tests/test_forecast_specialist.py",
@@ -8829,6 +9399,7 @@
         "tests/test_observable_public_council.py",
         "tests/test_ollama_ai_council.py",
         "tests/test_online_bridge.py",
+        "tests/test_openai_integration.py",
         "tests/test_opportunity_audit.py",
         "tests/test_opportunity_radar.py",
         "tests/test_options_volatility_context.py",
@@ -9789,7 +10360,7 @@
         "tests/test_command_center.py"
       ],
       "internal_dependencies": [],
-      "lines": 190,
+      "lines": 249,
       "module": "aura.interface.command_center",
       "parsed": true,
       "path": "aura/interface/command_center.py",
@@ -9798,7 +10369,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "49bb3a2d62e8e61eb9b21f65dd6745d8bf746cc7c59241192d8607c13706638c",
+      "sha256": "d4b127bf467e4492618f2d954d85c0078a153b966bcd6aef4c0d36de6c05eb34",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -9916,7 +10487,7 @@
       "internal_dependencies": [
         "aura/interface/command_center.py"
       ],
-      "lines": 450,
+      "lines": 482,
       "module": "aura.interface.web_command_center",
       "parsed": true,
       "path": "aura/interface/web_command_center.py",
@@ -9925,7 +10496,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "bc78e404626212e926784b10142d7005a7e158f9f2598fa48690a14f110c3f4d",
+      "sha256": "06ffd501de8fcc5ff295b27cca9c81725cfe1b195947db3bb082d9d04e25deca",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -9954,7 +10525,7 @@
         "aura/interface/operator_read_model.py",
         "aura/interface/web_command_center.py"
       ],
-      "lines": 422,
+      "lines": 425,
       "module": "aura.interface.web_command_center_v2",
       "parsed": true,
       "path": "aura/interface/web_command_center_v2.py",
@@ -9963,7 +10534,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "06a87d85e5fbbd0852b16fac9c27f47dc37e549cd995a0f9b889198c2c27df71",
+      "sha256": "4486a72993ca713d9292c79b06e0fdf9aae29c921ee76b39ab47bac2cf34d0c4",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -9984,7 +10555,8 @@
         "tests/test_knowledge_firewall.py",
         "tests/test_knowledge_retrieval.py",
         "tests/test_macro_external_intelligence.py",
-        "tests/test_ollama_ai_council.py"
+        "tests/test_ollama_ai_council.py",
+        "tests/test_openai_integration.py"
       ],
       "internal_dependencies": [
         "aura/knowledge/retrieval.py"
@@ -10065,6 +10637,242 @@
         "dataclasses",
         "datetime",
         "re"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/maintenance/authority.py"
+      ],
+      "lines": 15,
+      "module": "aura.maintenance",
+      "parsed": true,
+      "path": "aura/maintenance/__init__.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "package_marker",
+      "sha256": "a29af060f35f75ae54874894b59604a3f816079afe00bb844a2ac51cbd9f30dd",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_financial_corrections.py",
+        "tests/test_maintenance_authority.py",
+        "tests/test_maintenance_change_control.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 142,
+      "module": "aura.maintenance.authority",
+      "parsed": true,
+      "path": "aura/maintenance/authority.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "d0d9eef537d70aa8aa69128317686424c90745fdbf57ba15f8bc52a7014547bd",
+      "standard_library_dependencies": [
+        "__future__",
+        "enum"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_maintenance_change_control.py"
+      ],
+      "internal_dependencies": [
+        "aura/maintenance/authority.py",
+        "aura/maintenance/models.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 916,
+      "module": "aura.maintenance.change_control",
+      "parsed": true,
+      "path": "aura/maintenance/change_control.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "887039843cc94574ff5ec17eb3a26bc28e2b36a53fe7904bafa31f095996fc9e",
+      "standard_library_dependencies": [
+        "__future__",
+        "hashlib",
+        "os",
+        "pathlib",
+        "re",
+        "subprocess",
+        "sys",
+        "tempfile",
+        "time"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_maintenance_cli.py"
+      ],
+      "internal_dependencies": [
+        "aura/ai/free_models.py",
+        "aura/ai/ollama_structured.py",
+        "aura/ai/openai_responses.py",
+        "aura/maintenance/authority.py",
+        "aura/maintenance/change_control.py",
+        "aura/maintenance/financial_corrections.py",
+        "aura/maintenance/models.py",
+        "aura/maintenance/openai_developer.py"
+      ],
+      "lines": 532,
+      "module": "aura.maintenance.cli",
+      "parsed": true,
+      "path": "aura/maintenance/cli.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "d8cc51e8a4d1e7bd6c9f15beab02552ef3d1b49229cb2cd49de7a9dfafe144c5",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "datetime",
+        "decimal",
+        "json",
+        "os",
+        "pathlib",
+        "subprocess",
+        "sys",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_financial_corrections.py"
+      ],
+      "internal_dependencies": [
+        "aura/maintenance/authority.py",
+        "aura/maintenance/models.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 217,
+      "module": "aura.maintenance.financial_corrections",
+      "parsed": true,
+      "path": "aura/maintenance/financial_corrections.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "1e0a22260ca900fcb3f8552cf70732776ccb3cb94b83529683c2d8d62e043315",
+      "standard_library_dependencies": [
+        "__future__",
+        "decimal",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_financial_corrections.py",
+        "tests/test_maintenance_authority.py",
+        "tests/test_maintenance_change_control.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 419,
+      "module": "aura.maintenance.models",
+      "parsed": true,
+      "path": "aura/maintenance/models.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "1f246d374478bfbce9a6a01069ea85543f987b1f74794f710068156b510a5687",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "enum",
+        "hashlib",
+        "json",
+        "re",
+        "typing",
+        "uuid"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_maintenance_authority.py"
+      ],
+      "internal_dependencies": [
+        "aura/maintenance/authority.py",
+        "aura/maintenance/models.py",
+        "aura/ops/health.py",
+        "aura/runtime/supervisor.py"
+      ],
+      "lines": 136,
+      "module": "aura.maintenance.monitor",
+      "parsed": true,
+      "path": "aura/maintenance/monitor.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "36f2521c60fef96d0032b440a07198820a48c1473cf7d2947566df28097b1e18",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "hashlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "maintenance",
+      "direct_test_files": [
+        "tests/test_maintenance_authority.py"
+      ],
+      "internal_dependencies": [
+        "aura/ai/openai_responses.py",
+        "aura/maintenance/authority.py",
+        "aura/maintenance/models.py"
+      ],
+      "lines": 233,
+      "module": "aura.maintenance.openai_developer",
+      "parsed": true,
+      "path": "aura/maintenance/openai_developer.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "d4101d606c694239143cbab333c57c7eaa1e6bd59dc1c1ecbe404d91a3a1eb01",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "hashlib",
+        "pathlib",
+        "re",
+        "typing"
       ],
       "third_party_dependencies": []
     },
@@ -10604,6 +11412,7 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_maintenance_authority.py",
         "tests/test_production_ops.py"
       ],
       "internal_dependencies": [],
@@ -10858,7 +11667,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 826,
+      "lines": 828,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -10867,7 +11676,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "c010d460b649e33914d70f25e1cabab6b5d4ac692729b2282092006be3b1ec6c",
+      "sha256": "a498e909ef7cc012cade858b8cdeafa4fc4ac8f00fc199cff95c9bd9e1258fd7",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -11212,6 +12021,7 @@
       "component": "portfolio",
       "direct_test_files": [
         "tests/test_contract_accounting.py",
+        "tests/test_financial_corrections.py",
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_market_paper.py",
         "tests/test_paper_runtime.py",
@@ -11272,11 +12082,12 @@
         "tests/test_ai_strategy_architect.py"
       ],
       "internal_dependencies": [
+        "aura/ai/free_models.py",
         "aura/research/autonomy.py",
         "aura/research/lifecycle.py",
         "aura/research/strategy_factory.py"
       ],
-      "lines": 254,
+      "lines": 261,
       "module": "aura.research.ai_strategy_architect",
       "parsed": true,
       "path": "aura/research/ai_strategy_architect.py",
@@ -11285,7 +12096,7 @@
       ],
       "primary_phase": 7,
       "role": "source",
-      "sha256": "bb6e039dc5d7def761c44a2c6746c9aa90a2fc9095e480a4e550069e12c8f47a",
+      "sha256": "affa0d52cc38dc54b4f634c21f0944f3e87c4c82483abf3e3606353bcbfb471f",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -12996,7 +13807,7 @@
       "component": "repository_tooling",
       "direct_test_files": [],
       "internal_dependencies": [],
-      "lines": 694,
+      "lines": 704,
       "module": "scripts.generate_setup_pdf",
       "parsed": true,
       "path": "scripts/generate_setup_pdf.py",
@@ -13005,7 +13816,7 @@
       ],
       "primary_phase": 0,
       "role": "tooling",
-      "sha256": "486850a97f80e98aaf66082943304ae3b77314a5354be682180e330d4c1373cc",
+      "sha256": "65a556e61769beb77cfe329ede4f692549bc3fc8024a898e0835f0ef7a549819",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -13275,7 +14086,7 @@
         "aura/research/lifecycle.py",
         "aura/research/strategy_factory.py"
       ],
-      "lines": 135,
+      "lines": 155,
       "module": "tests.test_ai_strategy_architect",
       "parsed": true,
       "path": "tests/test_ai_strategy_architect.py",
@@ -13284,7 +14095,7 @@
       ],
       "primary_phase": 7,
       "role": "test",
-      "sha256": "8448a91bd52a93293043d40f5e2627d3ad4cb1d1771794c5b9abf938e1727918",
+      "sha256": "6784347f84b0b3d36d3b5db4760dbbdae5517d0c81000aca0f0d4b3bb8a30bbd",
       "standard_library_dependencies": [
         "datetime",
         "json"
@@ -13962,7 +14773,7 @@
       "internal_dependencies": [
         "aura/interface/command_center.py"
       ],
-      "lines": 52,
+      "lines": 70,
       "module": "tests.test_command_center",
       "parsed": true,
       "path": "tests/test_command_center.py",
@@ -13971,7 +14782,7 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "896a5be3ae70b4a9703069665e355f2edfa150c7ffcf2b579045c0e86ee7eb97",
+      "sha256": "f41c3df791c48f6eeca0c620560f6f50c4bdaf0a7bdd6b7a05d56068c4412cb8",
       "standard_library_dependencies": [
         "datetime"
       ],
@@ -14187,7 +14998,7 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [],
-      "lines": 35,
+      "lines": 69,
       "module": "tests.test_deployment_assets",
       "parsed": true,
       "path": "tests/test_deployment_assets.py",
@@ -14196,7 +15007,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "1acf8adc532901d595714e21ee9ed6752bf14d101da1acca9de0f85c94b8f4ba",
+      "sha256": "09e31a8d20bde46a23bd31222628ab35a7b2c13407dda0118322c2f191dc5b10",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -14589,6 +15400,39 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/maintenance/authority.py",
+        "aura/maintenance/financial_corrections.py",
+        "aura/maintenance/models.py",
+        "aura/portfolio/ledger.py"
+      ],
+      "lines": 206,
+      "module": "tests.test_financial_corrections",
+      "parsed": true,
+      "path": "tests/test_financial_corrections.py",
+      "phase_coverage": [
+        1,
+        2,
+        15
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "db21c954e0d024ef14645ed6e87f0867304987f55903298b81ae725e396dd67b",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "json"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/data/flattrade.py"
       ],
       "lines": 61,
@@ -14706,6 +15550,31 @@
       "standard_library_dependencies": [
         "datetime",
         "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ai/free_ai_cli.py",
+        "aura/ai/free_models.py"
+      ],
+      "lines": 96,
+      "module": "tests.test_free_ai_models",
+      "parsed": true,
+      "path": "tests/test_free_ai_models.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "49fad725b17e0827676ae69f45db8124928ae0349253ccf955a240cd9b1c60d7",
+      "standard_library_dependencies": [
+        "__future__",
+        "json"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -15037,6 +15906,95 @@
       "standard_library_dependencies": [
         "datetime",
         "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ai/openai_responses.py",
+        "aura/maintenance/authority.py",
+        "aura/maintenance/models.py",
+        "aura/maintenance/monitor.py",
+        "aura/maintenance/openai_developer.py",
+        "aura/ops/health.py"
+      ],
+      "lines": 174,
+      "module": "tests.test_maintenance_authority",
+      "parsed": true,
+      "path": "tests/test_maintenance_authority.py",
+      "phase_coverage": [
+        9,
+        15
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "cb8ba6a94e13407f29f972edfa17e3bd7f57d0744e842966965ab3044a5f9a63",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/maintenance/authority.py",
+        "aura/maintenance/change_control.py",
+        "aura/maintenance/models.py"
+      ],
+      "lines": 271,
+      "module": "tests.test_maintenance_change_control",
+      "parsed": true,
+      "path": "tests/test_maintenance_change_control.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "test",
+      "sha256": "009e4195826e16687b4cc3b88a47f0e6fbb98f2255f1ac26230e2f51161395cd",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "pathlib",
+        "subprocess",
+        "sys"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ai/ollama_structured.py",
+        "aura/maintenance/cli.py"
+      ],
+      "lines": 163,
+      "module": "tests.test_maintenance_cli",
+      "parsed": true,
+      "path": "tests/test_maintenance_cli.py",
+      "phase_coverage": [
+        9,
+        15
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "8a3a9a54dc1abb5006de8a58692c23023316aae7bb025b160b3296eba10a9629",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "json",
+        "os",
+        "pathlib",
+        "subprocess"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -15459,7 +16417,7 @@
         "aura/domain/models.py",
         "aura/knowledge/firewall.py"
       ],
-      "lines": 234,
+      "lines": 253,
       "module": "tests.test_ollama_ai_council",
       "parsed": true,
       "path": "tests/test_ollama_ai_council.py",
@@ -15470,12 +16428,36 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "73026782bd8e5ce4e9af14a5f471df532837d99b543435c3383ebaf8ab842e9c",
+      "sha256": "d6461baf5b199958fa4722d3e05f8d96e8c72e5a50e69cecacc124ee6d791815",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
         "datetime",
         "decimal",
+        "json"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ai/ollama_structured.py"
+      ],
+      "lines": 124,
+      "module": "tests.test_ollama_structured",
+      "parsed": true,
+      "path": "tests/test_ollama_structured.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "55374d0a46b5b2c74a358716aa498eb4a7e202e68599715c528c1ba8e36fe58d",
+      "standard_library_dependencies": [
+        "__future__",
         "json"
       ],
       "third_party_dependencies": [
@@ -15549,6 +16531,41 @@
       "sha256": "95ff207fbc1982a62ff182996a9634b4f7b31fc40b953ecd21aacc896c97abd5",
       "standard_library_dependencies": [],
       "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/agents/openai_provider.py",
+        "aura/agents/team.py",
+        "aura/ai/openai_responses.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py"
+      ],
+      "lines": 184,
+      "module": "tests.test_openai_integration",
+      "parsed": true,
+      "path": "tests/test_openai_integration.py",
+      "phase_coverage": [
+        1,
+        8,
+        9
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "630cbd8101034aa543adca955d09b12397d1642bef69944b8da06a3cafd126f3",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "io",
+        "json",
+        "urllib"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
     },
     {
       "component": "validation",
@@ -16734,7 +17751,7 @@
       "internal_dependencies": [
         "aura/interface/web_command_center.py"
       ],
-      "lines": 248,
+      "lines": 279,
       "module": "tests.test_web_command_center",
       "parsed": true,
       "path": "tests/test_web_command_center.py",
@@ -16743,7 +17760,7 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "5dfe7f7997349baef772db5a60affd86630a860963b256875236ca048fdf49b5",
+      "sha256": "11b3cfa5105f32562a5b7f4e6579b008660bfc9056bfe02e9045742f770c2a09",
       "standard_library_dependencies": [
         "__future__",
         "http",
@@ -16788,7 +17805,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "39c452896a89f66bae87e030f6ce6bcd8fa4f1546ba8f0b6fc2c8b5260efd419",
+  "repository_tree_sha256": "2e65973ed248440c043695e82c5d035044951be1e5ecb05b0521bd9a48378194",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -16810,7 +17827,7 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 26,
+      "line": 27,
       "path": "aura/agents/ollama_provider.py"
     },
     {
@@ -17134,7 +18151,7 @@
     {
       "classification": "intentional",
       "kind": "protocol-contract",
-      "line": 81,
+      "line": 90,
       "path": "aura/interface/command_center.py"
     },
     {
@@ -17148,6 +18165,30 @@
       "kind": "marker-exception",
       "line": 15,
       "path": "aura/knowledge/local_corpus.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "marker-exception",
+      "line": 41,
+      "path": "aura/maintenance/authority.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "marker-exception",
+      "line": 107,
+      "path": "aura/maintenance/change_control.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "marker-exception",
+      "line": 25,
+      "path": "aura/maintenance/financial_corrections.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 53,
+      "path": "aura/maintenance/openai_developer.py"
     },
     {
       "classification": "intentional",
@@ -17194,7 +18235,7 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 26,
+      "line": 27,
       "path": "aura/research/ai_strategy_architect.py"
     },
     {
@@ -17295,15 +18336,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 160,
-    "entrypoints": 37,
+    "directly_tested_source_modules": 172,
+    "entrypoints": 41,
     "parse_errors": 0,
-    "python_modules": 336,
-    "repository_files": 393,
-    "source_modules": 174,
-    "static_test_functions": 540,
-    "stub_candidates": 82,
-    "test_modules": 141,
+    "python_modules": 357,
+    "repository_files": 415,
+    "source_modules": 186,
+    "static_test_functions": 583,
+    "stub_candidates": 86,
+    "test_modules": 148,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

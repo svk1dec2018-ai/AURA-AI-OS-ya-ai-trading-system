@@ -6,6 +6,7 @@ import pytest
 from aura.research.ai_strategy_architect import (
     AIStrategyArchitectError,
     OllamaStrategyCandidateGenerator,
+    build_ollama_strategy_candidate_generator_from_env,
 )
 from aura.research.autonomy import ResearchHypothesis
 from aura.research.lifecycle import StrategyStage
@@ -77,6 +78,7 @@ async def test_ai_architect_compiles_model_components_into_research_only_strateg
     user_payload = json.loads(calls[0][1]["messages"][1]["content"])
     assert "weak ranging regime" in user_payload["measured_feedback_from_previous_candidates"][0]
     assert calls[0][1]["format"]
+    assert calls[0][1]["keep_alive"] == 0
 
 
 @pytest.mark.asyncio
@@ -133,3 +135,21 @@ def test_safe_compiler_rejects_primitive_used_in_wrong_role() -> None:
             candidate_index=0,
             design_tag="bad",
         )
+
+
+def test_strategy_architect_inherits_balanced_free_preset(monkeypatch) -> None:
+    monkeypatch.setenv("AURA_FREE_AI_PRESET", "balanced5")
+    monkeypatch.delenv("AURA_OLLAMA_MODELS", raising=False)
+    monkeypatch.delenv("AURA_STRATEGY_ARCHITECT_MODELS", raising=False)
+
+    generator = build_ollama_strategy_candidate_generator_from_env()
+
+    assert generator is not None
+    assert generator.model_ids == (
+        "qwen3.5:4b",
+        "deepseek-r1:8b",
+        "llama3.1:8b",
+        "gemma3:4b",
+        "phi4-mini:3.8b",
+    )
+    assert generator.keep_alive == 0

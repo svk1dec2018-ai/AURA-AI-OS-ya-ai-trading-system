@@ -25,6 +25,7 @@ PHASE_ZERO_EVIDENCE = {
 
 _PHASE_BY_PACKAGE = {
     "agents": 9,
+    "ai": 9,
     "backtest": 6,
     "connectors": 4,
     "core": 10,
@@ -36,6 +37,7 @@ _PHASE_BY_PACKAGE = {
     "interface": 13,
     "knowledge": 8,
     "markets": 1,
+    "maintenance": 15,
     "memory": 9,
     "models": 9,
     "observability": 14,

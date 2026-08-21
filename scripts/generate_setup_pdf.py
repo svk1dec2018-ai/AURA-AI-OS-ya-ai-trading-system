@@ -381,11 +381,20 @@ def build_story() -> list:
         p("Prerequisites", "h2"),
         bullet("Windows 10 or 11, 64-bit."),
         bullet("Python 3.11 or 3.12 with Add Python to PATH enabled."),
-        bullet("Git, at least 12 GB free disk space, and stable internet."),
+        bullet("Git, at least 30 GB free disk space, and stable internet."),
         bullet("Ollama installed and running. A 16 GB RAM system should start with one smaller model."),
         p("Install local AI models", "h2"),
-        code("ollama pull qwen3\nollama pull deepseek-r1"),
-        p("If hardware is limited, install only one model. Model names must exactly match `ollama list`."),
+        code(
+            "ollama pull qwen3.5:4b\n"
+            "ollama pull deepseek-r1:8b\n"
+            "ollama pull llama3.1:8b\n"
+            "ollama pull gemma3:4b\n"
+            "ollama pull phi4-mini:3.8b"
+        ),
+        p(
+            "The balanced preset is approximately 20 GB. If hardware is limited, pass an "
+            "explicit smaller `-Models` list. Model names must exactly match `ollama list`."
+        ),
         p("Clone and launch", "h2"),
         code(
             "git clone https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system.git\n"
@@ -399,7 +408,7 @@ def build_story() -> list:
         p("Custom PowerShell launch", "h2"),
         code(
             "powershell -ExecutionPolicy Bypass -File scripts/start_aura_ollama.ps1 `\n"
-            "  -Models qwen3,deepseek-r1 -Provider coinbase -Timeframe 5s"
+            "  -Models qwen3.5:4b,gemma3:4b -Provider coinbase -Timeframe 5s"
         ),
         PageBreak(),
         p("4. Windows background service-like mode", "h1"),
@@ -442,7 +451,8 @@ def build_story() -> list:
             "AURA_PUBLIC_PROVIDER=coinbase\n"
             "AURA_DECISION_TIMEFRAME=5s\n"
             "AURA_OLLAMA_URL=http://host.docker.internal:11434\n"
-            "AURA_OLLAMA_MODELS=qwen3,deepseek-r1"
+            "AURA_FREE_AI_PRESET=balanced5\n"
+            "AURA_OLLAMA_KEEP_ALIVE=0"
         ),
         bullet("Runtime state is stored in the named volume `aura-paper-state`."),
         bullet("The container filesystem is read-only except `/tmp` and the runtime volume."),
