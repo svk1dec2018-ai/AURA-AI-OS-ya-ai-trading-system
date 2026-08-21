@@ -14,6 +14,7 @@ from aura.agents.external_specialists import (
 )
 from aura.agents.forecast_specialist import ForecastEnsembleSpecialist
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
+from aura.agents.registry import AgentRegistry
 from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.specialists import (
@@ -28,6 +29,7 @@ from aura.knowledge.firewall import KnowledgeFirewall
 @dataclass(slots=True, frozen=True)
 class AuraAgentTeam:
     agents: tuple[SpecialistAgent, ...]
+    registry: AgentRegistry
     orchestrator: MultiAgentOrchestrator
     ceo: CEOAggregator
     risk_policy: AgentRiskPolicy
@@ -89,6 +91,7 @@ def build_default_agent_team(
     )
     return AuraAgentTeam(
         agents=agents,
+        registry=orchestrator.registry,
         orchestrator=orchestrator,
         ceo=ceo,
         risk_policy=risk_policy or AgentRiskPolicy(),
