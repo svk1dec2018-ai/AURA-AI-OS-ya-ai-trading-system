@@ -7,9 +7,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_local_openai_secret_files_are_ignored() -> None:
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    dockerignore = (ROOT / ".dockerignore").read_text(encoding="utf-8")
     example = (ROOT / ".env.example").read_text(encoding="utf-8")
     assert ".env.local" in gitignore
+    assert ".env*" in dockerignore
     assert "OPENAI_API_KEY=" in example
+    assert "AURA_OLLAMA_MODELS=" in example
+    assert "AURA_ANGEL_ONE_API_KEY=" in example
     assert "sk-" not in example
 
 

@@ -221,3 +221,51 @@ def test_fund_capability_and_guard_self_modification_patches_are_rejected() -> N
     )
     with pytest.raises(ChangeControlError, match="immutable path"):
         validate_code_change_proposal(guard_patch)
+
+
+def test_patch_cannot_change_tests_or_add_delete_or_redirect_files() -> None:
+    base = _proposal("a" * 40)
+    test_patch = base.model_copy(
+        update={
+            "proposal_id": "change:test-tamper",
+            "changed_files": ("tests/test_risk.py",),
+            "unified_diff": (
+                "diff --git a/tests/test_risk.py b/tests/test_risk.py\n"
+                "--- a/tests/test_risk.py\n"
+                "+++ b/tests/test_risk.py\n"
+                "@@ -1 +1 @@\n-old = True\n+old = False\n"
+            ),
+        }
+    )
+    with pytest.raises(ChangeControlError, match="immutable path"):
+        validate_code_change_proposal(test_patch)
+
+    new_file = base.model_copy(
+        update={
+            "proposal_id": "change:new-file",
+            "changed_files": ("helper.py",),
+            "unified_diff": (
+                "diff --git a/helper.py b/helper.py\n"
+                "new file mode 100644\n"
+                "--- /dev/null\n"
+                "+++ b/helper.py\n"
+                "@@ -0,0 +1 @@\n+VALUE = 1\n"
+            ),
+        }
+    )
+    with pytest.raises(ChangeControlError, match="cannot add/delete/rename"):
+        validate_code_change_proposal(new_file)
+
+    redirected = base.model_copy(
+        update={
+            "proposal_id": "change:redirected",
+            "unified_diff": (
+                "diff --git a/app.py b/app.py\n"
+                "--- a/app.py\n"
+                "+++ b/aura/risk/rules.py\n"
+                "@@ -1 +1 @@\n-VALUE = 1\n+VALUE = 2\n"
+            ),
+        }
+    )
+    with pytest.raises(ChangeControlError, match="headers do not match"):
+        validate_code_change_proposal(redirected)

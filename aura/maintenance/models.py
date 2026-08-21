@@ -14,6 +14,26 @@ from pydantic import BaseModel, ConfigDict, Field, computed_field, field_validat
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 _COMMIT_PATTERN = r"^[0-9a-f]{40}$"
 _SAFE_ID_PATTERN = re.compile(r"^[A-Za-z0-9._:@/-]{1,160}$")
+_MAX_REPORTING_ADJUSTMENT = Decimal(1000000000000000000)
+_ALLOWED_CORRECTION_FIELDS = frozenset(
+    {
+        "annotation",
+        "broker_reference",
+        "closed_at",
+        "entry_price",
+        "execution_venue",
+        "exit_price",
+        "note",
+        "opened_at",
+        "quantity",
+        "reported_fees",
+        "reported_realized_pnl",
+        "setup",
+        "side",
+        "status",
+        "strategy_id",
+    }
+)
 
 
 def _canonical_hash(value: dict[str, Any]) -> str:
@@ -280,6 +300,34 @@ class FinancialCorrectionRequest(BaseModel):
         if _SAFE_ID_PATTERN.fullmatch(value) is None:
             raise ValueError("requested_by contains unsafe characters")
         return value
+
+    @field_validator("target_trade_id", "reconciliation_id")
+    @classmethod
+    def optional_ids_are_safe(cls, value: str | None) -> str | None:
+        if value is not None and _SAFE_ID_PATTERN.fullmatch(value) is None:
+            raise ValueError("financial correction identifier contains unsafe characters")
+        return value
+
+    @field_validator("net_realized_pnl_delta", "fee_delta")
+    @classmethod
+    def reporting_adjustments_are_finite(cls, value: Decimal) -> Decimal:
+        if not value.is_finite() or abs(value) > _MAX_REPORTING_ADJUSTMENT:
+            raise ValueError("reporting adjustment must be finite and within the bounded range")
+        return value
+
+    @field_validator("corrected_fields")
+    @classmethod
+    def corrected_fields_are_reporting_only(cls, value: dict[str, str]) -> dict[str, str]:
+        if len(value) > 16:
+            raise ValueError("too many corrected reporting fields")
+        normalized: dict[str, str] = {}
+        for key, item in value.items():
+            if key not in _ALLOWED_CORRECTION_FIELDS:
+                raise ValueError(f"unsupported corrected reporting field: {key}")
+            if not item.strip() or len(item) > 500:
+                raise ValueError("corrected reporting values must contain 1-500 characters")
+            normalized[key] = item.strip()
+        return dict(sorted(normalized.items()))
 
     @field_validator("created_at")
     @classmethod

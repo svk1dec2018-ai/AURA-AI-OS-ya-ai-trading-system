@@ -34,6 +34,19 @@ _APPLIED_EVENT = "maintenance_change_applied_to_development"
 _PR_READY_EVENT = "maintenance_change_pr_ready"
 
 _DIFF_HEADER = re.compile(r"^diff --git a/([^\s]+) b/([^\s]+)$", re.MULTILINE)
+_FORBIDDEN_PATCH_DIRECTIVES = (
+    "GIT binary patch",
+    "Binary files ",
+    "new file mode ",
+    "deleted file mode ",
+    "old mode ",
+    "new mode ",
+    "rename from ",
+    "rename to ",
+    "copy from ",
+    "copy to ",
+    "Submodule ",
+)
 _FORBIDDEN_ADDITION = re.compile(
     r"(?i)\b(withdraw(?:al|[_-]?funds)?|deposit(?:[_-]?funds)?|add[_-]?funds|fund[_-]?transfer|"
     r"transfer[_-]?funds|cash[_-]?transfer)\b"
@@ -45,23 +58,44 @@ _SECRET_REDACTION = re.compile(
 
 _IMMUTABLE_PATHS = frozenset(
     {
-        "aura/maintenance/authority.py",
-        "aura/maintenance/change_control.py",
-        "aura/maintenance/financial_corrections.py",
-        "aura/maintenance/models.py",
+        ".gitignore",
+        "pyproject.toml",
+        "aura/agents/ai_council.py",
+        "aura/agents/openai_provider.py",
+        "aura/interface/command_center.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py",
+        "aura/ops/preflight.py",
+        "aura/ops/release_gate.py",
+        "aura/persistence/wal.py",
     }
 )
 _IMMUTABLE_PREFIXES = (
     ".git/",
-    ".github/workflows/",
+    ".github/",
+    "aura/ai/",
+    "aura/maintenance/",
     "runtime/",
     "artifacts/operator/",
+    "tests/",
 )
 _FINANCIAL_CORE_PREFIXES = (
+    "aura/agents/",
+    "aura/connectors/",
+    "aura/core/",
+    "aura/data/",
+    "aura/domain/",
     "aura/execution/",
+    "aura/forecast/",
+    "aura/interface/",
+    "aura/markets/",
+    "aura/models/",
+    "aura/options/",
     "aura/portfolio/",
     "aura/risk/",
     "aura/persistence/",
+    "aura/runtime/",
+    "aura/strategy/",
     "aura/ops/release_gate.py",
     "aura/ops/preflight.py",
     "deploy/",
@@ -99,6 +133,7 @@ def classify_change_risk(paths: tuple[str, ...]) -> ChangeRisk:
 
 def validate_code_change_proposal(proposal: CodeChangeProposal) -> tuple[str, ...]:
     changed_files = extract_changed_files(proposal.unified_diff)
+    _validate_diff_structure(proposal.unified_diff)
     if tuple(sorted(set(proposal.changed_files))) != changed_files:
         raise ChangeControlError("proposal changed_files do not match its unified diff")
     for path in changed_files:
@@ -117,6 +152,25 @@ def validate_code_change_proposal(proposal: CodeChangeProposal) -> tuple[str, ..
             f"proposal risk {proposal.risk.value} does not match {expected_risk.value}"
         )
     return changed_files
+
+
+def _validate_diff_structure(unified_diff: str) -> None:
+    if any(directive in unified_diff for directive in _FORBIDDEN_PATCH_DIRECTIVES):
+        raise ChangeControlError(
+            "maintenance patches cannot add/delete/rename files, change modes, or use binary diffs"
+        )
+    headers = list(_DIFF_HEADER.finditer(unified_diff))
+    for index, header in enumerate(headers):
+        old_path, new_path = header.groups()
+        section_end = headers[index + 1].start() if index + 1 < len(headers) else len(unified_diff)
+        section = unified_diff[header.end() : section_end]
+        pre_hunk, separator, _ = section.partition("\n@@")
+        if not separator:
+            raise ChangeControlError("each maintenance patch section must contain a text hunk")
+        old_headers = [line for line in pre_hunk.splitlines() if line.startswith("--- ")]
+        new_headers = [line for line in pre_hunk.splitlines() if line.startswith("+++ ")]
+        if old_headers != [f"--- a/{old_path}"] or new_headers != [f"+++ b/{new_path}"]:
+            raise ChangeControlError("patch file headers do not match canonical diff paths")
 
 
 class DevelopmentChangeRegistry:
@@ -451,10 +505,12 @@ class SandboxPatchExecutor:
         changed_files = validate_code_change_proposal(proposal)
         root = repository_root.resolve()
         _assert_git_commit(root, proposal.base_commit)
+        _assert_patch_targets_regular_files(root, proposal.base_commit, changed_files)
         checks: list[SandboxCheck] = []
         with tempfile.TemporaryDirectory(prefix="aura-maintenance-sandbox-") as temporary:
             sandbox = Path(temporary)
             _materialize_tracked_tree(root, proposal.base_commit, sandbox)
+            baseline_files = _tree_file_hashes(sandbox)
             environment = _sandbox_environment(sandbox)
             patch_check = _run_check(
                 ("git", "apply", "--check", "--whitespace=error-all", "-"),
@@ -484,16 +540,27 @@ class SandboxPatchExecutor:
                         )
                     )
                 else:
-                    for command in self.checks:
-                        check = _run_check(
-                            command,
-                            cwd=sandbox,
-                            timeout_seconds=self.timeout_seconds,
-                            environment=environment,
+                    changed_in_sandbox = _changed_materialized_files(
+                        baseline_files,
+                        _tree_file_hashes(sandbox),
+                    )
+                    if changed_in_sandbox != changed_files:
+                        detail = (
+                            "patch scope mismatch: expected "
+                            f"{','.join(changed_files)}; changed {','.join(changed_in_sandbox)}"
                         )
-                        checks.append(check)
-                        if not check.passed:
-                            break
+                        checks.append(_policy_failure_check("verify-patch-scope", detail))
+                    else:
+                        for command in self.checks:
+                            check = _run_check(
+                                command,
+                                cwd=sandbox,
+                                timeout_seconds=self.timeout_seconds,
+                                environment=environment,
+                            )
+                            checks.append(check)
+                            if not check.passed:
+                                break
         return SandboxValidation(
             proposal_id=proposal.proposal_id,
             patch_sha256=proposal.patch_sha256,
@@ -512,7 +579,7 @@ class SandboxPatchExecutor:
         role: AuthorityRole,
     ) -> AppliedChangeReceipt:
         self.policy.require(role, AuthorityAction.APPLY_TO_DEVELOPMENT)
-        validate_code_change_proposal(proposal)
+        changed_files = validate_code_change_proposal(proposal)
         if (
             approval.proposal_id != proposal.proposal_id
             or approval.patch_sha256 != proposal.patch_sha256
@@ -521,6 +588,7 @@ class SandboxPatchExecutor:
             raise ChangeControlError("owner approval does not bind this exact patch")
         root = repository_root.resolve()
         _assert_git_commit(root, proposal.base_commit)
+        _assert_patch_targets_regular_files(root, proposal.base_commit, changed_files)
         status = _git(root, "status", "--porcelain", "--untracked-files=all")
         if status.stdout.strip():
             raise ChangeControlError("development worktree must be clean before patch application")
@@ -544,6 +612,33 @@ class SandboxPatchExecutor:
         )
         if applied.returncode != 0:
             raise ChangeControlError("approved patch application failed")
+        actual_changed_files = tuple(
+            sorted(
+                line.strip()
+                for line in _git(
+                    root,
+                    "diff",
+                    "--name-only",
+                    "--no-ext-diff",
+                    "--",
+                ).stdout.splitlines()
+                if line.strip()
+            )
+        )
+        if actual_changed_files != changed_files:
+            reversed_patch = subprocess.run(
+                ("git", "apply", "--reverse", "-"),
+                cwd=root,
+                input=proposal.unified_diff,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if reversed_patch.returncode != 0:
+                raise ChangeControlError(
+                    "applied patch changed unexpected files and automatic reversal failed"
+                )
+            raise ChangeControlError("applied patch changed files outside its reviewed scope")
         resulting_diff = _git(root, "diff", "--binary", "--no-ext-diff").stdout
         return AppliedChangeReceipt(
             proposal_id=proposal.proposal_id,
@@ -646,6 +741,33 @@ def _assert_git_commit(root: Path, expected_commit: str) -> None:
         )
 
 
+def _assert_patch_targets_regular_files(
+    root: Path,
+    commit: str,
+    changed_files: tuple[str, ...],
+) -> None:
+    for path in changed_files:
+        result = subprocess.run(
+            ("git", "ls-tree", commit, "--", path),
+            cwd=root,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            raise ChangeControlError(f"unable to inspect patch target: {path}")
+        fields = result.stdout.strip().split(None, 3)
+        if (
+            len(fields) != 4
+            or fields[0] not in {"100644", "100755"}
+            or fields[1] != "blob"
+            or fields[3] != path
+        ):
+            raise ChangeControlError(
+                f"maintenance patch target must be an existing regular tracked file: {path}"
+            )
+
+
 def _git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     result = subprocess.run(
         ("git", *args),
@@ -684,6 +806,41 @@ def _materialize_tracked_tree(root: Path, commit: str, target: Path) -> None:
         if content.returncode != 0:
             raise ChangeControlError(f"unable to materialize tracked file: {safe}")
         destination.write_bytes(content.stdout)
+
+
+def _tree_file_hashes(root: Path) -> dict[str, str]:
+    hashes: dict[str, str] = {}
+    for path in root.rglob("*"):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root).as_posix()
+        if relative == ".sandbox-home" or relative.startswith(".sandbox-home/"):
+            continue
+        hashes[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashes
+
+
+def _changed_materialized_files(
+    before: dict[str, str],
+    after: dict[str, str],
+) -> tuple[str, ...]:
+    return tuple(
+        sorted(
+            path
+            for path in before.keys() | after.keys()
+            if before.get(path) != after.get(path)
+        )
+    )
+
+
+def _policy_failure_check(name: str, detail: str) -> SandboxCheck:
+    return SandboxCheck(
+        command=("policy", name),
+        exit_code=1,
+        duration_ms=0,
+        output_sha256=hashlib.sha256(detail.encode()).hexdigest(),
+        output_tail=_safe_output_tail(detail),
+    )
 
 
 def _sandbox_environment(sandbox: Path) -> dict[str, str]:

@@ -31,6 +31,8 @@ def test_router_classifies_development_correction_and_fund_boundaries() -> None:
     development = router.parse("repair system and update code")
     correction = router.parse("correct pnl for paper trade")
     funds = router.parse("withdraw funds")
+    deposit = router.parse("deposit funds in the broker account")
+    transfer = router.parse("cash transfer to another account")
 
     assert development.intent == AssistantIntent.DEVELOPMENT_REQUEST
     assert development.privilege == CommandPrivilege.DEVELOPMENT
@@ -38,6 +40,8 @@ def test_router_classifies_development_correction_and_fund_boundaries() -> None:
     assert correction.privilege == CommandPrivilege.FINANCIAL_CORRECTION
     assert funds.intent == AssistantIntent.FUND_CONTROL
     assert funds.privilege == CommandPrivilege.FUND
+    assert deposit.intent == AssistantIntent.FUND_CONTROL
+    assert transfer.intent == AssistantIntent.FUND_CONTROL
 
 
 @pytest.mark.asyncio

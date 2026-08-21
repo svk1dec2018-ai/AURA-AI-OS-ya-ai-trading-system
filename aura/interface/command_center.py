@@ -192,16 +192,13 @@ def _classify(text: str) -> tuple[AssistantIntent, dict[str, str]]:
     if symbol_match:
         parameters["symbol"] = symbol_match.group(1).upper()
 
-    if any(
-        phrase in normalized
-        for phrase in (
-            "add funds",
-            "deposit money",
-            "withdraw",
-            "withdrawal",
-            "transfer funds",
-            "fund transfer",
-        )
+    if re.search(
+        r"\b(?:withdraw(?:al)?|deposit|"
+        r"add\s+(?:funds?|money|cash)|"
+        r"(?:funds?|money|cash)\s+add|"
+        r"transfer\s+(?:funds?|money|cash)|"
+        r"(?:funds?|money|cash)\s+transfer)\b",
+        normalized,
     ):
         return AssistantIntent.FUND_CONTROL, parameters
     if any(

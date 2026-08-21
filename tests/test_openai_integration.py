@@ -38,7 +38,14 @@ def _context() -> AgentContext:
         decision_timeframe="1m",
         candles=candles,
         created_at=candles[-1].close_time,
-        metadata={"runtime": "unit_test", "unsafe_secret": "must-not-be-forwarded"},
+        metadata={
+            "runtime": {
+                "mode": "unit_test",
+                "api_key": "nested-provider-secret",
+                "note": "password=another-hidden-value",
+            },
+            "unsafe_secret": "must-not-be-forwarded",
+        },
     )
 
 
@@ -121,6 +128,9 @@ async def test_openai_market_provider_is_advisory_and_filters_context_metadata()
     encoded_request = json.dumps(captured["payload"])
     assert "unsafe_secret" not in encoded_request
     assert "must-not-be-forwarded" not in encoded_request
+    assert "nested-provider-secret" not in encoded_request
+    assert "another-hidden-value" not in encoded_request
+    assert "[REDACTED]" in encoded_request
     assert "broker" not in analysis.features
 
 

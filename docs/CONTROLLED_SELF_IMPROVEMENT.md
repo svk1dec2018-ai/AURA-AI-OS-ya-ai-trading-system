@@ -49,8 +49,11 @@ truncated, reordered or tampered journal fails closed.
 
 The machine-readable matrix is `aura.maintenance.authority.DevelopmentAuthorityPolicy`.
 Guard code, secret files, runtime financial state and CI workflow files cannot be changed by the
-automatic patch applier. Risk, execution, portfolio and persistence changes are classified as
-`FINANCIAL_CORE` and need an additional explicit owner acknowledgement.
+automatic patch applier. Host-controlled tests are also immutable to model-authored patches, so
+the model cannot weaken the checks used to validate its own change. Any runtime path that can
+affect decisions, orders or portfolio state is classified as `FINANCIAL_CORE` and needs an
+additional explicit owner acknowledgement. Automated patches edit existing regular tracked text
+files only; file creation, deletion, rename, mode changes, symlinks and binary diffs are rejected.
 
 ## OpenAI integration
 

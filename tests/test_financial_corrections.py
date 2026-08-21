@@ -165,6 +165,25 @@ def test_correction_schema_has_no_cash_or_fund_mutation_fields() -> None:
     ):
         assert policy.decide(AuthorityRole.OWNER, action).allowed is False
 
+    with pytest.raises(ValidationError, match="unsupported corrected reporting field"):
+        FinancialCorrectionRequest(
+            mode=FinancialMode.PAPER,
+            kind=FinancialCorrectionKind.TRADE_ANNOTATION,
+            target_trade_id="paper-trade-1",
+            corrected_fields={"cash_balance": "999999"},
+            reason="attempt to disguise a cash mutation as an annotation",
+            requested_by="owner",
+        )
+
+    with pytest.raises(ValidationError, match="finite"):
+        FinancialCorrectionRequest(
+            mode=FinancialMode.PAPER,
+            kind=FinancialCorrectionKind.PNL_ADJUSTMENT,
+            net_realized_pnl_delta=Decimal("NaN"),
+            reason="attempt to create a non-finite reporting adjustment",
+            requested_by="owner",
+        )
+
 
 def test_financial_correction_tampering_fails_closed_on_restart(tmp_path) -> None:
     path = tmp_path / "corrections.jsonl"

@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -36,6 +37,19 @@ _ROLE_MANDATES: dict[AgentRole, str] = {
     AgentRole.REGIME: "Judge trend, chop and volatility regime.",
     AgentRole.EXECUTION_QUALITY: "Judge supplied spread, liquidity and slippage evidence.",
 }
+
+_SENSITIVE_METADATA_KEY = re.compile(
+    r"(?i)(api[_-]?key|authorization|cookie|credential|password|private[_-]?key|secret|"
+    r"(?:access|refresh|session|auth)[_-]?token|token$)"
+)
+_SENSITIVE_VALUE_PATTERNS = (
+    re.compile(r"\bsk-[A-Za-z0-9_-]{12,}\b"),
+    re.compile(r"(?i)\bBearer\s+[A-Za-z0-9._~+/-]{12,}={0,2}"),
+    re.compile(
+        r"(?i)\b(api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret)"
+        r"\s*[:=]\s*[^\s,;]+"
+    ),
+)
 
 
 class OpenAIReasoningProvider(ReasoningProvider):
@@ -175,10 +189,30 @@ def _market_context(context: AgentContext, *, max_candles: int) -> dict[str, Any
 def _compact(value: Any, *, max_chars: int = 8000) -> Any:
     if hasattr(value, "model_dump"):
         value = value.model_dump(mode="json")
+    value = _sanitize_context_value(value)
     encoded = json.dumps(value, separators=(",", ":"), default=str)
     if len(encoded) <= max_chars:
         return json.loads(encoded)
     return {"truncated": True, "preview": encoded[:max_chars]}
+
+
+def _sanitize_context_value(value: Any) -> Any:
+    if hasattr(value, "model_dump"):
+        value = value.model_dump(mode="json")
+    if isinstance(value, dict):
+        return {
+            str(key): _sanitize_context_value(item)
+            for key, item in value.items()
+            if _SENSITIVE_METADATA_KEY.search(str(key)) is None
+        }
+    if isinstance(value, (list, tuple)):
+        return [_sanitize_context_value(item) for item in value]
+    if isinstance(value, str):
+        redacted = value
+        for pattern in _SENSITIVE_VALUE_PATTERNS:
+            redacted = pattern.sub("[REDACTED]", redacted)
+        return redacted
+    return value
 
 
 def _positive_int_env(name: str, *, default: int) -> int:
