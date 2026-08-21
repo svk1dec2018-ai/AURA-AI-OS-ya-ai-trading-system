@@ -1110,6 +1110,14 @@
         "to": "aura/persistence/broker_evidence_archive.py"
       },
       {
+        "from": "aura/ops/broker_evidence_custody.py",
+        "to": "aura/execution/broker_evidence.py"
+      },
+      {
+        "from": "aura/ops/broker_evidence_custody.py",
+        "to": "aura/persistence/broker_evidence_archive.py"
+      },
+      {
         "from": "aura/ops/broker_evidence_intake.py",
         "to": "aura/execution/broker_evidence.py"
       },
@@ -2842,6 +2850,26 @@
         "to": "aura/persistence/broker_evidence_archive.py"
       },
       {
+        "from": "tests/test_broker_evidence_custody.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_custody.py",
+        "to": "aura/execution/broker.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_custody.py",
+        "to": "aura/execution/broker_evidence.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_custody.py",
+        "to": "aura/ops/broker_evidence_custody.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_custody.py",
+        "to": "aura/persistence/broker_evidence_archive.py"
+      },
+      {
         "from": "tests/test_broker_evidence_intake.py",
         "to": "aura/domain/models.py"
       },
@@ -4321,6 +4349,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/broker_evidence_custody.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/broker_evidence_intake.py"
     },
     {
@@ -5191,6 +5223,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 10013,
+      "path": "aura/ops/broker_evidence_custody.py",
+      "sha256": "d97e784c405292ae572d8f07591db0749ac558f9c4bc37ccc06644012fc989f6"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 3826,
       "path": "aura/ops/broker_evidence_intake.py",
       "sha256": "cc036175134d5b9b96fb862dafa87b81a61f1ef7f3db0e318dd737a786301c1e"
@@ -5257,9 +5295,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 31270,
+      "bytes": 31317,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "b371ab9acf2edf5a44d06e61ecc47476ef22036b1f4d1def39f0af1c7c3f460f"
+      "sha256": "c010d460b649e33914d70f25e1cabab6b5d4ac692729b2282092006be3b1ec6c"
     },
     {
       "asset_class": "python_module",
@@ -5635,9 +5673,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 8248,
+      "bytes": 8411,
       "path": "docs/BROKER_DATA_CONNECTOR_MATRIX.md",
-      "sha256": "4918747fde23569abc5c0e3543e348601d6698e08c0bbd69d3710897bcfe825c"
+      "sha256": "e0d3fa6620103abc204d1df5391f8c31b293b61ece1fecbe97acdd24a1406653"
     },
     {
       "asset_class": "documentation",
@@ -5695,9 +5733,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 12125,
+      "bytes": 12437,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "c494553758618505b94de6b5886ac9f47bf1ac35c1e07c48e3592922d3f3b95d"
+      "sha256": "3ad4bfd8b5157459ad5ba5e80c1fa952a41a9862b67785e74ed2b05c77cd0216"
     },
     {
       "asset_class": "documentation",
@@ -5731,9 +5769,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 15455,
+      "bytes": 16815,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "af18b234544d4ac8fafb82ed1c1bbde208cb8d29a6799b2c3c6f2cb9e45a72bb"
+      "sha256": "f65f704aa3dd2a5a6dfbfd8f52a8ed0e341d0c24f1b7db083fb9f62f13f263bd"
     },
     {
       "asset_class": "documentation",
@@ -6094,6 +6132,12 @@
       "bytes": 3731,
       "path": "tests/test_broker_evidence_checkpoint.py",
       "sha256": "9d803828169440d9ffdec3c97432e13283c0d4905079de9c5ea11e30cf0071d5"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 10671,
+      "path": "tests/test_broker_evidence_custody.py",
+      "sha256": "24eda22f8b16382c5fd8f36ffda8ff0664628a843972038c3bb1527d67c5cea5"
     },
     {
       "asset_class": "python_module",
@@ -8754,6 +8798,7 @@
         "tests/test_backtest.py",
         "tests/test_brain_policy.py",
         "tests/test_broker_evidence.py",
+        "tests/test_broker_evidence_custody.py",
         "tests/test_broker_evidence_intake.py",
         "tests/test_broker_evidence_recorder.py",
         "tests/test_ceo_decision_trace.py",
@@ -9256,6 +9301,7 @@
         "tests/test_broker_evidence.py",
         "tests/test_broker_evidence_archive.py",
         "tests/test_broker_evidence_checkpoint.py",
+        "tests/test_broker_evidence_custody.py",
         "tests/test_broker_evidence_intake.py",
         "tests/test_broker_evidence_recorder.py"
       ],
@@ -9289,6 +9335,7 @@
         "tests/test_broker_evidence.py",
         "tests/test_broker_evidence_archive.py",
         "tests/test_broker_evidence_checkpoint.py",
+        "tests/test_broker_evidence_custody.py",
         "tests/test_broker_evidence_intake.py",
         "tests/test_broker_evidence_recorder.py"
       ],
@@ -10382,6 +10429,40 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_broker_evidence_custody.py"
+      ],
+      "internal_dependencies": [
+        "aura/execution/broker_evidence.py",
+        "aura/persistence/broker_evidence_archive.py"
+      ],
+      "lines": 286,
+      "module": "aura.ops.broker_evidence_custody",
+      "parsed": true,
+      "path": "aura/ops/broker_evidence_custody.py",
+      "phase_coverage": [
+        11
+      ],
+      "primary_phase": 11,
+      "role": "source",
+      "sha256": "d97e784c405292ae572d8f07591db0749ac558f9c4bc37ccc06644012fc989f6",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "hashlib",
+        "json",
+        "os",
+        "pathlib",
+        "sys",
+        "typing",
+        "uuid"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_broker_evidence_intake.py"
       ],
       "internal_dependencies": [
@@ -10777,7 +10858,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 825,
+      "lines": 826,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -10786,7 +10867,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "b371ab9acf2edf5a44d06e61ecc47476ef22036b1f4d1def39f0af1c7c3f460f",
+      "sha256": "c010d460b649e33914d70f25e1cabab6b5d4ac692729b2282092006be3b1ec6c",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -10954,7 +11035,8 @@
       "component": "persistence",
       "direct_test_files": [
         "tests/test_broker_evidence_archive.py",
-        "tests/test_broker_evidence_checkpoint.py"
+        "tests/test_broker_evidence_checkpoint.py",
+        "tests/test_broker_evidence_custody.py"
       ],
       "internal_dependencies": [
         "aura/execution/broker_evidence.py",
@@ -13602,6 +13684,39 @@
         "pathlib"
       ],
       "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/ops/broker_evidence_custody.py",
+        "aura/persistence/broker_evidence_archive.py"
+      ],
+      "lines": 299,
+      "module": "tests.test_broker_evidence_custody",
+      "parsed": true,
+      "path": "tests/test_broker_evidence_custody.py",
+      "phase_coverage": [
+        1,
+        4,
+        11
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "24eda22f8b16382c5fd8f36ffda8ff0664628a843972038c3bb1527d67c5cea5",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
     },
     {
       "component": "validation",
@@ -16673,7 +16788,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "f1bd2271de070f40a8e7779adc4d3502f4a039e4c102819813bf3a91c8f0cb32",
+  "repository_tree_sha256": "39c452896a89f66bae87e030f6ce6bcd8fa4f1546ba8f0b6fc2c8b5260efd419",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -17037,6 +17152,12 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
+      "line": 28,
+      "path": "aura/ops/broker_evidence_custody.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "marker-exception",
       "line": 21,
       "path": "aura/persistence/broker_evidence_archive.py"
     },
@@ -17174,15 +17295,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 159,
-    "entrypoints": 36,
+    "directly_tested_source_modules": 160,
+    "entrypoints": 37,
     "parse_errors": 0,
-    "python_modules": 334,
-    "repository_files": 391,
-    "source_modules": 173,
-    "static_test_functions": 531,
-    "stub_candidates": 81,
-    "test_modules": 140,
+    "python_modules": 336,
+    "repository_files": 393,
+    "source_modules": 174,
+    "static_test_functions": 540,
+    "stub_candidates": 82,
+    "test_modules": 141,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

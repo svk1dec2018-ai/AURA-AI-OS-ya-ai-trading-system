@@ -327,6 +327,32 @@ Phase 11 PASS. The checkpoint file or its printed digest must be copied to an
 owner-controlled system outside the archive host. An administrator who can rewrite
 both the WAL and its local checkpoint is outside this code-only trust boundary.
 
+### Validated evidence custody workflow
+
+The custody command joins the previously separate intake, archive, checkpoint and
+receipt steps without adding broker access. It validates every sealed input and the
+two-reviewer registry before opening the archive. A blocked or unsupported batch
+performs no custody writes. Eligible evidence is sorted by content hash, appended
+idempotently, covered by a sealed checkpoint and bound to a sealed receipt:
+
+```bash
+python -m aura.ops.broker_evidence_custody \
+  --evidence secure-import/angel-one-evidence.json \
+  --evidence secure-import/mt5-evidence.json \
+  --attestation-registry secure-import/owner-review-registry.json \
+  --archive runtime/evidence/broker-evidence.wal \
+  --checkpoint secure-export/broker-evidence-anchor.json \
+  --receipt secure-export/broker-evidence-custody-receipt.json
+```
+
+Interrupted append work is restart-safe: existing evidence is reused rather than
+duplicated, and an existing matching checkpoint/receipt is verified. A checkpoint
+that predates any input evidence fails closed before new append work; the operator
+must supply a new checkpoint path. Input, archive, checkpoint and receipt paths
+must be distinct. The receipt explicitly states that the phase ledger was not
+updated, Phase 11 PASS was not claimed, no broker connection occurred and execution
+authority remains false.
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own

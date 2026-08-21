@@ -560,6 +560,36 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_broker_evidence_custody.py",
+      "phase_coverage": [
+        1,
+        4,
+        11
+      ],
+      "sha256": "24eda22f8b16382c5fd8f36ffda8ff0664628a843972038c3bb1527d67c5cea5",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/ops/broker_evidence_custody.py",
+        "aura/persistence/broker_evidence_archive.py"
+      ],
+      "static_test_functions": 9,
+      "test_classes": [],
+      "test_functions": [
+        "test_blocked_batch_performs_no_custody_writes",
+        "test_custody_cli_reports_review_only_status",
+        "test_custody_rejects_overlapping_paths_before_mutation",
+        "test_custody_restart_is_idempotent",
+        "test_custody_resumes_after_partial_archive_append",
+        "test_eligible_batch_is_archived_anchored_and_receipted",
+        "test_existing_checkpoint_rejects_new_evidence_before_append",
+        "test_existing_checkpoint_rejects_unanchored_existing_record",
+        "test_tampered_existing_receipt_fails_closed"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_broker_evidence_intake.py",
       "phase_coverage": [
         1,
@@ -3107,7 +3137,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 531,
-    "test_modules": 140
+    "static_test_functions": 540,
+    "test_modules": 141
   }
 }
