@@ -89,6 +89,9 @@ Secrets are runtime-only. They belong in environment variables or a secret manag
 Phase 11 evidence exports must also be credential-free. AURA accepts hashed account,
 order, response and attestation fingerprints only; secret-bearing fields are rejected
 before schema validation. Evidence validation never grants trading authority.
+The runtime evidence recorder consumes normalized filled-order and reconciliation
+state, stores only the required quantities/status/timestamps plus opaque fingerprints,
+and never invokes broker APIs itself.
 
 Examples:
 
