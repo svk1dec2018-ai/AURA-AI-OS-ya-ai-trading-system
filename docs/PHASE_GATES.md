@@ -303,10 +303,29 @@ capture identifiers, duplicate evidence, and the evidence chain. Concurrent
 duplicate appends are idempotent and produce one record.
 
 The application API is append-only: it exposes no delete, truncate, or mutation
-operation and performs no broker call. This improves local chain of custody but is
-not an external broker attestation or Phase 11 PASS. An owner-controlled backup or
-external digest anchor is still required to detect deletion of the final WAL tail
-by an administrator with filesystem access.
+operation and performs no broker call. A sealed checkpoint can be exported by an
+operator and later verified against the current archive prefix:
+
+```bash
+python -m aura.ops.broker_evidence_checkpoint export \
+  --archive runtime/evidence/broker-evidence.wal \
+  --checkpoint secure-export/broker-evidence-anchor.json
+
+python -m aura.ops.broker_evidence_checkpoint verify \
+  --archive runtime/evidence/broker-evidence.wal \
+  --checkpoint secure-export/broker-evidence-anchor.json
+```
+
+Checkpoint publication is fsynced and atomic/exclusive, so an existing anchor is
+never silently overwritten. The checkpoint contains record count, tail sequence,
+tail evidence digest, WAL-prefix digest and no credentials or execution authority.
+Later valid appends remain allowed; rollback below the anchored prefix, prefix
+replacement, checkpoint tampering, or a broken content seal fails closed.
+
+This improves local chain of custody but is not an external broker attestation or
+Phase 11 PASS. The checkpoint file or its printed digest must be copied to an
+owner-controlled system outside the archive host. An administrator who can rewrite
+both the WAL and its local checkpoint is outside this code-only trust boundary.
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories

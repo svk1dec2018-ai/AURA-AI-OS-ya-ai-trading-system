@@ -34,8 +34,9 @@ order.
 Already-sealed evidence can now be persisted in a restart-safe append-only archive
 that reuses AURA's checksummed write-ahead log, verifies sequence/content/event
 bindings, and links records by prior evidence hash. Strong protection against an
-administrator deleting the final archive tail still requires an external digest
-anchor or owner-controlled backup.
+administrator deleting or replacing an archive prefix is available through a
+sealed checkpoint export/verify CLI, provided the checkpoint or printed digest is
+copied to an owner-controlled system outside the archive host.
 
 ## Implemented and wired
 
