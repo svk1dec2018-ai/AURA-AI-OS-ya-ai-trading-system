@@ -1194,6 +1194,54 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/evolution/core.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/research/hypothesis_generator.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/research/lifecycle.py"
+      },
+      {
+        "from": "aura/ops/strategy_research_gate.py",
+        "to": "aura/research/strategy_factory.py"
+      },
+      {
         "from": "aura/options/intelligence.py",
         "to": "aura/markets/universe.py"
       },
@@ -1312,6 +1360,10 @@
       {
         "from": "aura/research/holdout.py",
         "to": "aura/research/manifest.py"
+      },
+      {
+        "from": "aura/research/hypothesis_generator.py",
+        "to": "aura/research/autonomy.py"
       },
       {
         "from": "aura/research/lifecycle.py",
@@ -2866,6 +2918,10 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "tests/test_hypothesis_generator.py",
+        "to": "aura/research/hypothesis_generator.py"
+      },
+      {
         "from": "tests/test_instruments.py",
         "to": "aura/domain/instruments.py"
       },
@@ -3714,6 +3770,14 @@
         "to": "aura/research/strategy_mutation.py"
       },
       {
+        "from": "tests/test_strategy_research_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "tests/test_strategy_research_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
+      },
+      {
         "from": "tests/test_supervisor.py",
         "to": "aura/execution/reconciliation.py"
       },
@@ -3860,6 +3924,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/strategy_research_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "examples/check_angel_one_account.py"
     },
     {
@@ -3966,9 +4034,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5027,
+      "bytes": 5145,
       "path": ".github/workflows/ci.yml",
-      "sha256": "99792ff964c5df1e60b3ad5697b64b280b5d7da11ee61a04e418ed120eefbaea"
+      "sha256": "08408828403eb4bac04e7d79e6253078705dee2dc07590cc4ad8bb60dc696ca3"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4692,9 +4760,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30850,
+      "bytes": 30895,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "c2679f5bf0c7f5748f7a0c7e3e292d7e0bcf8956b5dadce860cbaa8e86942a46"
+      "sha256": "ceb62c7374960526d92422c0196193c63866b3ea70e6771bc32e9430f68f1503"
     },
     {
       "asset_class": "python_module",
@@ -4707,6 +4775,12 @@
       "bytes": 11637,
       "path": "aura/ops/state_engine_gate.py",
       "sha256": "7cf3f1b87b380ef7afb937c3beacc918d44fca6814ee8f651c74d43bda240788"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 9164,
+      "path": "aura/ops/strategy_research_gate.py",
+      "sha256": "08330dd7850b96034350401a858bef91f4034bbdcea349892321894fd71e16ef"
     },
     {
       "asset_class": "python_module",
@@ -4785,6 +4859,12 @@
       "bytes": 24080,
       "path": "aura/research/holdout.py",
       "sha256": "a3ed18aed5cb2821c4a95694d505484a1b4f275b180926551719c19cbdebfbdb"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 2715,
+      "path": "aura/research/hypothesis_generator.py",
+      "sha256": "b69e31ad9b59965567d3e20d972d4ab3f7b158f608eaf70114637e7d977653cd"
     },
     {
       "asset_class": "python_module",
@@ -5114,7 +5194,7 @@
       "asset_class": "documentation",
       "bytes": 10638,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "cea712afdde606a2e931d1c9c32e5ccd175988606783ee5c4c4bbc5ccf0be25c"
+      "sha256": "ae9278ff9c68061b7e44d6e6bfe420ce476793e86e17a0ccc13aa9697d46171e"
     },
     {
       "asset_class": "documentation",
@@ -5148,9 +5228,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 7200,
+      "bytes": 8177,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "62e2d0bf03195833a14cf8e4cf318ad4637f5ab6e466d714923818c265df838e"
+      "sha256": "210ccd5f1cc9bd29e23facd72b1ef364b534b32414e7a1b9133359b9802c8f92"
     },
     {
       "asset_class": "documentation",
@@ -5706,6 +5786,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 1536,
+      "path": "tests/test_hypothesis_generator.py",
+      "sha256": "f1e7e2b9acad2a036c7df785ed43cc90555ac6f3ca15071e8573e7e3499e1af3"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 1618,
       "path": "tests/test_instruments.py",
       "sha256": "a198788b6a9c3a353b4ecc556cc186cb55ce5908d92d18d414b88909746120d3"
@@ -5916,9 +6002,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3290,
+      "bytes": 3347,
       "path": "tests/test_phase_gates.py",
-      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d"
+      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093"
     },
     {
       "asset_class": "python_module",
@@ -6081,6 +6167,12 @@
       "bytes": 989,
       "path": "tests/test_strategy_mutation.py",
       "sha256": "8a527839a807c8ca6d53e0cc954faf7077d404cd421abbf4004364b912fadc89"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 1022,
+      "path": "tests/test_strategy_research_gate.py",
+      "sha256": "4c1d1a5eef7e58bc8b4b2818e8bc513de579f33b864fa31e686076960e0c81b1"
     },
     {
       "asset_class": "python_module",
@@ -9638,7 +9730,8 @@
         "tests/test_phase_gates.py",
         "tests/test_production_ops.py",
         "tests/test_risk_engine_gate.py",
-        "tests/test_state_engine_gate.py"
+        "tests/test_state_engine_gate.py",
+        "tests/test_strategy_research_gate.py"
       ],
       "internal_dependencies": [],
       "lines": 371,
@@ -9731,7 +9824,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 816,
+      "lines": 817,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -9740,7 +9833,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "c2679f5bf0c7f5748f7a0c7e3e292d7e0bcf8956b5dadce860cbaa8e86942a46",
+      "sha256": "ceb62c7374960526d92422c0196193c63866b3ea70e6771bc32e9430f68f1503",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -9830,6 +9923,46 @@
         "json",
         "pathlib",
         "tempfile",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
+        "tests/test_strategy_research_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/evolution/core.py",
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/research/hypothesis_generator.py",
+        "aura/research/lifecycle.py",
+        "aura/research/strategy_factory.py"
+      ],
+      "lines": 237,
+      "module": "aura.ops.strategy_research_gate",
+      "parsed": true,
+      "path": "aura/ops/strategy_research_gate.py",
+      "phase_coverage": [
+        7
+      ],
+      "primary_phase": 7,
+      "role": "source",
+      "sha256": "08330dd7850b96034350401a858bef91f4034bbdcea349892321894fd71e16ef",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "datetime",
+        "hashlib",
+        "json",
+        "pathlib",
         "typing"
       ],
       "third_party_dependencies": []
@@ -10241,6 +10374,34 @@
         "json",
         "math",
         "pathlib"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "research",
+      "direct_test_files": [
+        "tests/test_hypothesis_generator.py"
+      ],
+      "internal_dependencies": [
+        "aura/research/autonomy.py"
+      ],
+      "lines": 69,
+      "module": "aura.research.hypothesis_generator",
+      "parsed": true,
+      "path": "aura/research/hypothesis_generator.py",
+      "phase_coverage": [
+        7
+      ],
+      "primary_phase": 7,
+      "role": "source",
+      "sha256": "b69e31ad9b59965567d3e20d972d4ab3f7b158f608eaf70114637e7d977653cd",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "hashlib",
+        "json"
       ],
       "third_party_dependencies": [
         "pydantic"
@@ -13276,6 +13437,30 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/research/hypothesis_generator.py"
+      ],
+      "lines": 45,
+      "module": "tests.test_hypothesis_generator",
+      "parsed": true,
+      "path": "tests/test_hypothesis_generator.py",
+      "phase_coverage": [
+        7
+      ],
+      "primary_phase": 7,
+      "role": "test",
+      "sha256": "f1e7e2b9acad2a036c7df785ed43cc90555ac6f3ca15071e8573e7e3499e1af3",
+      "standard_library_dependencies": [
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/domain/instruments.py"
       ],
       "lines": 54,
@@ -14254,7 +14439,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 96,
+      "lines": 97,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -14263,7 +14448,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d",
+      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -14966,6 +15151,29 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/strategy_research_gate.py"
+      ],
+      "lines": 27,
+      "module": "tests.test_strategy_research_gate",
+      "parsed": true,
+      "path": "tests/test_strategy_research_gate.py",
+      "phase_coverage": [
+        0,
+        7
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "4c1d1a5eef7e58bc8b4b2818e8bc513de579f33b864fa31e686076960e0c81b1",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/execution/reconciliation.py",
         "aura/risk/engine.py",
         "aura/runtime/supervisor.py"
@@ -15150,7 +15358,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "b49941c91f8874878a21a74f1d2c6d4173ac8bd15f73a2e7fc4bcab4f62c0566",
+  "repository_tree_sha256": "ae378d2d9b7631f4e677b632d019f9e29e948de8b945fed1bf234109e32bf4ba",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -15639,15 +15847,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 146,
-    "entrypoints": 29,
+    "directly_tested_source_modules": 148,
+    "entrypoints": 30,
     "parse_errors": 0,
-    "python_modules": 307,
-    "repository_files": 364,
-    "source_modules": 160,
-    "static_test_functions": 482,
+    "python_modules": 311,
+    "repository_files": 368,
+    "source_modules": 162,
+    "static_test_functions": 486,
     "stub_candidates": 79,
-    "test_modules": 126,
+    "test_modules": 128,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

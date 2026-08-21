@@ -1,0 +1,36 @@
+{
+  "claims": {
+    "broker_execution_claimed": false,
+    "external_market_data_used": false,
+    "live_money_enabled": false,
+    "strategy_performance_claimed": false
+  },
+  "components": {
+    "evaluation_policy": "aura.evolution.core.FitnessPolicy",
+    "hypothesis_generator": "aura.research.hypothesis_generator.DeterministicHypothesisGenerator",
+    "promotion_governance": "aura.research.lifecycle.StrategyGovernance",
+    "strategy_factory": "aura.research.strategy_factory.AutonomousStrategyFactory"
+  },
+  "decision": "PASS",
+  "deterministic_fingerprint": "f8fbf06d0ca46cfeac99016bc5cf1f87f677d0547c74aaae4fda412bcad3a369",
+  "fixture_type": "deterministic_internal_research_fixture",
+  "overfitting_controls": {
+    "deliberately_overfit_fixture_failures": [
+      "unstable_walk_forward"
+    ],
+    "overfit_candidate_rejected": true,
+    "stable_fixture_failures": []
+  },
+  "phase": 7,
+  "promotion_controls": {
+    "automatic_live_promotion_performed": false,
+    "automatic_paper_promotion_performed": false,
+    "untested_promotion_blocked": true
+  },
+  "reproducibility": {
+    "hypothesis_id_equal": true,
+    "strategy_content_hash_equal": true,
+    "strategy_identity_equal": true
+  },
+  "schema_version": 1
+}

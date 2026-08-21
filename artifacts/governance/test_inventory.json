@@ -1223,6 +1223,23 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_hypothesis_generator.py",
+      "phase_coverage": [
+        7
+      ],
+      "sha256": "f1e7e2b9acad2a036c7df785ed43cc90555ac6f3ca15071e8573e7e3499e1af3",
+      "source_dependencies": [
+        "aura/research/hypothesis_generator.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_hypothesis_generation_is_canonical_and_reproducible",
+        "test_hypothesis_request_rejects_ambiguous_or_unsafe_shape"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_instruments.py",
       "phase_coverage": [
         1
@@ -2030,7 +2047,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "c2e74cae0d5e4d7ffab92be40f3d1120d03b3f9a919afe40f89cc58947ae467d",
+      "sha256": "2c205ec610a1c94f068d89bf5484b0bf9b83cc04aa8fed0b4c81b56b5f8e4093",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -2038,7 +2055,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_backtest_only",
+        "test_committed_ledger_passes_through_strategy_research_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2645,6 +2662,25 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_strategy_research_gate.py",
+      "phase_coverage": [
+        0,
+        7
+      ],
+      "sha256": "4c1d1a5eef7e58bc8b4b2818e8bc513de579f33b864fa31e686076960e0c81b1",
+      "source_dependencies": [
+        "aura/ops/phase_gates.py",
+        "aura/ops/strategy_research_gate.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_seven_evidence_is_current",
+        "test_phase_seven_report_is_reproducible_and_fail_closed"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_supervisor.py",
       "phase_coverage": [
         2,
@@ -2805,7 +2841,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 482,
-    "test_modules": 126
+    "static_test_functions": 486,
+    "test_modules": 128
   }
 }
