@@ -31,6 +31,11 @@ The evidence recorder can now convert existing filled `OrderState` and
 broker/order/fill identifiers, symbols, prices or reconciliation details. It is
 an adapter integration boundary, not proof that either broker has executed a live
 order.
+Already-sealed evidence can now be persisted in a restart-safe append-only archive
+that reuses AURA's checksummed write-ahead log, verifies sequence/content/event
+bindings, and links records by prior evidence hash. Strong protection against an
+administrator deleting the final archive tail still requires an external digest
+anchor or owner-controlled backup.
 
 ## Implemented and wired
 

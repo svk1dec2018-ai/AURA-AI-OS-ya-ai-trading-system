@@ -69,6 +69,7 @@ _FILE_PHASE_OVERRIDES = {
     "aura/ops/broker_evidence_readiness.py": 11,
     "aura/ops/broker_evidence_intake.py": 11,
     "aura/execution/broker_evidence_recorder.py": 11,
+    "aura/persistence/broker_evidence_archive.py": 11,
     "aura/ops/health.py": 15,
     "aura/ops/preflight.py": 15,
     "aura/ops/release_gate.py": 15,

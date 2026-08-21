@@ -92,6 +92,9 @@ before schema validation. Evidence validation never grants trading authority.
 The runtime evidence recorder consumes normalized filled-order and reconciliation
 state, stores only the required quantities/status/timestamps plus opaque fingerprints,
 and never invokes broker APIs itself.
+The restart-safe evidence archive persists only these sealed, credential-free
+exports. It does not persist credentials or raw broker identifiers and cannot grant
+execution or phase-gate authority.
 
 Examples:
 

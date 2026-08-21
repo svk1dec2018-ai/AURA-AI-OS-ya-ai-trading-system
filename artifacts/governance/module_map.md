@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 387
-- Python modules: 330
-- Source modules: 171
-- Test modules: 138
-- Static test functions: 516
+- Repository files: 389
+- Python modules: 332
+- Source modules: 172
+- Test modules: 139
+- Static test functions: 523
 - Entrypoints: 35
-- Known stub/incomplete candidates: 80
+- Known stub/incomplete candidates: 81
 
 ## Repository structure
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 175 |
+| `aura` | 176 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 138 |
+| `tests` | 139 |
 
 ## Entrypoints
 
@@ -169,8 +169,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
 | `aura/execution/angel_one.py` | source | execution | 4 | 5 | 2 |
-| `aura/execution/broker.py` | source | execution | 4 | 1 | 4 |
-| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 3 |
+| `aura/execution/broker.py` | source | execution | 4 | 1 | 5 |
+| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 4 |
 | `aura/execution/broker_evidence_recorder.py` | source | execution | 11 | 5 | 1 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
@@ -221,9 +221,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/state_engine_gate.py` | source | ops | 2 | 9 | 1 |
 | `aura/ops/strategy_research_gate.py` | source | ops | 7 | 12 | 1 |
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
+| `aura/persistence/broker_evidence_archive.py` | source | persistence | 11 | 2 | 1 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 5 | 6 |
-| `aura/persistence/wal.py` | source | persistence | 2 | 0 | 11 |
+| `aura/persistence/wal.py` | source | persistence | 2 | 0 | 12 |
 | `aura/portfolio/instruments.py` | source | portfolio | 2 | 0 | 1 |
 | `aura/portfolio/ledger.py` | source | portfolio | 2 | 2 | 5 |
 | `aura/portfolio/targets.py` | source | portfolio | 2 | 1 | 1 |
@@ -307,6 +308,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_broker_conformance_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_broker_contract.py` | test | validation | 4 | 5 | 0 |
 | `tests/test_broker_evidence.py` | test | validation | 1 | 3 | 0 |
+| `tests/test_broker_evidence_archive.py` | test | validation | 2 | 4 | 0 |
 | `tests/test_broker_evidence_intake.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_broker_evidence_readiness.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_broker_evidence_recorder.py` | test | validation | 1 | 6 | 0 |
