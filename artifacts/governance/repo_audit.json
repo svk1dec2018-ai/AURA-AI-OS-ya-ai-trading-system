@@ -1086,6 +1086,10 @@
         "to": "aura/ops/state_engine_gate.py"
       },
       {
+        "from": "aura/ops/broker_evidence_intake.py",
+        "to": "aura/execution/broker_evidence.py"
+      },
+      {
         "from": "aura/ops/broker_evidence_readiness.py",
         "to": "aura/domain/models.py"
       },
@@ -2774,6 +2778,22 @@
         "to": "aura/execution/broker_evidence.py"
       },
       {
+        "from": "tests/test_broker_evidence_intake.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_intake.py",
+        "to": "aura/execution/broker.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_intake.py",
+        "to": "aura/execution/broker_evidence.py"
+      },
+      {
+        "from": "tests/test_broker_evidence_intake.py",
+        "to": "aura/ops/broker_evidence_intake.py"
+      },
+      {
         "from": "tests/test_broker_evidence_readiness.py",
         "to": "aura/ops/broker_evidence_readiness.py"
       },
@@ -4208,6 +4228,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/broker_evidence_intake.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/broker_evidence_readiness.py"
     },
     {
@@ -4354,9 +4378,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5591,
+      "bytes": 5737,
       "path": ".github/workflows/ci.yml",
-      "sha256": "281586c8b2c54d3220f63f1d1209537a3ca2b7f591bf77618776395c08b081c6"
+      "sha256": "858e87a4721e0871178a7b08b1793c92ca73a56d6542bf5b7f27f47135f4c7a0"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4858,9 +4882,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 14035,
+      "bytes": 17648,
       "path": "aura/execution/broker_evidence.py",
-      "sha256": "ab75a083c0a817a1c7994b3af967f9c6285f4f2513342564c79739995d25dff7"
+      "sha256": "c7817bb7b77fdea15891fa849fede69f30121f564b6ac3693c2b3059b9d15d2e"
     },
     {
       "asset_class": "python_module",
@@ -5062,6 +5086,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 3826,
+      "path": "aura/ops/broker_evidence_intake.py",
+      "sha256": "cc036175134d5b9b96fb862dafa87b81a61f1ef7f3db0e318dd737a786301c1e"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 9437,
       "path": "aura/ops/broker_evidence_readiness.py",
       "sha256": "db8ed36cfb4d27cfaf8386df0b129c74ee7eed2658bc8f171e9c861faaa0480e"
@@ -5122,9 +5152,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 31065,
+      "bytes": 31111,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "f03645acac2f8130c994aa0a094567d44d53dc797bcf731191c4f6d114fbe6f3"
+      "sha256": "26577167be4ec1f10269d94d0e5887ad60f3141ed32cccbed79c25f2b42922c2"
     },
     {
       "asset_class": "python_module",
@@ -5554,9 +5584,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 11060,
+      "bytes": 11340,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "65ee1b6578841b5ba6990633e07d02bdfdd09f152d2debb47bcc8a5f801fe591"
+      "sha256": "6d95abb25e0265fda40b201e72be323697db1bce267ef1187f9a8823d24307f7"
     },
     {
       "asset_class": "documentation",
@@ -5590,9 +5620,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 11622,
+      "bytes": 12752,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "14e4ceb277ff92f8dea46dc89b63513e3a172c3511b9fd5397d4a6110e667b09"
+      "sha256": "0406c52413fb18a127241074de0d50f911196b09e88150c0a9d16831f3e1f829"
     },
     {
       "asset_class": "documentation",
@@ -5941,6 +5971,12 @@
       "bytes": 5748,
       "path": "tests/test_broker_evidence.py",
       "sha256": "bbd1f496f7c0394713110670ac6c49ae70dddc52cc8bff8b4a6e5bebfe085dc3"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 7320,
+      "path": "tests/test_broker_evidence_intake.py",
+      "sha256": "7867d3a29bd7aff9f8371ebc852957f128d019e073b934387fff50d962cb166a"
     },
     {
       "asset_class": "python_module",
@@ -8589,6 +8625,7 @@
         "tests/test_backtest.py",
         "tests/test_brain_policy.py",
         "tests/test_broker_evidence.py",
+        "tests/test_broker_evidence_intake.py",
         "tests/test_ceo_decision_trace.py",
         "tests/test_checkpoint.py",
         "tests/test_context_enrichment.py",
@@ -9086,7 +9123,8 @@
       "component": "execution",
       "direct_test_files": [
         "tests/test_broker_contract.py",
-        "tests/test_broker_evidence.py"
+        "tests/test_broker_evidence.py",
+        "tests/test_broker_evidence_intake.py"
       ],
       "internal_dependencies": [
         "aura/domain/models.py"
@@ -9115,13 +9153,14 @@
     {
       "component": "execution",
       "direct_test_files": [
-        "tests/test_broker_evidence.py"
+        "tests/test_broker_evidence.py",
+        "tests/test_broker_evidence_intake.py"
       ],
       "internal_dependencies": [
         "aura/domain/models.py",
         "aura/execution/broker.py"
       ],
-      "lines": 365,
+      "lines": 461,
       "module": "aura.execution.broker_evidence",
       "parsed": true,
       "path": "aura/execution/broker_evidence.py",
@@ -9130,7 +9169,7 @@
       ],
       "primary_phase": 4,
       "role": "source",
-      "sha256": "ab75a083c0a817a1c7994b3af967f9c6285f4f2513342564c79739995d25dff7",
+      "sha256": "c7817bb7b77fdea15891fa849fede69f30121f564b6ac3693c2b3059b9d15d2e",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -10145,6 +10184,34 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_broker_evidence_intake.py"
+      ],
+      "internal_dependencies": [
+        "aura/execution/broker_evidence.py"
+      ],
+      "lines": 122,
+      "module": "aura.ops.broker_evidence_intake",
+      "parsed": true,
+      "path": "aura/ops/broker_evidence_intake.py",
+      "phase_coverage": [
+        11
+      ],
+      "primary_phase": 11,
+      "role": "source",
+      "sha256": "cc036175134d5b9b96fb862dafa87b81a61f1ef7f3db0e318dd737a786301c1e",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_broker_evidence_readiness.py"
       ],
       "internal_dependencies": [
@@ -10512,7 +10579,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 821,
+      "lines": 822,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -10521,7 +10588,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "f03645acac2f8130c994aa0a094567d44d53dc797bcf731191c4f6d114fbe6f3",
+      "sha256": "26577167be4ec1f10269d94d0e5887ad60f3141ed32cccbed79c25f2b42922c2",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -13232,6 +13299,38 @@
       "primary_phase": 1,
       "role": "test",
       "sha256": "bbd1f496f7c0394713110670ac6c49ae70dddc52cc8bff8b4a6e5bebfe085dc3",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "json"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/ops/broker_evidence_intake.py"
+      ],
+      "lines": 201,
+      "module": "tests.test_broker_evidence_intake",
+      "parsed": true,
+      "path": "tests/test_broker_evidence_intake.py",
+      "phase_coverage": [
+        1,
+        4,
+        11
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "7867d3a29bd7aff9f8371ebc852957f128d019e073b934387fff50d962cb166a",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -16248,7 +16347,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "1104c46ce8fb8ca1e344060b0e4b5f8493fb0713d5efbc05eb5a68fac92523d0",
+  "repository_tree_sha256": "a31517f1682050ccb55c3408d1ceb3b20e30193942a175c4b2f0c405d4a42efd",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -16743,15 +16842,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 155,
-    "entrypoints": 34,
+    "directly_tested_source_modules": 156,
+    "entrypoints": 35,
     "parse_errors": 0,
-    "python_modules": 326,
-    "repository_files": 383,
-    "source_modules": 169,
-    "static_test_functions": 507,
+    "python_modules": 328,
+    "repository_files": 385,
+    "source_modules": 170,
+    "static_test_functions": 512,
     "stub_candidates": 80,
-    "test_modules": 136,
+    "test_modules": 137,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

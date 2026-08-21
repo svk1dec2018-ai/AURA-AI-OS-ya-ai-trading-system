@@ -22,6 +22,10 @@ verifier. It rejects self-attested sources, duplicated observations, tampered
 content, non-causal timestamps, incomplete fills and unstable reconciliation.
 This is readiness infrastructure only: Angel One remains read-only, MT5 remains
 demo-only, and Phase 11 remains BLOCKED pending accepted external evidence.
+An offline intake command can now load sealed evidence plus an owner-controlled
+two-reviewer attestation registry and emit a deterministic assessment. It cannot
+connect to a broker, mutate the phase ledger, authorize execution, or turn code
+approval into financial authorization.
 
 ## Implemented and wired
 

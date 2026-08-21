@@ -254,6 +254,30 @@ Phase 11 remains `BLOCKED`. Angel One is read-only, MT5 is demo-only, and no
 accepted external fill/reconciliation evidence or separate financial-risk
 authorization exists. Those facts cannot be manufactured by code-only tests.
 
+### Offline evidence intake
+
+Credential-free external exports can be assessed without granting the process
+broker access. Each owner-controlled registry review is bound to the exact sealed
+bundle SHA-256, requires at least two distinct reviewer fingerprints, and is itself
+content-sealed. A reviewer fingerprint is an audit identifier, not a password or a
+cryptographic signature; the registry must therefore be created and reviewed only
+through the authenticated owner workflow.
+
+```bash
+python -m aura.ops.broker_evidence_intake \
+  --evidence secure-import/angel-one-evidence.json \
+  --evidence secure-import/mt5-evidence.json \
+  --attestation-registry secure-import/owner-review-registry.json \
+  --output runtime/reports/phase11-intake.json \
+  --require-eligible
+```
+
+Successful intake means only `ELIGIBLE_FOR_GATE_REVIEW`. It does not update the
+phase ledger, enable live money, connect to a broker, or count as owner trade
+authorization. A blocked result exits with status 2 when `--require-eligible` is
+used. Evidence and registry files must remain outside Git and secret storage must
+not be included in either file.
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own
