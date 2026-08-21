@@ -11,6 +11,8 @@ from decimal import Decimal
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+from aura.ai.free_models import configured_ollama_model_ids, parse_ollama_keep_alive
+from aura.ai.ollama_structured import OllamaStructuredClient
 from aura.ai.openai_responses import OpenAIResponsesClient
 from aura.maintenance.authority import AuthorityRole, DevelopmentAuthorityPolicy
 from aura.maintenance.change_control import (
@@ -26,10 +28,20 @@ from aura.maintenance.models import (
     MaintenanceSeverity,
     SystemObservation,
 )
-from aura.maintenance.openai_developer import OpenAIMaintenanceDeveloper
+from aura.maintenance.openai_developer import AIMaintenanceDeveloper, StructuredAIClient
 
 _DEFAULT_CHANGE_JOURNAL = Path("runtime/maintenance/change_registry.jsonl")
 _DEFAULT_CORRECTION_JOURNAL = Path("runtime/maintenance/financial_corrections.jsonl")
+_LOCAL_MAINTENANCE_CONFIG_NAMES = {
+    "AURA_FREE_AI_PRESET",
+    "AURA_MAINTENANCE_AI_PROVIDER",
+    "AURA_MAINTENANCE_OLLAMA_MODEL",
+    "AURA_MAINTENANCE_OPENAI_MODEL",
+    "AURA_OLLAMA_KEEP_ALIVE",
+    "AURA_OLLAMA_MODELS",
+    "AURA_OLLAMA_TIMEOUT_SECONDS",
+    "AURA_OLLAMA_URL",
+}
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,7 +58,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     propose = subparsers.add_parser(
         "propose",
-        help="ask OpenAI for a patch and validate it in the credential-free sandbox",
+        help="ask configured AI for a patch and validate it in the credential-free sandbox",
     )
     propose.add_argument("--repository", type=Path, default=Path.cwd())
     propose.add_argument("--journal", type=Path, default=_DEFAULT_CHANGE_JOURNAL)
@@ -58,7 +70,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     propose.add_argument("--summary", required=True)
     propose.add_argument("--source", action="append", required=True)
-    propose.add_argument("--model", default=os.getenv("AURA_MAINTENANCE_OPENAI_MODEL", "gpt-5.4-mini"))
+    propose.add_argument(
+        "--provider",
+        choices=("auto", "ollama", "openai"),
+        default=os.getenv("AURA_MAINTENANCE_AI_PROVIDER", "auto"),
+    )
+    propose.add_argument(
+        "--model",
+        help="override the selected provider's maintenance model",
+    )
 
     apply_command = subparsers.add_parser(
         "approve-apply",
@@ -202,7 +222,6 @@ def _probe(repository: Path) -> int:
 
 async def _propose(args: argparse.Namespace) -> int:
     root = args.repository.resolve()
-    _load_local_openai_key(root)
     commit = _git_output(root, "rev-parse", "HEAD")
     files = _load_tracked_sources(root, args.source)
     observed_at = datetime.now(UTC)
@@ -218,8 +237,8 @@ async def _propose(args: argparse.Namespace) -> int:
         evidence={"source": "authenticated_local_owner_cli"},
         observed_at=observed_at,
     )
-    client = OpenAIResponsesClient(args.model)
-    developer = OpenAIMaintenanceDeveloper(client)
+    client = _maintenance_client(args, root)
+    developer = AIMaintenanceDeveloper(client)
     proposal = await developer.propose_repair(
         observation=observation,
         base_commit=commit,
@@ -234,6 +253,8 @@ async def _propose(args: argparse.Namespace) -> int:
         {
             "ok": validation.passed,
             "proposal_id": proposal.proposal_id,
+            "provider_id": proposal.provider_id,
+            "model_id": proposal.model_id,
             "patch_sha256": proposal.patch_sha256,
             "changed_files": proposal.changed_files,
             "risk": proposal.risk.value,
@@ -246,6 +267,56 @@ async def _propose(args: argparse.Namespace) -> int:
         }
     )
     return 0 if validation.passed else 1
+
+
+def _maintenance_client(
+    args: argparse.Namespace,
+    root: Path,
+) -> StructuredAIClient:
+    _load_local_maintenance_config(root)
+    requested_provider = args.provider
+    if requested_provider == "auto":
+        requested_provider = os.getenv("AURA_MAINTENANCE_AI_PROVIDER", "auto")
+    provider = _resolve_maintenance_provider(requested_provider, root)
+    if provider == "ollama":
+        configured_models = configured_ollama_model_ids()
+        model_id = (
+            args.model
+            or os.getenv("AURA_MAINTENANCE_OLLAMA_MODEL", "").strip()
+            or (configured_models[0] if configured_models else "qwen3.5:4b")
+        )
+        return OllamaStructuredClient(
+            model_id,
+            base_url=os.getenv("AURA_OLLAMA_URL", "http://127.0.0.1:11434"),
+            timeout_seconds=float(os.getenv("AURA_OLLAMA_TIMEOUT_SECONDS", "120")),
+            think=False,
+            keep_alive=parse_ollama_keep_alive(
+                os.getenv("AURA_OLLAMA_KEEP_ALIVE", "0")
+            ),
+        )
+    _load_local_openai_key(root)
+    model_id = (
+        args.model
+        or os.getenv("AURA_MAINTENANCE_OPENAI_MODEL", "").strip()
+        or "gpt-5.4-mini"
+    )
+    return OpenAIResponsesClient(model_id)
+
+
+def _resolve_maintenance_provider(requested: str, root: Path) -> str:
+    if requested not in {"auto", "ollama", "openai"}:
+        raise ValueError("AURA_MAINTENANCE_AI_PROVIDER must be auto, ollama or openai")
+    if requested != "auto":
+        return requested
+    if configured_ollama_model_ids():
+        return "ollama"
+    _load_local_openai_key(root)
+    if os.getenv("OPENAI_API_KEY", "").strip():
+        return "openai"
+    raise ValueError(
+        "no maintenance AI is configured; select the balanced5 Ollama preset "
+        "or provide an OpenAI API key"
+    )
 
 
 def _approve_apply(args: argparse.Namespace) -> int:
@@ -386,6 +457,25 @@ def _load_local_openai_key(root: Path) -> None:
         if name.strip() == "OPENAI_API_KEY" and value.strip():
             os.environ["OPENAI_API_KEY"] = value.strip().strip('"').strip("'")
             return
+
+
+def _load_local_maintenance_config(root: Path) -> None:
+    path = root / ".env.local"
+    if not path.exists():
+        return
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(".env.local must be a regular non-symlink file")
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            continue
+        name, value = stripped.split("=", 1)
+        normalized_name = name.strip()
+        if normalized_name not in _LOCAL_MAINTENANCE_CONFIG_NAMES:
+            continue
+        normalized_value = value.strip().strip('"').strip("'")
+        if normalized_name not in os.environ:
+            os.environ[normalized_name] = normalized_value
 
 
 def _parse_fields(values: list[str]) -> dict[str, str]:

@@ -107,7 +107,7 @@ Implemented AI infrastructure:
 
 - concurrent specialist orchestration with timeout/failure isolation
 - structured point-in-time AgentEvidence with trust/provenance
-- multi-model Ollama council using structured decisions
+- curated five-model, key-free Ollama council using structured decisions
 - optional OpenAI Responses API specialists using strict structured decisions
 - raw model private reasoning is not persisted as decision evidence
 - Bull/Bear/Counterfactual adversarial deliberation

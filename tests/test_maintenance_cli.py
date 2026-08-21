@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
+from argparse import Namespace
 from pathlib import Path
 
 import pytest
 
-from aura.maintenance.cli import build_parser, main
+from aura.ai.ollama_structured import OllamaStructuredClient
+from aura.maintenance.cli import _maintenance_client, build_parser, main
 
 
 def _git(root: Path, *args: str) -> None:
@@ -109,3 +112,52 @@ def test_correction_cli_requires_separate_exact_owner_approval(tmp_path: Path, c
 def test_cli_has_no_fund_operation_subcommand() -> None:
     with pytest.raises(SystemExit):
         build_parser().parse_args(["withdraw-funds"])
+
+
+def test_free_preset_selects_local_maintenance_ai_without_api_key(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("AURA_FREE_AI_PRESET", "balanced5")
+    monkeypatch.setenv("AURA_OLLAMA_MODELS", "")
+    monkeypatch.delenv("AURA_MAINTENANCE_AI_PROVIDER", raising=False)
+    monkeypatch.delenv("AURA_MAINTENANCE_OLLAMA_MODEL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+
+    client = _maintenance_client(
+        Namespace(provider="auto", model=None),
+        tmp_path,
+    )
+    assert isinstance(client, OllamaStructuredClient)
+    assert client.model_id == "qwen3.5:4b"
+    assert client.keep_alive == 0
+    assert client.provider_id == "ollama"
+
+
+def test_safe_local_env_file_can_select_free_maintenance_provider(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.delenv("AURA_FREE_AI_PRESET", raising=False)
+    monkeypatch.delenv("AURA_MAINTENANCE_AI_PROVIDER", raising=False)
+    monkeypatch.delenv("AURA_MAINTENANCE_OLLAMA_MODEL", raising=False)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    (tmp_path / ".env.local").write_text(
+        "AURA_FREE_AI_PRESET=balanced5\n"
+        "AURA_MAINTENANCE_AI_PROVIDER=ollama\n"
+        "AURA_MAINTENANCE_OLLAMA_MODEL=gemma3:4b\n"
+        "UNTRUSTED_SETTING=must-not-load\n",
+        encoding="utf-8",
+    )
+
+    client = _maintenance_client(
+        Namespace(provider="auto", model=None),
+        tmp_path,
+    )
+    os.environ.pop("AURA_FREE_AI_PRESET", None)
+    os.environ.pop("AURA_MAINTENANCE_AI_PROVIDER", None)
+    os.environ.pop("AURA_MAINTENANCE_OLLAMA_MODEL", None)
+
+    assert isinstance(client, OllamaStructuredClient)
+    assert client.model_id == "gemma3:4b"
+    assert "UNTRUSTED_SETTING" not in os.environ

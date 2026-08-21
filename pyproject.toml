@@ -14,6 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
+aura-free-ai = "aura.ai.free_ai_cli:main"
 aura-maintenance = "aura.maintenance.cli:main"
 
 [project.optional-dependencies]

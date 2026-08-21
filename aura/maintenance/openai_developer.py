@@ -4,8 +4,9 @@ import hashlib
 import re
 from collections.abc import Mapping
 from pathlib import PurePosixPath
+from typing import Any, Protocol
 
-from aura.ai.openai_responses import OpenAIResponsesClient
+from aura.ai.openai_responses import OpenAIResponsesClient, StructuredResponse
 from aura.maintenance.authority import (
     AuthorityAction,
     AuthorityRole,
@@ -38,8 +39,22 @@ _FINANCIAL_CORE_PREFIXES = (
 )
 
 
-class OpenAIMaintenanceDeveloper:
-    """ChatGPT-class diagnosis and patch-proposal adapter.
+class StructuredAIClient(Protocol):
+    provider_id: str
+    model_id: str
+
+    async def structured(
+        self,
+        *,
+        system_prompt: str,
+        user_payload: Mapping[str, Any],
+        schema_name: str,
+        schema: Mapping[str, Any],
+    ) -> StructuredResponse: ...
+
+
+class AIMaintenanceDeveloper:
+    """Provider-neutral diagnosis and owner-gated patch-proposal adapter.
 
     This object has no filesystem write, shell, GitHub, broker, ledger, or approval
     methods. It can only turn sanitized diagnostics and selected source excerpts
@@ -47,19 +62,22 @@ class OpenAIMaintenanceDeveloper:
     enforce all later authority boundaries.
     """
 
-    provider_id = "openai"
-
     def __init__(
         self,
-        client: OpenAIResponsesClient,
+        client: StructuredAIClient,
         *,
+        provider_id: str | None = None,
         policy: DevelopmentAuthorityPolicy | None = None,
         max_files: int = 12,
         max_total_source_chars: int = 180_000,
     ) -> None:
         if max_files <= 0 or max_total_source_chars <= 0:
             raise ValueError("maintenance context limits must be positive")
+        resolved_provider = provider_id or getattr(client, "provider_id", "")
+        if re.fullmatch(r"[a-z][a-z0-9_-]{0,31}", resolved_provider) is None:
+            raise ValueError("maintenance AI client must declare a safe provider_id")
         self.client = client
+        self.provider_id = resolved_provider
         self.model_id = client.model_id
         self.policy = policy or DevelopmentAuthorityPolicy()
         self.max_files = max_files
@@ -138,6 +156,26 @@ class OpenAIMaintenanceDeveloper:
             rollback_plan=plan.rollback_plan,
             residual_risks=plan.residual_risks,
             risk=risk,
+        )
+
+
+class OpenAIMaintenanceDeveloper(AIMaintenanceDeveloper):
+    """Backward-compatible OpenAI-specific maintenance adapter."""
+
+    def __init__(
+        self,
+        client: OpenAIResponsesClient,
+        *,
+        policy: DevelopmentAuthorityPolicy | None = None,
+        max_files: int = 12,
+        max_total_source_chars: int = 180_000,
+    ) -> None:
+        super().__init__(
+            client,
+            provider_id="openai",
+            policy=policy,
+            max_files=max_files,
+            max_total_source_chars=max_total_source_chars,
         )
 
 

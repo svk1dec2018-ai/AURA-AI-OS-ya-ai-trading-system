@@ -90,7 +90,7 @@ Raw private model reasoning is not treated as trading evidence; AURA stores vali
 
 ### Controlled maintenance and development AI
 
-- OpenAI-powered system diagnosis and unified-diff repair proposals
+- free local Ollama or optional OpenAI system diagnosis and unified-diff repair proposals
 - deterministic AI/developer/owner authority matrix
 - tracked-file-only, credential-free patch sandbox with fixed test commands
 - exact base-commit, patch-hash and owner-approval binding
@@ -208,10 +208,29 @@ python examples/run_free_public_strategy_lab.py
 Local multi-AI council with Ollama:
 
 ```bash
-# Example environment
-export AURA_OLLAMA_MODELS="qwen3,deepseek-r1"
+# Five key-free local assistants: Qwen 3.5, DeepSeek-R1, Llama 3.1,
+# Gemma 3 and Phi-4 Mini.
+export AURA_FREE_AI_PRESET="balanced5"
+export AURA_OLLAMA_KEEP_ALIVE="0"
 export AURA_AI_OPINIONS_PER_ROLE="1"
+aura-free-ai catalog
+aura-free-ai probe
 python examples/run_free_public_ai_council.py
+```
+
+The balanced preset uses local Ollama inference: no API key and no per-token provider
+charge. The five downloads total approximately 20 GB, individual model licenses still
+apply, and no claim is made that small local models match paid ChatGPT or Claude quality.
+Requests are serialized and models unload after each request by default to limit RAM use.
+An explicit `AURA_OLLAMA_MODELS` comma-separated list overrides the preset.
+
+Owner-gated local maintenance developer:
+
+```bash
+export AURA_MAINTENANCE_AI_PROVIDER="ollama"
+export AURA_MAINTENANCE_OLLAMA_MODEL="qwen3.5:4b"
+aura-maintenance policy
+aura-maintenance probe --repository .
 ```
 
 Optional OpenAI advisory models and maintenance developer:
@@ -220,13 +239,13 @@ Optional OpenAI advisory models and maintenance developer:
 cp .env.example .env.local
 # securely set OPENAI_API_KEY in .env.local
 export AURA_OPENAI_MODELS="gpt-5.4-mini"
-aura-maintenance policy
-aura-maintenance probe --repository .
+export AURA_MAINTENANCE_AI_PROVIDER="openai"
 ```
 
-OpenAI models remain advisory inside the trading council. Maintenance patches go through
+All AI models remain advisory inside the trading council. Maintenance patches go through
 proposal -> credential-free sandbox -> tests -> exact owner approval -> development branch;
-they never auto-merge or auto-deploy.
+they never auto-merge or auto-deploy. Add/withdraw/transfer funds, historical ledger rewrites,
+risk bypass, secret exposure and AI self-approval are unavailable to every provider and role.
 
 Run the complete no-key autonomy stack (Multi-AI council + historical seed + live
 intelligence + deterministic forecasts + missed-opportunity audit + forward-only

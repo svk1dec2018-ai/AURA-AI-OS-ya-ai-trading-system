@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 410
-- Python modules: 352
-- Source modules: 183
-- Test modules: 146
-- Static test functions: 566
-- Entrypoints: 39
-- Known stub/incomplete candidates: 85
+- Repository files: 415
+- Python modules: 357
+- Source modules: 186
+- Test modules: 148
+- Static test functions: 583
+- Entrypoints: 41
+- Known stub/incomplete candidates: 86
 
 ## Repository structure
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 189 |
+| `aura` | 192 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 146 |
+| `tests` | 148 |
 
 ## Entrypoints
 
@@ -55,6 +55,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `Dockerfile` | container-entrypoint |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
+| `aura/ai/free_ai_cli.py` | python-main |
 | `aura/maintenance/cli.py` | python-main |
 | `aura/ops/backtest_gate.py` | python-main |
 | `aura/ops/broker_conformance_gate.py` | python-main |
@@ -87,6 +88,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_public_command_center.py` | python-main |
 | `examples/run_public_crypto_live.py` | python-main |
 | `examples/send_telegram_test_alert.py` | python-main |
+| `pyproject.toml` | console-script:aura-free-ai |
 | `pyproject.toml` | console-script:aura-maintenance |
 | `scripts/generate_setup_pdf.py` | python-main |
 | `scripts/install_aura_user_service.sh` | shell-launcher |
@@ -108,7 +110,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/external_specialists.py` | source | agents | 9 | 5 | 3 |
 | `aura/agents/forecast_specialist.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/models.py` | source | agents | 9 | 1 | 28 |
-| `aura/agents/ollama_provider.py` | source | agents | 9 | 3 | 1 |
+| `aura/agents/ollama_provider.py` | source | agents | 9 | 4 | 1 |
 | `aura/agents/openai_provider.py` | source | agents | 9 | 4 | 1 |
 | `aura/agents/orchestrator.py` | source | agents | 9 | 5 | 9 |
 | `aura/agents/providers.py` | source | agents | 9 | 3 | 3 |
@@ -118,7 +120,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/service.py` | source | agents | 9 | 7 | 3 |
 | `aura/agents/specialists.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/team.py` | source | agents | 9 | 11 | 3 |
-| `aura/ai/__init__.py` | package_marker | ai | 9 | 1 | 0 |
+| `aura/ai/__init__.py` | package_marker | ai | 9 | 3 | 0 |
+| `aura/ai/free_ai_cli.py` | source | ai | 9 | 2 | 1 |
+| `aura/ai/free_models.py` | source | ai | 9 | 0 | 1 |
+| `aura/ai/ollama_structured.py` | source | ai | 9 | 2 | 2 |
 | `aura/ai/openai_responses.py` | source | ai | 9 | 0 | 2 |
 | `aura/backtest/engine.py` | source | backtest | 6 | 6 | 2 |
 | `aura/backtest/multi_engine.py` | source | backtest | 6 | 7 | 1 |
@@ -204,7 +209,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/maintenance/__init__.py` | package_marker | maintenance | 15 | 1 | 0 |
 | `aura/maintenance/authority.py` | source | maintenance | 15 | 0 | 3 |
 | `aura/maintenance/change_control.py` | source | maintenance | 15 | 3 | 1 |
-| `aura/maintenance/cli.py` | source | maintenance | 15 | 6 | 1 |
+| `aura/maintenance/cli.py` | source | maintenance | 15 | 8 | 1 |
 | `aura/maintenance/financial_corrections.py` | source | maintenance | 15 | 3 | 1 |
 | `aura/maintenance/models.py` | source | maintenance | 15 | 0 | 3 |
 | `aura/maintenance/monitor.py` | source | maintenance | 15 | 4 | 1 |
@@ -245,7 +250,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/portfolio/instruments.py` | source | portfolio | 2 | 0 | 1 |
 | `aura/portfolio/ledger.py` | source | portfolio | 2 | 2 | 6 |
 | `aura/portfolio/targets.py` | source | portfolio | 2 | 1 | 1 |
-| `aura/research/ai_strategy_architect.py` | source | research | 7 | 3 | 1 |
+| `aura/research/ai_strategy_architect.py` | source | research | 7 | 4 | 1 |
 | `aura/research/autonomous_strategy_lab.py` | source | research | 7 | 4 | 3 |
 | `aura/research/autonomy.py` | source | research | 7 | 1 | 2 |
 | `aura/research/blueprint_compiler.py` | source | research | 7 | 4 | 0 |
@@ -367,6 +372,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_forecast_ensemble.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_forecast_providers.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_forecast_specialist.py` | test | validation | 1 | 3 | 0 |
+| `tests/test_free_ai_models.py` | test | validation | 9 | 2 | 0 |
 | `tests/test_free_intelligence.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_free_public_ai_context.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_futures_roll.py` | test | validation | 1 | 2 | 0 |
@@ -382,7 +388,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_macro_external_intelligence.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_maintenance_authority.py` | test | validation | 9 | 6 | 0 |
 | `tests/test_maintenance_change_control.py` | test | validation | 15 | 3 | 0 |
-| `tests/test_maintenance_cli.py` | test | validation | 15 | 1 | 0 |
+| `tests/test_maintenance_cli.py` | test | validation | 9 | 2 | 0 |
 | `tests/test_market_data_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_market_data_pipeline.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_market_universe.py` | test | validation | 1 | 1 | 0 |
@@ -398,6 +404,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_oanda.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_observable_public_council.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_ollama_ai_council.py` | test | validation | 1 | 6 | 0 |
+| `tests/test_ollama_structured.py` | test | validation | 9 | 1 | 0 |
 | `tests/test_online_bridge.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_online_learning.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_open_model_catalog.py` | test | validation | 9 | 2 | 0 |

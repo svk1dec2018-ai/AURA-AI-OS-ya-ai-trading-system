@@ -13,7 +13,10 @@ from aura.maintenance.authority import (
 )
 from aura.maintenance.models import ChangeRisk, MaintenanceSeverity, SystemObservation
 from aura.maintenance.monitor import MaintenanceMonitor
-from aura.maintenance.openai_developer import OpenAIMaintenanceDeveloper
+from aura.maintenance.openai_developer import (
+    AIMaintenanceDeveloper,
+    OpenAIMaintenanceDeveloper,
+)
 from aura.ops.health import ComponentHealth, HealthReport, HealthStatus
 
 
@@ -52,6 +55,11 @@ class _FakeClient:
                 "touches_financial_core": False,
             },
         )
+
+
+class _FakeOllamaClient(_FakeClient):
+    provider_id = "ollama"
+    model_id = "qwen3.5:4b"
 
 
 def test_owner_and_ai_cannot_move_funds_rewrite_history_or_bypass_risk() -> None:
@@ -129,6 +137,33 @@ async def test_openai_developer_only_returns_sanitized_owner_gated_proposal() ->
     serialized = str(client.user_payload)
     assert "secret-value" not in serialized
     assert "hunter2" not in serialized
+
+
+@pytest.mark.asyncio
+async def test_free_local_developer_uses_identical_owner_gated_authority() -> None:
+    client = _FakeOllamaClient()
+    developer = AIMaintenanceDeveloper(client)
+    observation = SystemObservation(
+        observation_id="incident:local-ai",
+        component="health",
+        severity=MaintenanceSeverity.DEGRADED,
+        summary="health state requires a bounded repair",
+        symptoms=("health test failed",),
+        evidence={"source": "unit_test"},
+        observed_at=datetime(2026, 8, 21, 4, 0, tzinfo=UTC),
+    )
+
+    proposal = await developer.propose_repair(
+        observation=observation,
+        base_commit="b" * 40,
+        relevant_files={"aura/ops/health.py": "class Health: pass"},
+    )
+
+    assert proposal.provider_id == "ollama"
+    assert proposal.model_id == "qwen3.5:4b"
+    assert proposal.owner_approval_required is True
+    assert proposal.auto_apply_allowed is False
+    assert proposal.live_deploy_allowed is False
 
 
 def test_ai_cannot_approve_its_own_change() -> None:

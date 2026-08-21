@@ -1,13 +1,14 @@
 # AURA controlled self-improvement and owner authority
 
-AURA now contains an optional OpenAI-powered maintenance developer plus a deterministic
-authority, sandbox, audit and correction plane. This is real code-change capability, not an
-LLM chat prompt with unrestricted shell access.
+AURA contains a provider-neutral maintenance developer powered by the free local Ollama preset
+or optional OpenAI, plus a deterministic authority, sandbox, audit and correction plane. This is
+real code-change proposal capability, not an LLM chat prompt with unrestricted shell access.
 
 The implementation deliberately separates four things:
 
 1. **Observe and diagnose** — deterministic health state becomes a typed incident.
-2. **Propose** — an OpenAI Responses API model returns a strict repair plan and unified diff.
+2. **Propose** — the selected local Ollama or OpenAI model returns a strict repair plan and
+   unified diff.
 3. **Validate** — the diff is applied to a temporary copy containing only files tracked at the
    proposal's exact base commit. Credentials are removed and only host-configured test commands
    run; commands proposed by the model are never executed.
@@ -19,7 +20,7 @@ The state machine is:
 
 ```text
 health incident
-  -> OpenAI repair proposal
+  -> configured AI repair proposal
   -> patch/path/fund-operation policy validation
   -> credential-free sandbox + allowlisted tests
   -> exact owner approval receipt
@@ -55,7 +56,32 @@ affect decisions, orders or portfolio state is classified as `FINANCIAL_CORE` an
 additional explicit owner acknowledgement. Automated patches edit existing regular tracked text
 files only; file creation, deletion, rename, mode changes, symlinks and binary diffs are rejected.
 
-## OpenAI integration
+## Free local AI integration
+
+`aura.ai.ollama_structured.OllamaStructuredClient` calls only a credential-free loopback or
+Docker-host Ollama HTTP endpoint. It uses JSON-schema structured output, temperature zero,
+discards raw thinking and defaults to `keep_alive=0` to release RAM. Remote/cloud endpoints,
+URL-embedded credentials and keep-forever settings are rejected.
+
+The `balanced5` preset contains Qwen 3.5 4B, DeepSeek-R1 8B, Llama 3.1 8B, Gemma 3 4B and
+Phi-4 Mini 3.8B. Set:
+
+```bash
+export AURA_FREE_AI_PRESET=balanced5
+export AURA_MAINTENANCE_AI_PROVIDER=ollama
+export AURA_MAINTENANCE_OLLAMA_MODEL=qwen3.5:4b
+aura-free-ai probe
+```
+
+The same allow-listed local settings can be placed in the ignored `.env.local` file. The
+maintenance CLI loads only the provider, preset, model, local URL, timeout and bounded
+keep-alive fields from that file; unrelated variables cannot change the maintenance process.
+
+This needs no AI API key and has no per-token provider charge, but local hardware/electricity
+costs and model-specific licenses still apply. Small local models are not represented as equal
+in quality to paid ChatGPT or Claude services.
+
+## Optional OpenAI integration
 
 `aura.ai.openai_responses.OpenAIResponsesClient` uses the official HTTPS Responses API with
 strict JSON-schema output and `store=false`. The endpoint is fixed to OpenAI; an environment
@@ -100,6 +126,7 @@ Create and fully sandbox-test a repair proposal from selected tracked files:
 
 ```bash
 aura-maintenance propose \
+  --provider ollama \
   --repository . \
   --component market_data \
   --severity DEGRADED \
@@ -159,9 +186,11 @@ The corrected view never mutates the source portfolio ledger or broker reconcili
 ## Honest boundaries
 
 - The maintenance AI does not automatically merge or deploy its own code.
+- Local and cloud models receive identical authority: diagnose/propose only; no self-approval.
 - The file sandbox strips credentials, but network isolation must also be enforced by the host or
   container policy for high-assurance deployment.
-- OpenAI calls require API access and may incur operator account charges.
+- Local Ollama calls require installed model files and sufficient RAM; OpenAI calls require API
+  access and may incur operator account charges.
 - A passing code repair does not make Phase 11 pass and does not enable live money. Authentic
   broker-origin evidence, clean reconciliation history, operational validation and separate
   financial-risk authorization remain external gates.

@@ -7,6 +7,7 @@ param(
     [ValidateRange(1, 3)]
     [int]$OpinionsPerRole = 1,
     [switch]$NoVoice,
+    [switch]$SkipModelPull,
     [switch]$SkipDependencyInstall
 )
 
@@ -65,15 +66,22 @@ if (-not $tags) {
 
 $installedModels = @($tags.models | ForEach-Object { $_.name } | Where-Object { $_ })
 if ($Models.Count -eq 0) {
-    if ($installedModels.Count -eq 0) {
-        Fail "Ollama is connected, but no local model is installed. Run 'ollama pull <model-name>' once, then launch AURA again."
-    }
-    $Models = @($installedModels | Select-Object -First 2)
+    $Models = @(
+        "qwen3.5:4b",
+        "deepseek-r1:8b",
+        "llama3.1:8b",
+        "gemma3:4b",
+        "phi4-mini:3.8b"
+    )
+    Write-Host "Using AURA balanced5 free local AI preset (~20 GB total model download)." -ForegroundColor Yellow
 }
 
 $missing = @($Models | Where-Object { $_ -notin $installedModels })
 if ($missing.Count -gt 0) {
     Write-Host "Missing requested Ollama model(s): $($missing -join ', ')" -ForegroundColor Yellow
+    if ($SkipModelPull) {
+        Fail "Model pull was disabled. Install each missing model with 'ollama pull <model-name>' and try again."
+    }
     foreach ($model in $missing) {
         Write-Host "Pulling $model ..." -ForegroundColor Yellow
         & $ollama.Source pull $model
@@ -119,12 +127,16 @@ if (-not $SkipDependencyInstall) {
 
 Write-Step "Configuring AURA Multi-AI council"
 $env:AURA_OLLAMA_URL = $ollamaUrl
+$env:AURA_FREE_AI_PRESET = "balanced5"
 $env:AURA_OLLAMA_MODELS = ($Models -join ",")
 $env:AURA_AI_OPINIONS_PER_ROLE = [string]$OpinionsPerRole
 $env:AURA_OLLAMA_THINK = "false"
 $env:AURA_OLLAMA_TIMEOUT_SECONDS = "120"
 $env:AURA_OLLAMA_MAX_CONCURRENCY = "1"
+$env:AURA_OLLAMA_KEEP_ALIVE = "0"
 $env:AURA_AI_AGENT_TIMEOUT_SECONDS = "240"
+$env:AURA_MAINTENANCE_AI_PROVIDER = "ollama"
+$env:AURA_MAINTENANCE_OLLAMA_MODEL = $Models[0]
 $env:AURA_LIVE_TRADING_ENABLED = ""
 $env:AURA_HUMAN_LIVE_APPROVAL_ID = ""
 

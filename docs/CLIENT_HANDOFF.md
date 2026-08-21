@@ -51,8 +51,10 @@ python examples/run_public_crypto_live.py
 python examples/run_free_public_strategy_lab.py
 ```
 
-Optional local AI council support uses Ollama and remains advisory. AI output
-cannot set leverage, quantity, risk limits, broker permission or live authority.
+Optional local AI council support uses the key-free Ollama `balanced5` preset and remains
+advisory. AI output cannot set leverage, quantity, risk limits, broker permission or live
+authority. The same local models may propose owner-gated maintenance diffs but cannot apply,
+approve, commit, push or deploy them automatically.
 
 ## Credential-backed paper/demo modes
 
