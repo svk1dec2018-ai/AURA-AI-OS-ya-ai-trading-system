@@ -27,7 +27,10 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 2 | PASS | Order lifecycle, restart recovery, and fail-closed reconciliation have deterministic evidence. |
 | 3 | PASS | Risk veto, stop-distance sizing, exposure controls, stress overlays, and kill-switch behavior have deterministic evidence. |
 | 4 | PASS | Broker capabilities, common-interface conformance, reconciliation support, and strategy isolation have deterministic evidence. |
-| 5–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 5 | PASS | Provider-neutral ingestion rejects invalid batches and measures data lag. |
+| 6 | PASS | Backtest and paper execution share fill/cost semantics and causal guards. |
+| 7 | PASS | Hypotheses and candidates are reproducible; overfit and untested candidates fail closed. |
+| 8–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -155,6 +158,23 @@ strategy-performance, external-broker or live-readiness claim.
 ```bash
 python -m aura.ops.backtest_gate --write
 python -m aura.ops.backtest_gate --check
+```
+
+## Phase 7 evidence
+
+- `artifacts/governance/strategy_evaluation_report.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The strategy-research gate adds a canonical, provenance-bound hypothesis generator
+to the existing bounded strategy factory. It exercises the existing conservative
+fitness policy with stable and deliberately overfit internal fixtures, proves
+candidate reproduction from identical inputs, and proves that lifecycle governance
+rejects promotion without passed evidence. The report makes no market-performance
+claim and performs no paper or live promotion.
+
+```bash
+python -m aura.ops.strategy_research_gate --write
+python -m aura.ops.strategy_research_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

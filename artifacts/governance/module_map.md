@@ -7,12 +7,12 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 364
-- Python modules: 307
-- Source modules: 160
-- Test modules: 126
-- Static test functions: 482
-- Entrypoints: 29
+- Repository files: 368
+- Python modules: 311
+- Source modules: 162
+- Test modules: 128
+- Static test functions: 486
+- Entrypoints: 30
 - Known stub/incomplete candidates: 79
 
 ## Repository structure
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 164 |
+| `aura` | 166 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 126 |
+| `tests` | 128 |
 
 ## Entrypoints
 
@@ -62,6 +62,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/repository_audit.py` | python-main |
 | `aura/ops/risk_engine_gate.py` | python-main |
 | `aura/ops/state_engine_gate.py` | python-main |
+| `aura/ops/strategy_research_gate.py` | python-main |
 | `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
 | `examples/evaluate_production_release.py` | python-main |
@@ -198,12 +199,13 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/core_contracts.py` | source | ops | 1 | 5 | 1 |
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 7 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 8 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
 | `aura/ops/risk_engine_gate.py` | source | ops | 3 | 8 | 1 |
 | `aura/ops/state_engine_gate.py` | source | ops | 2 | 9 | 1 |
+| `aura/ops/strategy_research_gate.py` | source | ops | 7 | 12 | 1 |
 | `aura/options/intelligence.py` | source | options | 5 | 1 | 2 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 5 | 1 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 5 | 6 |
@@ -217,6 +219,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/research/blueprint_compiler.py` | source | research | 7 | 4 | 0 |
 | `aura/research/evidence.py` | source | research | 7 | 2 | 1 |
 | `aura/research/holdout.py` | source | research | 7 | 2 | 1 |
+| `aura/research/hypothesis_generator.py` | source | research | 7 | 1 | 1 |
 | `aura/research/lifecycle.py` | source | research | 7 | 1 | 6 |
 | `aura/research/live_shadow_strategy_lab.py` | source | research | 7 | 3 | 1 |
 | `aura/research/manifest.py` | source | research | 7 | 0 | 2 |
@@ -324,6 +327,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_free_intelligence.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_free_public_ai_context.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_futures_roll.py` | test | validation | 1 | 2 | 0 |
+| `tests/test_hypothesis_generator.py` | test | validation | 7 | 1 | 0 |
 | `tests/test_instruments.py` | test | validation | 1 | 1 | 0 |
 | `tests/test_intelligence_service.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_knowledge_firewall.py` | test | validation | 8 | 1 | 0 |
@@ -387,6 +391,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_strategy_farm.py` | test | validation | 7 | 3 | 0 |
 | `tests/test_strategy_governance.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_strategy_mutation.py` | test | validation | 7 | 3 | 0 |
+| `tests/test_strategy_research_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_supervisor.py` | test | validation | 2 | 3 | 0 |
 | `tests/test_telegram_alerts.py` | test | validation | 2 | 2 | 0 |
 | `tests/test_unified_features.py` | test | validation | 1 | 2 | 0 |
