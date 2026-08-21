@@ -111,6 +111,8 @@ jobs:
         run: python -m aura.ops.multi_agent_gate --check
       - name: Phase 10 CEO decision evidence drift
         run: python -m aura.ops.ceo_decision_gate --check
+      - name: Phase 11 broker evidence readiness drift
+        run: python -m aura.ops.broker_evidence_readiness --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests

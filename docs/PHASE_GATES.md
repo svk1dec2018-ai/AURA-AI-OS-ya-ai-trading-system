@@ -231,6 +231,29 @@ python -m aura.ops.ceo_decision_gate --write
 python -m aura.ops.ceo_decision_gate --check
 ```
 
+## Phase 11 readiness evidence (gate remains BLOCKED)
+
+- `artifacts/governance/broker_evidence_readiness_report.json`
+
+The readiness layer accepts only sealed, credential-free broker observations. It
+checks causal timestamps, complete normalized fills, controlled-live mode,
+verified environment identity, and at least three consecutive clean reconciliation
+runs for each required adapter. A source label alone is not trusted: an explicitly
+configured external attestation verifier must validate every bundle. Duplicate
+captures, execution probes, and reconciliation runs are rejected rather than
+counted twice.
+
+This command performs no broker connection and grants no execution authority:
+
+```bash
+python -m aura.ops.broker_evidence_readiness --write
+python -m aura.ops.broker_evidence_readiness --check
+```
+
+Phase 11 remains `BLOCKED`. Angel One is read-only, MT5 is demo-only, and no
+accepted external fill/reconciliation evidence or separate financial-risk
+authorization exists. Those facts cannot be manufactured by code-only tests.
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own
