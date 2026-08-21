@@ -1,0 +1,149 @@
+{
+  "authority_boundary": {
+    "specialists_can_approve_strategies": false,
+    "specialists_can_bypass_risk": false,
+    "specialists_can_mutate_portfolio": false,
+    "specialists_can_submit_orders": false
+  },
+  "claims": {
+    "external_ai_called": false,
+    "external_market_data_used": false,
+    "live_money_enabled": false,
+    "trading_action_performed": false
+  },
+  "consistency": {
+    "evidence_packets_per_round": 10,
+    "first_round_hash": "149dbd876bc3b8eeeaf2c3e79784113c77f40edf605138701d11f9e685a44b4f",
+    "probes": {
+      "all_roles_present": true,
+      "free_form_output_blocked": true,
+      "outputs_deterministic": true,
+      "outputs_match_agent_evidence_schema": true,
+      "registry_complete": true,
+      "registry_is_advisory_only": true
+    },
+    "second_round_hash": "149dbd876bc3b8eeeaf2c3e79784113c77f40edf605138701d11f9e685a44b4f"
+  },
+  "decision": "PASS",
+  "deterministic_fingerprint": "f5a777d2c334a54a093a902c3d38b4990e247ff1da7989db027b6d4dc95ef0f0",
+  "fixture_type": "deterministic_internal_multi_agent_fixture",
+  "phase": 9,
+  "schema_version": 1,
+  "specialists": {
+    "count": 10,
+    "registry": [
+      {
+        "agent_id": "deterministic:cross_market:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.external_specialists.CrossMarketSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "cross_market",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:execution_quality:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.advisory_specialists.ExecutionQualitySpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "execution_quality",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "ensemble:forecast:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.forecast_specialist.ForecastEnsembleSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "forecast",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:htf_bias:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.external_specialists.HigherTimeframeBiasSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "htf_bias",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "knowledge:macro_sentiment:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.external_specialists.KnowledgeMacroSentimentSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "macro_sentiment",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:options_volatility:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.external_specialists.OptionsVolatilitySpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "options_volatility",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:regime:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.specialists.RegimeSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "regime",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:smc_ict:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.specialists.SmcIctStructureSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "smc_ict",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:technical:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.specialists.TechnicalSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "technical",
+        "strategy_approval": false
+      },
+      {
+        "agent_id": "deterministic:volume_vwap:v1",
+        "authority": "advisory_only",
+        "broker_access": false,
+        "implementation": "aura.agents.specialists.VolumeVwapSpecialist",
+        "output_schema": "aura.agents.models.AgentEvidence",
+        "portfolio_mutation": false,
+        "role": "volume_vwap",
+        "strategy_approval": false
+      }
+    ],
+    "roles": [
+      "cross_market",
+      "execution_quality",
+      "forecast",
+      "htf_bias",
+      "macro_sentiment",
+      "options_volatility",
+      "regime",
+      "smc_ict",
+      "technical",
+      "volume_vwap"
+    ]
+  }
+}

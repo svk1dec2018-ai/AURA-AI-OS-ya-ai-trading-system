@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -32,7 +32,7 @@ class EvidenceSourceType(str, Enum):
 
 
 class EvidenceSource(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     source_id: str = Field(min_length=1)
     source_type: EvidenceSourceType
@@ -90,7 +90,7 @@ class AgentContext(BaseModel):
 
 
 class AgentEvidence(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     agent_id: str = Field(min_length=1)
     role: AgentRole
@@ -100,6 +100,7 @@ class AgentEvidence(BaseModel):
     risk_flags: tuple[str, ...] = ()
     sources: tuple[EvidenceSource, ...]
     features: dict[str, Any] = Field(default_factory=dict)
+    execution_authority: Literal[False] = False
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("sources")
@@ -145,7 +146,7 @@ class AgentRound(BaseModel):
 class CEODecisionMemo(BaseModel):
     """Advisory multi-agent synthesis; never an executable order."""
 
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, extra="forbid")
 
     correlation_id: str
     intent: SignalIntent
@@ -156,4 +157,5 @@ class CEODecisionMemo(BaseModel):
     risk_flags: tuple[str, ...]
     rationale: str
     quorum_met: bool
+    execution_authority: Literal[False] = False
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

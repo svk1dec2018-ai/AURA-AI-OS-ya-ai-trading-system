@@ -175,6 +175,10 @@
       },
       {
         "from": "aura/agents/orchestrator.py",
+        "to": "aura/agents/registry.py"
+      },
+      {
+        "from": "aura/agents/orchestrator.py",
         "to": "aura/agents/reliability.py"
       },
       {
@@ -192,6 +196,14 @@
       {
         "from": "aura/agents/providers.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/agents/registry.py",
+        "to": "aura/agents/base.py"
+      },
+      {
+        "from": "aura/agents/registry.py",
+        "to": "aura/agents/models.py"
       },
       {
         "from": "aura/agents/reliability.py",
@@ -272,6 +284,10 @@
       {
         "from": "aura/agents/team.py",
         "to": "aura/agents/orchestrator.py"
+      },
+      {
+        "from": "aura/agents/team.py",
+        "to": "aura/agents/registry.py"
       },
       {
         "from": "aura/agents/team.py",
@@ -1164,6 +1180,70 @@
       {
         "from": "aura/ops/market_data_gate.py",
         "to": "aura/runtime/scanner.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/agents/base.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/agents/orchestrator.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/agents/team.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/knowledge_rag_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/multi_agent_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
       },
       {
         "from": "aura/ops/preflight.py",
@@ -2298,6 +2378,22 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "tests/test_agent_registry.py",
+        "to": "aura/agents/base.py"
+      },
+      {
+        "from": "tests/test_agent_registry.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_agent_registry.py",
+        "to": "aura/agents/registry.py"
+      },
+      {
+        "from": "tests/test_agent_registry.py",
+        "to": "aura/domain/models.py"
+      },
+      {
         "from": "tests/test_agent_reliability.py",
         "to": "aura/agents/models.py"
       },
@@ -3166,6 +3262,14 @@
         "to": "aura/strategy/ema.py"
       },
       {
+        "from": "tests/test_multi_agent_gate.py",
+        "to": "aura/ops/multi_agent_gate.py"
+      },
+      {
+        "from": "tests/test_multi_agent_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
         "from": "tests/test_multi_backtest.py",
         "to": "aura/backtest/multi_engine.py"
       },
@@ -3988,6 +4092,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/multi_agent_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/repository_audit.py"
     },
     {
@@ -4110,9 +4218,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5255,
+      "bytes": 5361,
       "path": ".github/workflows/ci.yml",
-      "sha256": "d56ae1baa06f3e91c80d6a3c1d89844a86fcf88a0a978762466a8da9c47a2a45"
+      "sha256": "65b48f3ff443561f7b77c1c6b71ea30de35f9c9da9b449d7e41a87100c768337"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -4212,9 +4320,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5693,
+      "bytes": 5846,
       "path": "aura/agents/models.py",
-      "sha256": "c4e1b8f80ef051b830276b1aa72cede6b1a0e8992fbe2f567f8a53710a2b7109"
+      "sha256": "d9149f95a6115fe0f99f2735405f1cafba2ef78daee46dea4dd34704ee917840"
     },
     {
       "asset_class": "python_module",
@@ -4224,15 +4332,21 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 10366,
+      "bytes": 10259,
       "path": "aura/agents/orchestrator.py",
-      "sha256": "9a373227f65dcfe041ac12d1756acda3b4e2b329ea96e08a3ae24ab9eff3c49d"
+      "sha256": "bcc826035e18ec0ecbcf1748cd04ff5e75f9332eb9d4aff3978e53c0c0e3d1c6"
     },
     {
       "asset_class": "python_module",
       "bytes": 2289,
       "path": "aura/agents/providers.py",
       "sha256": "5ab348f2b2ce7ca04180a78f3922dde6ed839a2e47e4d7be3970a1b8b0fa4bec"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 3224,
+      "path": "aura/agents/registry.py",
+      "sha256": "85e1a4b3e3238e68199ce1477d3f4ab88deecd11b9fded2bba49608f044009d6"
     },
     {
       "asset_class": "python_module",
@@ -4260,9 +4374,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3309,
+      "bytes": 3424,
       "path": "aura/agents/team.py",
-      "sha256": "72027f518ac1cd235a2553c862459b5f538162c333ebe4d03eed23c4d629fa14"
+      "sha256": "d6e000071092daff94dc8ab205fee59fb769ff2b704e1af878fd1da750a59211"
     },
     {
       "asset_class": "python_module",
@@ -4830,6 +4944,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 11388,
+      "path": "aura/ops/multi_agent_gate.py",
+      "sha256": "506018afeafe9b8d80f74944b9d7bf79d72b0a5bb08aca2a26f1cd082e797a77"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 14737,
       "path": "aura/ops/phase_gates.py",
       "sha256": "9e37c3630d6fa4c0c350af003603e9fb50d16b2be502d8d7d527ac0b2d5345f6"
@@ -4848,9 +4968,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 30936,
+      "bytes": 30975,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "a14f660ab03774cc2f1714f97d1b0b57183ace21852fd744d4bcc437b8e92690"
+      "sha256": "f104ce7ed61875fff4084eecb18993aaa37bb01144f00bc62adf929fb4371ed9"
     },
     {
       "asset_class": "python_module",
@@ -5280,9 +5400,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 10638,
+      "bytes": 10639,
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sha256": "2837f14bc0ba8fae84952a205e151643ff535702a084e7e33cd9df36b9a7ea39"
+      "sha256": "271946631d3a9011bb265fb8c5af4d83eb6428bcdc70223643b4241c01a6d797"
     },
     {
       "asset_class": "documentation",
@@ -5316,9 +5436,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 8970,
+      "bytes": 9681,
       "path": "docs/PHASE_GATES.md",
-      "sha256": "8449bf4061c450abdfdbefff08832add443ee55dbb87d48cedf1a8e4defb9919"
+      "sha256": "202c51d6bc8fcec3e1dcaf6b64e75885887a951b1e5d51d9d50cc810db8d55d2"
     },
     {
       "asset_class": "documentation",
@@ -5547,6 +5667,12 @@
       "bytes": 2807,
       "path": "tests/test_agent_audit.py",
       "sha256": "38feb96f7b3ba08fdd378b99e7075605d65978fd6b2f0cc389f8638e823d3bfc"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 2018,
+      "path": "tests/test_agent_registry.py",
+      "sha256": "c0568931772a6a91bcb99544f2c1577c8366000d90ba387c689719925363ea9c"
     },
     {
       "asset_class": "python_module",
@@ -5982,6 +6108,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 967,
+      "path": "tests/test_multi_agent_gate.py",
+      "sha256": "382416972ac53618427c8d9e69d9c8e53a88a8eaea9bf2b9a6d8e46264d22f4b"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 4123,
       "path": "tests/test_multi_backtest.py",
       "sha256": "c97f73de0674702fcda12ce6ec033e57915c862704f88f26fd62995ee258c777"
@@ -6102,9 +6234,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 3391,
+      "bytes": 3438,
       "path": "tests/test_phase_gates.py",
-      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b"
+      "sha256": "1fb136479c8f731ecf1896c4642684bddddff12a89c053c92e994416f4e59efb"
     },
     {
       "asset_class": "python_module",
@@ -6353,6 +6485,12 @@
       {
         "classification": "review-required",
         "kind": "not-implemented",
+        "line": 22,
+        "path": "tests/test_agent_registry.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "not-implemented",
         "line": 44,
         "path": "tests/test_mt5_contracts.py"
       },
@@ -6528,6 +6666,7 @@
     {
       "component": "agents",
       "direct_test_files": [
+        "tests/test_agent_registry.py",
         "tests/test_agent_risk_policy.py",
         "tests/test_agents.py",
         "tests/test_multi_market_paper.py",
@@ -6676,6 +6815,7 @@
       "direct_test_files": [
         "tests/test_adaptive_model_router.py",
         "tests/test_agent_audit.py",
+        "tests/test_agent_registry.py",
         "tests/test_agent_reliability.py",
         "tests/test_agent_risk_policy.py",
         "tests/test_agent_service.py",
@@ -6703,7 +6843,7 @@
       "internal_dependencies": [
         "aura/domain/models.py"
       ],
-      "lines": 159,
+      "lines": 161,
       "module": "aura.agents.models",
       "parsed": true,
       "path": "aura/agents/models.py",
@@ -6712,7 +6852,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "c4e1b8f80ef051b830276b1aa72cede6b1a0e8992fbe2f567f8a53710a2b7109",
+      "sha256": "d9149f95a6115fe0f99f2735405f1cafba2ef78daee46dea4dd34704ee917840",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -6771,10 +6911,11 @@
       "internal_dependencies": [
         "aura/agents/base.py",
         "aura/agents/models.py",
+        "aura/agents/registry.py",
         "aura/agents/reliability.py",
         "aura/domain/models.py"
       ],
-      "lines": 258,
+      "lines": 257,
       "module": "aura.agents.orchestrator",
       "parsed": true,
       "path": "aura/agents/orchestrator.py",
@@ -6783,7 +6924,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "9a373227f65dcfe041ac12d1756acda3b4e2b329ea96e08a3ae24ab9eff3c49d",
+      "sha256": "bcc826035e18ec0ecbcf1748cd04ff5e75f9332eb9d4aff3978e53c0c0e3d1c6",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -6818,6 +6959,33 @@
         "__future__",
         "abc",
         "typing"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "agents",
+      "direct_test_files": [
+        "tests/test_agent_registry.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py"
+      ],
+      "lines": 81,
+      "module": "aura.agents.registry",
+      "parsed": true,
+      "path": "aura/agents/registry.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "85e1a4b3e3238e68199ce1477d3f4ab88deecd11b9fded2bba49608f044009d6",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses"
       ],
       "third_party_dependencies": [
         "pydantic"
@@ -6957,12 +7125,13 @@
         "aura/agents/external_specialists.py",
         "aura/agents/forecast_specialist.py",
         "aura/agents/orchestrator.py",
+        "aura/agents/registry.py",
         "aura/agents/reliability.py",
         "aura/agents/risk_policy.py",
         "aura/agents/specialists.py",
         "aura/knowledge/firewall.py"
       ],
-      "lines": 95,
+      "lines": 98,
       "module": "aura.agents.team",
       "parsed": true,
       "path": "aura/agents/team.py",
@@ -6971,7 +7140,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "72027f518ac1cd235a2553c862459b5f538162c333ebe4d03eed23c4d629fa14",
+      "sha256": "d6e000071092daff94dc8ab205fee59fb769ff2b704e1af878fd1da750a59211",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -8226,6 +8395,7 @@
       "direct_test_files": [
         "tests/test_adaptive_model_router.py",
         "tests/test_agent_audit.py",
+        "tests/test_agent_registry.py",
         "tests/test_agent_reliability.py",
         "tests/test_agent_risk_policy.py",
         "tests/test_agent_service.py",
@@ -9894,10 +10064,57 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_multi_agent_gate.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/orchestrator.py",
+        "aura/agents/team.py",
+        "aura/domain/models.py",
+        "aura/knowledge/firewall.py",
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/ops/strategy_research_gate.py"
+      ],
+      "lines": 311,
+      "module": "aura.ops.multi_agent_gate",
+      "parsed": true,
+      "path": "aura/ops/multi_agent_gate.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "506018afeafe9b8d80f74944b9d7bf79d72b0a5bb08aca2a26f1cd082e797a77",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_backtest_gate.py",
         "tests/test_broker_conformance_gate.py",
         "tests/test_knowledge_rag_gate.py",
         "tests/test_market_data_gate.py",
+        "tests/test_multi_agent_gate.py",
         "tests/test_phase_gates.py",
         "tests/test_production_ops.py",
         "tests/test_risk_engine_gate.py",
@@ -9995,7 +10212,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 818,
+      "lines": 819,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -10004,7 +10221,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "a14f660ab03774cc2f1714f97d1b0b57183ace21852fd744d4bcc437b8e92690",
+      "sha256": "f104ce7ed61875fff4084eecb18993aaa37bb01144f00bc62adf929fb4371ed9",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -12177,6 +12394,33 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/registry.py",
+        "aura/domain/models.py"
+      ],
+      "lines": 64,
+      "module": "tests.test_agent_registry",
+      "parsed": true,
+      "path": "tests/test_agent_registry.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "c0568931772a6a91bcb99544f2c1577c8366000d90ba387c689719925363ea9c",
+      "standard_library_dependencies": [
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
         "aura/agents/reliability.py",
@@ -14063,6 +14307,29 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/multi_agent_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "lines": 27,
+      "module": "tests.test_multi_agent_gate",
+      "parsed": true,
+      "path": "tests/test_multi_agent_gate.py",
+      "phase_coverage": [
+        0,
+        9
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "382416972ac53618427c8d9e69d9c8e53a88a8eaea9bf2b9a6d8e46264d22f4b",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/backtest/multi_engine.py",
         "aura/core/pipeline.py",
         "aura/domain/models.py",
@@ -14657,7 +14924,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 98,
+      "lines": 99,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -14666,7 +14933,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b",
+      "sha256": "1fb136479c8f731ecf1896c4642684bddddff12a89c053c92e994416f4e59efb",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -15576,7 +15843,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "a7ce7734c1eea04c3cb497d54de099466aa02bd6ff8637e6349420e4b48b915a",
+  "repository_tree_sha256": "ced59adac895516edd677c25f8376b6e72568d1444d1fb23e865e7c90a210353",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -15604,7 +15871,7 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
-      "line": 25,
+      "line": 26,
       "path": "aura/agents/orchestrator.py"
     },
     {
@@ -16048,6 +16315,12 @@
     {
       "classification": "review-required",
       "kind": "not-implemented",
+      "line": 22,
+      "path": "tests/test_agent_registry.py"
+    },
+    {
+      "classification": "review-required",
+      "kind": "not-implemented",
       "line": 44,
       "path": "tests/test_mt5_contracts.py"
     },
@@ -16065,15 +16338,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 150,
-    "entrypoints": 31,
+    "directly_tested_source_modules": 152,
+    "entrypoints": 32,
     "parse_errors": 0,
-    "python_modules": 315,
-    "repository_files": 372,
-    "source_modules": 164,
-    "static_test_functions": 490,
-    "stub_candidates": 79,
-    "test_modules": 130,
+    "python_modules": 319,
+    "repository_files": 376,
+    "source_modules": 166,
+    "static_test_functions": 494,
+    "stub_candidates": 80,
+    "test_modules": 132,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

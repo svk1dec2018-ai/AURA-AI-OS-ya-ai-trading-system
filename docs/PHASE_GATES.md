@@ -31,7 +31,8 @@ present, content-addressed, and the sequential ledger records `PASS`.
 | 6 | PASS | Backtest and paper execution share fill/cost semantics and causal guards. |
 | 7 | PASS | Hypotheses and candidates are reproducible; overfit and untested candidates fail closed. |
 | 8 | PASS | Retrieval is point-in-time, citation-bound, and external content has no command authority. |
-| 9–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
+| 9 | PASS | Ten registered specialist roles emit deterministic structured advisory evidence. |
+| 10–15 | BLOCKED | Required phase-specific validation evidence has not yet been accepted. |
 
 Existing code in later-phase areas is preserved and classified, but its presence
 does not retroactively pass a gate. The generated
@@ -193,6 +194,22 @@ fixture downloads or scrapes no external content.
 ```bash
 python -m aura.ops.knowledge_rag_gate --write
 python -m aura.ops.knowledge_rag_gate --check
+```
+
+## Phase 9 evidence
+
+- `artifacts/governance/agent_consistency_report.json`
+- `artifacts/governance/phase_gate_status.json`
+
+The multi-agent gate adds a machine-readable registry for the existing ten-role
+specialist desk. Every registration is advisory-only and explicitly lacks broker,
+portfolio-mutation, strategy-approval, or execution authority. Two complete runs
+over identical internal point-in-time context must emit identical structured
+`AgentEvidence`; free-form output is isolated as an agent failure.
+
+```bash
+python -m aura.ops.multi_agent_gate --write
+python -m aura.ops.multi_agent_gate --check
 ```
 
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked

@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 372
-- Python modules: 315
-- Source modules: 164
-- Test modules: 130
-- Static test functions: 490
-- Entrypoints: 31
-- Known stub/incomplete candidates: 79
+- Repository files: 376
+- Python modules: 319
+- Source modules: 166
+- Test modules: 132
+- Static test functions: 494
+- Entrypoints: 32
+- Known stub/incomplete candidates: 80
 
 ## Repository structure
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 168 |
+| `aura` | 170 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 130 |
+| `tests` | 132 |
 
 ## Entrypoints
 
@@ -60,6 +60,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/core_contracts.py` | python-main |
 | `aura/ops/knowledge_rag_gate.py` | python-main |
 | `aura/ops/market_data_gate.py` | python-main |
+| `aura/ops/multi_agent_gate.py` | python-main |
 | `aura/ops/repository_audit.py` | python-main |
 | `aura/ops/risk_engine_gate.py` | python-main |
 | `aura/ops/state_engine_gate.py` | python-main |
@@ -94,20 +95,21 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/advisory_specialists.py` | source | agents | 9 | 3 | 0 |
 | `aura/agents/ai_council.py` | source | agents | 9 | 6 | 1 |
 | `aura/agents/audit.py` | source | agents | 9 | 3 | 4 |
-| `aura/agents/base.py` | source | agents | 9 | 1 | 4 |
+| `aura/agents/base.py` | source | agents | 9 | 1 | 5 |
 | `aura/agents/context_enrichment.py` | source | agents | 9 | 5 | 1 |
 | `aura/agents/deliberation.py` | source | agents | 9 | 2 | 4 |
 | `aura/agents/external_specialists.py` | source | agents | 9 | 5 | 3 |
 | `aura/agents/forecast_specialist.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/models.py` | source | agents | 9 | 1 | 25 |
+| `aura/agents/models.py` | source | agents | 9 | 1 | 26 |
 | `aura/agents/ollama_provider.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/orchestrator.py` | source | agents | 9 | 4 | 8 |
+| `aura/agents/orchestrator.py` | source | agents | 9 | 5 | 8 |
 | `aura/agents/providers.py` | source | agents | 9 | 3 | 3 |
+| `aura/agents/registry.py` | source | agents | 9 | 2 | 1 |
 | `aura/agents/reliability.py` | source | agents | 9 | 2 | 3 |
 | `aura/agents/risk_policy.py` | source | agents | 9 | 2 | 3 |
 | `aura/agents/service.py` | source | agents | 9 | 7 | 3 |
 | `aura/agents/specialists.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/team.py` | source | agents | 9 | 10 | 2 |
+| `aura/agents/team.py` | source | agents | 9 | 11 | 2 |
 | `aura/backtest/engine.py` | source | backtest | 6 | 6 | 2 |
 | `aura/backtest/multi_engine.py` | source | backtest | 6 | 7 | 1 |
 | `aura/backtest/scheduler.py` | source | backtest | 6 | 1 | 0 |
@@ -150,7 +152,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 54 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 55 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -202,7 +204,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/health.py` | source | ops | 15 | 0 | 1 |
 | `aura/ops/knowledge_rag_gate.py` | source | ops | 8 | 11 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
-| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 9 |
+| `aura/ops/multi_agent_gate.py` | source | ops | 9 | 16 | 1 |
+| `aura/ops/phase_gates.py` | source | ops | 0 | 0 | 10 |
 | `aura/ops/preflight.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/release_gate.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/repository_audit.py` | source | ops | 0 | 1 | 1 |
@@ -276,6 +279,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_agent_registry.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_reliability.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_risk_policy.py` | test | validation | 1 | 10 | 0 |
 | `tests/test_agent_service.py` | test | validation | 1 | 9 | 0 |
@@ -348,6 +352,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_model_registry.py` | test | validation | 9 | 1 | 0 |
 | `tests/test_mt5_contracts.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 15 | 0 |
+| `tests/test_multi_agent_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 5 | 0 |
 | `tests/test_multi_market_paper.py` | test | validation | 1 | 16 | 0 |
 | `tests/test_multi_market_scanner.py` | test | validation | 1 | 10 | 0 |

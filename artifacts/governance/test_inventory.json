@@ -55,6 +55,27 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_agent_registry.py",
+      "phase_coverage": [
+        1,
+        9
+      ],
+      "sha256": "c0568931772a6a91bcb99544f2c1577c8366000d90ba387c689719925363ea9c",
+      "source_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/agents/registry.py",
+        "aura/domain/models.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_registry_manifest_is_advisory_and_schema_bound",
+        "test_registry_rejects_non_schema_or_mismatched_output"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_agent_reliability.py",
       "phase_coverage": [
         1,
@@ -1597,6 +1618,25 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_multi_agent_gate.py",
+      "phase_coverage": [
+        0,
+        9
+      ],
+      "sha256": "382416972ac53618427c8d9e69d9c8e53a88a8eaea9bf2b9a6d8e46264d22f4b",
+      "source_dependencies": [
+        "aura/ops/multi_agent_gate.py",
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_committed_phase_nine_evidence_is_current",
+        "test_phase_nine_report_is_deterministic_and_advisory_only"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_multi_backtest.py",
       "phase_coverage": [
         1,
@@ -2084,7 +2124,7 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "10aee3bc30ed178ef4e13e523840cc3d72317518b22b6243d86b8be78b053c2b",
+      "sha256": "1fb136479c8f731ecf1896c4642684bddddff12a89c053c92e994416f4e59efb",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
@@ -2092,7 +2132,7 @@
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
-        "test_committed_ledger_passes_through_knowledge_rag_only",
+        "test_committed_ledger_passes_through_multi_agent_only",
         "test_later_phase_cannot_pass_before_previous_phase",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
@@ -2878,7 +2918,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 490,
-    "test_modules": 130
+    "static_test_functions": 494,
+    "test_modules": 132
   }
 }

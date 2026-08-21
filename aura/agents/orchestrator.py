@@ -13,6 +13,7 @@ from aura.agents.models import (
     AgentRound,
     CEODecisionMemo,
 )
+from aura.agents.registry import AgentRegistry
 from aura.agents.reliability import (
     AgentReliabilityTracker,
     reliability_market_key,
@@ -43,10 +44,11 @@ class MultiAgentOrchestrator:
             raise AgentConfigurationError("at least one specialist agent is required")
         if timeout_seconds <= 0:
             raise AgentConfigurationError("timeout_seconds must be positive")
-        agent_ids = [agent.agent_id for agent in agents]
-        if len(agent_ids) != len(set(agent_ids)):
-            raise AgentConfigurationError("specialist agent_id values must be unique")
         self.agents = tuple(agents)
+        try:
+            self.registry = AgentRegistry.from_agents(self.agents)
+        except (TypeError, ValueError) as exc:
+            raise AgentConfigurationError(str(exc)) from exc
         self.timeout_seconds = timeout_seconds
 
     async def run_round(self, context: AgentContext) -> AgentRound:
@@ -79,11 +81,8 @@ class MultiAgentOrchestrator:
     ) -> tuple[AgentEvidence | None, AgentFailure | None]:
         try:
             async with asyncio.timeout(self.timeout_seconds):
-                evidence = await agent.analyze(context)
-            if evidence.agent_id != agent.agent_id or evidence.role != agent.role:
-                raise AgentConfigurationError(
-                    f"agent {agent.agent_id} returned mismatched identity/role"
-                )
+                raw_evidence = await agent.analyze(context)
+            evidence = self.registry.validate_evidence(agent, raw_evidence)
             return evidence, None
         except TimeoutError:
             return None, AgentFailure(
