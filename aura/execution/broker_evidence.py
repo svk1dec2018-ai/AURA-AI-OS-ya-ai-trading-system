@@ -151,6 +151,90 @@ class SealedBrokerEvidence(BaseModel):
         return cls(bundle=bundle, sha256=broker_evidence_sha256(bundle))
 
 
+class BrokerAttestationReview(BaseModel):
+    """One credential-free human review bound to an exact evidence bundle."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    bundle_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    reviewer_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    reviewed_at: datetime
+    decision: Literal["ACCEPTED"] = "ACCEPTED"
+    purpose: Literal["PHASE11_BROKER_EVIDENCE"] = "PHASE11_BROKER_EVIDENCE"
+
+    @field_validator("reviewed_at")
+    @classmethod
+    def reviewed_at_must_be_timezone_aware(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("broker attestation review timestamp must be timezone-aware")
+        return value
+
+
+class BrokerAttestationRegistry(BaseModel):
+    """Owner-controlled review quorum; it grants no broker or execution authority."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Literal[1] = 1
+    registry_id: str = Field(min_length=1)
+    generated_at: datetime
+    minimum_independent_reviewers: int = Field(default=2, ge=2)
+    reviews: tuple[BrokerAttestationReview, ...]
+    execution_authority: Literal[False] = False
+
+    @field_validator("generated_at")
+    @classmethod
+    def generated_at_must_be_timezone_aware(cls, value: datetime) -> datetime:
+        if value.tzinfo is None or value.utcoffset() is None:
+            raise ValueError("attestation registry timestamp must be timezone-aware")
+        return value
+
+    @model_validator(mode="after")
+    def validate_review_registry(self) -> BrokerAttestationRegistry:
+        identities = [
+            (review.bundle_sha256, review.reviewer_fingerprint)
+            for review in self.reviews
+        ]
+        if len(set(identities)) != len(identities):
+            raise ValueError("duplicate broker attestation review")
+        if any(review.reviewed_at > self.generated_at for review in self.reviews):
+            raise ValueError("broker attestation review occurs after registry generation")
+        return self
+
+    def verifies(self, bundle: BrokerEvidenceBundle) -> bool:
+        digest = broker_evidence_sha256(bundle)
+        reviewers = {
+            review.reviewer_fingerprint
+            for review in self.reviews
+            if review.bundle_sha256 == digest
+        }
+        return len(reviewers) >= self.minimum_independent_reviewers
+
+
+class SealedBrokerAttestationRegistry(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    registry: BrokerAttestationRegistry
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def verify_content_hash(self) -> SealedBrokerAttestationRegistry:
+        expected = broker_attestation_registry_sha256(self.registry)
+        if self.sha256 != expected:
+            raise ValueError("broker attestation registry content hash mismatch")
+        return self
+
+    @classmethod
+    def seal(
+        cls,
+        registry: BrokerAttestationRegistry,
+    ) -> SealedBrokerAttestationRegistry:
+        return cls(
+            registry=registry,
+            sha256=broker_attestation_registry_sha256(registry),
+        )
+
+
 class BrokerAdapterEvidenceAssessment(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -339,8 +423,20 @@ def load_sealed_broker_evidence(path: Path) -> SealedBrokerEvidence:
     return SealedBrokerEvidence.model_validate(raw)
 
 
+def load_sealed_broker_attestation_registry(
+    path: Path,
+) -> SealedBrokerAttestationRegistry:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    _reject_secret_fields(raw)
+    return SealedBrokerAttestationRegistry.model_validate(raw)
+
+
 def broker_evidence_sha256(bundle: BrokerEvidenceBundle) -> str:
     return hashlib.sha256(_canonical_json(bundle.model_dump(mode="json"))).hexdigest()
+
+
+def broker_attestation_registry_sha256(registry: BrokerAttestationRegistry) -> str:
+    return hashlib.sha256(_canonical_json(registry.model_dump(mode="json"))).hexdigest()
 
 
 def _canonical_json(value: object) -> bytes:
