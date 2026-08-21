@@ -5,6 +5,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def test_local_openai_secret_files_are_ignored() -> None:
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+    example = (ROOT / ".env.example").read_text(encoding="utf-8")
+    assert ".env.local" in gitignore
+    assert "OPENAI_API_KEY=" in example
+    assert "sk-" not in example
+
+
 def test_compose_paper_service_is_fail_closed() -> None:
     compose = (ROOT / "compose.paper.yml").read_text(encoding="utf-8")
     assert "run_free_public_autonomy.py" in compose

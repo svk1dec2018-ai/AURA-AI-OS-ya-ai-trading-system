@@ -102,8 +102,13 @@ class DurableResearchQueue:
         owner_id: str,
         idempotency_key: str | None = None,
     ) -> dict[str, Any]:
-        if command.intent is not AssistantIntent.RESEARCH_REQUEST:
-            raise ValueError("only research requests may be queued")
+        allowed_intents = {
+            AssistantIntent.RESEARCH_REQUEST,
+            AssistantIntent.DEVELOPMENT_REQUEST,
+            AssistantIntent.FINANCIAL_CORRECTION_REQUEST,
+        }
+        if command.intent not in allowed_intents:
+            raise ValueError("only governed owner requests may be queued")
         key_hash = (
             hashlib.sha256(idempotency_key.encode("utf-8")).hexdigest()
             if idempotency_key
@@ -112,16 +117,29 @@ class DurableResearchQueue:
         with self._lock:
             if key_hash and key_hash in self._idempotency_index:
                 return dict(self._idempotency_index[key_hash])
+            request_prefix = {
+                AssistantIntent.RESEARCH_REQUEST: "research",
+                AssistantIntent.DEVELOPMENT_REQUEST: "development",
+                AssistantIntent.FINANCIAL_CORRECTION_REQUEST: "financial-correction",
+            }[command.intent]
+            status = {
+                AssistantIntent.RESEARCH_REQUEST: "pending_human_review",
+                AssistantIntent.DEVELOPMENT_REQUEST: "pending_sandbox_review",
+                AssistantIntent.FINANCIAL_CORRECTION_REQUEST: "pending_typed_correction_review",
+            }[command.intent]
             body: dict[str, Any] = {
-                "request_id": f"research:{command.command_id.removeprefix('cmd:')}",
+                "request_id": f"{request_prefix}:{command.command_id.removeprefix('cmd:')}",
                 "command_id": command.command_id,
+                "request_type": command.intent.value,
                 "authenticated_owner_id": owner_id,
                 "raw_text": command.raw_text,
                 "parameters": command.parameters,
                 "created_at": command.created_at.isoformat(),
                 "queued_at": _now_iso(),
-                "status": "pending_human_review",
+                "status": status,
                 "auto_promotion_allowed": False,
+                "auto_apply_allowed": False,
+                "fund_movement_allowed": False,
                 "idempotency_key_sha256": key_hash,
             }
             record = {**body, "checksum": _checksum(body)}
@@ -191,6 +209,14 @@ class CommandCenterService:
         idempotency_key: str | None = None,
     ) -> tuple[int, dict[str, Any]]:
         command = self.router.parse(text)
+        if command.intent is AssistantIntent.FUND_CONTROL:
+            return HTTPStatus.FORBIDDEN, {
+                "accepted": False,
+                "command_id": command.command_id,
+                "intent": command.intent.value,
+                "summary": "deposit, withdrawal and fund transfer are permanently blocked",
+                "fund_movement_allowed": False,
+            }
         if command.intent is AssistantIntent.LIVE_CONTROL:
             return HTTPStatus.FORBIDDEN, {
                 "accepted": False,
@@ -210,13 +236,17 @@ class CommandCenterService:
                 ),
                 "risk_gate_required": True,
             }
-        if command.intent is AssistantIntent.RESEARCH_REQUEST:
+        if command.intent in {
+            AssistantIntent.RESEARCH_REQUEST,
+            AssistantIntent.DEVELOPMENT_REQUEST,
+            AssistantIntent.FINANCIAL_CORRECTION_REQUEST,
+        }:
             if self.config.api_token is None or not owner_authenticated:
                 return HTTPStatus.UNAUTHORIZED, {
                     "accepted": False,
                     "command_id": command.command_id,
                     "intent": command.intent.value,
-                    "summary": "authenticated owner token required for research requests",
+                    "summary": "authenticated owner token required for governed owner requests",
                 }
             record = self.queue.enqueue(
                 command,
@@ -227,11 +257,13 @@ class CommandCenterService:
                 "accepted": True,
                 "command_id": command.command_id,
                 "intent": command.intent.value,
-                "summary": "research request queued for governed human review",
+                "summary": f"{command.intent.value} queued for governed owner review",
                 "payload": {
                     "request_id": record["request_id"],
                     "status": record["status"],
                     "auto_promotion_allowed": False,
+                    "auto_apply_allowed": False,
+                    "fund_movement_allowed": False,
                 },
             }
         if command.intent is AssistantIntent.STATUS:

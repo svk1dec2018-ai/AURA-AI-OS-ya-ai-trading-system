@@ -69,6 +69,9 @@ class CommandCenterV2Service(CommandCenterService):
             AssistantIntent.LIVE_CONTROL,
             AssistantIntent.PAPER_CONTROL,
             AssistantIntent.RESEARCH_REQUEST,
+            AssistantIntent.DEVELOPMENT_REQUEST,
+            AssistantIntent.FINANCIAL_CORRECTION_REQUEST,
+            AssistantIntent.FUND_CONTROL,
         }:
             return super().handle_command(
                 text,

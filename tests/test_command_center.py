@@ -26,6 +26,20 @@ def test_router_parses_market_scan_without_broker_privilege() -> None:
     assert command.parameters["symbol"] == "XAUUSD"
 
 
+def test_router_classifies_development_correction_and_fund_boundaries() -> None:
+    router = CommandRouter()
+    development = router.parse("repair system and update code")
+    correction = router.parse("correct pnl for paper trade")
+    funds = router.parse("withdraw funds")
+
+    assert development.intent == AssistantIntent.DEVELOPMENT_REQUEST
+    assert development.privilege == CommandPrivilege.DEVELOPMENT
+    assert correction.intent == AssistantIntent.FINANCIAL_CORRECTION_REQUEST
+    assert correction.privilege == CommandPrivilege.FINANCIAL_CORRECTION
+    assert funds.intent == AssistantIntent.FUND_CONTROL
+    assert funds.privilege == CommandPrivilege.FUND
+
+
 @pytest.mark.asyncio
 async def test_live_command_is_denied_by_default() -> None:
     router = CommandRouter(

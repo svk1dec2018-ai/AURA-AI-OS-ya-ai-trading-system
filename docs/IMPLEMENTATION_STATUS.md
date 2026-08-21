@@ -108,6 +108,7 @@ Implemented AI infrastructure:
 - concurrent specialist orchestration with timeout/failure isolation
 - structured point-in-time AgentEvidence with trust/provenance
 - multi-model Ollama council using structured decisions
+- optional OpenAI Responses API specialists using strict structured decisions
 - raw model private reasoning is not persisted as decision evidence
 - Bull/Bear/Counterfactual adversarial deliberation
 - deterministic CEO synthesis
@@ -210,8 +211,13 @@ Additional repository controls:
 
 - CodeQL Python security scanning on push/PR plus weekly schedule
 - Dependabot for pip and GitHub Actions dependencies
-- `.env` ignored by git
-- self-modifying patch-and-push workflow removed from normal production CI
+- `.env` and local env files ignored by git
+- controlled maintenance AI can diagnose and propose a unified diff
+- patch changes are restricted, sandboxed against the exact base commit and owner-approved
+- development apply never auto-commits, pushes, merges or deploys
+- append-only P&L/trade correction views preserve original fills and ledger truth
+- deposit, withdrawal, fund transfer, historical rewrite and risk bypass remain immutable denials
+- self-modifying patch-and-push workflow remains removed from normal production CI
 
 ## What remains before real-money production certification
 
