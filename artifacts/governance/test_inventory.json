@@ -550,6 +550,33 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_broker_evidence_recorder.py",
+      "phase_coverage": [
+        1,
+        2,
+        4,
+        11
+      ],
+      "sha256": "ce69959a09204faa3f6188f4802c3d135bbd8a8f9462617ac5e04c0184ba8ca7",
+      "source_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/broker.py",
+        "aura/execution/broker_evidence.py",
+        "aura/execution/broker_evidence_recorder.py",
+        "aura/execution/reconciliation.py",
+        "aura/execution/state.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_recorder_converts_runtime_state_without_leaking_raw_identifiers",
+        "test_recorder_hashes_reconciliation_issue_details",
+        "test_recorder_rejects_duplicate_observations",
+        "test_recorder_rejects_nonterminal_and_read_only_execution"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_candle_aggregation.py",
       "phase_coverage": [
         5
@@ -3026,7 +3053,7 @@
   "summary": {
     "async_test_functions": 87,
     "modules_without_static_tests": [],
-    "static_test_functions": 512,
-    "test_modules": 137
+    "static_test_functions": 516,
+    "test_modules": 138
   }
 }

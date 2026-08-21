@@ -278,6 +278,21 @@ authorization. A blocked result exits with status 2 when `--require-eligible` is
 used. Evidence and registry files must remain outside Git and secret storage must
 not be included in either file.
 
+### Evidence recorder integration contract
+
+`BrokerEvidenceRecorder` converts the existing normalized `OrderState` and
+`ReconciliationReport` objects into the sealed intake format. It accepts only
+precomputed 64-character fingerprints for client order, broker order, broker
+response, account and attestation identity. Raw identifiers, symbols, fill IDs,
+prices and reconciliation details are never serialized into the evidence bundle;
+reconciliation issue keys/details are represented only by one-way fingerprints.
+
+The recorder accepts execution evidence only from a complete `FILLED` order and
+rejects execution capture in `PAPER` or `READ_ONLY` mode. Duplicate execution and
+reconciliation observations fail closed, including under concurrent recorder use.
+It performs no broker call and does not verify that an external fingerprint is
+authentic; the separate owner review/attestation workflow remains mandatory.
+
 The audit uses Git's tracked plus non-ignored untracked file set, so tracked
 packages such as `aura/runtime` remain visible even though runtime state directories
 are generically ignored. Generated governance artifacts are excluded from their own

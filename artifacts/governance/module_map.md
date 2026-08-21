@@ -7,11 +7,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 385
-- Python modules: 328
-- Source modules: 170
-- Test modules: 137
-- Static test functions: 512
+- Repository files: 387
+- Python modules: 330
+- Source modules: 171
+- Test modules: 138
+- Static test functions: 516
 - Entrypoints: 35
 - Known stub/incomplete candidates: 80
 
@@ -28,7 +28,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 174 |
+| `aura` | 175 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -47,7 +47,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 137 |
+| `tests` | 138 |
 
 ## Entrypoints
 
@@ -155,7 +155,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 58 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 59 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -169,16 +169,17 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/evolution/paper_tracker.py` | source | evolution | 7 | 3 | 2 |
 | `aura/evolution/shadow_outcomes.py` | source | evolution | 7 | 6 | 1 |
 | `aura/execution/angel_one.py` | source | execution | 4 | 5 | 2 |
-| `aura/execution/broker.py` | source | execution | 4 | 1 | 3 |
-| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 2 |
+| `aura/execution/broker.py` | source | execution | 4 | 1 | 4 |
+| `aura/execution/broker_evidence.py` | source | execution | 4 | 2 | 3 |
+| `aura/execution/broker_evidence_recorder.py` | source | execution | 11 | 5 | 1 |
 | `aura/execution/demo_guard.py` | source | execution | 4 | 0 | 2 |
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
 | `aura/execution/fill_model.py` | source | execution | 4 | 1 | 0 |
 | `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 2 |
 | `aura/execution/paper.py` | source | execution | 12 | 5 | 6 |
-| `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 3 |
+| `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 4 |
 | `aura/execution/resilience.py` | source | execution | 4 | 0 | 1 |
-| `aura/execution/state.py` | source | execution | 2 | 1 | 1 |
+| `aura/execution/state.py` | source | execution | 2 | 1 | 2 |
 | `aura/forecast/baselines.py` | source | forecast | 7 | 3 | 1 |
 | `aura/forecast/ensemble.py` | source | forecast | 7 | 0 | 3 |
 | `aura/forecast/providers.py` | source | forecast | 7 | 2 | 2 |
@@ -308,6 +309,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_broker_evidence.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_broker_evidence_intake.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_broker_evidence_readiness.py` | test | validation | 0 | 2 | 0 |
+| `tests/test_broker_evidence_recorder.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_candle_aggregation.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_ceo_decision_gate.py` | test | validation | 0 | 2 | 0 |
 | `tests/test_ceo_decision_trace.py` | test | validation | 1 | 3 | 0 |

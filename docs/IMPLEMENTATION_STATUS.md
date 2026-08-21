@@ -26,6 +26,11 @@ An offline intake command can now load sealed evidence plus an owner-controlled
 two-reviewer attestation registry and emit a deterministic assessment. It cannot
 connect to a broker, mutate the phase ledger, authorize execution, or turn code
 approval into financial authorization.
+The evidence recorder can now convert existing filled `OrderState` and
+`ReconciliationReport` objects into that sealed format without serializing raw
+broker/order/fill identifiers, symbols, prices or reconciliation details. It is
+an adapter integration boundary, not proof that either broker has executed a live
+order.
 
 ## Implemented and wired
 
