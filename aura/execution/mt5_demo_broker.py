@@ -96,7 +96,7 @@ class MT5DemoBroker(BrokerAdapter):
         await asyncio.to_thread(self._cancel_sync, ticket)
 
     async def poll_fills_once(self) -> tuple[Fill, ...]:
-        """Poll broker-origin fills once for deterministic coordinator/replay integration."""
+        """Poll broker-origin fills once for deterministic runtime integration."""
         self._require_connected()
         return await asyncio.to_thread(self._poll_fills_sync)
 
@@ -140,9 +140,7 @@ class MT5DemoBroker(BrokerAdapter):
                     quantity=initial,
                     filled_quantity=filled,
                     status=(
-                        OrderStatus.PARTIALLY_FILLED
-                        if filled > 0
-                        else OrderStatus.SUBMITTED
+                        OrderStatus.PARTIALLY_FILLED if filled > 0 else OrderStatus.SUBMITTED
                     ),
                 )
             )
@@ -204,7 +202,9 @@ class MT5DemoBroker(BrokerAdapter):
         if raw_symbol is None:
             raise RuntimeError(f"MT5 symbol_info failed for {order.symbol}")
         symbol = _asdict(raw_symbol)
-        if not bool(symbol.get("visible", True)) and not self.gateway.symbol_select(order.symbol, True):
+        if not bool(symbol.get("visible", True)) and not self.gateway.symbol_select(
+            order.symbol, True
+        ):
             raise RuntimeError(f"MT5 could not select {order.symbol} in MarketWatch")
         self._validate_volume(order.quantity, symbol)
         if self.config.block_existing_aura_position:
@@ -291,9 +291,11 @@ class MT5DemoBroker(BrokerAdapter):
         entry: Decimal,
         symbol: dict[str, Any],
     ) -> tuple[Decimal, Decimal]:
+        digits_value = symbol.get("digits")
+        digits = int(digits_value) if digits_value is not None else 5
         point = Decimal(str(symbol.get("point", 0)))
         if point <= 0:
-            raise RuntimeError("MT5 symbol point must be positive for native protection")
+            point = Decimal(1).scaleb(-digits)
         broker_points = max(int(symbol.get("trade_stops_level", 0)), 1) + 2
         broker_distance = point * Decimal(broker_points)
         stop_distance = max(
@@ -304,7 +306,6 @@ class MT5DemoBroker(BrokerAdapter):
             entry * self.config.take_profit_bps / Decimal(10000),
             broker_distance,
         )
-        digits = int(symbol.get("digits", 5))
         quantum = Decimal(1).scaleb(-digits)
         if side == Side.BUY:
             stop_loss = entry - stop_distance
