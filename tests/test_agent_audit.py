@@ -4,6 +4,8 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from aura.agents.audit import AgentAuditEventType, AgentAuditJournal
 from aura.agents.models import (
     AgentContext,
@@ -15,10 +17,12 @@ from aura.agents.models import (
     EvidenceSourceType,
 )
 from aura.domain.models import NormalizedCandle, SignalIntent
+from aura.lineage.decision import DecisionLineageRecord
+from aura.lineage.replay import DecisionLineageMismatch, DecisionLineageReplayVerifier
 from aura.persistence.wal import JsonlWriteAheadLog
 
 
-def test_agent_round_is_persisted_with_context_and_ceo_memo(tmp_path: Path) -> None:
+def _decision_objects(*, metadata: dict | None = None):
     start = datetime(2026, 1, 1, tzinfo=UTC)
     candle = NormalizedCandle(
         symbol="X",
@@ -39,7 +43,7 @@ def test_agent_round_is_persisted_with_context_and_ceo_memo(tmp_path: Path) -> N
         decision_timeframe="5m",
         candles=(candle,),
         created_at=candle.close_time,
-        metadata={"mode": "paper"},
+        metadata=metadata or {"mode": "paper"},
     )
     evidence = AgentEvidence(
         agent_id="technical:model-a",
@@ -75,7 +79,11 @@ def test_agent_round_is_persisted_with_context_and_ceo_memo(tmp_path: Path) -> N
         quorum_met=False,
         generated_at=candle.close_time,
     )
+    return context, round_result, memo
 
+
+def test_agent_round_is_persisted_with_context_ceo_and_lineage(tmp_path: Path) -> None:
+    context, round_result, memo = _decision_objects()
     wal = JsonlWriteAheadLog(tmp_path / "agent-audit.wal", fsync=False)
     event = AgentAuditJournal(wal).record_round(
         context=context,
@@ -89,3 +97,43 @@ def test_agent_round_is_persisted_with_context_and_ceo_memo(tmp_path: Path) -> N
     assert restored.payload["context"]["symbol"] == "X"
     assert restored.payload["round"]["evidence"][0]["agent_id"] == "technical:model-a"
     assert restored.payload["memo"]["rationale"] == "quorum not met"
+    lineage = DecisionLineageRecord.model_validate(restored.payload["lineage"])
+    assert lineage.verify_hash()
+    assert lineage.source_ids == ("market:X:5m",)
+
+
+def test_replay_verifier_accepts_exact_decision_and_rejects_changed_context(
+    tmp_path: Path,
+) -> None:
+    context, round_result, memo = _decision_objects()
+    wal = JsonlWriteAheadLog(tmp_path / "agent-audit.wal", fsync=False)
+    event = AgentAuditJournal(wal).record_round(
+        context=context,
+        round_result=round_result,
+        memo=memo,
+    )
+    exact = DecisionLineageRecord.build(
+        context=context,
+        round_result=round_result,
+        memo=memo,
+        data_quality=None,
+        agent_policy=None,
+        deliberation=None,
+    )
+    verifier = DecisionLineageReplayVerifier()
+    stored = verifier.verify_event(event, exact)
+    assert stored.lineage_hash == exact.lineage_hash
+
+    changed_context, changed_round, changed_memo = _decision_objects(
+        metadata={"mode": "paper", "regime": "chop"}
+    )
+    changed = DecisionLineageRecord.build(
+        context=changed_context,
+        round_result=changed_round,
+        memo=changed_memo,
+        data_quality=None,
+        agent_policy=None,
+        deliberation=None,
+    )
+    with pytest.raises(DecisionLineageMismatch, match="lineage mismatch"):
+        verifier.verify_event(event, changed)
