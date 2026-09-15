@@ -217,6 +217,9 @@ class MultiMarketPaperCoordinator:
                 round_result=candidate.round,
                 memo=candidate.memo,
                 deliberation=candidate.deliberation,
+                data_quality=candidate.data_quality,
+                agent_policy=candidate.agent_policy,
+                lineage=candidate.lineage,
             )
 
         current_positions = {
