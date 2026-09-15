@@ -31,7 +31,7 @@ def _event(event_id: str, published: datetime, observed: datetime):
 
 @pytest.mark.asyncio
 async def test_intelligence_service_filters_by_original_observation_time() -> None:
-    now = datetime(2026, 8, 18, 5, 0, tzinfo=UTC)
+    now = datetime.now(UTC)
     service = LiveIntelligenceService(
         _Hub(
             [
