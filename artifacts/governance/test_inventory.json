@@ -1950,6 +1950,27 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_mt5_demo_readiness.py",
+      "phase_coverage": [
+        5,
+        15
+      ],
+      "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01",
+      "source_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/ops/mt5_demo_readiness.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_mt5_demo_readiness_fails_closed_when_terminal_disconnected",
+        "test_mt5_demo_readiness_is_no_order_and_checks_closed_candles",
+        "test_mt5_live_account_is_rejected_before_readiness_inspection",
+        "test_resolve_xauusd_prefers_tradable_broker_suffix"
+      ]
+    },
+    {
       "async_test_functions": 4,
       "path": "tests/test_mt5_demo_runtime.py",
       "phase_coverage": [
@@ -3360,7 +3381,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 593,
-    "test_modules": 150
+    "static_test_functions": 597,
+    "test_modules": 151
   }
 }

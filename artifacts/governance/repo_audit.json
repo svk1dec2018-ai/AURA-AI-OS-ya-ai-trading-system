@@ -1562,6 +1562,14 @@
         "to": "aura/runtime/scanner.py"
       },
       {
+        "from": "aura/ops/mt5_demo_readiness.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/ops/mt5_demo_readiness.py",
+        "to": "aura/execution/demo_guard.py"
+      },
+      {
         "from": "aura/ops/multi_agent_gate.py",
         "to": "aura/agents/base.py"
       },
@@ -3954,6 +3962,14 @@
         "to": "aura/markets/universe.py"
       },
       {
+        "from": "tests/test_mt5_demo_readiness.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "tests/test_mt5_demo_readiness.py",
+        "to": "aura/ops/mt5_demo_readiness.py"
+      },
+      {
         "from": "tests/test_mt5_demo_runtime.py",
         "to": "aura/agents/audit.py"
       },
@@ -4848,6 +4864,10 @@
   },
   "entrypoints": [
     {
+      "kind": "shell-launcher",
+      "path": "CHECK_MT5_XAUUSD_DEMO.ps1"
+    },
+    {
       "kind": "container-entrypoint",
       "path": "Dockerfile"
     },
@@ -4906,6 +4926,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/market_data_gate.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/mt5_demo_readiness.py"
     },
     {
       "kind": "python-main",
@@ -5051,9 +5075,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 6074,
+      "bytes": 2952,
       "path": ".github/workflows/ci.yml",
-      "sha256": "dd13e3d2c8143fbf6c1d23d6532a62a562db25429cac0686e091e74b1a9b7062"
+      "sha256": "a8d655299139fe6fb8569a13bc56805bbacd0931f43b27eaf53c2af869cbe3b5"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -5066,6 +5090,12 @@
       "bytes": 183,
       "path": ".gitignore",
       "sha256": "2d32fd99b3bee007be0d4f94254233c901329f49b0a11ec472fa30ea27f92422"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 1792,
+      "path": "CHECK_MT5_XAUUSD_DEMO.ps1",
+      "sha256": "610f126b8244f9b2598a2bdaddbfd70857a6851a6b531c1f9e26a92ea6dc01f3"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -5933,6 +5963,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 10269,
+      "path": "aura/ops/mt5_demo_readiness.py",
+      "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 11388,
       "path": "aura/ops/multi_agent_gate.py",
       "sha256": "506018afeafe9b8d80f74944b9d7bf79d72b0a5bb08aca2a26f1cd082e797a77"
@@ -6434,6 +6470,12 @@
       "bytes": 7695,
       "path": "docs/LIVE_VALIDATION_POLICY.md",
       "sha256": "9cbabcb50d4597b23170ce21ad124df769bef89d5c108422a9bdac5d0b55b270"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 4380,
+      "path": "docs/MT5_XAUUSD_BEGINNER_SETUP.md",
+      "sha256": "64e07fd002ed02cdd0b7c6cbd4808f8a7c87d192d5b27c775aff728936886ab8"
     },
     {
       "asset_class": "documentation",
@@ -7244,6 +7286,12 @@
       "bytes": 3064,
       "path": "tests/test_mt5_contracts.py",
       "sha256": "f1cdea6b49294dab0406391da748d41483814e6e63ae104033703669d417aa77"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 5226,
+      "path": "tests/test_mt5_demo_readiness.py",
+      "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01"
     },
     {
       "asset_class": "python_module",
@@ -9409,6 +9457,7 @@
       "component": "data",
       "direct_test_files": [
         "tests/test_evolution_demo_stack.py",
+        "tests/test_mt5_demo_readiness.py",
         "tests/test_mt5_demo_runtime.py"
       ],
       "internal_dependencies": [
@@ -12031,6 +12080,35 @@
         "inspect",
         "json",
         "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
+        "tests/test_mt5_demo_readiness.py"
+      ],
+      "internal_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/execution/demo_guard.py"
+      ],
+      "lines": 355,
+      "module": "aura.ops.mt5_demo_readiness",
+      "parsed": true,
+      "path": "aura/ops/mt5_demo_readiness.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "decimal",
+        "json",
+        "re",
         "typing"
       ],
       "third_party_dependencies": []
@@ -16806,6 +16884,30 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/ops/mt5_demo_readiness.py"
+      ],
+      "lines": 173,
+      "module": "tests.test_mt5_demo_readiness",
+      "parsed": true,
+      "path": "tests/test_mt5_demo_readiness.py",
+      "phase_coverage": [
+        5,
+        15
+      ],
+      "primary_phase": 5,
+      "role": "test",
+      "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01",
+      "standard_library_dependencies": [
+        "__future__",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/audit.py",
         "aura/core/pipeline.py",
         "aura/data/mt5_demo.py",
@@ -18471,7 +18573,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "086aa6ea8e83496a9cfbb9ef21f127e925e58e79b6efe21831bd7428c6bccebb",
+  "repository_tree_sha256": "3059b6d2f8af54c646cd3c55f4db93ec316247f79bc32dc367475cd547f2d8b7",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19008,15 +19110,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 174,
-    "entrypoints": 44,
+    "directly_tested_source_modules": 175,
+    "entrypoints": 46,
     "parse_errors": 0,
-    "python_modules": 365,
-    "repository_files": 431,
-    "source_modules": 191,
-    "static_test_functions": 593,
+    "python_modules": 367,
+    "repository_files": 435,
+    "source_modules": 192,
+    "static_test_functions": 597,
     "stub_candidates": 87,
-    "test_modules": 150,
+    "test_modules": 151,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
