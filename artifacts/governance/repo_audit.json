@@ -5969,9 +5969,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 10192,
+      "bytes": 10269,
       "path": "aura/ops/mt5_demo_readiness.py",
-      "sha256": "b8b9d5974e0f7cc5fb7cec8efae7fb529e2c79f6b108e7fc636fe836ca92d798"
+      "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651"
     },
     {
       "asset_class": "python_module",
@@ -12108,7 +12108,7 @@
       ],
       "primary_phase": 15,
       "role": "source",
-      "sha256": "b8b9d5974e0f7cc5fb7cec8efae7fb529e2c79f6b108e7fc636fe836ca92d798",
+      "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -18579,7 +18579,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "41079714c8e45ace017ab45b7563433bf7dc48ee6923a203d9dd7338cf4cc655",
+  "repository_tree_sha256": "afc5fdbf9d581ca181936107a12cf7812311d5c1f07905f0ad8cf4b1dbed9341",
   "schema_version": 1,
   "scope": {
     "excluded": [
