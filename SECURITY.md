@@ -18,6 +18,23 @@ AURA handles financial decision infrastructure. Security boundaries are part of 
 - AI/research automation cannot perform final live approval or mutate deployed strategy code.
 - Kill switches and flattening paths must not depend on an LLM being available.
 
+## Maintenance AI boundary
+
+- OpenAI/other maintenance models receive selected, sanitized source excerpts—not env files,
+  credentials, broker sessions or raw account payloads.
+- Model output is data: only a validated unified diff is accepted. Model-supplied shell commands
+  are never executed.
+- Patches run against tracked files from an exact base commit in a credential-free temporary
+  sandbox and require passing allowlisted checks plus an exact owner approval receipt.
+- Model-authored patches cannot alter host-controlled tests or create, delete, rename, chmod,
+  symlink or binary-patch files; the applied file set is rechecked against the reviewed proposal.
+- The automated applier cannot modify its authority/correction guards, local env files, runtime
+  financial state or CI workflows, and cannot commit, push, merge or deploy.
+- Deposit, withdrawal, fund transfer, direct historical fill/trade/P&L rewrite, secret disclosure
+  and risk bypass are immutable denials for AI, developer and owner roles.
+- Financial reporting corrections are append-only overlays; controlled-live corrections require
+  external evidence and reconciliation binding.
+
 ## Logging and audit
 
 Do not log:

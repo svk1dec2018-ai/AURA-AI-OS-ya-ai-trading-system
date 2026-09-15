@@ -42,8 +42,10 @@ class DecisionPipeline:
         position_average_price: Decimal = Decimal(0),
         bars_in_position: int = 0,
     ) -> DecisionResult | None:
-        if not history or not history[-1].closed:
+        if not history:
             return None
+        if any(not candle.closed for candle in history):
+            raise ValueError("decision pipeline accepts only closed candle history")
 
         runtime = StrategyRuntimeContext(
             current_position_quantity=current_position_quantity,
@@ -55,6 +57,7 @@ class DecisionPipeline:
         signal = self.strategy.on_closed_candle_with_context(history, runtime)
         if signal is None:
             return None
+        validate_strategy_signal_causality(signal, history[-1])
         return self.evaluate_signal(
             signal=signal,
             portfolio=portfolio,
@@ -125,3 +128,15 @@ class DecisionPipeline:
 
         approved_order = proposed.model_copy(update={"quantity": decision.approved_quantity})
         return DecisionResult(signal=signal, risk=decision, order=approved_order)
+
+
+def validate_strategy_signal_causality(
+    signal: StrategySignal,
+    latest_candle: NormalizedCandle,
+) -> None:
+    """Reject strategy output that depends on a future timestamp or wrong series."""
+
+    if signal.symbol != latest_candle.symbol:
+        raise ValueError("strategy signal symbol does not match its candle history")
+    if signal.generated_at > latest_candle.close_time:
+        raise ValueError("strategy signal generated_at is after the latest closed candle")

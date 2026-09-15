@@ -5,8 +5,12 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+if TYPE_CHECKING:
+    from aura.knowledge.retrieval import RetrievedKnowledge
 
 
 class KnowledgeError(RuntimeError):
@@ -161,6 +165,28 @@ class KnowledgeFirewall:
         return KnowledgeBundle(
             as_of=as_of,
             items=tuple(eligible),
+            contradictions=contradictions,
+        )
+
+    def retrieve(
+        self,
+        query: str,
+        *,
+        as_of: datetime,
+        required_tags: tuple[str, ...] = (),
+        limit: int = 6,
+    ) -> RetrievedKnowledge:
+        """Retrieve only trusted, point-in-time-visible, decision-safe evidence."""
+
+        from aura.knowledge.retrieval import RetrievedKnowledge, rank_knowledge_items
+
+        bundle = self.build_bundle(as_of=as_of, required_tags=required_tags)
+        ranked = rank_knowledge_items(bundle.items, query, limit=limit)
+        contradictions = self._find_contradictions(list(ranked))
+        return RetrievedKnowledge(
+            query=" ".join(query.split()),
+            as_of=as_of,
+            items=ranked,
             contradictions=contradictions,
         )
 

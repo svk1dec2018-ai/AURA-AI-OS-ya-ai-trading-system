@@ -1,0 +1,37 @@
+{
+  "backtest": {
+    "ending_equity": "10001.55978",
+    "fee": "0.22022",
+    "fill_price": "110.110",
+    "fills": 1,
+    "orders": 1
+  },
+  "decision": "PASS",
+  "deterministic_fingerprint": "36222f055383dfced8cb8e3bed6c83f85969b417d16f02df51616d0086536cef",
+  "execution_assumptions": {
+    "fee_bps": "10",
+    "fill_timing": "next eligible candle",
+    "slippage_bps": "10"
+  },
+  "external_broker_execution_claimed": false,
+  "fixture_type": "deterministic_internal_backtest_fixture",
+  "live_money_enabled": false,
+  "paper": {
+    "fee": "0.22022",
+    "fill_price": "110.110",
+    "fills": 1
+  },
+  "parity": {
+    "fee_equal": true,
+    "fill_price_equal": true,
+    "quantity_equal": true,
+    "shared_fill_model_type": true
+  },
+  "phase": 6,
+  "schema_version": 1,
+  "shared_components": {
+    "decision_pipeline": "aura.core.pipeline.DecisionPipeline",
+    "fill_and_cost_model": "aura.execution.fill_model.CandleExecutionModel"
+  },
+  "strategy_performance_claimed": false
+}

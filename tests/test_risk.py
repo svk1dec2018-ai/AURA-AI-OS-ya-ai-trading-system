@@ -1,5 +1,7 @@
 from decimal import Decimal
 
+import pytest
+
 from aura.domain.models import OrderRequest, PortfolioSnapshot, Side
 from aura.risk.engine import RiskEngine, RiskLimits
 
@@ -90,3 +92,52 @@ def test_drawdown_gate_allows_flattening() -> None:
     )
     assert decision.approved
     assert decision.approved_quantity == Decimal(2)
+
+
+def test_stop_distance_caps_opening_quantity_by_risk_budget() -> None:
+    engine = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_risk_per_trade_pct=Decimal("1.5"),
+        )
+    )
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1000))
+    decision = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(equity="100000"),
+        Decimal(100000),
+        protective_stop_price=Decimal(95),
+    )
+    assert decision.approved
+    assert decision.approved_quantity == Decimal(300)
+    assert decision.approved_quantity * Decimal(5) == Decimal(1500)
+
+
+def test_per_trade_risk_policy_fails_closed_without_valid_stop() -> None:
+    engine = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_risk_per_trade_pct=Decimal("1.5"),
+        )
+    )
+    order = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1))
+    missing = engine.evaluate(order, Decimal(100), snapshot(), Decimal(10000))
+    non_adverse = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(),
+        Decimal(10000),
+        protective_stop_price=Decimal(101),
+    )
+    assert not missing.approved
+    assert "protective stop required" in missing.reason
+    assert not non_adverse.approved
+    assert "adverse" in non_adverse.reason
+
+
+def test_invalid_risk_limit_configuration_is_rejected() -> None:
+    with pytest.raises(ValueError, match="cannot be negative"):
+        RiskLimits(max_daily_loss_pct=Decimal(-1))
+    with pytest.raises(ValueError, match="max_risk_per_trade_pct"):
+        RiskLimits(max_risk_per_trade_pct=Decimal(0))

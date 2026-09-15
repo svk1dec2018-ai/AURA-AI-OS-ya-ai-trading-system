@@ -9,8 +9,9 @@ from aura.agents.adaptive_model_router import (
 )
 from aura.agents.base import SpecialistAgent
 from aura.agents.models import AgentRole
-from aura.agents.ollama_provider import OllamaReasoningProvider, build_ollama_providers_from_env
-from aura.agents.providers import ProviderBackedSpecialist
+from aura.agents.ollama_provider import build_ollama_providers_from_env
+from aura.agents.openai_provider import build_openai_providers_from_env
+from aura.agents.providers import ProviderBackedSpecialist, ReasoningProvider
 from aura.agents.reliability import AgentReliabilityTracker
 
 _DEFAULT_ROLES = (
@@ -46,12 +47,12 @@ class AICouncilConfig:
 
 
 def build_ollama_ai_council(
-    providers: tuple[OllamaReasoningProvider, ...] | list[OllamaReasoningProvider],
+    providers: tuple[ReasoningProvider, ...] | list[ReasoningProvider],
     *,
     config: AICouncilConfig | None = None,
     reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> tuple[SpecialistAgent, ...]:
-    """Build independent local-AI specialists with optional adaptive model routing.
+    """Build independent AI specialists with optional adaptive model routing.
 
     With a reliability tracker, each role chooses models from forward-observed
     performance using bounded exploration. Multiple opinion slots select different
@@ -96,6 +97,21 @@ def build_ollama_ai_council(
     return tuple(agents)
 
 
+def build_ai_council(
+    providers: tuple[ReasoningProvider, ...] | list[ReasoningProvider],
+    *,
+    config: AICouncilConfig | None = None,
+    reliability_tracker: AgentReliabilityTracker | None = None,
+) -> tuple[SpecialistAgent, ...]:
+    """Provider-neutral council builder retained behind the Ollama-compatible API."""
+
+    return build_ollama_ai_council(
+        providers,
+        config=config,
+        reliability_tracker=reliability_tracker,
+    )
+
+
 def build_ollama_ai_council_from_env(
     *,
     reliability_tracker: AgentReliabilityTracker | None = None,
@@ -113,6 +129,39 @@ def build_ollama_ai_council_from_env(
         "off",
     }
     return build_ollama_ai_council(
+        providers,
+        config=AICouncilConfig(
+            roles=roles or _DEFAULT_ROLES,
+            opinions_per_role=opinions,
+            adaptive_routing=adaptive,
+            exploration_strength=exploration,
+        ),
+        reliability_tracker=reliability_tracker,
+    )
+
+
+def build_env_ai_council_from_env(
+    *,
+    reliability_tracker: AgentReliabilityTracker | None = None,
+) -> tuple[SpecialistAgent, ...]:
+    """Load local Ollama and optional OpenAI models into one advisory council."""
+
+    providers: tuple[ReasoningProvider, ...] = (
+        *build_ollama_providers_from_env(),
+        *build_openai_providers_from_env(),
+    )
+    if not providers:
+        return ()
+    roles = _roles_from_env(os.getenv("AURA_AI_ROLES", ""))
+    opinions = int(os.getenv("AURA_AI_OPINIONS_PER_ROLE", "1"))
+    exploration = float(os.getenv("AURA_AI_ROUTER_EXPLORATION", "0.12"))
+    adaptive = os.getenv("AURA_AI_ADAPTIVE_ROUTING", "1").strip().lower() not in {
+        "0",
+        "false",
+        "no",
+        "off",
+    }
+    return build_ai_council(
         providers,
         config=AICouncilConfig(
             roles=roles or _DEFAULT_ROLES,

@@ -1,0 +1,48 @@
+# AURA AI OS vision coverage audit
+
+This is a code-evidence map, not a marketing checklist. `IMPLEMENTED` means a
+concrete module and tests exist. `PARTIAL` means the safety/core contract exists
+but a production integration or client-facing surface is still missing.
+`EXTERNAL GATE` means completion requires credentials, elapsed forward operation
+or human approval and cannot be manufactured in source code.
+
+| Vision capability | Status | Code evidence | Remaining boundary |
+|---|---|---|---|
+| Multi-market, multi-timeframe scanning | IMPLEMENTED | `aura/runtime/scanner.py`, `aura/runtime/multi_market_paper.py`, `aura/markets/universe.py` | Coverage depends on connected data feeds and entitlements. |
+| Ten specialist intelligence roles | IMPLEMENTED | `aura/agents/models.py`, `aura/agents/specialists.py`, `aura/agents/external_specialists.py` | Provider-specific evidence can abstain when trustworthy data is unavailable. |
+| Multi-model local/provider AI council | IMPLEMENTED | `aura/ai/free_models.py`, `aura/agents/ai_council.py`, `aura/agents/ollama_provider.py`, `aura/agents/openai_provider.py`, `aura/agents/adaptive_model_router.py` | The balanced five-model Ollama preset requires local model downloads; OpenAI models require an operator-owned API key. |
+| Deep/adversarial reasoning | IMPLEMENTED | `aura/agents/deliberation.py` | Raw private model reasoning is not treated as financial evidence. |
+| CEO decision layer | IMPLEMENTED | `aura/agents/orchestrator.py`, `aura/agents/service.py` | CEO has no authority to bypass independent risk controls. |
+| Deterministic evidence schema and explainability | IMPLEMENTED | `aura/agents/models.py`, `aura/agents/audit.py` | UI presentation remains partial. |
+| Independent financial Risk Engine and kill switch | IMPLEMENTED | `aura/risk/engine.py`, `aura/core/pipeline.py` | Broker/venue limits require account-specific validation. |
+| Portfolio and order source of truth | IMPLEMENTED | `aura/portfolio/ledger.py`, `aura/execution/state.py`, `aura/persistence/wal.py` | Live broker reconciliation is an external gate. |
+| Paper execution and restart recovery | IMPLEMENTED | `aura/execution/paper.py`, `aura/persistence/recovery.py`, `aura/runtime/autonomous_paper.py` | Sustained forward paper evidence must accrue over real time. |
+| Knowledge/RAG firewall | IMPLEMENTED | `aura/knowledge/firewall.py`, `aura/knowledge/local_corpus.py` | Only authorized/public content may be ingested. |
+| Live news and macro context | IMPLEMENTED | `aura/data/free_intelligence.py`, `aura/data/intelligence_service.py` | Optional FRED/Alpha Vantage sources require user-owned keys. |
+| Historical research provenance | IMPLEMENTED | `aura/research/manifest.py`, `aura/data/public_history.py` | Licensed datasets must be supplied by the operator where required. |
+| Strategy invention and bounded evolution | IMPLEMENTED | `aura/research/autonomous_strategy_lab.py`, `aura/research/strategy_factory.py`, `aura/research/strategy_mutation.py` | Research output cannot auto-deploy live. |
+| Backtest, purged walk-forward and Monte Carlo | IMPLEMENTED | `aura/backtest/`, `aura/research/robustness.py` | Realistic market-specific costs require current broker/venue inputs. |
+| Sealed holdout, stability and regime tests | IMPLEMENTED | `aura/research/holdout.py`, `aura/research/parameter_stability.py`, `aura/research/regime_validation.py` | Strategy-specific evidence must still be produced. |
+| Point-in-time equities/futures/options research | IMPLEMENTED | `aura/data/corporate_actions.py`, `aura/data/futures_roll.py`, `aura/data/options_replay.py` | Reliable licensed option-chain history remains dataset-dependent. |
+| Self-learning from trades and missed opportunities | IMPLEMENTED | `aura/evolution/online_learning.py`, `aura/evolution/opportunity_audit.py`, `aura/evolution/shadow_outcomes.py` | Learning remains advisory/research until governed validation passes. |
+| Strategy versioning and approval lifecycle | IMPLEMENTED | `aura/research/lifecycle.py` | Final approval requires a human actor. |
+| Local voice and browser speech input | IMPLEMENTED, BROWSER-DEPENDENT | `aura/interface/voice_alerts.py`, `aura/interface/web_command_center_v2.py` | Always-on/offline wake-word and native STT remain pending. |
+| Jarvis-style command and authenticated-owner boundary | IMPLEMENTED | `aura/interface/command_center.py`, `aura/interface/web_command_center.py`, `aura/interface/web_command_center_v2.py` | Research/change requests require an owner token; paper/live controls remain unavailable from the PWA. |
+| Controlled repair/monitor/code-update AI | IMPLEMENTED, OWNER-GATED | `aura/maintenance/`, `aura/ai/ollama_structured.py`, `aura/ai/openai_responses.py`, `tests/test_maintenance_change_control.py` | Free local Ollama or optional OpenAI proposes and sandbox-validates; exact owner approval is required before a development worktree changes. No automatic merge/deploy. |
+| Audited P&L/trade reporting corrections | IMPLEMENTED, APPEND-ONLY | `aura/maintenance/financial_corrections.py`, `tests/test_financial_corrections.py` | Original fills, cash, positions and broker truth remain immutable; controlled-live corrections require evidence and reconciliation binding. |
+| Mobile PWA command-center UI | IMPLEMENTED, LOCAL-FIRST | `aura/interface/web_command_center_v2.py`, `aura/interface/runtime_bridge.py`, `examples/run_public_command_center.py` | Public governed runtime snapshots are wired; broader provider-backed portfolio coverage and native mobile clients remain partial. |
+| Telegram outbound delivery | IMPLEMENTED, UNVALIDATED DESTINATION | `aura/interface/alerts.py`, `examples/send_telegram_test_alert.py` | Requires an operator-owned bot token/chat ID and real destination delivery test. It cannot accept commands or execute orders. |
+| WhatsApp delivery | PENDING | Notification contracts and Telegram delivery exist. | A supported provider/API, credentials, verified recipient and delivery receipts are required. |
+| Dhan Indian-market paper runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/dhan_learning_daemon.py`, Dhan data modules | Requires user-owned Dhan credentials and subscription validation. |
+| MT5 forex/metals demo runtime | IMPLEMENTED, UNVALIDATED ACCOUNT | `aura/runtime/mt5_learning_daemon.py`, `aura/execution/mt5_demo_broker.py` | Requires Windows MT5 DEMO credentials and terminal validation. |
+| Angel One adapter | IMPLEMENTED, READ-ONLY/UNVALIDATED ACCOUNT | `aura/execution/angel_one.py`, `examples/check_angel_one_account.py` | Profile, quote, order/trade book, positions, routing and reconciliation are implemented. Submit/cancel stay locked pending static-IP and broker-origin validation. |
+| Unrestricted live-money readiness | EXTERNAL GATE | `aura/ops/release_gate.py`, `aura/ops/preflight.py` | Sequential phases, broker-origin evidence and explicit human approval are mandatory. |
+
+## Truthful conclusion
+
+The core AURA vision - governed multi-agent intelligence, a deterministic CEO,
+knowledge grounding, research/evolution, paper execution, learning, auditability
+and risk-first authority - is present. The largest remaining product gaps are a
+always-on/native voice, broader provider-backed portfolio coverage, WhatsApp/mobile-push delivery, controlled Angel One
+execution validation, and credential-backed long-duration broker validation. Those gaps do not justify
+removing the existing safety gates or claiming guaranteed trading accuracy.

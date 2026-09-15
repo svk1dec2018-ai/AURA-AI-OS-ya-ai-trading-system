@@ -17,20 +17,39 @@ class OverfillError(RuntimeError):
 _ALLOWED_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
     OrderStatus.CREATED: {OrderStatus.SUBMITTED, OrderStatus.CANCELLED, OrderStatus.REJECTED},
     OrderStatus.SUBMITTED: {
+        OrderStatus.ACKNOWLEDGED,
         OrderStatus.PARTIALLY_FILLED,
         OrderStatus.FILLED,
         OrderStatus.CANCELLED,
         OrderStatus.REJECTED,
     },
+    OrderStatus.ACKNOWLEDGED: {
+        OrderStatus.PARTIALLY_FILLED,
+        OrderStatus.FILLED,
+        OrderStatus.CANCELLED,
+        OrderStatus.REJECTED,
+        OrderStatus.EXPIRED,
+    },
     OrderStatus.PARTIALLY_FILLED: {
         OrderStatus.PARTIALLY_FILLED,
         OrderStatus.FILLED,
         OrderStatus.CANCELLED,
+        OrderStatus.EXPIRED,
     },
     OrderStatus.FILLED: set(),
     OrderStatus.CANCELLED: set(),
     OrderStatus.REJECTED: set(),
+    OrderStatus.EXPIRED: set(),
 }
+
+
+def allowed_order_transitions(status: OrderStatus) -> frozenset[OrderStatus]:
+    """Return the immutable transition contract for a lifecycle state."""
+    return frozenset(_ALLOWED_TRANSITIONS[status])
+
+
+def is_terminal_order_status(status: OrderStatus) -> bool:
+    return not _ALLOWED_TRANSITIONS[status]
 
 
 @dataclass(slots=True)
@@ -53,17 +72,27 @@ class OrderState:
     def submit(self) -> None:
         self.transition(OrderStatus.SUBMITTED)
 
+    def acknowledge(self) -> None:
+        self.transition(OrderStatus.ACKNOWLEDGED)
+
     def cancel(self) -> None:
         self.transition(OrderStatus.CANCELLED)
 
     def reject(self) -> None:
         self.transition(OrderStatus.REJECTED)
 
+    def expire(self) -> None:
+        self.transition(OrderStatus.EXPIRED)
+
     def apply_fill(self, fill: Fill) -> bool:
         """Apply a fill once. Returns False for an already-seen fill id."""
         if fill.fill_id in self.fill_ids:
             return False
-        if self.status not in {OrderStatus.SUBMITTED, OrderStatus.PARTIALLY_FILLED}:
+        if self.status not in {
+            OrderStatus.SUBMITTED,
+            OrderStatus.ACKNOWLEDGED,
+            OrderStatus.PARTIALLY_FILLED,
+        }:
             raise InvalidOrderTransition(f"cannot fill an order in {self.status}")
         if fill.order_id != self.request.order_id:
             raise ValueError("fill order_id does not match order")

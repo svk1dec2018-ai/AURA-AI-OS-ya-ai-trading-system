@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import pytest
+from pydantic import ValidationError
+
 from aura.research.robustness import (
     RobustnessThresholds,
     WalkForwardPlan,
+    WalkForwardSplit,
     bootstrap_monte_carlo,
     evaluate_robustness,
     summarize_walk_forward,
@@ -33,6 +37,57 @@ def test_expanding_walk_forward_keeps_past_and_never_uses_future() -> None:
     assert [split.train_start for split in splits] == [0, 0, 0]
     assert [split.train_end for split in splits] == [8, 10, 12]
     assert [split.test_start for split in splits] == [8, 10, 12]
+
+
+def test_purged_walk_forward_excludes_forward_label_boundary() -> None:
+    plan = WalkForwardPlan(
+        train_size=10,
+        test_size=4,
+        step_size=4,
+        purge_size=3,
+    )
+
+    splits = plan.splits(33)
+
+    assert plan.minimum_data_length == 17
+    assert len(splits) == 5
+    assert (splits[0].train_start, splits[0].train_end) == (0, 10)
+    assert (splits[0].test_start, splits[0].test_end) == (13, 17)
+    for split in splits:
+        assert split.train_size == 10
+        assert split.test_size == 4
+        assert split.purge_size == 3
+        assert split.train_end + plan.purge_size == split.test_start
+
+
+def test_expanding_walk_forward_preserves_purge_gap() -> None:
+    splits = WalkForwardPlan(
+        train_size=8,
+        test_size=2,
+        step_size=2,
+        expanding=True,
+        purge_size=2,
+    ).splits(16)
+
+    assert [split.train_start for split in splits] == [0, 0, 0]
+    assert [split.train_end for split in splits] == [8, 10, 12]
+    assert [split.test_start for split in splits] == [10, 12, 14]
+    assert all(split.purge_size == 2 for split in splits)
+
+
+def test_walk_forward_rejects_invalid_purge_and_split_chronology() -> None:
+    with pytest.raises(ValueError, match="purge_size cannot be negative"):
+        WalkForwardPlan(train_size=10, test_size=4, purge_size=-1)
+    with pytest.raises(ValueError, match="need at least 17, got 16"):
+        WalkForwardPlan(train_size=10, test_size=4, purge_size=3).splits(16)
+    with pytest.raises(ValidationError, match="train_start < train_end"):
+        WalkForwardSplit(
+            fold=0,
+            train_start=0,
+            train_end=10,
+            test_start=9,
+            test_end=13,
+        )
 
 
 def test_monte_carlo_is_deterministic_for_fixed_seed() -> None:

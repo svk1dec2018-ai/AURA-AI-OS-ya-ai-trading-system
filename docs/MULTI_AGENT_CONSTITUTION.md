@@ -128,6 +128,15 @@ But self-evolution follows this pipeline:
 
 An AI agent may generate or critique candidates, but it cannot replace a deployed strategy directly or perform final live approval.
 
+Code self-improvement follows a separate controlled path:
+
+`Health evidence -> AI diagnosis/diff -> immutable policy checks -> credential-free sandbox -> allowlisted tests -> exact owner approval -> development branch -> PR/CI/release governance`
+
+The AI cannot execute arbitrary model-supplied shell commands, modify its own authority guards,
+commit/push/merge/deploy automatically, or turn code approval into trading approval. P&L/trade
+corrections are append-only reporting events and never silent rewrites of broker fills or ledger
+history. Deposit, withdrawal and fund transfer are denied to AI, developer and owner roles alike.
+
 ## 10. Frequency and accuracy are outcomes, not hard-coded promises
 
 AURA should scan broadly and avoid an artificial bias toward never trading, but it must not force trades to satisfy a daily quota. Trade frequency must come from validated market opportunity, realistic execution and portfolio risk.

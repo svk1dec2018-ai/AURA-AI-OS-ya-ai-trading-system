@@ -1,0 +1,25 @@
+{
+  "decision": "PASS",
+  "deterministic_fingerprint": "892590e661f6f1de2b6792806e99cc25c1724a9386fe5ee5cb71bf1895baa47a",
+  "equity": "100000",
+  "fixture_type": "deterministic_internal_risk_fixture",
+  "live_money_enabled": false,
+  "market_data_claimed": false,
+  "phase": 3,
+  "results": [
+    {
+      "loss_amount": "9000",
+      "loss_pct_of_equity": "9.00",
+      "pnl": "-9000",
+      "scenario": "cross_asset_adverse"
+    },
+    {
+      "loss_amount": "6000",
+      "loss_pct_of_equity": "6.00",
+      "pnl": "-6000",
+      "scenario": "gold_gap"
+    }
+  ],
+  "schema_version": 1,
+  "worst_loss_pct": "9.00"
+}

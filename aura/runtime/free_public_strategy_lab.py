@@ -88,14 +88,19 @@ class FreePublicStrategyLabRuntime:
                 aspirational_win_rate=self.config.aspirational_win_rate,
                 min_resolved_for_confidence=self.config.min_resolved_for_confidence,
             ),
+            journal_path=self.config.state_dir / "live_shadow_journal.jsonl",
         )
+        self.population = self.lab.genomes
         self.aggregator = SessionCandleAggregator(timeframes=self.config.timeframes)
         self.feed = feed or self._build_feed()
         self.counters = FreePublicStrategyLabCounters(
-            strategies_created=len(self.population),
+            closed_candles=self.lab.processed_candles,
+            generated_plans=self.lab.total_plans,
+            population_refreshes=self.lab.population_refreshes,
+            strategies_created=self.lab.total_strategies_seen,
         )
-        self.population_generation = 0
-        self._resolved_at_last_refresh = 0
+        self.population_generation = self.lab.population_refreshes
+        self._resolved_at_last_refresh = self.lab.resolved_at_last_population_refresh
         self.status_path = self.config.state_dir / "status.json"
         self.top_genomes_path = self.config.state_dir / "top_research_seeds.json"
 
@@ -224,6 +229,7 @@ class FreePublicStrategyLabRuntime:
             "resolved_plans": self.lab.total_resolved,
             "pending_plans": self.lab.pending_plans,
             "discarded_pending_on_refresh": self.lab.discarded_pending_on_refresh,
+            "journal_recovered_events": self.lab.recovered_events,
             "broker_credentials_required": False,
             "real_money_enabled": False,
             "paper_orders_enabled": False,

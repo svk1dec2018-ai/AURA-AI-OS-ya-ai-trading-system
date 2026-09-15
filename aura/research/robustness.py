@@ -5,7 +5,7 @@ import random
 from dataclasses import dataclass
 from statistics import fmean
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class WalkForwardSplit(BaseModel):
@@ -17,6 +17,15 @@ class WalkForwardSplit(BaseModel):
     test_start: int = Field(ge=0)
     test_end: int = Field(gt=0)
 
+    @model_validator(mode="after")
+    def validate_chronology(self) -> WalkForwardSplit:
+        if not self.train_start < self.train_end <= self.test_start < self.test_end:
+            raise ValueError(
+                "walk-forward indexes must satisfy "
+                "train_start < train_end <= test_start < test_end"
+            )
+        return self
+
     @property
     def train_size(self) -> int:
         return self.train_end - self.train_start
@@ -25,6 +34,12 @@ class WalkForwardSplit(BaseModel):
     def test_size(self) -> int:
         return self.test_end - self.test_start
 
+    @property
+    def purge_size(self) -> int:
+        """Observations intentionally omitted between training and testing."""
+
+        return self.test_start - self.train_end
+
 
 @dataclass(slots=True, frozen=True)
 class WalkForwardPlan:
@@ -32,23 +47,33 @@ class WalkForwardPlan:
     test_size: int
     step_size: int | None = None
     expanding: bool = False
+    purge_size: int = 0
 
     def __post_init__(self) -> None:
         if self.train_size <= 0 or self.test_size <= 0:
             raise ValueError("walk-forward train/test sizes must be positive")
         if self.step_size is not None and self.step_size <= 0:
             raise ValueError("walk-forward step_size must be positive")
+        if self.purge_size < 0:
+            raise ValueError("walk-forward purge_size cannot be negative")
+
+    @property
+    def minimum_data_length(self) -> int:
+        return self.train_size + self.purge_size + self.test_size
 
     def splits(self, data_length: int) -> tuple[WalkForwardSplit, ...]:
-        if data_length < self.train_size + self.test_size:
-            raise ValueError("not enough observations for one walk-forward fold")
+        if data_length < self.minimum_data_length:
+            raise ValueError(
+                "not enough observations for one walk-forward fold: "
+                f"need at least {self.minimum_data_length}, got {data_length}"
+            )
         step = self.step_size or self.test_size
         result: list[WalkForwardSplit] = []
-        anchor = self.train_size
+        anchor = self.train_size + self.purge_size
         fold = 0
         while anchor + self.test_size <= data_length:
-            train_start = 0 if self.expanding else anchor - self.train_size
-            train_end = anchor
+            train_end = anchor - self.purge_size
+            train_start = 0 if self.expanding else train_end - self.train_size
             test_start = anchor
             test_end = anchor + self.test_size
             result.append(

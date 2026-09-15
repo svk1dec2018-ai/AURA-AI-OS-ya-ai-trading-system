@@ -88,6 +88,7 @@ async def test_ollama_provider_uses_structured_output_and_discards_raw_thinking(
     assert captured["payload"]["think"] == "high"
     assert isinstance(captured["payload"]["format"], dict)
     assert captured["payload"]["stream"] is False
+    assert captured["payload"]["keep_alive"] == 0
 
 
 @pytest.mark.asyncio
@@ -130,6 +131,7 @@ async def test_ollama_provider_retries_http_400_in_compatible_json_mode() -> Non
     assert isinstance(payloads[0]["format"], dict)
     assert "think" not in payloads[1]
     assert payloads[1]["format"] == "json"
+    assert payloads[1]["keep_alive"] == 0
     assert analysis.features["ollama_compatibility_mode"] is True
 
 
@@ -207,8 +209,25 @@ def test_env_ollama_providers_share_safe_local_defaults(monkeypatch) -> None:
 
     assert len(providers) == 2
     assert all(item.think is False for item in providers)
+    assert all(item.keep_alive == 0 for item in providers)
     assert all(item.timeout_seconds == 120.0 for item in providers)
     assert providers[0].request_limiter is providers[1].request_limiter
+
+
+def test_balanced_five_preset_builds_five_serialized_local_providers(monkeypatch) -> None:
+    monkeypatch.setenv("AURA_FREE_AI_PRESET", "balanced5")
+    monkeypatch.delenv("AURA_OLLAMA_MODELS", raising=False)
+    providers = build_ollama_providers_from_env()
+
+    assert tuple(item.model_id for item in providers) == (
+        "qwen3.5:4b",
+        "deepseek-r1:8b",
+        "llama3.1:8b",
+        "gemma3:4b",
+        "phi4-mini:3.8b",
+    )
+    assert len({id(item.request_limiter) for item in providers}) == 1
+    assert all(item.keep_alive == 0 for item in providers)
 
 
 def _valid_ollama_response() -> dict:

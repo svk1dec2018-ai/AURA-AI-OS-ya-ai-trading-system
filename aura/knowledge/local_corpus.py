@@ -8,6 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from aura.knowledge.firewall import KnowledgeItem, KnowledgeSourceType
+from aura.knowledge.retrieval import rank_knowledge_items
 
 
 class LocalKnowledgeError(RuntimeError):
@@ -147,37 +148,12 @@ class LocalKnowledgeIndex:
             raise ValueError("knowledge search as_of must be timezone-aware")
         if limit <= 0:
             raise ValueError("knowledge search limit must be positive")
-        query_tokens = _tokens(query)
-        if not query_tokens:
-            return ()
-        scored: list[tuple[float, KnowledgeItem]] = []
-        for item in self.items:
-            if item.publication_date > as_of or item.observed_at > as_of:
-                continue
-            title_tokens = _tokens(item.title)
-            content_tokens = _tokens(item.content)
-            tag_tokens = _tokens(" ".join(item.tags))
-            score = (
-                3.0 * len(query_tokens & title_tokens)
-                + 1.0 * len(query_tokens & content_tokens)
-                + 2.0 * len(query_tokens & tag_tokens)
-            )
-            if score <= 0:
-                continue
-            score *= item.trust_score * item.confidence
-            scored.append((score, item))
-        scored.sort(
-            key=lambda pair: (
-                -pair[0],
-                -pair[1].publication_date.timestamp(),
-                pair[1].item_id,
-            )
+        eligible = tuple(
+            item
+            for item in self.items
+            if item.publication_date <= as_of and item.observed_at <= as_of
         )
-        return tuple(item for _, item in scored[:limit])
-
-
-def _tokens(value: str) -> set[str]:
-    return set(re.findall(r"[a-z0-9][a-z0-9_-]+", value.lower()))
+        return rank_knowledge_items(eligible, query, limit=limit)
 
 
 def _chunks(text: str, *, chunk_chars: int, overlap_chars: int) -> tuple[str, ...]:

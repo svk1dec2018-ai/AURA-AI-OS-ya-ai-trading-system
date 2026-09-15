@@ -1,0 +1,58 @@
+{
+  "allowed_transition_matrix": {
+    "ACKNOWLEDGED": [
+      "CANCELLED",
+      "EXPIRED",
+      "FILLED",
+      "PARTIALLY_FILLED",
+      "REJECTED"
+    ],
+    "CANCELLED": [],
+    "CREATED": [
+      "CANCELLED",
+      "REJECTED",
+      "SUBMITTED"
+    ],
+    "EXPIRED": [],
+    "FILLED": [],
+    "PARTIALLY_FILLED": [
+      "CANCELLED",
+      "EXPIRED",
+      "FILLED",
+      "PARTIALLY_FILLED"
+    ],
+    "REJECTED": [],
+    "SUBMITTED": [
+      "ACKNOWLEDGED",
+      "CANCELLED",
+      "FILLED",
+      "PARTIALLY_FILLED",
+      "REJECTED"
+    ]
+  },
+  "complete_fill_lifecycle": [
+    "CREATED",
+    "SUBMITTED",
+    "ACKNOWLEDGED",
+    "PARTIALLY_FILLED",
+    "FILLED"
+  ],
+  "decision": "PASS",
+  "deterministic_fingerprint": "21633d9cd6f859391ee453650c54a79d2011c72523022d0e187c027644acaf9b",
+  "expiry_lifecycle": [
+    "CREATED",
+    "SUBMITTED",
+    "ACKNOWLEDGED",
+    "EXPIRED"
+  ],
+  "illegal_terminal_transition_rejected": true,
+  "live_money_enabled": false,
+  "phase": 2,
+  "schema_version": 1,
+  "terminal_states": [
+    "CANCELLED",
+    "EXPIRED",
+    "FILLED",
+    "REJECTED"
+  ]
+}

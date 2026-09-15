@@ -106,6 +106,18 @@ This command:
 
 Historical research alone cannot become a paper champion. The evaluator returns no paper evidence until actual paper/demo trade outcomes are attached through `PaperGenomePerformanceTracker`.
 
+For a restart-safe paper validation run, construct that tracker with a dedicated
+`journal_path` inside the run state directory. The resulting checksummed JSONL WAL
+binds the configured starting equity and fsyncs each measured closed trade or
+incident before updating in-memory metrics. Stable trade and incident IDs make
+retries idempotent; collisions, sequence gaps, checksum failures and equity changes
+fail closed.
+
+Reconciliation and operational incidents are propagated by the tracker into
+`CandidateEvaluation`. They therefore remain active inputs to the existing fitness
+and paper-promotion firewall instead of being silently reduced to performance-only
+metrics.
+
 ## 6. What the evolution files mean
 
 `runtime/evolution/mt5_demo/evolution.jsonl`
@@ -116,6 +128,12 @@ Historical research alone cannot become a paper champion. The evaluator returns 
 - fitness scores
 - OOS trade counts
 - paper promotion events when they eventually exist
+
+`runtime/evolution/mt5_demo/paper_evidence.jsonl` (when configured)
+
+- measured closed paper trades keyed by immutable genome hash and trade ID
+- reconciliation and operational incidents with stable incident IDs
+- version, sequence and checksum validation for deterministic restart replay
 
 `runtime/evolution/mt5_demo/paper_champion.json`
 

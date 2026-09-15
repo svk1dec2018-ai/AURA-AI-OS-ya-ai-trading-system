@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 
 from aura.agents.advisory_specialists import ExecutionQualitySpecialist
-from aura.agents.ai_council import build_ollama_ai_council_from_env
+from aura.agents.ai_council import build_env_ai_council_from_env
 from aura.agents.base import SpecialistAgent
 from aura.agents.external_specialists import (
     CrossMarketSpecialist,
@@ -14,6 +14,7 @@ from aura.agents.external_specialists import (
 )
 from aura.agents.forecast_specialist import ForecastEnsembleSpecialist
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
+from aura.agents.registry import AgentRegistry
 from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.risk_policy import AgentRiskPolicy
 from aura.agents.specialists import (
@@ -28,6 +29,7 @@ from aura.knowledge.firewall import KnowledgeFirewall
 @dataclass(slots=True, frozen=True)
 class AuraAgentTeam:
     agents: tuple[SpecialistAgent, ...]
+    registry: AgentRegistry
     orchestrator: MultiAgentOrchestrator
     ceo: CEOAggregator
     risk_policy: AgentRiskPolicy
@@ -44,12 +46,12 @@ def build_default_agent_team(
     include_env_ai: bool = True,
     reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> AuraAgentTeam:
-    """Build AURA's deterministic desk plus an optional local multi-AI council.
+    """Build AURA's deterministic desk plus an optional provider AI council.
 
-    When `AURA_OLLAMA_MODELS` is configured, provider-backed AI specialists are
-    added automatically. The same learned reliability state drives both adaptive
-    model routing and bounded CEO vote weighting, while execution authority stays
-    in the downstream governed risk/execution path.
+    `AURA_OLLAMA_MODELS` adds local models and `AURA_OPENAI_MODELS` adds optional
+    OpenAI Responses API models. The same learned reliability state drives both
+    adaptive routing and bounded CEO vote weighting, while execution authority
+    stays in the downstream governed risk/execution path.
     """
 
     execution_agent = execution_quality_specialist or ExecutionQualitySpecialist()
@@ -66,7 +68,7 @@ def build_default_agent_team(
         execution_agent,
     )
     env_ai_agents = (
-        build_ollama_ai_council_from_env(reliability_tracker=reliability_tracker)
+        build_env_ai_council_from_env(reliability_tracker=reliability_tracker)
         if include_env_ai
         else ()
     )
@@ -89,6 +91,7 @@ def build_default_agent_team(
     )
     return AuraAgentTeam(
         agents=agents,
+        registry=orchestrator.registry,
         orchestrator=orchestrator,
         ceo=ceo,
         risk_policy=risk_policy or AgentRiskPolicy(),

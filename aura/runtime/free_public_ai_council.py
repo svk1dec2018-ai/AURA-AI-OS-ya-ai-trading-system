@@ -12,7 +12,7 @@ from typing import Any
 from aura.agents.models import AgentContext
 from aura.agents.reliability import AgentReliabilityTracker
 from aura.agents.team import build_default_agent_team
-from aura.data.candle_aggregation import SessionCandleAggregator
+from aura.data.candle_aggregation import SessionCandleAggregator, fixed_timeframe_duration
 from aura.data.intelligence_service import LiveIntelligenceService
 from aura.data.public_crypto_feeds import BybitPublicTradeFeed, CoinbasePublicTradeFeed
 from aura.data.public_history import (
@@ -21,6 +21,7 @@ from aura.data.public_history import (
     HistoricalCandleArchive,
     PublicHistoryClient,
 )
+from aura.data.quality import CandleQualityGate, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.evolution.brain_online import BrainReplayStore
 from aura.evolution.brain_replay import SampleOrigin
@@ -152,6 +153,7 @@ class FreePublicAICouncilRuntime:
             self.online_learner,
             market=f"{self.config.provider}_public",
         )
+        self.online_bridge.replay_records(self.opportunity_store.read_all())
         self.knowledge_load_error: str | None = None
         self.knowledge_ingest_errors: list[str] = []
         self.knowledge_index = LocalKnowledgeIndex()
@@ -184,9 +186,17 @@ class FreePublicAICouncilRuntime:
             )
         self.team = team
         self.ai_agent_count = len(ai_agents)
+        decision_interval = fixed_timeframe_duration(self.config.decision_timeframe)
         self.scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
+            data_quality_gate=CandleQualityGate(
+                DataQualityPolicy(
+                    expected_interval=decision_interval,
+                    max_staleness=decision_interval
+                    * max(3, self.config.analyze_every_bars * 2),
+                )
+            ),
             agent_risk_policy=team.risk_policy,
             max_concurrent_contexts=self.config.max_inflight_ai_decisions,
         )
@@ -344,6 +354,12 @@ class FreePublicAICouncilRuntime:
             "agent_reliability_observations": self.reliability_tracker.observation_count,
             "pending_shadow_outcomes": self.recorder.pending_count,
             "pending_opportunity_audits": self.opportunity_auditor.pending_count,
+            "recovered_pending_opportunity_audits": (
+                self.opportunity_auditor.recovered_pending_count
+            ),
+            "opportunity_pending_checkpoint": str(
+                self.opportunity_auditor.pending_checkpoint_path
+            ),
             "context_services": {
                 "historical": {
                     "enabled": self.config.enable_public_history,

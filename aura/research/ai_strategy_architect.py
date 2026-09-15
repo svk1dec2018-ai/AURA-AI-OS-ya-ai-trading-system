@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from aura.ai.free_models import configured_ollama_model_ids, parse_ollama_keep_alive
 from aura.research.autonomy import ResearchHypothesis
 from aura.research.lifecycle import StrategyStage, StrategyVersion
 from aura.research.strategy_factory import (
@@ -66,6 +67,7 @@ class OllamaStrategyCandidateGenerator:
         base_url: str = "http://127.0.0.1:11434",
         timeout_seconds: float = 45.0,
         think: bool | str = True,
+        keep_alive: str | int = 0,
         transport: JsonTransport | None = None,
     ) -> None:
         models = tuple(dict.fromkeys(item.strip() for item in model_ids if item.strip()))
@@ -78,6 +80,7 @@ class OllamaStrategyCandidateGenerator:
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.think = think
+        self.keep_alive = parse_ollama_keep_alive(keep_alive)
         self.transport = transport or _default_json_transport
         self._proposals: dict[str, StrategyArchitectureProposal] = {}
         self._proposal_models: dict[str, str] = {}
@@ -175,6 +178,7 @@ class OllamaStrategyCandidateGenerator:
             "think": self.think,
             "format": schema,
             "options": {"temperature": 0.35},
+            "keep_alive": self.keep_alive,
         }
         response = await self.transport(
             f"{self.base_url}/api/chat",
@@ -197,8 +201,10 @@ def build_ollama_strategy_candidate_generator_from_env(
     *,
     factory: AutonomousStrategyFactory | None = None,
 ) -> OllamaStrategyCandidateGenerator | None:
-    raw = os.getenv("AURA_STRATEGY_ARCHITECT_MODELS") or os.getenv("AURA_OLLAMA_MODELS", "")
+    raw = os.getenv("AURA_STRATEGY_ARCHITECT_MODELS", "")
     models = tuple(dict.fromkeys(item.strip() for item in raw.split(",") if item.strip()))
+    if not models:
+        models = configured_ollama_model_ids()
     if not models:
         return None
     return OllamaStrategyCandidateGenerator(
@@ -207,6 +213,7 @@ def build_ollama_strategy_candidate_generator_from_env(
         base_url=os.getenv("AURA_OLLAMA_URL", "http://127.0.0.1:11434"),
         timeout_seconds=float(os.getenv("AURA_OLLAMA_TIMEOUT_SECONDS", "45")),
         think=_parse_think(os.getenv("AURA_OLLAMA_THINK", "true")),
+        keep_alive=parse_ollama_keep_alive(os.getenv("AURA_OLLAMA_KEEP_ALIVE", "0")),
     )
 
 

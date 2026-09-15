@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 from datetime import datetime
 from typing import Any
 
@@ -13,7 +14,7 @@ class DatasetArtifact(BaseModel):
 
     dataset_id: str = Field(min_length=1)
     source: str = Field(min_length=1)
-    content_hash: str = Field(min_length=64, max_length=64)
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     symbols: tuple[str, ...]
     timeframes: tuple[str, ...]
     start_at: datetime
@@ -26,6 +27,15 @@ class DatasetArtifact(BaseModel):
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("dataset timestamps must be timezone-aware")
         return value
+
+    @field_validator("symbols", "timeframes")
+    @classmethod
+    def dimensions_must_be_unique_and_normalized(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if not value or any(not item.strip() or item != item.strip() for item in value):
+            raise ValueError("dataset dimensions must contain non-empty normalized values")
+        if len(set(value)) != len(value):
+            raise ValueError("dataset dimensions must not contain duplicates")
+        return tuple(sorted(value))
 
     @model_validator(mode="after")
     def validate_dataset(self) -> DatasetArtifact:
@@ -44,13 +54,13 @@ class ExperimentManifest(BaseModel):
     experiment_id: str = Field(min_length=1)
     strategy_id: str = Field(min_length=1)
     strategy_version: str = Field(min_length=1)
-    strategy_content_hash: str = Field(min_length=64, max_length=64)
+    strategy_content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     datasets: tuple[DatasetArtifact, ...]
     configuration: dict[str, Any]
     execution_assumptions: dict[str, Any]
     code_revision: str = Field(min_length=1)
     created_at: datetime
-    manifest_hash: str = Field(min_length=64, max_length=64)
+    manifest_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
 
     @field_validator("created_at")
     @classmethod
@@ -58,6 +68,21 @@ class ExperimentManifest(BaseModel):
         if value.tzinfo is None or value.utcoffset() is None:
             raise ValueError("experiment created_at must be timezone-aware")
         return value
+
+    @field_validator("configuration", "execution_assumptions")
+    @classmethod
+    def mappings_must_be_canonical_json(cls, value: dict[str, Any]) -> dict[str, Any]:
+        _validate_json_value(value)
+        return value
+
+    @model_validator(mode="after")
+    def datasets_must_be_unique(self) -> ExperimentManifest:
+        dataset_ids = [dataset.dataset_id for dataset in self.datasets]
+        if not dataset_ids:
+            raise ValueError("experiment requires at least one dataset")
+        if len(set(dataset_ids)) != len(dataset_ids):
+            raise ValueError("experiment dataset IDs must be unique")
+        return self
 
     @classmethod
     def build(
@@ -75,12 +100,14 @@ class ExperimentManifest(BaseModel):
     ) -> ExperimentManifest:
         if not datasets:
             raise ValueError("experiment requires at least one dataset")
+        _validate_json_value(configuration)
+        _validate_json_value(execution_assumptions)
         payload = _payload(
             experiment_id=experiment_id,
             strategy_id=strategy_id,
             strategy_version=strategy_version,
             strategy_content_hash=strategy_content_hash,
-            datasets=datasets,
+            datasets=tuple(sorted(datasets, key=lambda dataset: dataset.dataset_id)),
             configuration=configuration,
             execution_assumptions=execution_assumptions,
             code_revision=code_revision,
@@ -91,7 +118,7 @@ class ExperimentManifest(BaseModel):
             strategy_id=strategy_id,
             strategy_version=strategy_version,
             strategy_content_hash=strategy_content_hash,
-            datasets=datasets,
+            datasets=tuple(sorted(datasets, key=lambda dataset: dataset.dataset_id)),
             configuration=dict(configuration),
             execution_assumptions=dict(execution_assumptions),
             code_revision=code_revision,
@@ -119,9 +146,15 @@ class ResearchArtifact(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     artifact_type: str = Field(min_length=1)
-    content_hash: str = Field(min_length=64, max_length=64)
-    experiment_manifest_hash: str = Field(min_length=64, max_length=64)
+    content_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
+    experiment_manifest_hash: str = Field(pattern=r"^[0-9a-f]{64}$")
     metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("metadata")
+    @classmethod
+    def metadata_must_be_canonical_json(cls, value: dict[str, Any]) -> dict[str, Any]:
+        _validate_json_value(value)
+        return value
 
     def belongs_to(self, manifest: ExperimentManifest) -> bool:
         return manifest.verify() and self.experiment_manifest_hash == manifest.manifest_hash
@@ -153,5 +186,30 @@ def _payload(
 
 
 def _hash(payload: dict[str, Any]) -> str:
-    canonical = json.dumps(payload, separators=(",", ":"), sort_keys=True, default=str).encode("utf-8")
+    canonical = json.dumps(
+        payload,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
     return hashlib.sha256(canonical).hexdigest()
+
+
+def _validate_json_value(value: Any, *, path: str = "$") -> None:
+    if value is None or isinstance(value, (str, bool, int)):
+        return
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError(f"{path} must not contain NaN or Infinity")
+        return
+    if isinstance(value, list):
+        for index, item in enumerate(value):
+            _validate_json_value(item, path=f"{path}[{index}]")
+        return
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if not isinstance(key, str):
+                raise TypeError(f"{path} must use string object keys")
+            _validate_json_value(item, path=f"{path}.{key}")
+        return
+    raise TypeError(f"{path} contains non-JSON value of type {type(value).__name__}")

@@ -42,6 +42,7 @@ def test_clean_series_is_safe() -> None:
     )
     assert report.safe_for_decision
     assert report.issues == ()
+    assert report.latest_data_lag_ms == 30000
 
 
 def test_duplicate_and_out_of_order_bars_are_blocked() -> None:

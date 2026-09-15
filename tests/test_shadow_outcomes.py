@@ -3,6 +3,8 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from aura.agents.deliberation import DeliberationCase, DeliberationMemo
 from aura.agents.models import (
     AgentContext,
@@ -253,3 +255,154 @@ def test_skipped_ceo_trade_still_teaches_directional_agent_reliability(
     assert store.read_all() == ()
     assert tracker.observation_count == 2
     assert recorder.pending_agent_outcome_count == 0
+
+
+def test_shadow_and_agent_horizons_resume_after_restart_without_double_counting(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 17, 13, 0, tzinfo=UTC)
+    replay_path = tmp_path / "restart_replay.jsonl"
+    reliability_path = tmp_path / "restart_reliability.jsonl"
+    policy = ShadowOutcomePolicy(horizon_bars=2, fallback_round_trip_cost_bps=2.0)
+    recorder = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(replay_path),
+        policy=policy,
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=AgentReliabilityTracker(reliability_path),
+    )
+    assert recorder.register_scan(MarketScanResult(candidates=(_candidate(now),))) == 1
+    first_bar = _candle(now + timedelta(minutes=1), "2010")
+    assert recorder.on_closed_candles((first_bar,)) == ()
+
+    restored_tracker = AgentReliabilityTracker(reliability_path)
+    restored = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(replay_path),
+        policy=policy,
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=restored_tracker,
+    )
+    assert restored.recovered_pending_count == 1
+    assert restored.recovered_agent_outcome_count == 1
+    assert restored.on_closed_candles((first_bar,)) == ()
+    assert restored.pending_count == 1
+    assert restored.pending_agent_outcome_count == 1
+
+    resolved = restored.on_closed_candles(
+        (_candle(now + timedelta(minutes=2), "2020"),)
+    )
+    assert len(resolved) == 1
+    assert restored_tracker.observation_count == 2
+    assert restored.pending_count == 0
+    assert restored.pending_agent_outcome_count == 0
+
+    final_tracker = AgentReliabilityTracker(reliability_path)
+    final = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(replay_path),
+        policy=policy,
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=final_tracker,
+    )
+    assert final.recovered_pending_count == 0
+    assert final.recovered_agent_outcome_count == 0
+    assert len(final.store.read_all()) == 1
+    assert final_tracker.observation_count == 2
+
+
+def test_ready_resolution_recovers_exactly_after_output_write_failure(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    now = datetime(2026, 8, 17, 14, 0, tzinfo=UTC)
+    replay_path = tmp_path / "crash_replay.jsonl"
+    reliability_path = tmp_path / "crash_reliability.jsonl"
+    policy = ShadowOutcomePolicy(horizon_bars=1, fallback_round_trip_cost_bps=2.0)
+    store = BrainReplayStore(replay_path)
+    tracker = AgentReliabilityTracker(reliability_path)
+    recorder = ShadowDecisionOutcomeRecorder(
+        store,
+        policy=policy,
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=tracker,
+    )
+    recorder.register_scan(MarketScanResult(candidates=(_candidate(now),)))
+
+    def fail_append(_sample):
+        raise RuntimeError("simulated replay append failure")
+
+    monkeypatch.setattr(store, "append", fail_append)
+    with pytest.raises(RuntimeError, match="simulated replay append failure"):
+        recorder.on_closed_candles(
+            (_candle(now + timedelta(minutes=1), "2020"),)
+        )
+    assert tracker.observation_count == 2
+
+    restored_tracker = AgentReliabilityTracker(reliability_path)
+    restored = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(replay_path),
+        policy=policy,
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=restored_tracker,
+    )
+    samples = restored.store.read_all()
+    assert restored.recovered_pending_count == 1
+    assert restored.recovered_agent_outcome_count == 1
+    assert len(samples) == 1
+    assert samples[0].net_return_pct > 0
+    assert restored_tracker.observation_count == 2
+    assert restored.pending_count == 0
+    assert restored.pending_agent_outcome_count == 0
+
+
+def test_checkpoint_failure_must_recover_before_resolution_outputs(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    now = datetime(2026, 8, 17, 14, 30, tzinfo=UTC)
+    store = BrainReplayStore(tmp_path / "checkpoint_failure_replay.jsonl")
+    tracker = AgentReliabilityTracker(tmp_path / "checkpoint_failure_reliability.jsonl")
+    recorder = ShadowDecisionOutcomeRecorder(
+        store,
+        policy=ShadowOutcomePolicy(horizon_bars=1),
+        origin=SampleOrigin.LIVE_PUBLIC,
+        reliability_tracker=tracker,
+    )
+    recorder.register_scan(MarketScanResult(candidates=(_candidate(now),)))
+    original_write = recorder._write_pending_checkpoint
+    attempts = 0
+
+    def fail_once() -> None:
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise OSError("simulated checkpoint failure")
+        original_write()
+
+    monkeypatch.setattr(recorder, "_write_pending_checkpoint", fail_once)
+    resolution_bar = _candle(now + timedelta(minutes=1), "2020")
+    with pytest.raises(OSError, match="simulated checkpoint failure"):
+        recorder.on_closed_candles((resolution_bar,))
+    assert store.read_all() == ()
+    assert tracker.observation_count == 0
+
+    resolved = recorder.on_closed_candles((resolution_bar,))
+    assert len(resolved) == 1
+    assert tracker.observation_count == 2
+    assert attempts == 3
+
+
+def test_pending_shadow_checkpoint_rejects_configuration_change(
+    tmp_path: Path,
+) -> None:
+    now = datetime(2026, 8, 17, 15, 0, tzinfo=UTC)
+    path = tmp_path / "configuration_replay.jsonl"
+    recorder = ShadowDecisionOutcomeRecorder(
+        BrainReplayStore(path),
+        policy=ShadowOutcomePolicy(horizon_bars=2),
+    )
+    recorder.register_scan(MarketScanResult(candidates=(_candidate(now),)))
+
+    with pytest.raises(RuntimeError, match="configuration changed"):
+        ShadowDecisionOutcomeRecorder(
+            BrainReplayStore(path),
+            policy=ShadowOutcomePolicy(horizon_bars=3),
+        )

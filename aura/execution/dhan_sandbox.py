@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 from aura.domain.models import Fill, OrderRequest, OrderType, Side, TimeInForce
-from aura.execution.broker import BrokerAdapter
+from aura.execution.broker import BrokerAdapter, BrokerCapabilities, BrokerExecutionMode
 from aura.execution.demo_guard import DemoExecutionGuard
 
 
@@ -76,6 +76,13 @@ class UrllibJsonTransport:
 
 class DhanSandboxBroker(BrokerAdapter):
     name = "DHAN_SANDBOX"
+    capabilities = BrokerCapabilities(
+        mode=BrokerExecutionMode.SANDBOX,
+        supports_order_submission=True,
+        supports_order_cancellation=True,
+        supports_fill_stream=True,
+        supports_reconciliation=False,
+    )
     base_url = "https://sandbox.dhan.co/v2"
 
     def __init__(

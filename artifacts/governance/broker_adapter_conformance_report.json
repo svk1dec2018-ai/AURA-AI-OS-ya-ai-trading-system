@@ -1,0 +1,77 @@
+{
+  "adapters": [
+    {
+      "adapter": "aura.execution.paper.PaperBroker",
+      "conformance_errors": [],
+      "decision": "PASS",
+      "live_money_enabled": false,
+      "mode": "PAPER",
+      "name": "AURA_PAPER",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": true,
+      "supports_order_submission": true,
+      "supports_reconciliation": true
+    },
+    {
+      "adapter": "aura.execution.angel_one.AngelOneReadOnlyBroker",
+      "conformance_errors": [],
+      "decision": "PASS",
+      "live_money_enabled": false,
+      "mode": "READ_ONLY",
+      "name": "ANGEL_ONE_SMARTAPI_READ_ONLY",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": false,
+      "supports_order_submission": false,
+      "supports_reconciliation": true
+    },
+    {
+      "adapter": "aura.execution.mt5_demo_broker.MT5DemoBroker",
+      "conformance_errors": [],
+      "decision": "PASS",
+      "live_money_enabled": false,
+      "mode": "DEMO",
+      "name": "MT5_DEMO",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": true,
+      "supports_order_submission": true,
+      "supports_reconciliation": true
+    },
+    {
+      "adapter": "aura.execution.dhan_sandbox.DhanSandboxBroker",
+      "conformance_errors": [],
+      "decision": "PASS",
+      "live_money_enabled": false,
+      "mode": "SANDBOX",
+      "name": "DHAN_SANDBOX",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": true,
+      "supports_order_submission": true,
+      "supports_reconciliation": false
+    }
+  ],
+  "credential_backed_validation_claimed": false,
+  "decision": "PASS",
+  "deterministic_fingerprint": "349da68b40858b1807cf0cef31dcc1c03134f0339c43046209473301e39589dd",
+  "external_order_execution_claimed": false,
+  "live_money_enabled": false,
+  "mock_broker_contract_probe": {
+    "broker_order_id_shape": "probe:<client_order_id>",
+    "external_service_used": false,
+    "normalized_order_accepted": true,
+    "passed": true
+  },
+  "phase": 4,
+  "reconciliation_contract": {
+    "snapshot_methods": [
+      "open_order_snapshots",
+      "position_snapshots"
+    ],
+    "unsupported_adapters_fail_closed_by_capability": true
+  },
+  "schema_version": 1,
+  "strategy_isolation": {
+    "broker_specific_logic_detected": false,
+    "forbidden_imports": [],
+    "strategy_modules_scanned": 3
+  }
+}

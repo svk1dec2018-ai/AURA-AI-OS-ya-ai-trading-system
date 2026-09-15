@@ -1,0 +1,192 @@
+{
+  "authority_boundary": {
+    "validator_can_bypass_risk": false,
+    "validator_can_connect_to_broker": false,
+    "validator_can_enable_live_money": false,
+    "validator_can_submit_orders": false
+  },
+  "blocked_assessments": {
+    "internal_fixture": {
+      "adapters": [
+        {
+          "adapter_name": "ANGEL_ONE_SMARTAPI",
+          "controlled_live_mode": true,
+          "eligible": false,
+          "environment_verified": true,
+          "filled_execution_verified": true,
+          "present": true,
+          "reasons": [
+            "evidence source is not an authorized external broker export"
+          ],
+          "stable_reconciliation_verified": true,
+          "trusted_external_source": false
+        },
+        {
+          "adapter_name": "MT5",
+          "controlled_live_mode": true,
+          "eligible": false,
+          "environment_verified": true,
+          "filled_execution_verified": true,
+          "present": true,
+          "reasons": [
+            "evidence source is not an authorized external broker export"
+          ],
+          "stable_reconciliation_verified": true,
+          "trusted_external_source": false
+        }
+      ],
+      "execution_authority": false,
+      "gate_decision": "BLOCKED",
+      "phase": 11,
+      "phase11_eligible": false,
+      "reasons": [
+        "ANGEL_ONE_SMARTAPI: evidence source is not an authorized external broker export",
+        "MT5: evidence source is not an authorized external broker export"
+      ]
+    },
+    "no_evidence": {
+      "adapters": [
+        {
+          "adapter_name": "ANGEL_ONE_SMARTAPI",
+          "controlled_live_mode": false,
+          "eligible": false,
+          "environment_verified": false,
+          "filled_execution_verified": false,
+          "present": false,
+          "reasons": [
+            "evidence bundle is missing",
+            "evidence source is not an authorized external broker export",
+            "controlled-live broker mode is not externally verified",
+            "broker environment identity is not verified",
+            "no complete normalized broker fill is verified",
+            "insufficient consecutive clean reconciliation evidence"
+          ],
+          "stable_reconciliation_verified": false,
+          "trusted_external_source": false
+        },
+        {
+          "adapter_name": "MT5",
+          "controlled_live_mode": false,
+          "eligible": false,
+          "environment_verified": false,
+          "filled_execution_verified": false,
+          "present": false,
+          "reasons": [
+            "evidence bundle is missing",
+            "evidence source is not an authorized external broker export",
+            "controlled-live broker mode is not externally verified",
+            "broker environment identity is not verified",
+            "no complete normalized broker fill is verified",
+            "insufficient consecutive clean reconciliation evidence"
+          ],
+          "stable_reconciliation_verified": false,
+          "trusted_external_source": false
+        }
+      ],
+      "execution_authority": false,
+      "gate_decision": "BLOCKED",
+      "phase": 11,
+      "phase11_eligible": false,
+      "reasons": [
+        "ANGEL_ONE_SMARTAPI: evidence bundle is missing",
+        "ANGEL_ONE_SMARTAPI: evidence source is not an authorized external broker export",
+        "ANGEL_ONE_SMARTAPI: controlled-live broker mode is not externally verified",
+        "ANGEL_ONE_SMARTAPI: broker environment identity is not verified",
+        "ANGEL_ONE_SMARTAPI: no complete normalized broker fill is verified",
+        "ANGEL_ONE_SMARTAPI: insufficient consecutive clean reconciliation evidence",
+        "MT5: evidence bundle is missing",
+        "MT5: evidence source is not an authorized external broker export",
+        "MT5: controlled-live broker mode is not externally verified",
+        "MT5: broker environment identity is not verified",
+        "MT5: no complete normalized broker fill is verified",
+        "MT5: insufficient consecutive clean reconciliation evidence"
+      ]
+    },
+    "self_asserted_external_without_attestation": {
+      "adapters": [
+        {
+          "adapter_name": "ANGEL_ONE_SMARTAPI",
+          "controlled_live_mode": true,
+          "eligible": false,
+          "environment_verified": true,
+          "filled_execution_verified": true,
+          "present": true,
+          "reasons": [
+            "evidence source is not an authorized external broker export"
+          ],
+          "stable_reconciliation_verified": true,
+          "trusted_external_source": false
+        },
+        {
+          "adapter_name": "MT5",
+          "controlled_live_mode": true,
+          "eligible": false,
+          "environment_verified": true,
+          "filled_execution_verified": true,
+          "present": true,
+          "reasons": [
+            "evidence source is not an authorized external broker export"
+          ],
+          "stable_reconciliation_verified": true,
+          "trusted_external_source": false
+        }
+      ],
+      "execution_authority": false,
+      "gate_decision": "BLOCKED",
+      "phase": 11,
+      "phase11_eligible": false,
+      "reasons": [
+        "ANGEL_ONE_SMARTAPI: evidence source is not an authorized external broker export",
+        "MT5: evidence source is not an authorized external broker export"
+      ]
+    }
+  },
+  "claims": {
+    "external_broker_called": false,
+    "external_execution_verified": false,
+    "live_money_enabled": false,
+    "phase11_pass_claimed": false,
+    "trading_action_performed": false
+  },
+  "current_adapters": {
+    "ANGEL_ONE_SMARTAPI": {
+      "implementation": "aura.execution.angel_one.AngelOneReadOnlyBroker",
+      "live_money_enabled": false,
+      "mode": "READ_ONLY",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": false,
+      "supports_order_submission": false,
+      "supports_reconciliation": true
+    },
+    "MT5": {
+      "implementation": "aura.execution.mt5_demo_broker.MT5DemoBroker",
+      "live_money_enabled": false,
+      "mode": "DEMO",
+      "supports_fill_stream": true,
+      "supports_order_cancellation": true,
+      "supports_order_submission": true,
+      "supports_reconciliation": true
+    }
+  },
+  "deterministic_fingerprint": "39c7f96b2a0bc2c0be641f9d5f820234ca6fa0273faecc7634ca09ea2932819f",
+  "exact_external_blockers": [
+    "Angel One remains read-only until separately authorized controlled-live implementation and canary evidence exist.",
+    "MT5 execution is verified only against a DEMO account; no controlled-live adapter evidence exists.",
+    "No cryptographically or operator-verified external broker attestation verifier is configured.",
+    "No authorized external normalized fill evidence has been supplied for both required adapters.",
+    "No minimum sequence of three clean external reconciliation observations has been supplied for both required adapters.",
+    "No separate owner financial-risk authorization has been supplied; code approval is not trade approval."
+  ],
+  "fixture_type": "deterministic_internal_broker_evidence_fixture",
+  "gate_decision": "BLOCKED",
+  "increment_status": "EVIDENCE_VALIDATOR_READY",
+  "phase": 11,
+  "schema_version": 1,
+  "validation_probes": {
+    "angel_one_execution_remains_locked": true,
+    "internal_fixture_is_not_external_proof": true,
+    "missing_evidence_is_blocked": true,
+    "mt5_remains_verified_demo_only": true,
+    "self_asserted_source_without_attestation_is_blocked": true
+  }
+}

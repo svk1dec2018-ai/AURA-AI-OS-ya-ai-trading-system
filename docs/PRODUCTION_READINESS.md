@@ -105,10 +105,16 @@ python examples/run_free_public_strategy_lab.py
 Multi-AI council with local Ollama models:
 
 ```powershell
-$env:AURA_OLLAMA_MODELS="qwen3,deepseek-r1"
+$env:AURA_FREE_AI_PRESET="balanced5"
+$env:AURA_OLLAMA_KEEP_ALIVE="0"
 $env:AURA_AI_OPINIONS_PER_ROLE="1"
+aura-free-ai probe
 python examples/run_free_public_ai_council.py
 ```
+
+The preset resolves to five local models and approximately 20 GB of downloads. Requests are
+serialized and models unload after each response by default. No AI API key or broker credential
+is used; model licenses and local hardware costs still apply.
 
 ## MT5 / Exness demo candidate
 

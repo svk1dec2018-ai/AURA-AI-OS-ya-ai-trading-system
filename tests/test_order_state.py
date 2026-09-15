@@ -3,7 +3,7 @@ from decimal import Decimal
 import pytest
 
 from aura.domain.models import Fill, OrderRequest, OrderStatus, Side
-from aura.execution.state import OrderState, OverfillError
+from aura.execution.state import InvalidOrderTransition, OrderState, OverfillError
 
 
 def test_partial_fill_is_idempotent_and_computes_vwap() -> None:
@@ -50,3 +50,15 @@ def test_overfill_is_rejected() -> None:
     )
     with pytest.raises(OverfillError):
         state.apply_fill(fill)
+
+
+def test_acknowledged_order_can_fill_and_expired_order_is_terminal() -> None:
+    request = OrderRequest(symbol="X", venue="TEST", side=Side.BUY, quantity=Decimal(1))
+    state = OrderState(request)
+    state.submit()
+    state.acknowledge()
+    assert state.status == OrderStatus.ACKNOWLEDGED
+    state.expire()
+    assert state.status == OrderStatus.EXPIRED
+    with pytest.raises(InvalidOrderTransition):
+        state.cancel()

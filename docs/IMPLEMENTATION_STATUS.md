@@ -2,6 +2,13 @@
 
 This document is the current source of truth for what is implemented in code versus what remains externally gated. See `PRODUCTION_READINESS.md` for deployment and release procedures.
 
+> **Mandatory governance status:** Code presence is no longer a phase-completion
+> claim. The machine-readable authority is
+> `artifacts/governance/phase_gate_status.json`. Phases 0–10 are PASS; Phases 11–15
+> remain BLOCKED until their named validation evidence is produced and accepted.
+> Existing later-phase code is preserved as implementation inventory, not
+> retroactive gate certification.
+
 ## Current classification
 
 **AURA is a production-deployable paper/demo research service candidate.**
@@ -10,10 +17,38 @@ It is **not yet certified for unrestricted real-money production**. Real-money e
 
 No backtest, LLM opinion, public-data shadow result, paper champion or code-only test can bypass that boundary.
 
+Phase 11 now has a secret-free external broker evidence schema and read-only
+verifier. It rejects self-attested sources, duplicated observations, tampered
+content, non-causal timestamps, incomplete fills and unstable reconciliation.
+This is readiness infrastructure only: Angel One remains read-only, MT5 remains
+demo-only, and Phase 11 remains BLOCKED pending accepted external evidence.
+An offline intake command can now load sealed evidence plus an owner-controlled
+two-reviewer attestation registry and emit a deterministic assessment. It cannot
+connect to a broker, mutate the phase ledger, authorize execution, or turn code
+approval into financial authorization.
+The evidence recorder can now convert existing filled `OrderState` and
+`ReconciliationReport` objects into that sealed format without serializing raw
+broker/order/fill identifiers, symbols, prices or reconciliation details. It is
+an adapter integration boundary, not proof that either broker has executed a live
+order.
+Already-sealed evidence can now be persisted in a restart-safe append-only archive
+that reuses AURA's checksummed write-ahead log, verifies sequence/content/event
+bindings, and links records by prior evidence hash. Strong protection against an
+administrator deleting or replacing an archive prefix is available through a
+sealed checkpoint export/verify CLI, provided the checkpoint or printed digest is
+copied to an owner-controlled system outside the archive host.
+A custody CLI now validates an eligible two-broker batch before any write, appends
+it idempotently, anchors the resulting WAL prefix and emits a content-sealed
+receipt. Blocked evidence produces no archive/checkpoint/receipt mutation, and the
+receipt cannot update the phase ledger or grant execution authority.
+
 ## Implemented and wired
 
 ### Financial and execution core
 
+- one deterministic candle fill/cost model shared by backtest and paper execution
+- market/limit/stop gap rules, adverse slippage, fees and contract multipliers
+  use that shared model rather than duplicated simulator math
 - canonical candles, orders, fills and portfolio snapshots
 - broker-neutral instruments and venue symbol mapping
 - shared signal -> independent RiskEngine -> order path
@@ -38,6 +73,10 @@ No backtest, LLM opinion, public-data shadow result, paper champion or code-only
 
 ### Market-data safety and multi-market feeds
 
+- fail-closed provider-neutral candle ingestion boundary: malformed or partial
+  batches expose no candles to decision consumers
+- mandatory quality gates at multi-agent decision and multi-market scanner boundaries
+- machine-readable latest-candle lag measurement in every non-empty quality report
 - duplicate/out-of-order/gap/stale/future-data gates
 - session-aware candle aggregation including second-level research bars
 - cross-feed price sanity/outlier guard
@@ -68,7 +107,8 @@ Implemented AI infrastructure:
 
 - concurrent specialist orchestration with timeout/failure isolation
 - structured point-in-time AgentEvidence with trust/provenance
-- multi-model Ollama council using structured decisions
+- curated five-model, key-free Ollama council using structured decisions
+- optional OpenAI Responses API specialists using strict structured decisions
 - raw model private reasoning is not persisted as decision evidence
 - Bull/Bear/Counterfactual adversarial deliberation
 - deterministic CEO synthesis
@@ -118,6 +158,8 @@ Implemented AI infrastructure:
 - demo/paper champion/challenger evolution
 - forward-only live outcome labeling
 - missed-opportunity, wrong-direction and capture-rate learning
+- restart-safe unresolved opportunity checkpoints and idempotent replay into the
+  safe online learner
 - historical/public data may accelerate research but cannot masquerade as broker-forward live proof
 
 ### Live/paper runtimes
@@ -169,8 +211,13 @@ Additional repository controls:
 
 - CodeQL Python security scanning on push/PR plus weekly schedule
 - Dependabot for pip and GitHub Actions dependencies
-- `.env` ignored by git
-- self-modifying patch-and-push workflow removed from normal production CI
+- `.env` and local env files ignored by git
+- controlled maintenance AI can diagnose and propose a unified diff
+- patch changes are restricted, sandboxed against the exact base commit and owner-approved
+- development apply never auto-commits, pushes, merges or deploys
+- append-only P&L/trade correction views preserve original fills and ledger truth
+- deposit, withdrawal, fund transfer, historical rewrite and risk bypass remain immutable denials
+- self-modifying patch-and-push workflow remains removed from normal production CI
 
 ## What remains before real-money production certification
 
@@ -202,7 +249,7 @@ Deterministic specialists + optional multiple AI models
 Bull / Bear / Counterfactual deliberation
               |
               v
-Reliability-weighted deterministic CEO synthesis
+Reliability-weighted deterministic CEO synthesis + reproducible decision trace
               |
               v
 Agent evidence policy

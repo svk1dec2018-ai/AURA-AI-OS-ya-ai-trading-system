@@ -29,6 +29,12 @@ def parse_args() -> argparse.Namespace:
         choices=[item.value for item in StrategyStage],
         default=None,
     )
+    parser.add_argument(
+        "--phase-gate-status",
+        default="artifacts/governance/phase_gate_status.json",
+        help="Mandatory Phase 0-15 evidence ledger used by LIVE preflight",
+    )
+    parser.add_argument("--repository-root", default=".")
     return parser.parse_args()
 
 
@@ -40,6 +46,8 @@ def main() -> int:
         runtime_dir=Path(args.runtime_dir),
         connectors=tuple(args.connector),
         strategy_stage=stage,
+        phase_gate_status_path=Path(args.phase_gate_status),
+        repository_root=Path(args.repository_root),
     ).run()
     payload = {
         "ready": report.ready,

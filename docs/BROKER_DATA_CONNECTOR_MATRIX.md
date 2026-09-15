@@ -6,11 +6,11 @@ This matrix separates **official capability**, **cost/access**, and **AURA imple
 
 | Connector | Markets | Data / API access | Key capability | AURA state |
 |---|---|---|---|---|
-| Exness / MT5 | FX, metals, energy, index/stock/crypto CFDs | account/MT5 access | live terminal data, history, account/order APIs | adapter implemented; self-evolving runner internal-paper by default |
+| Exness / MT5 | FX, metals, energy, index/stock/crypto CFDs | account/MT5 access | live terminal data, history, account/order APIs | DEMO execution/reconciliation adapter implemented; no controlled-live evidence |
 | DhanHQ | NSE/BSE/F&O/MCX | trading API + paid Data API subscription | live WebSocket, Full feed, history, option chain/Greeks/OI | substantial adapter implemented; live credentials not validated in repo |
 | Shoonya / Finvasia | NSE/BSE/NFO/CDS/MCX | developer APIs advertised without API charge for account users | REST quote/history/options + single WebSocket touchline/depth | live/historical market-data adapter implemented; execution intentionally disabled |
 | Upstox | Indian cash/F&O/commodities | official developer APIs advertise trading/market-data access | WebSocket, history, orders | researched; concrete AURA adapter pending |
-| Angel One SmartAPI | Indian cash/F&O/commodities | Trading/Historical/Market Feed APIs | Full quote, OI, depth, WebSocket, orders | researched; concrete AURA adapter pending; current static-IP/order rules must be honored |
+| Angel One SmartAPI | Indian cash/F&O/commodities | Trading/Historical/Market Feed APIs | Full quote, OI, depth, WebSocket, orders | read-only adapter and reconciliation implemented; order submission remains locked; current static-IP/order rules must be honored |
 | FYERS | Indian cash/F&O/commodities | developer/trading APIs for FYERS users | history, real-time data, orders | researched; concrete AURA adapter pending; current retail-algo rules apply |
 | Flattrade Pi v2 | NSE/BSE/NFO/CDS/MCX | Pi v2 account API | REST TPSeries, WebSocket touchline, options/OI capabilities | read-only Pi v2 market-data adapter implemented; execution intentionally disabled pending reconciliation/static-IP validation |
 | Kotak Neo | NSE/BSE/F&O/CDS/MCX | official Trade API | quotes/WS/orders | researched; concrete AURA adapter pending |
@@ -85,6 +85,19 @@ No external news source is allowed to place an order. News/macro/filing events b
 ## Credential policy
 
 Secrets are runtime-only. They belong in environment variables or a secret manager on the machine/VPS. They must never be committed to GitHub, stored in a strategy genome or written into an agent prompt/log.
+
+Phase 11 evidence exports must also be credential-free. AURA accepts hashed account,
+order, response and attestation fingerprints only; secret-bearing fields are rejected
+before schema validation. Evidence validation never grants trading authority.
+The runtime evidence recorder consumes normalized filled-order and reconciliation
+state, stores only the required quantities/status/timestamps plus opaque fingerprints,
+and never invokes broker APIs itself.
+The restart-safe evidence archive persists only these sealed, credential-free
+exports. It does not persist credentials or raw broker identifiers and cannot grant
+execution or phase-gate authority. Its checkpoint CLI exports a content-sealed WAL
+prefix anchor for owner-controlled off-host storage and later rollback detection.
+The custody CLI archives only a fully attested, verifier-eligible Angel One/MT5
+batch and emits a sealed review receipt; blocked inputs perform no custody writes.
 
 Examples:
 

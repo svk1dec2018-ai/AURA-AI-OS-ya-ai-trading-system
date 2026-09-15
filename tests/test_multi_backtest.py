@@ -95,3 +95,25 @@ def test_multi_symbol_backtest_requires_one_shared_risk_engine() -> None:
             starting_cash=Decimal(10000),
             requested_quantities={"X": Decimal(1), "Y": Decimal(1)},
         )
+
+
+def test_multi_symbol_backtest_applies_shared_adverse_slippage_and_fees() -> None:
+    risk = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_gross_exposure_pct=Decimal(100),
+        )
+    )
+    engine = MultiSymbolBacktestEngine(
+        pipelines={"X": DecisionPipeline(FirstBarLong("x"), risk)},
+        starting_cash=Decimal(10000),
+        requested_quantities={"X": Decimal(2)},
+        fee_bps=Decimal(10),
+        slippage_bps=Decimal(10),
+    )
+
+    result = engine.run({"X": _series("X")})
+
+    assert len(result.fill_records) == 1
+    assert result.fill_records[0].price == Decimal("101.101")
+    assert result.fill_records[0].fee == Decimal("0.202202")

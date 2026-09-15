@@ -1,6 +1,9 @@
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
+import pytest
+
+import aura.agents.reliability as reliability_module
 from aura.agents.models import (
     AgentContext,
     AgentEvidence,
@@ -171,3 +174,56 @@ def test_ceo_uses_contextual_reliability_to_break_equal_confidence_vote() -> Non
 
     assert memo.intent == SignalIntent.LONG
     assert "avg_reliability_weight" in memo.rationale
+
+
+def test_persistent_reliability_observation_is_fsynced(tmp_path, monkeypatch) -> None:
+    fsync_calls: list[int] = []
+    monkeypatch.setattr(reliability_module.os, "fsync", fsync_calls.append)
+    tracker = AgentReliabilityTracker(tmp_path / "durable_reliability.jsonl")
+    evidence = _evidence(
+        agent_id="durable-agent",
+        role=AgentRole.TECHNICAL,
+        intent=SignalIntent.LONG,
+    )
+    decision_time = datetime(2026, 8, 18, 5, 0, tzinfo=UTC)
+
+    assert tracker.record_evidence_outcome(
+        evidence,
+        observation_prefix="durable-1",
+        market="COINBASE_PUBLIC",
+        regime="trend",
+        realized_intent=SignalIntent.LONG,
+        decision_time=decision_time,
+        outcome_observed_at=decision_time + timedelta(minutes=1),
+    )
+    assert len(fsync_calls) == 1
+
+
+def test_reliability_write_failure_does_not_claim_in_memory_success(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    tracker = AgentReliabilityTracker(tmp_path / "failed_reliability.jsonl")
+    evidence = _evidence(
+        agent_id="durable-agent",
+        role=AgentRole.TECHNICAL,
+        intent=SignalIntent.LONG,
+    )
+    decision_time = datetime(2026, 8, 18, 5, 0, tzinfo=UTC)
+
+    def fail_fsync(_fd: int) -> None:
+        raise OSError("disk sync failed")
+
+    monkeypatch.setattr(reliability_module.os, "fsync", fail_fsync)
+
+    with pytest.raises(OSError, match="disk sync failed"):
+        tracker.record_evidence_outcome(
+            evidence,
+            observation_prefix="durable-failure",
+            market="COINBASE_PUBLIC",
+            regime="trend",
+            realized_intent=SignalIntent.LONG,
+            decision_time=decision_time,
+            outcome_observed_at=decision_time + timedelta(minutes=1),
+        )
+    assert tracker.observation_count == 0

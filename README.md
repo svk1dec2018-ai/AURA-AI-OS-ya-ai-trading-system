@@ -78,6 +78,7 @@ The desk supports:
 - concurrent specialist execution
 - multiple local/provider AI agents through structured evidence
 - Ollama multi-model council
+- optional OpenAI Responses API council with strict structured output
 - Bull/Bear/Counterfactual adversarial deliberation
 - deterministic CEO synthesis
 - market/regime/role-specific agent and model reliability learning
@@ -86,6 +87,19 @@ The desk supports:
 - bounded AI in-flight capacity so slow models do not stall market ingestion
 
 Raw private model reasoning is not treated as trading evidence; AURA stores validated conclusions, confidence, factors, provenance and risk flags.
+
+### Controlled maintenance and development AI
+
+- free local Ollama or optional OpenAI system diagnosis and unified-diff repair proposals
+- deterministic AI/developer/owner authority matrix
+- tracked-file-only, credential-free patch sandbox with fixed test commands
+- exact base-commit, patch-hash and owner-approval binding
+- restart-safe proposal, validation, approval and application WAL
+- development worktree apply and exact rollback without automatic commit/push/deploy
+- append-only P&L/trade reporting corrections without rewriting fills or broker truth
+- owner, developer and AI all hard-blocked from deposit, withdrawal, fund transfer, risk bypass and secret disclosure
+
+See `docs/CONTROLLED_SELF_IMPROVEMENT.md` for commands and the complete authority contract.
 
 ### Autonomous strategy research
 
@@ -103,6 +117,7 @@ Raw private model reasoning is not treated as trading evidence; AURA stores vali
 - research -> backtest -> robustness -> paper -> human approval lifecycle
 - paper champion/challenger evolution
 - missed-opportunity, wrong-direction and capture-rate learning
+- restart-safe pending opportunity labels and deterministic online-learning replay
 
 ### Market data and broker/data adapters
 
@@ -193,11 +208,44 @@ python examples/run_free_public_strategy_lab.py
 Local multi-AI council with Ollama:
 
 ```bash
-# Example environment
-export AURA_OLLAMA_MODELS="qwen3,deepseek-r1"
+# Five key-free local assistants: Qwen 3.5, DeepSeek-R1, Llama 3.1,
+# Gemma 3 and Phi-4 Mini.
+export AURA_FREE_AI_PRESET="balanced5"
+export AURA_OLLAMA_KEEP_ALIVE="0"
 export AURA_AI_OPINIONS_PER_ROLE="1"
+aura-free-ai catalog
+aura-free-ai probe
 python examples/run_free_public_ai_council.py
 ```
+
+The balanced preset uses local Ollama inference: no API key and no per-token provider
+charge. The five downloads total approximately 20 GB, individual model licenses still
+apply, and no claim is made that small local models match paid ChatGPT or Claude quality.
+Requests are serialized and models unload after each request by default to limit RAM use.
+An explicit `AURA_OLLAMA_MODELS` comma-separated list overrides the preset.
+
+Owner-gated local maintenance developer:
+
+```bash
+export AURA_MAINTENANCE_AI_PROVIDER="ollama"
+export AURA_MAINTENANCE_OLLAMA_MODEL="qwen3.5:4b"
+aura-maintenance policy
+aura-maintenance probe --repository .
+```
+
+Optional OpenAI advisory models and maintenance developer:
+
+```bash
+cp .env.example .env.local
+# securely set OPENAI_API_KEY in .env.local
+export AURA_OPENAI_MODELS="gpt-5.4-mini"
+export AURA_MAINTENANCE_AI_PROVIDER="openai"
+```
+
+All AI models remain advisory inside the trading council. Maintenance patches go through
+proposal -> credential-free sandbox -> tests -> exact owner approval -> development branch;
+they never auto-merge or auto-deploy. Add/withdraw/transfer funds, historical ledger rewrites,
+risk bypass, secret exposure and AI self-approval are unavailable to every provider and role.
 
 Run the complete no-key autonomy stack (Multi-AI council + historical seed + live
 intelligence + deterministic forecasts + missed-opportunity audit + forward-only
@@ -211,11 +259,65 @@ On Windows, `START_AURA_OLLAMA.cmd` performs the preflight and starts this combi
 runtime. It uses Coinbase/Bybit public market endpoints, GDELT and official feeds;
 no third-party key is embedded. OS-native voice alerts are local and optional.
 
+Run the same fail-closed stack continuously as a service:
+
+```bash
+# Docker Desktop / Docker Engine (voice disabled inside the container)
+docker compose -f compose.paper.yml up -d --build
+docker compose -f compose.paper.yml logs -f
+
+# Linux systemd user service, after creating .venv and installing AURA
+./scripts/install_aura_user_service.sh
+systemctl --user status aura-paper.service
+```
+
+On Windows, first run `START_AURA_OLLAMA.cmd` successfully once, then register the
+same launcher as a restartable logon task:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_aura_windows_task.ps1 -StartNow
+```
+
+These service modes explicitly clear live-trading authority and run the public
+paper preflight before startup. See `docs/AURA_VISION_COVERAGE.md` for the exact
+vision-to-code audit and `output/pdf/AURA_SETUP_AND_OPERATIONS.pdf` for the complete
+operator guide.
+
 Authorized books and video transcripts can be added through
 `knowledge/public_corpus/manifest.jsonl`; see that directory's README. AURA never
 downloads copyrighted books/transcripts automatically.
 
 PowerShell uses `$env:NAME="value"` instead of `export`.
+
+## Local mobile Command Center
+
+```bash
+export AURA_COMMAND_CENTER_OWNER_ID="owner"
+export AURA_COMMAND_CENTER_TOKEN="use-at-least-32-random-characters"
+python examples/run_command_center.py
+```
+
+Open `http://127.0.0.1:8765`. Read-only loopback status works without a token,
+but research, development and financial-correction requests require authenticated owner access
+and remain queued for governed review. Fund commands are rejected even for the owner. The browser
+keeps the token in session storage only.
+
+## Optional Telegram outbound alerts
+
+Create a bot through Telegram's official BotFather flow, start a conversation with
+that bot (or add it to the intended chat), then keep both values in the process
+environment only:
+
+```bash
+export AURA_TELEGRAM_BOT_TOKEN="..."
+export AURA_TELEGRAM_CHAT_ID="..."
+python examples/send_telegram_test_alert.py
+```
+
+Successful and failed delivery receipts are checksummed and restart-safe at
+`runtime/alerts/telegram_receipts.jsonl`. The journal contains only a hash of the
+destination, never the token or raw chat ID. This adapter sends outbound alerts;
+it does not accept commands and has no order-execution authority.
 
 ## MT5 / Exness demo + internal paper
 
@@ -242,6 +344,31 @@ $env:AURA_DHAN_ACCESS_TOKEN="..."
 python examples/run_production_preflight.py --mode paper --connector dhan
 python examples/run_dhan_self_evolving_paper.py
 ```
+
+## Angel One SmartAPI read-only + reconciliation
+
+AURA includes a concrete SmartAPI adapter for profile verification, LTP queries,
+order/trade books, position snapshots, symbol routing and restart reconciliation.
+Because SmartAPI order eligibility depends on the operator's current account and
+static-IP requirements, submit/cancel remain deliberately locked until broker-origin
+validation and the controlled-live phase gates pass.
+
+Generate short-lived session tokens using Angel One's official login flow; AURA does
+not accept or store your PIN/TOTP seed. Then run the account preflight:
+
+```powershell
+pip install smartapi-python
+$env:AURA_ANGEL_ONE_API_KEY="..."
+$env:AURA_ANGEL_ONE_CLIENT_CODE="..."
+$env:AURA_ANGEL_ONE_JWT_TOKEN="..."
+$env:AURA_ANGEL_ONE_REFRESH_TOKEN="..."
+$env:AURA_ANGEL_ONE_FEED_TOKEN="..."  # optional for REST-only check
+
+python examples/check_angel_one_account.py
+```
+
+The command prints only non-secret readiness/count information. It cannot place or
+cancel an Angel One order.
 
 ## Docker
 

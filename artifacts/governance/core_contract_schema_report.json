@@ -1,0 +1,97 @@
+{
+  "ambiguous_fields_allowed": false,
+  "decision": "PASS",
+  "entities": [
+    {
+      "additional_properties": false,
+      "entity": "candle",
+      "json_schema_sha256": "1fbfdf10a375f54e1645d905e25af9c3ff75debba41879215571922a289fe6a7",
+      "model": "aura.domain.models.NormalizedCandle",
+      "required_fields": [
+        "close",
+        "close_time",
+        "high",
+        "low",
+        "open",
+        "open_time",
+        "symbol",
+        "timeframe",
+        "venue"
+      ]
+    },
+    {
+      "additional_properties": false,
+      "entity": "fill",
+      "json_schema_sha256": "4792fa6ee437bfc0a5146e6f0adee7c89eb0e50d7b978cb6e2ece7e14b15ad9a",
+      "model": "aura.domain.models.Fill",
+      "required_fields": [
+        "fill_id",
+        "order_id",
+        "price",
+        "quantity",
+        "side",
+        "symbol"
+      ]
+    },
+    {
+      "additional_properties": false,
+      "entity": "order",
+      "json_schema_sha256": "78198c3995b5253439f45eea7768c9643670f353a4660c62253c314c55b92b52",
+      "model": "aura.domain.models.OrderRequest",
+      "required_fields": [
+        "quantity",
+        "side",
+        "symbol",
+        "venue"
+      ]
+    },
+    {
+      "additional_properties": false,
+      "entity": "portfolio",
+      "json_schema_sha256": "c2d316149c7c3bac493d561ec09191789d230cd3fac387154db023154bf26e75",
+      "model": "aura.domain.models.PortfolioSnapshot",
+      "required_fields": [
+        "cash",
+        "drawdown_pct",
+        "equity",
+        "gross_exposure",
+        "net_exposure",
+        "peak_equity",
+        "realized_pnl",
+        "unrealized_pnl"
+      ]
+    },
+    {
+      "additional_properties": false,
+      "entity": "position",
+      "json_schema_sha256": "1e00535a169fe20daae813d5fb81eb774a7edbe7550c9a60bd7702b9ff01c54d",
+      "model": "aura.portfolio.ledger.Position",
+      "required_fields": [
+        "symbol"
+      ]
+    },
+    {
+      "additional_properties": false,
+      "entity": "tick",
+      "json_schema_sha256": "5f02da46184e753a251d0f0bc4d251254316bddaab6ee9efa708a1cdd244d288",
+      "model": "aura.domain.models.Tick",
+      "required_fields": [
+        "price",
+        "symbol",
+        "timestamp",
+        "venue"
+      ]
+    }
+  ],
+  "entity_count": 6,
+  "phase": 1,
+  "required_entities": [
+    "candle",
+    "fill",
+    "order",
+    "portfolio",
+    "position",
+    "tick"
+  ],
+  "schema_version": 1
+}

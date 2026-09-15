@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from dataclasses import dataclass
 from datetime import datetime
@@ -7,8 +8,9 @@ from decimal import Decimal
 from enum import Enum
 from itertools import pairwise
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from aura.domain.models import NormalizedCandle, SignalIntent
 from aura.runtime.scanner import MarketScanResult, ScanCandidate
@@ -52,6 +54,52 @@ class OpportunityAuditRecord(BaseModel):
         return value
 
 
+class OpportunityAuditPendingRecord(BaseModel):
+    """Durable causal state for an outcome whose horizon has not closed yet."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    record_id: str = Field(min_length=1)
+    decision_time: datetime
+    symbol: str = Field(min_length=1)
+    timeframe: str = Field(min_length=1)
+    entry_price: Decimal = Field(gt=0)
+    atr: Decimal = Field(gt=0)
+    raw_intent: SignalIntent
+    memo_confidence: float = Field(ge=0, le=1)
+    safety_allowed: bool
+    bars_seen: int = Field(default=0, ge=0)
+    last_candle_close_time: datetime | None = None
+
+    @field_validator("decision_time", "last_candle_close_time")
+    @classmethod
+    def timestamps_must_be_aware(cls, value: datetime | None) -> datetime | None:
+        if value is not None and (value.tzinfo is None or value.utcoffset() is None):
+            raise ValueError("pending opportunity timestamps must be timezone-aware")
+        return value
+
+    @model_validator(mode="after")
+    def progress_is_consistent(self) -> OpportunityAuditPendingRecord:
+        if (self.bars_seen == 0) != (self.last_candle_close_time is None):
+            raise ValueError("pending opportunity bar progress is inconsistent")
+        if (
+            self.last_candle_close_time is not None
+            and self.last_candle_close_time <= self.decision_time
+        ):
+            raise ValueError("pending opportunity progress must follow its decision")
+        return self
+
+
+class OpportunityAuditPendingCheckpoint(BaseModel):
+    """Versioned checkpoint; the append-only resolved ledger remains authoritative."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: int = Field(default=1, ge=1, le=1)
+    policy: OpportunityAuditPolicy
+    pending: tuple[OpportunityAuditPendingRecord, ...] = ()
+
+
 @dataclass(slots=True)
 class _PendingOpportunity:
     record_id: str
@@ -64,6 +112,7 @@ class _PendingOpportunity:
     memo_confidence: float
     safety_allowed: bool
     bars_seen: int = 0
+    last_candle_close_time: datetime | None = None
 
 
 @dataclass(slots=True, frozen=True)
@@ -140,18 +189,28 @@ class OpportunityAuditStore:
 
 
 class MissedOpportunityAuditor:
-    """Ex-post live auditor for false negatives without leaking future data into decisions."""
+    """Ex-post live auditor for false negatives without future-data leakage.
+
+    Unresolved horizons are checkpointed atomically. A restart therefore cannot
+    silently discard a decision that was waiting for future closed bars, and a
+    repeated candle cannot advance the horizon twice.
+    """
 
     def __init__(
         self,
         store: OpportunityAuditStore,
         *,
         policy: OpportunityAuditPolicy | None = None,
+        pending_checkpoint_path: Path | None = None,
     ) -> None:
         self.store = store
         self.policy = policy or OpportunityAuditPolicy()
-        self._pending: dict[str, _PendingOpportunity] = {}
         self._known_ids = {record.record_id for record in store.read_all()}
+        self.pending_checkpoint_path = pending_checkpoint_path or store.path.with_name(
+            f"{store.path.stem}.pending.json"
+        )
+        self._pending = self._load_pending()
+        self.recovered_pending_count = len(self._pending)
 
     @property
     def pending_count(self) -> int:
@@ -167,6 +226,8 @@ class MissedOpportunityAuditor:
                 continue
             self._pending[pending.record_id] = pending
             added += 1
+        if added:
+            self._write_pending_checkpoint()
         return added
 
     def on_closed_candles(
@@ -176,6 +237,7 @@ class MissedOpportunityAuditor:
         if any(not candle.closed for candle in candles):
             raise ValueError("opportunity audit requires closed candles")
         resolved: list[OpportunityAuditRecord] = []
+        checkpoint_changed = False
         for candle in sorted(candles, key=lambda item: item.close_time):
             matching = [
                 record_id
@@ -186,7 +248,14 @@ class MissedOpportunityAuditor:
                 pending = self._pending[record_id]
                 if candle.close_time <= pending.decision_time:
                     continue
+                if (
+                    pending.last_candle_close_time is not None
+                    and candle.close_time <= pending.last_candle_close_time
+                ):
+                    continue
                 pending.bars_seen += 1
+                pending.last_candle_close_time = candle.close_time
+                checkpoint_changed = True
                 if pending.bars_seen < self.policy.horizon_bars:
                     continue
                 record = self._resolve(pending, candle)
@@ -194,7 +263,120 @@ class MissedOpportunityAuditor:
                     self._known_ids.add(record.record_id)
                     resolved.append(record)
                 del self._pending[record_id]
+        if checkpoint_changed:
+            self._write_pending_checkpoint()
         return tuple(resolved)
+
+    def _load_pending(self) -> dict[str, _PendingOpportunity]:
+        path = self.pending_checkpoint_path
+        if not path.exists():
+            return {}
+        try:
+            checkpoint = OpportunityAuditPendingCheckpoint.model_validate_json(
+                path.read_text(encoding="utf-8")
+            )
+        except Exception as exc:
+            raise RuntimeError(f"invalid opportunity pending checkpoint {path}: {exc}") from exc
+        if checkpoint.policy != self.policy:
+            if checkpoint.pending:
+                raise RuntimeError(
+                    "opportunity audit policy changed while unresolved records exist"
+                )
+            self._write_pending_checkpoint_for({})
+            return {}
+
+        pending: dict[str, _PendingOpportunity] = {}
+        checkpoint_ids: set[str] = set()
+        stale_checkpoint = False
+        for item in checkpoint.pending:
+            if item.record_id in checkpoint_ids:
+                raise RuntimeError(
+                    f"duplicate pending opportunity record: {item.record_id}"
+                )
+            checkpoint_ids.add(item.record_id)
+            if item.record_id in self._known_ids:
+                stale_checkpoint = True
+                continue
+            if item.bars_seen >= self.policy.horizon_bars:
+                raise RuntimeError(
+                    f"unresolved opportunity reached its horizon: {item.record_id}"
+                )
+            pending[item.record_id] = _PendingOpportunity(
+                record_id=item.record_id,
+                decision_time=item.decision_time,
+                symbol=item.symbol,
+                timeframe=item.timeframe,
+                entry_price=item.entry_price,
+                atr=item.atr,
+                raw_intent=item.raw_intent,
+                memo_confidence=item.memo_confidence,
+                safety_allowed=item.safety_allowed,
+                bars_seen=item.bars_seen,
+                last_candle_close_time=item.last_candle_close_time,
+            )
+        if stale_checkpoint:
+            self._write_pending_checkpoint_for(pending)
+        return pending
+
+    def _write_pending_checkpoint(self) -> None:
+        self._write_pending_checkpoint_for(self._pending)
+
+    def _write_pending_checkpoint_for(
+        self,
+        pending: dict[str, _PendingOpportunity],
+    ) -> None:
+        records = tuple(
+            OpportunityAuditPendingRecord(
+                record_id=item.record_id,
+                decision_time=item.decision_time,
+                symbol=item.symbol,
+                timeframe=item.timeframe,
+                entry_price=item.entry_price,
+                atr=item.atr,
+                raw_intent=item.raw_intent,
+                memo_confidence=item.memo_confidence,
+                safety_allowed=item.safety_allowed,
+                bars_seen=item.bars_seen,
+                last_candle_close_time=item.last_candle_close_time,
+            )
+            for _, item in sorted(pending.items())
+        )
+        checkpoint = OpportunityAuditPendingCheckpoint(
+            policy=self.policy,
+            pending=records,
+        )
+        path = self.pending_checkpoint_path
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temp_path: Path | None = None
+        try:
+            with NamedTemporaryFile(
+                mode="w",
+                encoding="utf-8",
+                dir=path.parent,
+                prefix=f".{path.name}.",
+                suffix=".tmp",
+                delete=False,
+            ) as handle:
+                temp_path = Path(handle.name)
+                json.dump(
+                    checkpoint.model_dump(mode="json"),
+                    handle,
+                    separators=(",", ":"),
+                    sort_keys=True,
+                )
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temp_path, path)
+            if os.name != "nt":
+                directory_fd = os.open(path.parent, os.O_RDONLY)
+                try:
+                    os.fsync(directory_fd)
+                finally:
+                    os.close(directory_fd)
+        finally:
+            if temp_path is not None and temp_path.exists():
+                temp_path.unlink()
 
     def _from_candidate(self, candidate: ScanCandidate) -> _PendingOpportunity | None:
         if candidate.data_quality is not None and not candidate.data_quality.safe_for_decision:

@@ -66,7 +66,7 @@ class MultiMarketIntelligenceScanner:
         *,
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
-        data_quality_gate: CandleQualityGate | None = None,
+        data_quality_gate: CandleQualityGate,
         agent_risk_policy: AgentRiskPolicy | None = None,
         deliberation_engine: AdversarialDeliberationEngine | None = None,
         max_concurrent_contexts: int = 20,
@@ -75,6 +75,8 @@ class MultiMarketIntelligenceScanner:
             raise ValueError("max_concurrent_contexts must be positive")
         self.orchestrator = orchestrator
         self.ceo = ceo
+        if data_quality_gate is None:
+            raise ValueError("data_quality_gate is required for every scan boundary")
         self.data_quality_gate = data_quality_gate
         self.agent_risk_policy = agent_risk_policy
         self.deliberation_engine = deliberation_engine or AdversarialDeliberationEngine()

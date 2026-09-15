@@ -35,13 +35,15 @@ class MultiAgentDecisionService:
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
         decision_pipeline: DecisionPipeline,
-        data_quality_gate: CandleQualityGate | None = None,
+        data_quality_gate: CandleQualityGate,
         agent_risk_policy: AgentRiskPolicy | None = None,
         deliberation_engine: AdversarialDeliberationEngine | None = None,
     ) -> None:
         self.orchestrator = orchestrator
         self.ceo = ceo
         self.decision_pipeline = decision_pipeline
+        if data_quality_gate is None:
+            raise ValueError("data_quality_gate is required for every decision boundary")
         self.data_quality_gate = data_quality_gate
         self.agent_risk_policy = agent_risk_policy
         self.deliberation_engine = deliberation_engine or AdversarialDeliberationEngine()

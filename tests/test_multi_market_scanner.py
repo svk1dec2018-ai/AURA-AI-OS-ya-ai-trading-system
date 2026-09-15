@@ -16,6 +16,7 @@ from aura.agents.models import (
 )
 from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.core.pipeline import DecisionPipeline
+from aura.data.quality import CandleQualityGate, DataQualityPolicy
 from aura.domain.models import NormalizedCandle, PortfolioSnapshot, SignalIntent
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.runtime.allocation import PortfolioRiskCoordinator
@@ -129,6 +130,12 @@ async def test_markets_scan_concurrently_then_share_one_reserved_risk_budget() -
     scanner = MultiMarketIntelligenceScanner(
         orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
         ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=5),
+                max_staleness=timedelta(minutes=1),
+            )
+        ),
         max_concurrent_contexts=3,
     )
     scan = await scanner.scan([_context("X"), _context("Y"), _context("Z")])

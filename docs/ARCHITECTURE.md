@@ -177,6 +177,14 @@ The current backtester is deliberately single-series. It rejects multi-symbol in
 - must expose operational kill switches and health telemetry
 - must not allow an LLM/agent to edit running strategy code
 
+### Forward research outcome recovery
+
+CEO shadow samples and directional specialist reliability labels retain their causal
+horizon across restarts. AURA checkpoints the exact resolution bar before appending
+idempotent replay/reliability outputs, so recovery cannot substitute a later price.
+See [Forward Outcome Recovery](FORWARD_OUTCOME_RECOVERY.md) for the state and
+crash-consistency contract. This path has no broker or promotion authority.
+
 ## 4. Future intelligence layer
 
 AURA's future multi-agent intelligence should sit **upstream of the risk engine** and operate as evidence producers, not privileged executors.

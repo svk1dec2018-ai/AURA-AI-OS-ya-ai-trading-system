@@ -17,6 +17,7 @@ from aura.agents.models import (
     EvidenceSourceType,
 )
 from aura.agents.providers import ProviderAnalysis, ReasoningProvider
+from aura.ai.free_models import configured_ollama_model_ids, parse_ollama_keep_alive
 from aura.domain.models import SignalIntent
 
 JsonTransport = Callable[[str, dict[str, Any], float], Awaitable[dict[str, Any]]]
@@ -79,6 +80,7 @@ class OllamaReasoningProvider(ReasoningProvider):
         base_url: str = "http://127.0.0.1:11434",
         timeout_seconds: float = 120.0,
         think: bool | str = False,
+        keep_alive: str | int = 0,
         transport: JsonTransport | None = None,
         max_candles: int = 80,
         request_limiter: asyncio.Semaphore | None = None,
@@ -94,6 +96,7 @@ class OllamaReasoningProvider(ReasoningProvider):
         self.base_url = base_url.rstrip("/")
         self.timeout_seconds = timeout_seconds
         self.think = think
+        self.keep_alive = parse_ollama_keep_alive(keep_alive)
         self.transport = transport or _default_json_transport
         self.max_candles = max_candles
         self.request_limiter = request_limiter
@@ -204,6 +207,7 @@ class OllamaReasoningProvider(ReasoningProvider):
             "stream": False,
             "format": schema,
             "options": {"temperature": 0.15},
+            "keep_alive": self.keep_alive,
         }
         if self.think is not False:
             payload["think"] = self.think
@@ -213,13 +217,13 @@ class OllamaReasoningProvider(ReasoningProvider):
 def build_ollama_providers_from_env() -> tuple[OllamaReasoningProvider, ...]:
     """Build configured local AI models without requiring broker credentials."""
 
-    raw = os.getenv("AURA_OLLAMA_MODELS", "")
-    models = tuple(dict.fromkeys(item.strip() for item in raw.split(",") if item.strip()))
+    models = configured_ollama_model_ids()
     if not models:
         return ()
     base_url = os.getenv("AURA_OLLAMA_URL", "http://127.0.0.1:11434")
     timeout = float(os.getenv("AURA_OLLAMA_TIMEOUT_SECONDS", "120"))
     think = _parse_think(os.getenv("AURA_OLLAMA_THINK", "false"))
+    keep_alive = parse_ollama_keep_alive(os.getenv("AURA_OLLAMA_KEEP_ALIVE", "0"))
     max_concurrency = _positive_int_env("AURA_OLLAMA_MAX_CONCURRENCY", default=1)
     request_limiter = asyncio.Semaphore(max_concurrency)
     return tuple(
@@ -228,6 +232,7 @@ def build_ollama_providers_from_env() -> tuple[OllamaReasoningProvider, ...]:
             base_url=base_url,
             timeout_seconds=timeout,
             think=think,
+            keep_alive=keep_alive,
             request_limiter=request_limiter,
         )
         for model in models

@@ -281,11 +281,17 @@ def _apply_tail_event(
         elif event_type == FinancialEventType.ORDER_SUBMITTED:
             _order_state(orders, event).submit()
 
+        elif event_type == FinancialEventType.ORDER_ACKNOWLEDGED:
+            _order_state(orders, event).acknowledge()
+
         elif event_type == FinancialEventType.ORDER_CANCELLED:
             _order_state(orders, event).cancel()
 
         elif event_type == FinancialEventType.ORDER_REJECTED:
             _order_state(orders, event).reject()
+
+        elif event_type == FinancialEventType.ORDER_EXPIRED:
+            _order_state(orders, event).expire()
 
         elif event_type == FinancialEventType.FILL_APPLIED:
             fill = Fill.model_validate(_required(event.payload, "fill"))

@@ -5,26 +5,11 @@ from datetime import UTC, datetime, time, timedelta
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from aura.domain.models import NormalizedCandle, Tick
 
-from aura.domain.models import NormalizedCandle
-
-
-class CanonicalTradeTick(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    symbol: str = Field(min_length=1)
-    venue: str = Field(min_length=1)
-    price: Decimal = Field(gt=0)
-    quantity: Decimal = Field(default=Decimal(0), ge=0)
-    timestamp: datetime
-
-    @field_validator("timestamp")
-    @classmethod
-    def timestamp_is_aware(cls, value: datetime) -> datetime:
-        if value.tzinfo is None or value.utcoffset() is None:
-            raise ValueError("tick timestamp must be timezone-aware")
-        return value
+# Backward-compatible public name for existing data adapters. The canonical
+# contract now lives with AURA's other core entities.
+CanonicalTradeTick = Tick
 
 
 @dataclass(slots=True, frozen=True)
@@ -85,6 +70,15 @@ _FIXED_TIMEFRAMES = {
     "1h": timedelta(hours=1),
     "4h": timedelta(hours=4),
 }
+
+
+def fixed_timeframe_duration(timeframe: str) -> timedelta:
+    """Return the canonical duration for a supported fixed candle timeframe."""
+
+    try:
+        return _FIXED_TIMEFRAMES[timeframe]
+    except KeyError as exc:
+        raise ValueError(f"unsupported fixed timeframe: {timeframe}") from exc
 
 
 class SessionCandleAggregator:
@@ -152,7 +146,7 @@ class SessionCandleAggregator:
         return tuple(completed)
 
     def _bucket(self, timestamp: datetime, timeframe: str) -> tuple[datetime, datetime]:
-        duration = _FIXED_TIMEFRAMES[timeframe]
+        duration = fixed_timeframe_duration(timeframe)
         local = timestamp.astimezone(self.session.tz)
         anchor = datetime.combine(local.date(), self.session.session_start, tzinfo=self.session.tz)
         if local < anchor:

@@ -226,8 +226,17 @@ DEFAULT_CONNECTOR_CATALOG = ConnectorCatalog(
             markets=("NSE", "BSE", "NFO", "BFO", "MCX"),
             capabilities=frozenset({Capability.LIVE_QUOTES, Capability.WEBSOCKET, Capability.DEPTH, Capability.HISTORICAL, Capability.ORDERS, Capability.ORDER_UPDATES, Capability.POSITIONS, Capability.OPEN_INTEREST}),
             cost_tier=CostTier.FREE_ACCOUNT_REQUIRED,
-            maturity=ConnectorMaturity.RESEARCHED,
-            notes=("Order APIs are subject to current static-IP/regulatory requirements.",),
+            maturity=ConnectorMaturity.ADAPTER_IMPLEMENTED,
+            required_env=(
+                "AURA_ANGEL_ONE_API_KEY",
+                "AURA_ANGEL_ONE_CLIENT_CODE",
+                "AURA_ANGEL_ONE_JWT_TOKEN",
+                "AURA_ANGEL_ONE_REFRESH_TOKEN",
+            ),
+            notes=(
+                "Read-only account, quote and reconciliation adapter is implemented.",
+                "Order submit/cancel remain fail-closed pending static-IP and broker-origin validation.",
+            ),
         ),
         ConnectorDescriptor(
             connector_id="fyers",

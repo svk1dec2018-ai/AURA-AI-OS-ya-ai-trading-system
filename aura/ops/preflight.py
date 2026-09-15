@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
+from aura.ops.phase_gates import phase_is_pass, validate_phase_gate_ledger
 from aura.research.lifecycle import StrategyStage
 
 
@@ -80,6 +81,8 @@ class ProductionPreflight:
         runtime_dir: Path,
         connectors: Sequence[str] = (),
         strategy_stage: StrategyStage | None = None,
+        phase_gate_status_path: Path | None = None,
+        repository_root: Path | None = None,
         env: Mapping[str, str] | None = None,
     ) -> None:
         self.mode = mode
@@ -88,6 +91,8 @@ class ProductionPreflight:
             dict.fromkeys(item.strip().lower() for item in connectors)
         )
         self.strategy_stage = strategy_stage
+        self.phase_gate_status_path = phase_gate_status_path
+        self.repository_root = (repository_root or Path.cwd()).resolve()
         self.env = dict(os.environ if env is None else env)
 
     def run(self) -> PreflightReport:
@@ -178,6 +183,7 @@ class ProductionPreflight:
         human_approval = self.env.get("AURA_HUMAN_LIVE_APPROVAL_ID", "").strip()
         acknowledgement = self.env.get("AURA_LIVE_TRADING_ENABLED", "").strip()
         return [
+            self._phase_gate_check(),
             PreflightCheck(
                 "approved-strategy",
                 stage_ok,
@@ -206,3 +212,25 @@ class ProductionPreflight:
                 ),
             ),
         ]
+
+    def _phase_gate_check(self) -> PreflightCheck:
+        path = self.phase_gate_status_path
+        if path is None:
+            return PreflightCheck(
+                "phase-15-live-readiness",
+                False,
+                "LIVE mode requires a verified phase-gate status ledger",
+            )
+        errors = validate_phase_gate_ledger(path, self.repository_root)
+        if errors:
+            return PreflightCheck(
+                "phase-15-live-readiness",
+                False,
+                "phase-gate ledger invalid: " + "; ".join(errors),
+            )
+        passed = phase_is_pass(path, self.repository_root, 15)
+        return PreflightCheck(
+            "phase-15-live-readiness",
+            passed,
+            "Phase 15 is PASS" if passed else "Phase 15 is not PASS; live deployment is blocked",
+        )
