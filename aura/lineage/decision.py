@@ -66,7 +66,7 @@ class DecisionLineageRecord(BaseModel):
         data_quality: DataQualityReport | None,
         agent_policy: AgentPolicyDecision | None,
         deliberation: DeliberationMemo | None,
-    ) -> "DecisionLineageRecord":
+    ) -> DecisionLineageRecord:
         if round_result.correlation_id != context.correlation_id:
             raise ValueError("lineage round correlation_id does not match context")
         if memo.correlation_id != context.correlation_id:
