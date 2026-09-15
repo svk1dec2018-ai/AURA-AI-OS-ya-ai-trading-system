@@ -2013,6 +2013,24 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_mt5_demo_trade.py",
+      "phase_coverage": [
+        15
+      ],
+      "sha256": "3e92c4ec8eaf8d1380099403184c0948d1a3c6bdd79baf72c4ec520b59fb5518",
+      "source_dependencies": [
+        "aura/ops/mt5_demo_trade.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_existing_aura_position_blocks_duplicate_demo_entry",
+        "test_protected_prices_are_on_correct_side_of_entry",
+        "test_resolver_prefers_tradable_suffix_over_disabled_exact"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_multi_agent_gate.py",
       "phase_coverage": [
         0,
@@ -3381,7 +3399,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 597,
-    "test_modules": 151
+    "static_test_functions": 600,
+    "test_modules": 152
   }
 }
