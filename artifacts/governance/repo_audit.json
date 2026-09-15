@@ -5075,12 +5075,6 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 3352,
-      "path": ".github/workflows/aura_mt5_governance_rebuild.yml",
-      "sha256": "d1e30c251808458cb9f8ca7fa10188a20c53d9cd51c499643ec1e4a243b86b51"
-    },
-    {
-      "asset_class": "ci_or_repository_policy",
       "bytes": 6074,
       "path": ".github/workflows/ci.yml",
       "sha256": "dd13e3d2c8143fbf6c1d23d6532a62a562db25429cac0686e091e74b1a9b7062"
@@ -18579,7 +18573,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "9f850a2427255db8c631878dba1a8b84a6fef96d478ccbe9bdd12425993e2d08",
+  "repository_tree_sha256": "f98ed07bfc1294628d11637c0ea287a0fc64aed6cb65893979a5e1e416e23953",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19120,7 +19114,7 @@
     "entrypoints": 46,
     "parse_errors": 0,
     "python_modules": 367,
-    "repository_files": 436,
+    "repository_files": 435,
     "source_modules": 192,
     "static_test_functions": 597,
     "stub_candidates": 87,
