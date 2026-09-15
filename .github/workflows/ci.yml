@@ -115,6 +115,12 @@ jobs:
         run: python -m aura.ops.broker_evidence_readiness --check
       - name: Phase 11 offline evidence intake smoke
         run: python -m aura.ops.broker_evidence_intake --output /tmp/aura-broker-intake.json
+      - name: Phase 12 paper trading evidence drift
+        run: python -m aura.ops.paper_trading_gate --check
+      - name: Phase 13 operator interface evidence drift
+        run: python -m aura.ops.operator_interface_gate --check
+      - name: Phase 14 end-to-end evidence drift
+        run: python -m aura.ops.end_to_end_gate --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
       - name: Tests
