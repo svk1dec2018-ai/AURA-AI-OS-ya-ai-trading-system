@@ -9,6 +9,7 @@ from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
 from aura.data.quality import CandleQualityGate, DataQualityReport
 from aura.domain.models import SignalIntent
+from aura.lineage.decision import DecisionLineageRecord
 
 
 @dataclass(slots=True, frozen=True)
@@ -19,6 +20,7 @@ class ScanCandidate:
     data_quality: DataQualityReport | None
     agent_policy: AgentPolicyDecision | None = None
     deliberation: DeliberationMemo | None = None
+    lineage: DecisionLineageRecord | None = None
 
     @property
     def actionable(self) -> bool:
@@ -26,6 +28,18 @@ class ScanCandidate:
             self.memo.quorum_met
             and self.memo.intent != SignalIntent.FLAT
             and (self.agent_policy is None or self.agent_policy.allowed)
+        )
+
+    def verify_lineage(self) -> bool:
+        if self.lineage is None:
+            return False
+        return self.lineage.verify(
+            context=self.context,
+            round_result=self.round,
+            memo=self.memo,
+            data_quality=self.data_quality,
+            agent_policy=self.agent_policy,
+            deliberation=self.deliberation,
         )
 
 
@@ -41,10 +55,10 @@ class MarketScanResult:
 class MultiMarketIntelligenceScanner:
     """Scan symbols/timeframes concurrently without granting execution authority.
 
-    Every healthy round is explicitly adversarially reviewed before CEO synthesis.
-    The deliberation is a concise auditable bull/bear/counterfactual artifact, not
-    hidden chain-of-thought. Portfolio sizing/order permission still happen later
-    in the single central financial-risk coordinator.
+    Every scan candidate carries a cryptographic lineage record covering the
+    point-in-time market inputs, specialist evidence, data-quality result,
+    deliberation, CEO synthesis and evidence-policy decision. The lineage is for
+    reproducibility/audit only and grants no order or risk authority.
     """
 
     def __init__(
@@ -52,7 +66,7 @@ class MultiMarketIntelligenceScanner:
         *,
         orchestrator: MultiAgentOrchestrator,
         ceo: CEOAggregator,
-        data_quality_gate: CandleQualityGate,
+        data_quality_gate: CandleQualityGate | None = None,
         agent_risk_policy: AgentRiskPolicy | None = None,
         deliberation_engine: AdversarialDeliberationEngine | None = None,
         max_concurrent_contexts: int = 20,
@@ -91,47 +105,58 @@ class MultiMarketIntelligenceScanner:
         return MarketScanResult(candidates=tuple(candidates))
 
     async def _scan_context(self, context: AgentContext) -> ScanCandidate:
-        quality_report = self.data_quality_gate.assess(
-            context.candles,
-            decision_time=context.created_at,
-        )
-        if not quality_report.safe_for_decision:
-            empty_round = AgentRound(
-                correlation_id=context.correlation_id,
-                evidence=(),
-                failures=(),
-                started_at=context.created_at,
-                completed_at=context.created_at,
+        quality_report: DataQualityReport | None = None
+        if self.data_quality_gate is not None:
+            quality_report = self.data_quality_gate.assess(
+                context.candles,
+                decision_time=context.created_at,
             )
-            issue_names = ", ".join(issue.issue_type.value for issue in quality_report.issues)
-            blocked_memo = CEODecisionMemo(
-                correlation_id=context.correlation_id,
-                intent=SignalIntent.FLAT,
-                confidence=0.0,
-                supporting_agents=(),
-                opposing_agents=(),
-                abstaining_agents=(),
-                risk_flags=("market_data_quality_block",),
-                rationale=f"market data quality gate blocked scan: {issue_names}",
-                quorum_met=False,
-                generated_at=context.created_at,
-            )
-            policy_decision = (
-                self.agent_risk_policy.evaluate(
+            if not quality_report.safe_for_decision:
+                empty_round = AgentRound(
+                    correlation_id=context.correlation_id,
+                    evidence=(),
+                    failures=(),
+                    started_at=context.created_at,
+                    completed_at=context.created_at,
+                )
+                issue_names = ", ".join(issue.issue_type.value for issue in quality_report.issues)
+                blocked_memo = CEODecisionMemo(
+                    correlation_id=context.correlation_id,
+                    intent=SignalIntent.FLAT,
+                    confidence=0.0,
+                    supporting_agents=(),
+                    opposing_agents=(),
+                    abstaining_agents=(),
+                    risk_flags=("market_data_quality_block",),
+                    rationale=f"market data quality gate blocked scan: {issue_names}",
+                    quorum_met=False,
+                    generated_at=context.created_at,
+                )
+                policy_decision = (
+                    self.agent_risk_policy.evaluate(
+                        round_result=empty_round,
+                        memo=blocked_memo,
+                    )
+                    if self.agent_risk_policy is not None
+                    else None
+                )
+                lineage = DecisionLineageRecord.build(
+                    context=context,
                     round_result=empty_round,
                     memo=blocked_memo,
+                    data_quality=quality_report,
+                    agent_policy=policy_decision,
+                    deliberation=None,
                 )
-                if self.agent_risk_policy is not None
-                else None
-            )
-            return ScanCandidate(
-                context=context,
-                round=empty_round,
-                memo=blocked_memo,
-                data_quality=quality_report,
-                agent_policy=policy_decision,
-                deliberation=None,
-            )
+                return ScanCandidate(
+                    context=context,
+                    round=empty_round,
+                    memo=blocked_memo,
+                    data_quality=quality_report,
+                    agent_policy=policy_decision,
+                    deliberation=None,
+                    lineage=lineage,
+                )
 
         round_result = await self.orchestrator.run_round(context)
         deliberation = self.deliberation_engine.deliberate(round_result)
@@ -141,6 +166,14 @@ class MultiMarketIntelligenceScanner:
             if self.agent_risk_policy is not None
             else None
         )
+        lineage = DecisionLineageRecord.build(
+            context=context,
+            round_result=round_result,
+            memo=memo,
+            data_quality=quality_report,
+            agent_policy=policy_decision,
+            deliberation=deliberation,
+        )
         return ScanCandidate(
             context=context,
             round=round_result,
@@ -148,4 +181,5 @@ class MultiMarketIntelligenceScanner:
             data_quality=quality_report,
             agent_policy=policy_decision,
             deliberation=deliberation,
+            lineage=lineage,
         )
