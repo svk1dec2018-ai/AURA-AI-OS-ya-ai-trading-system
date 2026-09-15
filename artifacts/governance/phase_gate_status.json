@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "cd82bedd4df4391118fd8eaf9dda3a3a2e037c2bac42a4d14d6047d4a8536ebb",
+  "ledger_sha256": "451828efe4772312f81917b1dc43f6ebc19488acf8d45a762f3105272e1a167f",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,12 +8,12 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "adff5dba86c46435b422816958048febb87fb7c7294a9848484946e8b8aade0d"
+          "sha256": "a1efda692251b329c52b8415a588f6996585a8d809f3395d8502776ac3b05d4a"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "035c4a0b5348466a7caf22ea60c9c92576d047573466287ccc60afe58e9323d5"
+          "sha256": "80f61ebb485d5d6b9173868133831ab6469c350f016d1f3d732b2f66b762ce4f"
         },
         {
           "output": "test_inventory.json",
@@ -25,21 +25,12 @@
       "reasons": []
     },
     {
-      "decision": "PASS",
-      "evidence": [
-        {
-          "output": "Contract validation suite",
-          "path": "artifacts/governance/core_contract_validation_suite.json",
-          "sha256": "38167cc5d56d93121c40a216126fe6e7e36c7b6c9ac4f4563113afeac800cdcf"
-        },
-        {
-          "output": "Schema test report",
-          "path": "artifacts/governance/core_contract_schema_report.json",
-          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
-        }
-      ],
+      "decision": "BLOCKED",
+      "evidence": [],
       "phase": 1,
-      "reasons": []
+      "reasons": [
+        "Phase 1 validation evidence has not been produced or accepted; Phase 0 must remain PASS before this gate can pass."
+      ]
     },
     {
       "decision": "BLOCKED",
