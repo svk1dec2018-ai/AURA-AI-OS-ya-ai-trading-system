@@ -4843,12 +4843,6 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 1338,
-      "path": ".github/workflows/aura_integration_phase1_fix.yml",
-      "sha256": "7507ada0d977fceb823e5517d666ecdc0be7ce8b850c998dea6becf6e71a8288"
-    },
-    {
-      "asset_class": "ci_or_repository_policy",
       "bytes": 5737,
       "path": ".github/workflows/ci.yml",
       "sha256": "858e87a4721e0871178a7b08b1793c92ca73a56d6542bf5b7f27f47135f4c7a0"
@@ -4975,9 +4969,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 16292,
+      "bytes": 16454,
       "path": "aura/agents/orchestrator.py",
-      "sha256": "a4f5da5f4568e0846c355c26e018775e0c81c278c80f58baf639cbb919415ecd"
+      "sha256": "fd9b0745c280d38fa7f3fef2b0c2e2e25e6dccbd267dcd0c282b7010ef97a253"
     },
     {
       "asset_class": "python_module",
@@ -5005,9 +4999,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 6575,
+      "bytes": 6689,
       "path": "aura/agents/service.py",
-      "sha256": "2f9f67a1a1af0285c99de548f562b104b8f0483f46bd64aa172968f66abebafe"
+      "sha256": "b4ee79ec6790ae9e4f32fe31073bd1786ca94d4e5be5282d76b09bd17b99e82c"
     },
     {
       "asset_class": "python_module",
@@ -6037,9 +6031,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 7330,
+      "bytes": 7440,
       "path": "aura/runtime/scanner.py",
-      "sha256": "da8ce5120c4ff5d06fdc7ed109ec03f2d289c7393820f4db97e8ae3c3fec3da8"
+      "sha256": "67d76870c91201cbb223605fff9f3c1086364684040620eb31ee414f57139e8f"
     },
     {
       "asset_class": "python_module",
@@ -6535,9 +6529,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5263,
+      "bytes": 6156,
       "path": "tests/test_agents.py",
-      "sha256": "d146c4c3ab27de45de32fcad8a6abaa90fe7784a7bb2ec9795731652262b4287"
+      "sha256": "aec0fc62831b3a8f4089a63d1a446e8979132facc7f5edc6afead646d861ae68"
     },
     {
       "asset_class": "python_module",
@@ -7895,7 +7889,7 @@
         "aura/agents/reliability.py",
         "aura/domain/models.py"
       ],
-      "lines": 420,
+      "lines": 424,
       "module": "aura.agents.orchestrator",
       "parsed": true,
       "path": "aura/agents/orchestrator.py",
@@ -7904,7 +7898,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "a4f5da5f4568e0846c355c26e018775e0c81c278c80f58baf639cbb919415ecd",
+      "sha256": "fd9b0745c280d38fa7f3fef2b0c2e2e25e6dccbd267dcd0c282b7010ef97a253",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -8053,7 +8047,7 @@
         "aura/domain/models.py",
         "aura/lineage/decision.py"
       ],
-      "lines": 165,
+      "lines": 167,
       "module": "aura.agents.service",
       "parsed": true,
       "path": "aura/agents/service.py",
@@ -8062,7 +8056,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "2f9f67a1a1af0285c99de548f562b104b8f0483f46bd64aa172968f66abebafe",
+      "sha256": "b4ee79ec6790ae9e4f32fe31073bd1786ca94d4e5be5282d76b09bd17b99e82c",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -13491,7 +13485,7 @@
         "aura/domain/models.py",
         "aura/lineage/decision.py"
       ],
-      "lines": 185,
+      "lines": 187,
       "module": "aura.runtime.scanner",
       "parsed": true,
       "path": "aura/runtime/scanner.py",
@@ -13500,7 +13494,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "da8ce5120c4ff5d06fdc7ed109ec03f2d289c7393820f4db97e8ae3c3fec3da8",
+      "sha256": "67d76870c91201cbb223605fff9f3c1086364684040620eb31ee414f57139e8f",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -14310,7 +14304,7 @@
         "aura/agents/orchestrator.py",
         "aura/domain/models.py"
       ],
-      "lines": 180,
+      "lines": 209,
       "module": "tests.test_agents",
       "parsed": true,
       "path": "tests/test_agents.py",
@@ -14320,7 +14314,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "d146c4c3ab27de45de32fcad8a6abaa90fe7784a7bb2ec9795731652262b4287",
+      "sha256": "aec0fc62831b3a8f4089a63d1a446e8979132facc7f5edc6afead646d861ae68",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -18092,7 +18086,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "350d2b975f4ada7ade8489416d99f24acaaa360cb4b427ea1c730588b017103b",
+  "repository_tree_sha256": "83971adc7d4a6f4e3ed37bc706276fb0dadaf53114096a42c169563c08fe8749",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -18633,9 +18627,9 @@
     "entrypoints": 41,
     "parse_errors": 0,
     "python_modules": 361,
-    "repository_files": 428,
+    "repository_files": 427,
     "source_modules": 188,
-    "static_test_functions": 588,
+    "static_test_functions": 589,
     "stub_candidates": 87,
     "test_modules": 149,
     "unclassified_modules": 0,

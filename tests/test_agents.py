@@ -178,3 +178,32 @@ def test_non_point_in_time_evidence_is_rejected() -> None:
             thesis="uses future information",
             sources=(_source("future-source", point_in_time_safe=False),),
         )
+
+
+@pytest.mark.asyncio
+async def test_ceo_memo_uses_context_decision_time_for_replay() -> None:
+    started: list[str] = []
+    gate = asyncio.Event()
+    context_time = datetime(2026, 1, 1, 0, 5, tzinfo=UTC)
+    context = AgentContext(
+        correlation_id="replay-round",
+        symbol="X",
+        decision_timeframe="5m",
+        candles=(_candle(),),
+        created_at=context_time,
+    )
+    agents = [
+        BarrierAgent(
+            agent_id="htf-replay",
+            role=AgentRole.HTF_BIAS,
+            intent=SignalIntent.LONG,
+            started=started,
+            gate=gate,
+            expected=1,
+        )
+    ]
+    round_result = await MultiAgentOrchestrator(agents, timeout_seconds=1).run_round(context)
+    memo = CEOAggregator(min_agents=1, min_distinct_roles=1).synthesize(
+        round_result, context=context
+    )
+    assert memo.generated_at == context_time

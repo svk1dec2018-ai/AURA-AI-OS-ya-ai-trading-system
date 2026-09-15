@@ -187,22 +187,23 @@
       ]
     },
     {
-      "async_test_functions": 2,
+      "async_test_functions": 3,
       "path": "tests/test_agents.py",
       "phase_coverage": [
         1,
         9
       ],
-      "sha256": "d146c4c3ab27de45de32fcad8a6abaa90fe7784a7bb2ec9795731652262b4287",
+      "sha256": "aec0fc62831b3a8f4089a63d1a446e8979132facc7f5edc6afead646d861ae68",
       "source_dependencies": [
         "aura/agents/base.py",
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
         "aura/domain/models.py"
       ],
-      "static_test_functions": 3,
+      "static_test_functions": 4,
       "test_classes": [],
       "test_functions": [
+        "test_ceo_memo_uses_context_decision_time_for_replay",
         "test_non_point_in_time_evidence_is_rejected",
         "test_one_agent_failure_does_not_cancel_other_specialists",
         "test_specialists_run_concurrently_and_ceo_combines_evidence"
@@ -3338,9 +3339,9 @@
   ],
   "schema_version": 1,
   "summary": {
-    "async_test_functions": 95,
+    "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 588,
+    "static_test_functions": 589,
     "test_modules": 149
   }
 }

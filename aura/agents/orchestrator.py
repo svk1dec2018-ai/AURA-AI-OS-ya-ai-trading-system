@@ -245,6 +245,9 @@ class CEOAggregator:
                 rationale=rationale,
                 reason_code=reason_code,
                 quorum_met=quorum,
+                generated_at=(
+                    context.created_at if context is not None else round_result.completed_at
+                ),
             )
 
         if not quorum_met:
@@ -340,6 +343,7 @@ class CEOAggregator:
         rationale: str,
         reason_code: DecisionReasonCode,
         quorum_met: bool,
+        generated_at: datetime,
     ) -> CEODecisionMemo:
         trace_inputs = {
             "correlation_id": round_result.correlation_id,
@@ -398,7 +402,7 @@ class CEOAggregator:
             rationale=rationale,
             quorum_met=quorum_met,
             decision_trace=trace,
-            generated_at=round_result.completed_at,
+            generated_at=generated_at,
         )
 
     @staticmethod

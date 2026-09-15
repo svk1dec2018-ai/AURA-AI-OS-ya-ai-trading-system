@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "451828efe4772312f81917b1dc43f6ebc19488acf8d45a762f3105272e1a167f",
+  "ledger_sha256": "ae308c90df09d0eede2664579d1420690a0726cdfb73498f092748dfeca4540d",
   "policy": "AURA mandatory sequential phase gates 0-15",
   "records": [
     {
@@ -8,101 +8,166 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "a1efda692251b329c52b8415a588f6996585a8d809f3395d8502776ac3b05d4a"
+          "sha256": "968855afd51a455ed3d84947d0af50aafbdd9b9a108cb93193363d704eea49e4"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "80f61ebb485d5d6b9173868133831ab6469c350f016d1f3d732b2f66b762ce4f"
+          "sha256": "84866432d99262c32f9d9f07ed59822713c689533ebb534c2b2aeafc1193f639"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "3fea1415601dc147084f927747528b94780c2029072fc0ca24d2d2203fe6f1cb"
+          "sha256": "3b5e51a5c91aaea48826ba3b33ae1e270ced60d6cb37b267c43325dc62c2e297"
         }
       ],
       "phase": 0,
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Contract validation suite",
+          "path": "artifacts/governance/core_contract_validation_suite.json",
+          "sha256": "38167cc5d56d93121c40a216126fe6e7e36c7b6c9ac4f4563113afeac800cdcf"
+        },
+        {
+          "output": "Schema test report",
+          "path": "artifacts/governance/core_contract_schema_report.json",
+          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
+        }
+      ],
       "phase": 1,
-      "reasons": [
-        "Phase 1 validation evidence has not been produced or accepted; Phase 0 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Reconciliation test report",
+          "path": "artifacts/governance/reconciliation_test_report.json",
+          "sha256": "0d08a23ca06db9d1ac7d2f09a39f702d14fed0275d66cc1bfef216dc84584e7f"
+        },
+        {
+          "output": "State transition logs",
+          "path": "artifacts/governance/state_transition_logs.json",
+          "sha256": "84bd8fcbce689ca78cdef8a4da68bef14e46f14b30642aebd23cd4f340871042"
+        }
+      ],
       "phase": 2,
-      "reasons": [
-        "Phase 2 validation evidence has not been produced or accepted; Phase 1 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Risk stress test report",
+          "path": "artifacts/governance/risk_stress_test_report.json",
+          "sha256": "db0bbcca5b27214f2071b9e0a19699c73478dea3884bf0f3737dc391548d5456"
+        },
+        {
+          "output": "Violation simulation logs",
+          "path": "artifacts/governance/risk_violation_simulation_logs.json",
+          "sha256": "9293d9b5ed372c3e311dadfe50727c53104821c5efc6bf8501489a6981f7563a"
+        }
+      ],
       "phase": 3,
-      "reasons": [
-        "Phase 3 validation evidence has not been produced or accepted; Phase 2 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Adapter conformance report",
+          "path": "artifacts/governance/broker_adapter_conformance_report.json",
+          "sha256": "3c5796385234a3dc8e1001d8a2735bf57f74db775f2efdd34ce9685191d6de1c"
+        }
+      ],
       "phase": 4,
-      "reasons": [
-        "Phase 4 validation evidence has not been produced or accepted; Phase 3 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Anomaly detection logs",
+          "path": "artifacts/governance/anomaly_detection_logs.json",
+          "sha256": "fc63f0f0959a491b0a27eddc219be707bdff98636b85e5a3d947f4b38aee9d44"
+        },
+        {
+          "output": "Data quality report",
+          "path": "artifacts/governance/data_quality_report.json",
+          "sha256": "a9761264824af642f82bc6a4572f3a4e8a40d10565d9a01867c38f70259df8ca"
+        }
+      ],
       "phase": 5,
-      "reasons": [
-        "Phase 5 validation evidence has not been produced or accepted; Phase 4 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Backtest report",
+          "path": "artifacts/governance/backtest_report.json",
+          "sha256": "fcf42a5ddbe7fece6aad7a126df4ed5d5f0cd187571e05b3688cfec422192049"
+        },
+        {
+          "output": "Bias detection report",
+          "path": "artifacts/governance/bias_detection_report.json",
+          "sha256": "d301473c2c6d9e36d9b33265abd5fc8532835513cbec74cf83870cfd17eb0151"
+        }
+      ],
       "phase": 6,
-      "reasons": [
-        "Phase 6 validation evidence has not been produced or accepted; Phase 5 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Strategy evaluation report",
+          "path": "artifacts/governance/strategy_evaluation_report.json",
+          "sha256": "76956c44e3fdabe53edf900711e1c7c92706cf45d355d086dd849b98b89e1de6"
+        }
+      ],
       "phase": 7,
-      "reasons": [
-        "Phase 7 validation evidence has not been produced or accepted; Phase 6 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Retrieval benchmark report",
+          "path": "artifacts/governance/retrieval_benchmark_report.json",
+          "sha256": "c6403704410dfc5f02416135d901a6df78b45edb9e0908c25c5ce4066d290bdc"
+        }
+      ],
       "phase": 8,
-      "reasons": [
-        "Phase 8 validation evidence has not been produced or accepted; Phase 7 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Agent consistency report",
+          "path": "artifacts/governance/agent_consistency_report.json",
+          "sha256": "22aab0cea91beac83cc2db0667e287c67ce153f05adb5b17460bff1bcb0b59f7"
+        }
+      ],
       "phase": 9,
-      "reasons": [
-        "Phase 9 validation evidence has not been produced or accepted; Phase 8 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Decision trace logs",
+          "path": "artifacts/governance/decision_trace_logs.json",
+          "sha256": "ed9f0fa328ecbf3dd089566e37c70f56f51710425ba16974d43c20bf1354d52b"
+        }
+      ],
       "phase": 10,
-      "reasons": [
-        "Phase 10 validation evidence has not been produced or accepted; Phase 9 must remain PASS before this gate can pass."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",
