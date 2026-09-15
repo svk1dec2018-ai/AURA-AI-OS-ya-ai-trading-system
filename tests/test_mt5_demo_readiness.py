@@ -166,7 +166,7 @@ def test_mt5_live_account_is_rejected_before_readiness_inspection() -> None:
 
     try:
         gateway.connect_demo(MT5DemoCredentials(123456, "secret", "Broker-Demo"))
-    except Exception as exc:
+    except RuntimeError as exc:
         assert "not DEMO" in str(exc)
     else:
         raise AssertionError("live account must never pass DEMO verification")
