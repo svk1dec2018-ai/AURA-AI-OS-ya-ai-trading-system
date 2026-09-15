@@ -78,6 +78,7 @@ jobs:
       - name: Compile and lint patched code
         run: |
           set -euo pipefail
+          python -m pip check
           python -m compileall -q aura examples
           ruff check --output-format=github aura tests examples
       - name: Rebuild sequential governance evidence
@@ -107,11 +108,12 @@ jobs:
           python -m aura.ops.ceo_decision_gate --check
           python -m aura.ops.broker_evidence_readiness --write
           python -m aura.ops.broker_evidence_readiness --check
+          python -m aura.ops.broker_evidence_intake --output /tmp/aura-broker-intake.json
       - name: Full regression validation
         run: |
           set -euo pipefail
           pytest -q
-          python -m aura.ops.production_preflight --mode paper --provider public
+          python examples/run_production_preflight.py --mode paper --connector public
           python -m build
       - name: Commit verified code and governance evidence to integration branch
         run: |
