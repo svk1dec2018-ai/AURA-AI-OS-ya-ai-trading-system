@@ -118,6 +118,10 @@ class DecisionLineageRecord(BaseModel):
             lineage_hash=_hash(lineage_payload),
         )
 
+    def verify_hash(self) -> bool:
+        """Verify the stored aggregate hash without needing the original objects."""
+        return self.lineage_hash == _hash(self._payload())
+
     def verify(
         self,
         *,
@@ -128,6 +132,8 @@ class DecisionLineageRecord(BaseModel):
         agent_policy: AgentPolicyDecision | None,
         deliberation: DeliberationMemo | None,
     ) -> bool:
+        if not self.verify_hash():
+            return False
         rebuilt = type(self).build(
             context=context,
             round_result=round_result,
@@ -137,6 +143,26 @@ class DecisionLineageRecord(BaseModel):
             deliberation=deliberation,
         )
         return self == rebuilt
+
+    def _payload(self) -> dict[str, Any]:
+        return {
+            "lineage_version": self.lineage_version,
+            "correlation_id": self.correlation_id,
+            "symbol": self.symbol,
+            "timeframe": self.timeframe,
+            "decision_time": self.decision_time,
+            "candle_count": self.candle_count,
+            "candle_series_hash": self.candle_series_hash,
+            "metadata_hash": self.metadata_hash,
+            "evidence_hash": self.evidence_hash,
+            "failures_hash": self.failures_hash,
+            "quality_hash": self.quality_hash,
+            "deliberation_hash": self.deliberation_hash,
+            "ceo_hash": self.ceo_hash,
+            "agent_policy_hash": self.agent_policy_hash,
+            "source_ids": self.source_ids,
+            "latest_source_observed_at": self.latest_source_observed_at,
+        }
 
 
 def _hash(value: Any) -> str:
