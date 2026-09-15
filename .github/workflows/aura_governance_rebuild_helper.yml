@@ -1,0 +1,62 @@
+name: AURA governance rebuild helper
+
+on:
+  push:
+    branches:
+      - agent/aura-governance-helper
+    paths:
+      - .github/workflows/aura_governance_rebuild_helper.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild-governance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/aura-master-integration
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Rebuild sequential governance evidence
+        run: |
+          set -euo pipefail
+          python -m aura.ops.repository_audit --write
+          python -m aura.ops.repository_audit --check
+          python -m aura.ops.core_contracts --write
+          python -m aura.ops.core_contracts --check
+          python -m aura.ops.state_engine_gate --write
+          python -m aura.ops.state_engine_gate --check
+          python -m aura.ops.risk_engine_gate --write
+          python -m aura.ops.risk_engine_gate --check
+          python -m aura.ops.broker_conformance_gate --write
+          python -m aura.ops.broker_conformance_gate --check
+          python -m aura.ops.market_data_gate --write
+          python -m aura.ops.market_data_gate --check
+          python -m aura.ops.backtest_gate --write
+          python -m aura.ops.backtest_gate --check
+          python -m aura.ops.strategy_research_gate --write
+          python -m aura.ops.strategy_research_gate --check
+          python -m aura.ops.knowledge_rag_gate --write
+          python -m aura.ops.knowledge_rag_gate --check
+          python -m aura.ops.multi_agent_gate --write
+          python -m aura.ops.multi_agent_gate --check
+          python -m aura.ops.ceo_decision_gate --write
+          python -m aura.ops.ceo_decision_gate --check
+      - name: Commit verified governance evidence to integration branch
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artifacts/governance
+          if git diff --cached --quiet; then
+            echo "Governance artifacts already current."
+          else
+            git commit -m "rebuild Phase 0-10 governance evidence"
+            git push origin HEAD:agent/aura-master-integration
+          fi
