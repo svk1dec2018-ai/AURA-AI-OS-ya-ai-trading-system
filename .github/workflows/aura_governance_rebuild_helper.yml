@@ -75,14 +75,11 @@ jobs:
               text += '''\n\n@pytest.mark.asyncio\nasync def test_ceo_memo_uses_context_decision_time_for_replay() -> None:\n    started: list[str] = []\n    gate = asyncio.Event()\n    context_time = datetime(2026, 1, 1, 0, 5, tzinfo=UTC)\n    context = AgentContext(\n        correlation_id="replay-round",\n        symbol="X",\n        decision_timeframe="5m",\n        candles=(_candle(),),\n        created_at=context_time,\n    )\n    agents = [\n        BarrierAgent(\n            agent_id="htf-replay",\n            role=AgentRole.HTF_BIAS,\n            intent=SignalIntent.LONG,\n            started=started,\n            gate=gate,\n            expected=1,\n        )\n    ]\n    round_result = await MultiAgentOrchestrator(agents, timeout_seconds=1).run_round(context)\n    memo = CEOAggregator(min_agents=1, min_distinct_roles=1).synthesize(\n        round_result, context=context\n    )\n    assert memo.generated_at == context_time\n'''
               tests.write_text(text)
           PY
-          grep -R -n "MultiAgentDecisionService(" aura tests examples || true
-          grep -R -n "MultiMarketIntelligenceScanner(" aura tests examples || true
-      - name: Validate code before governance rebuild
+      - name: Compile and lint patched code
         run: |
           set -euo pipefail
           python -m compileall -q aura examples
           ruff check --output-format=github aura tests examples
-          pytest -q
       - name: Rebuild sequential governance evidence
         run: |
           set -euo pipefail
@@ -108,6 +105,14 @@ jobs:
           python -m aura.ops.multi_agent_gate --check
           python -m aura.ops.ceo_decision_gate --write
           python -m aura.ops.ceo_decision_gate --check
+          python -m aura.ops.broker_evidence_readiness --write
+          python -m aura.ops.broker_evidence_readiness --check
+      - name: Full regression validation
+        run: |
+          set -euo pipefail
+          pytest -q
+          python -m aura.ops.production_preflight --mode paper --provider public
+          python -m build
       - name: Commit verified code and governance evidence to integration branch
         run: |
           set -euo pipefail
