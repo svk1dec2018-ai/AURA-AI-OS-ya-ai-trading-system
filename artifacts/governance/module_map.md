@@ -7,7 +7,7 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 435
+- Repository files: 436
 - Python modules: 367
 - Source modules: 192
 - Test modules: 151
@@ -22,7 +22,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `.dockerignore` | 1 |
 | `.env.example` | 1 |
 | `.gitattributes` | 1 |
-| `.github` | 3 |
+| `.github` | 4 |
 | `.gitignore` | 1 |
 | `CHECK_MT5_XAUUSD_DEMO.ps1` | 1 |
 | `CLAUDE.md` | 1 |
