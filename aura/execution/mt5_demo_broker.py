@@ -21,6 +21,9 @@ class MT5DemoBrokerConfig:
     fill_poll_seconds: float = 1.0
     history_lookback_seconds: int = 15
     comment_prefix: str = "AURA"
+    stop_loss_bps: Decimal = Decimal(50)
+    take_profit_bps: Decimal = Decimal(100)
+    block_existing_aura_position: bool = True
 
     def __post_init__(self) -> None:
         if self.magic <= 0:
@@ -31,10 +34,12 @@ class MT5DemoBrokerConfig:
             raise ValueError("MT5 fill polling configuration must be positive")
         if not self.comment_prefix or len(self.comment_prefix) > 10:
             raise ValueError("MT5 comment_prefix must contain 1-10 characters")
+        if self.stop_loss_bps <= 0 or self.take_profit_bps <= 0:
+            raise ValueError("MT5 native stop-loss/take-profit bps must be positive")
 
 
 class MT5DemoBroker(BrokerAdapter):
-    """Market-order BrokerAdapter for a verified MetaTrader 5 DEMO account."""
+    """Protected market-order BrokerAdapter for a verified MetaTrader 5 DEMO account."""
 
     name = "MT5_DEMO"
     capabilities = BrokerCapabilities(
@@ -90,9 +95,14 @@ class MT5DemoBroker(BrokerAdapter):
             raise ValueError("MT5 broker_order_id must be a numeric ticket") from exc
         await asyncio.to_thread(self._cancel_sync, ticket)
 
+    async def poll_fills_once(self) -> tuple[Fill, ...]:
+        """Poll broker-origin fills once for deterministic coordinator/replay integration."""
+        self._require_connected()
+        return await asyncio.to_thread(self._poll_fills_sync)
+
     async def fills(self):
         while self._connected:
-            for fill in await asyncio.to_thread(self._poll_fills_sync):
+            for fill in await self.poll_fills_once():
                 yield fill
             await asyncio.sleep(self.config.fill_poll_seconds)
 
@@ -103,6 +113,8 @@ class MT5DemoBroker(BrokerAdapter):
         snapshots: list[BrokerOrderSnapshot] = []
         for row in rows:
             source = _asdict(row)
+            if int(source.get("magic", self.config.magic)) != self.config.magic:
+                continue
             ticket = int(source.get("ticket", 0))
             mapped = self._order_by_ticket.get(ticket)
             if mapped is None:
@@ -143,6 +155,8 @@ class MT5DemoBroker(BrokerAdapter):
         quantities: dict[str, Decimal] = {}
         for row in rows:
             source = _asdict(row)
+            if int(source.get("magic", self.config.magic)) != self.config.magic:
+                continue
             symbol = str(source.get("symbol", ""))
             volume = Decimal(str(source.get("volume", 0)))
             if not symbol or volume <= 0:
@@ -193,6 +207,13 @@ class MT5DemoBroker(BrokerAdapter):
         if not bool(symbol.get("visible", True)) and not self.gateway.symbol_select(order.symbol, True):
             raise RuntimeError(f"MT5 could not select {order.symbol} in MarketWatch")
         self._validate_volume(order.quantity, symbol)
+        if self.config.block_existing_aura_position:
+            existing = self._aura_positions(order.symbol)
+            if existing:
+                raise RuntimeError(
+                    f"MT5 DEMO safety block: {order.symbol} already has "
+                    f"{len(existing)} AURA position(s)"
+                )
 
         tick = self.gateway.symbol_info_tick(order.symbol)
         if tick is None:
@@ -201,6 +222,7 @@ class MT5DemoBroker(BrokerAdapter):
         price = Decimal(str(tick_data["ask"] if order.side == Side.BUY else tick_data["bid"]))
         if price <= 0:
             raise RuntimeError(f"MT5 returned non-positive tradable price for {order.symbol}")
+        stop_loss, take_profit = self._native_protection(order.side, price, symbol)
 
         token = hashlib.sha1(order.client_order_id.encode("utf-8")).hexdigest()[:12]
         request: dict[str, Any] = {
@@ -208,6 +230,8 @@ class MT5DemoBroker(BrokerAdapter):
             "symbol": order.symbol,
             "volume": float(order.quantity),
             "type": self._mt5_market_type(order.side),
+            "sl": float(stop_loss),
+            "tp": float(take_profit),
             "deviation": self.config.deviation_points,
             "magic": self.config.magic,
             "comment": f"{self.config.comment_prefix}:{token}",
@@ -250,6 +274,47 @@ class MT5DemoBroker(BrokerAdapter):
         self._order_by_ticket[ticket] = order
         self._order_by_token[token] = order
         return ticket
+
+    def _aura_positions(self, symbol: str) -> tuple[Any, ...]:
+        rows = self.gateway.positions_get(symbol=symbol)
+        if rows is None:
+            raise RuntimeError(f"MT5 positions_get failed: {self.gateway.last_error()}")
+        return tuple(
+            row
+            for row in rows
+            if int(_asdict(row).get("magic", self.config.magic)) == self.config.magic
+        )
+
+    def _native_protection(
+        self,
+        side: Side,
+        entry: Decimal,
+        symbol: dict[str, Any],
+    ) -> tuple[Decimal, Decimal]:
+        point = Decimal(str(symbol.get("point", 0)))
+        if point <= 0:
+            raise RuntimeError("MT5 symbol point must be positive for native protection")
+        broker_points = max(int(symbol.get("trade_stops_level", 0)), 1) + 2
+        broker_distance = point * Decimal(broker_points)
+        stop_distance = max(
+            entry * self.config.stop_loss_bps / Decimal(10000),
+            broker_distance,
+        )
+        target_distance = max(
+            entry * self.config.take_profit_bps / Decimal(10000),
+            broker_distance,
+        )
+        digits = int(symbol.get("digits", 5))
+        quantum = Decimal(1).scaleb(-digits)
+        if side == Side.BUY:
+            stop_loss = entry - stop_distance
+            take_profit = entry + target_distance
+        else:
+            stop_loss = entry + stop_distance
+            take_profit = entry - target_distance
+        if stop_loss <= 0 or take_profit <= 0:
+            raise RuntimeError("MT5 native protection produced a non-positive price")
+        return stop_loss.quantize(quantum), take_profit.quantize(quantum)
 
     def _poll_fills_sync(self) -> tuple[Fill, ...]:
         now = datetime.now(UTC)
