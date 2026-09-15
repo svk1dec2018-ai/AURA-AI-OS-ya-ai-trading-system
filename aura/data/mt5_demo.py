@@ -44,13 +44,37 @@ def load_mt5_demo_credentials_from_env() -> MT5DemoCredentials:
     )
 
 
+def _account_state(info: Any) -> MT5AccountState:
+    source = (
+        info._asdict()
+        if hasattr(info, "_asdict")
+        else info
+        if isinstance(info, dict)
+        else vars(info)
+    )
+    margin_level = source.get("margin_level")
+    return MT5AccountState(
+        login=int(source["login"]),
+        server=str(source["server"]),
+        currency=str(source["currency"]),
+        balance=Decimal(str(source["balance"])),
+        equity=Decimal(str(source["equity"])),
+        margin=Decimal(str(source["margin"])),
+        margin_free=Decimal(str(source["margin_free"])),
+        margin_level=(
+            Decimal(str(margin_level)) if margin_level is not None else None
+        ),
+    )
+
+
 class OfficialMT5Gateway:
     """Serialized, fail-closed wrapper around MetaQuotes' MetaTrader5 package.
 
     MetaTrader terminal calls are guarded by one re-entrant lock so data polling,
     reconciliation and demo execution workers cannot concurrently mutate/use the
-    platform bridge. Trading calls remain unavailable until `connect_demo` proves
-    the account is DEMO.
+    platform bridge. Trading calls remain unavailable until a DEMO account is
+    verified, whether credentials are supplied explicitly or an already logged-in
+    terminal session is reused.
     """
 
     def __init__(self, module: Any | None = None) -> None:
@@ -103,20 +127,50 @@ class OfficialMT5Gateway:
                 mt5.shutdown()
                 raise
             self._demo_verified = True
-            source = info._asdict() if hasattr(info, "_asdict") else info if isinstance(info, dict) else vars(info)
-            margin_level = source.get("margin_level")
-            return MT5AccountState(
-                login=int(source["login"]),
-                server=str(source["server"]),
-                currency=str(source["currency"]),
-                balance=Decimal(str(source["balance"])),
-                equity=Decimal(str(source["equity"])),
-                margin=Decimal(str(source["margin"])),
-                margin_free=Decimal(str(source["margin_free"])),
-                margin_level=(
-                    Decimal(str(margin_level)) if margin_level is not None else None
-                ),
+            return _account_state(info)
+
+    def connect_current_demo_session(
+        self,
+        terminal_path: str | None = None,
+    ) -> MT5AccountState:
+        """Reuse the account already logged in to the local MT5 terminal.
+
+        No login, password or server is accepted by this path. It is intentionally
+        fail-closed: the terminal must already be connected and the active account
+        must pass the existing DEMO-account guard before any trading-capable call
+        becomes available through this gateway.
+        """
+
+        with self._lock:
+            mt5 = self.module
+            ok = mt5.initialize(terminal_path) if terminal_path else mt5.initialize()
+            if not ok:
+                raise RuntimeError(f"MT5 initialize failed: {mt5.last_error()}")
+            info = mt5.account_info()
+            if info is None:
+                mt5.shutdown()
+                raise RuntimeError(f"MT5 account_info failed: {mt5.last_error()}")
+            try:
+                DemoExecutionGuard.assert_mt5_demo_account(info)
+            except Exception:
+                mt5.shutdown()
+                raise
+            terminal = mt5.terminal_info()
+            if terminal is None:
+                mt5.shutdown()
+                raise RuntimeError(f"MT5 terminal_info failed: {mt5.last_error()}")
+            terminal_source = (
+                terminal._asdict()
+                if hasattr(terminal, "_asdict")
+                else terminal
+                if isinstance(terminal, dict)
+                else vars(terminal)
             )
+            if not bool(terminal_source.get("connected", False)):
+                mt5.shutdown()
+                raise RuntimeError("MT5 terminal is not connected")
+            self._demo_verified = True
+            return _account_state(info)
 
     def initialize(self) -> bool:
         with self._lock:
