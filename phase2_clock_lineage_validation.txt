@@ -1,0 +1,108 @@
+PY311_INSTALL=0
+PY311_RUFF=0
+PY311_PYTEST=1
+=== PY311 RUFF ===
+All checks passed!
+=== PY311 PYTEST ===
+........................................................................ [ 24%]
+........................................................................ [ 48%]
+...................................F.................................... [ 73%]
+........................................................................ [ 97%]
+.......                                                                  [100%]
+=================================== FAILURES ===================================
+_____________ test_event_time_clock_produces_replay_stable_lineage _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_event_time_clock_produces0')
+
+    @pytest.mark.asyncio
+    async def test_event_time_clock_produces_replay_stable_lineage(tmp_path: Path) -> None:
+        first_runtime, _, _, first_audit = _runtime(
+            tmp_path / "first",
+            deterministic_clock=True,
+        )
+        second_runtime, _, _, second_audit = _runtime(
+            tmp_path / "second",
+            deterministic_clock=True,
+        )
+        batch = [_candle("X", 0, "100", "100")]
+    
+        await first_runtime.start()
+        first_step = await first_runtime.on_batch(batch)
+        await first_runtime.stop()
+    
+        await second_runtime.start()
+        second_step = await second_runtime.on_batch(batch)
+        await second_runtime.stop()
+    
+        first_candidate = first_step.scan.candidates[0]
+        second_candidate = second_step.scan.candidates[0]
+        assert first_candidate.context.created_at == batch[0].close_time
+        assert second_candidate.context.created_at == batch[0].close_time
+        assert first_candidate.lineage is not None
+        assert second_candidate.lineage is not None
+>       assert first_candidate.lineage.lineage_hash == second_candidate.lineage.lineage_hash
+E       AssertionError: assert 'fd1134c052f9...e7986aad6cff8' == '2cf86a826bf6...5ce6bf397940c'
+E         
+E         - 2cf86a826bf6a494e1064179bda48cea1e6abd821d3c4f7d9b85ce6bf397940c
+E         + fd1134c052f9106606c385f83e7d97cf817cd23f64e5115e766e7986aad6cff8
+
+tests/test_multi_market_paper.py:178: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_multi_market_paper.py::test_event_time_clock_produces_replay_stable_lineage - AssertionError: assert 'fd1134c052f9...e7986aad6cff8' == '2cf86a826bf6...5ce6bf397940c'
+  
+  - 2cf86a826bf6a494e1064179bda48cea1e6abd821d3c4f7d9b85ce6bf397940c
+  + fd1134c052f9106606c385f83e7d97cf817cd23f64e5115e766e7986aad6cff8
+PY312_INSTALL=0
+PY312_RUFF=0
+PY312_PYTEST=1
+=== PY312 RUFF ===
+All checks passed!
+=== PY312 PYTEST ===
+........................................................................ [ 24%]
+........................................................................ [ 48%]
+...................................F.................................... [ 73%]
+........................................................................ [ 97%]
+.......                                                                  [100%]
+=================================== FAILURES ===================================
+_____________ test_event_time_clock_produces_replay_stable_lineage _____________
+
+tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-1/test_event_time_clock_produces0')
+
+    @pytest.mark.asyncio
+    async def test_event_time_clock_produces_replay_stable_lineage(tmp_path: Path) -> None:
+        first_runtime, _, _, first_audit = _runtime(
+            tmp_path / "first",
+            deterministic_clock=True,
+        )
+        second_runtime, _, _, second_audit = _runtime(
+            tmp_path / "second",
+            deterministic_clock=True,
+        )
+        batch = [_candle("X", 0, "100", "100")]
+    
+        await first_runtime.start()
+        first_step = await first_runtime.on_batch(batch)
+        await first_runtime.stop()
+    
+        await second_runtime.start()
+        second_step = await second_runtime.on_batch(batch)
+        await second_runtime.stop()
+    
+        first_candidate = first_step.scan.candidates[0]
+        second_candidate = second_step.scan.candidates[0]
+        assert first_candidate.context.created_at == batch[0].close_time
+        assert second_candidate.context.created_at == batch[0].close_time
+        assert first_candidate.lineage is not None
+        assert second_candidate.lineage is not None
+>       assert first_candidate.lineage.lineage_hash == second_candidate.lineage.lineage_hash
+E       AssertionError: assert '4711f8acf1d3...fdae3af7b805d' == 'b2c44372eb1b...258f169ba9b9e'
+E         
+E         - b2c44372eb1bb8b7203b05fdcf4e8166c12d897d1d2b1adf56e258f169ba9b9e
+E         + 4711f8acf1d39d0aaa14e904d5ae7c64d5c4bbd13daa128979dfdae3af7b805d
+
+tests/test_multi_market_paper.py:178: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_multi_market_paper.py::test_event_time_clock_produces_replay_stable_lineage - AssertionError: assert '4711f8acf1d3...fdae3af7b805d' == 'b2c44372eb1b...258f169ba9b9e'
+  
+  - b2c44372eb1bb8b7203b05fdcf4e8166c12d897d1d2b1adf56e258f169ba9b9e
+  + 4711f8acf1d39d0aaa14e904d5ae7c64d5c4bbd13daa128979dfdae3af7b805d
