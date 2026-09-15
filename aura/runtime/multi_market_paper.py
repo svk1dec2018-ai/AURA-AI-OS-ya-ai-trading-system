@@ -26,6 +26,7 @@ BatchMetadataProvider = Callable[
     dict[str, Any],
 ]
 RequestedQuantityProvider = Callable[[str], Decimal]
+DecisionTimeProvider = Callable[[datetime], datetime]
 
 _HTF_MAP = {
     "1m": "5m",
@@ -36,6 +37,16 @@ _HTF_MAP = {
     "4h": "1d",
     "1d": "1w",
 }
+
+
+def live_decision_time(close_time: datetime) -> datetime:
+    """Return the live processing time while never preceding market close time."""
+    return max(close_time, datetime.now(UTC))
+
+
+def event_time_decision(close_time: datetime) -> datetime:
+    """Deterministic replay clock: decision occurs exactly at captured event close."""
+    return close_time
 
 
 @dataclass(slots=True, frozen=True)
@@ -56,7 +67,12 @@ class MultiMarketPaperStep:
 
 
 class MultiMarketPaperCoordinator:
-    """Coordinated multi-market paper loop with causal historical warm-up."""
+    """Coordinated multi-market paper loop with explicit decision-time authority.
+
+    Live runtimes default to wall-clock capture. Deterministic replay must inject
+    an event/captured-time provider so replay never silently substitutes today's
+    wall clock for the original decision timestamp.
+    """
 
     def __init__(
         self,
@@ -75,6 +91,7 @@ class MultiMarketPaperCoordinator:
         max_history_bars: int = 5000,
         metadata_provider: BatchMetadataProvider | None = None,
         decision_timeframes: frozenset[str] | None = None,
+        decision_time_provider: DecisionTimeProvider = live_decision_time,
     ) -> None:
         if starting_cash <= 0:
             raise ValueError("starting_cash must be positive")
@@ -102,6 +119,7 @@ class MultiMarketPaperCoordinator:
         self.max_history_bars = max_history_bars
         self.metadata_provider = metadata_provider
         self.decision_timeframes = decision_timeframes
+        self.decision_time_provider = decision_time_provider
         self.day_start_equity = starting_cash
         self._current_session_date = None
         self._histories: dict[tuple[str, str], list[NormalizedCandle]] = {}
@@ -168,7 +186,11 @@ class MultiMarketPaperCoordinator:
             self._marks[candle.symbol] = candle.close
         portfolio = self.ledger.snapshot(self._marks)
         close_time = ordered[0].close_time
-        decision_time = max(close_time, datetime.now(UTC))
+        decision_time = self.decision_time_provider(close_time)
+        if decision_time.tzinfo is None or decision_time.utcoffset() is None:
+            raise ValueError("decision_time_provider must return a timezone-aware datetime")
+        if decision_time < close_time:
+            raise ValueError("decision_time_provider cannot return a time before candle close")
         session_date = close_time.date()
         if self._current_session_date != session_date:
             self._current_session_date = session_date
