@@ -134,6 +134,7 @@ class CEOAggregator:
         *,
         context: AgentContext | None = None,
     ) -> CEODecisionMemo:
+        generated_at = context.created_at if context is not None else round_result.completed_at
         distinct_roles = {item.role for item in round_result.evidence}
         quorum_met = (
             len(round_result.evidence) >= self.min_agents
@@ -154,6 +155,7 @@ class CEOAggregator:
                     f"{len(distinct_roles)} distinct roles"
                 ),
                 quorum_met=False,
+                generated_at=generated_at,
             )
 
         market = reliability_market_key(context) if context is not None else "unknown"
@@ -203,6 +205,7 @@ class CEOAggregator:
                 risk_flags=self._risk_flags(round_result.evidence),
                 rationale="specialists produced no directional evidence",
                 quorum_met=True,
+                generated_at=generated_at,
             )
 
         directional_margin = abs(long_score - short_score) / directional_total
@@ -233,6 +236,7 @@ class CEOAggregator:
                     f"{reliability_note}"
                 ),
                 quorum_met=True,
+                generated_at=generated_at,
             )
 
         intent = SignalIntent.LONG if long_score > short_score else SignalIntent.SHORT
@@ -251,6 +255,7 @@ class CEOAggregator:
                 f"{reliability_note}"
             ),
             quorum_met=True,
+            generated_at=generated_at,
         )
 
     @staticmethod
