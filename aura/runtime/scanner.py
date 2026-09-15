@@ -9,6 +9,7 @@ from aura.agents.orchestrator import CEOAggregator, MultiAgentOrchestrator
 from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
 from aura.data.quality import CandleQualityGate, DataQualityReport
 from aura.domain.models import SignalIntent
+from aura.lineage.decision import DecisionLineageRecord
 
 
 @dataclass(slots=True, frozen=True)
@@ -19,6 +20,7 @@ class ScanCandidate:
     data_quality: DataQualityReport | None
     agent_policy: AgentPolicyDecision | None = None
     deliberation: DeliberationMemo | None = None
+    lineage: DecisionLineageRecord | None = None
 
     @property
     def actionable(self) -> bool:
@@ -26,6 +28,18 @@ class ScanCandidate:
             self.memo.quorum_met
             and self.memo.intent != SignalIntent.FLAT
             and (self.agent_policy is None or self.agent_policy.allowed)
+        )
+
+    def verify_lineage(self) -> bool:
+        if self.lineage is None:
+            return False
+        return self.lineage.verify(
+            context=self.context,
+            round_result=self.round,
+            memo=self.memo,
+            data_quality=self.data_quality,
+            agent_policy=self.agent_policy,
+            deliberation=self.deliberation,
         )
 
 
@@ -41,10 +55,10 @@ class MarketScanResult:
 class MultiMarketIntelligenceScanner:
     """Scan symbols/timeframes concurrently without granting execution authority.
 
-    Every healthy round is explicitly adversarially reviewed before CEO synthesis.
-    The deliberation is a concise auditable bull/bear/counterfactual artifact, not
-    hidden chain-of-thought. Portfolio sizing/order permission still happen later
-    in the single central financial-risk coordinator.
+    Every scan candidate carries a cryptographic lineage record covering the
+    point-in-time market inputs, specialist evidence, data-quality result,
+    deliberation, CEO synthesis and evidence-policy decision. The lineage is for
+    reproducibility/audit only and grants no order or risk authority.
     """
 
     def __init__(
@@ -126,6 +140,14 @@ class MultiMarketIntelligenceScanner:
                     if self.agent_risk_policy is not None
                     else None
                 )
+                lineage = DecisionLineageRecord.build(
+                    context=context,
+                    round_result=empty_round,
+                    memo=blocked_memo,
+                    data_quality=quality_report,
+                    agent_policy=policy_decision,
+                    deliberation=None,
+                )
                 return ScanCandidate(
                     context=context,
                     round=empty_round,
@@ -133,6 +155,7 @@ class MultiMarketIntelligenceScanner:
                     data_quality=quality_report,
                     agent_policy=policy_decision,
                     deliberation=None,
+                    lineage=lineage,
                 )
 
         round_result = await self.orchestrator.run_round(context)
@@ -143,6 +166,14 @@ class MultiMarketIntelligenceScanner:
             if self.agent_risk_policy is not None
             else None
         )
+        lineage = DecisionLineageRecord.build(
+            context=context,
+            round_result=round_result,
+            memo=memo,
+            data_quality=quality_report,
+            agent_policy=policy_decision,
+            deliberation=deliberation,
+        )
         return ScanCandidate(
             context=context,
             round=round_result,
@@ -150,4 +181,5 @@ class MultiMarketIntelligenceScanner:
             data_quality=quality_report,
             agent_policy=policy_decision,
             deliberation=deliberation,
+            lineage=lineage,
         )
