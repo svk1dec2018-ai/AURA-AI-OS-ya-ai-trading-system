@@ -4,6 +4,9 @@ from enum import Enum
 
 from aura.agents.deliberation import DeliberationMemo
 from aura.agents.models import AgentContext, AgentRound, CEODecisionMemo
+from aura.agents.risk_policy import AgentPolicyDecision
+from aura.data.quality import DataQualityReport
+from aura.lineage.decision import DecisionLineageRecord
 from aura.persistence.wal import JsonlWriteAheadLog, WalEvent
 
 
@@ -24,11 +27,32 @@ class AgentAuditJournal:
         round_result: AgentRound,
         memo: CEODecisionMemo,
         deliberation: DeliberationMemo | None = None,
+        data_quality: DataQualityReport | None = None,
+        agent_policy: AgentPolicyDecision | None = None,
+        lineage: DecisionLineageRecord | None = None,
     ) -> WalEvent:
         if round_result.correlation_id != context.correlation_id:
             raise ValueError("agent round correlation_id does not match context")
         if memo.correlation_id != context.correlation_id:
             raise ValueError("CEO memo correlation_id does not match context")
+
+        effective_lineage = lineage or DecisionLineageRecord.build(
+            context=context,
+            round_result=round_result,
+            memo=memo,
+            data_quality=data_quality,
+            agent_policy=agent_policy,
+            deliberation=deliberation,
+        )
+        if not effective_lineage.verify(
+            context=context,
+            round_result=round_result,
+            memo=memo,
+            data_quality=data_quality,
+            agent_policy=agent_policy,
+            deliberation=deliberation,
+        ):
+            raise ValueError("agent audit lineage does not match decision payload")
 
         payload = {
             "context": {
@@ -42,6 +66,11 @@ class AgentAuditJournal:
             "round": round_result.model_dump(mode="json"),
             "memo": memo.model_dump(mode="json"),
             "deliberation": _deliberation_payload(deliberation),
+            "data_quality": _data_quality_payload(data_quality),
+            "agent_policy": (
+                agent_policy.model_dump(mode="json") if agent_policy is not None else None
+            ),
+            "lineage": effective_lineage.model_dump(mode="json"),
         }
         return self.wal.append(
             event_type=AgentAuditEventType.ROUND_COMPLETED.value,
@@ -62,4 +91,14 @@ def _deliberation_payload(deliberation: DeliberationMemo | None) -> dict | None:
         ],
         "disagreement_ratio": deliberation.disagreement_ratio,
         "evidence_count": deliberation.evidence_count,
+    }
+
+
+def _data_quality_payload(report: DataQualityReport | None) -> dict | None:
+    if report is None:
+        return None
+    return {
+        "bars_checked": report.bars_checked,
+        "safe_for_decision": report.safe_for_decision,
+        "issues": [item.model_dump(mode="json") for item in report.issues],
     }
