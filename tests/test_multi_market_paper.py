@@ -24,7 +24,10 @@ from aura.persistence.wal import JsonlWriteAheadLog
 from aura.portfolio.ledger import PortfolioLedger
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.runtime.allocation import PortfolioRiskCoordinator
-from aura.runtime.multi_market_paper import MultiMarketPaperCoordinator
+from aura.runtime.multi_market_paper import (
+    MultiMarketPaperCoordinator,
+    event_time_decision,
+)
 from aura.runtime.scanner import MultiMarketIntelligenceScanner
 from aura.strategy.ema import EmaCrossStrategy
 
@@ -72,8 +75,7 @@ def _candle(symbol: str, minute: int, open_price: str, close_price: str) -> Norm
     )
 
 
-@pytest.mark.asyncio
-async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: Path) -> None:
+def _runtime(tmp_path: Path, *, deterministic_clock: bool = False):
     risk = RiskEngine(
         RiskLimits(
             max_order_notional_pct=Decimal(100),
@@ -97,6 +99,9 @@ async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: P
     ledger = PortfolioLedger(Decimal(10000))
     financial_wal = JsonlWriteAheadLog(tmp_path / "financial.wal", fsync=False)
     audit_wal = JsonlWriteAheadLog(tmp_path / "agent-audit.wal", fsync=False)
+    kwargs = {}
+    if deterministic_clock:
+        kwargs["decision_time_provider"] = event_time_decision
     runtime = MultiMarketPaperCoordinator(
         scanner=scanner,
         allocator=allocator,
@@ -107,7 +112,14 @@ async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: P
         risk_engine=risk,
         starting_cash=Decimal(10000),
         default_requested_quantity=Decimal(8),
+        **kwargs,
     )
+    return runtime, risk, ledger, audit_wal
+
+
+@pytest.mark.asyncio
+async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: Path) -> None:
+    runtime, risk, ledger, audit_wal = _runtime(tmp_path)
     await runtime.start()
 
     first = await runtime.on_batch(
@@ -135,3 +147,36 @@ async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: P
     assert not risk.kill_switch
 
     await runtime.stop()
+
+
+@pytest.mark.asyncio
+async def test_event_time_clock_produces_replay_stable_lineage(tmp_path: Path) -> None:
+    first_runtime, _, _, first_audit = _runtime(
+        tmp_path / "first",
+        deterministic_clock=True,
+    )
+    second_runtime, _, _, second_audit = _runtime(
+        tmp_path / "second",
+        deterministic_clock=True,
+    )
+    batch = [_candle("X", 0, "100", "100")]
+
+    await first_runtime.start()
+    first_step = await first_runtime.on_batch(batch)
+    await first_runtime.stop()
+
+    await second_runtime.start()
+    second_step = await second_runtime.on_batch(batch)
+    await second_runtime.stop()
+
+    first_candidate = first_step.scan.candidates[0]
+    second_candidate = second_step.scan.candidates[0]
+    assert first_candidate.context.created_at == batch[0].close_time
+    assert second_candidate.context.created_at == batch[0].close_time
+    assert first_candidate.lineage is not None
+    assert second_candidate.lineage is not None
+    assert first_candidate.lineage.lineage_hash == second_candidate.lineage.lineage_hash
+    assert (
+        first_audit.read_all()[0].payload["lineage"]["lineage_hash"]
+        == second_audit.read_all()[0].payload["lineage"]["lineage_hash"]
+    )
