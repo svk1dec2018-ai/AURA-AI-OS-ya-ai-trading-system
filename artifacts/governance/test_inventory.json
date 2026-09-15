@@ -3059,6 +3059,25 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_software_phase_dependencies.py",
+      "phase_coverage": [
+        0
+      ],
+      "sha256": "fe6dbca828daae3b5a603ece83dd265b0c3228961e0e0363ba8bca33ab020f85",
+      "source_dependencies": [
+        "aura/ops/phase_gates.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_phase_12_to_14_can_pass_while_external_phase_11_is_blocked",
+        "test_phase_13_requires_phase_12_even_when_phase_10_passes",
+        "test_phase_15_can_only_pass_when_live_and_software_dependencies_pass",
+        "test_phase_15_remains_blocked_without_external_phase_11"
+      ]
+    },
+    {
       "async_test_functions": 2,
       "path": "tests/test_specialists.py",
       "phase_coverage": [
@@ -3341,7 +3360,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 589,
-    "test_modules": 149
+    "static_test_functions": 593,
+    "test_modules": 150
   }
 }

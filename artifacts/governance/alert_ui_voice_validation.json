@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "authenticated_research_is_review_gated": true,
+    "command_center_reports_live_money_disabled": true,
+    "content_protection_enabled": true,
+    "critical_alert_delivered": true,
+    "critical_alert_not_silenced": true,
+    "delivery_receipt_durable": true,
+    "duplicate_alert_deduplicated": true,
+    "human_live_approval_required": true,
+    "live_control_blocked": true,
+    "paper_control_not_exposed_by_operator_ui": true,
+    "research_requires_owner_auth": true,
+    "voice_available": true,
+    "voice_avoids_shell_interpolation": true,
+    "voice_probe_spoken": true,
+    "voice_text_passed_by_environment": true,
+    "voice_uses_argument_vector": true
+  },
+  "classification": "governed_operator_interface_ready",
+  "decision": "PASS",
+  "external_telegram_delivery_claimed": false,
+  "external_voice_quality_claimed": false,
+  "live_money_enabled": false,
+  "phase": 13,
+  "schema_version": 1
+}

@@ -192,6 +192,28 @@ PHASE_GATE_SPECS: tuple[PhaseGateSpec, ...] = (
     ),
 )
 
+# Phase 11 is an external live-broker certification track. It must not block
+# paper/demo and operator-software validation (12-14), but Phase 15 must require
+# every earlier phase, including authentic Phase-11 broker evidence.
+_PHASE_DEPENDENCIES: dict[int, tuple[int, ...]] = {
+    0: (),
+    1: (0,),
+    2: (1,),
+    3: (2,),
+    4: (3,),
+    5: (4,),
+    6: (5,),
+    7: (6,),
+    8: (7,),
+    9: (8,),
+    10: (9,),
+    11: (10,),
+    12: (10,),
+    13: (12,),
+    14: (13,),
+    15: tuple(range(15)),
+}
+
 
 def build_phase_zero_records(
     root: Path,
@@ -204,38 +226,53 @@ def build_sequential_phase_records(
     root: Path,
     evidence_by_phase: Mapping[int, Mapping[str, str]],
 ) -> tuple[PhaseGateRecord, ...]:
-    """Build a fail-closed ledger for one contiguous prefix of passed phases."""
+    """Build a fail-closed dependency-aware ledger for phases 0 through 15."""
 
     phases = tuple(sorted(evidence_by_phase))
-    if not phases or phases != tuple(range(phases[-1] + 1)):
-        raise ValueError("passed phase evidence must form a contiguous prefix starting at phase 0")
-    if phases[-1] > 15:
+    if not phases or phases[0] != 0:
+        raise ValueError("phase 0 evidence is required")
+    if any(phase < 0 or phase > 15 for phase in phases):
         raise ValueError("phase must be in [0, 15]")
 
     records: list[PhaseGateRecord] = []
-    for phase in phases:
-        spec = PHASE_GATE_SPECS[phase]
-        evidence_paths = evidence_by_phase[phase]
-        required = set(spec.validation_outputs)
-        if set(evidence_paths) != required:
-            raise ValueError(f"phase {phase} evidence must exactly match its required outputs")
-        evidence = tuple(
-            GateEvidence(output, path, _file_sha256(_resolve_evidence_path(root, path)))
-            for output, path in sorted(evidence_paths.items())
+    for spec in PHASE_GATE_SPECS:
+        phase = spec.phase
+        dependencies = _PHASE_DEPENDENCIES[phase]
+        missing_dependencies = tuple(
+            dependency
+            for dependency in dependencies
+            if records[dependency].decision != GateDecision.PASS
         )
-        records.append(PhaseGateRecord(phase, GateDecision.PASS, evidence=evidence))
+        evidence_paths = evidence_by_phase.get(phase)
 
-    for spec in PHASE_GATE_SPECS[len(records) :]:
-        previous = PHASE_GATE_SPECS[spec.phase - 1]
-        reason = (
-            f"Phase {spec.phase} validation evidence has not been produced or accepted; "
-            f"Phase {previous.phase} must remain PASS before this gate can pass."
-        )
+        if evidence_paths is not None and not missing_dependencies:
+            required = set(spec.validation_outputs)
+            if set(evidence_paths) != required:
+                raise ValueError(f"phase {phase} evidence must exactly match its required outputs")
+            evidence = tuple(
+                GateEvidence(output, path, _file_sha256(_resolve_evidence_path(root, path)))
+                for output, path in sorted(evidence_paths.items())
+            )
+            records.append(PhaseGateRecord(phase, GateDecision.PASS, evidence=evidence))
+            continue
+
+        reasons: list[str] = []
+        if missing_dependencies:
+            joined = ", ".join(str(item) for item in missing_dependencies)
+            reasons.append(
+                f"Phase {phase} is blocked until required phase(s) {joined} remain PASS."
+            )
+        if evidence_paths is None:
+            reasons.append(f"Phase {phase} validation evidence has not been produced or accepted.")
+        else:
+            reasons.append(
+                f"Phase {phase} evidence is present but cannot be accepted while dependencies are blocked."
+            )
         records.append(
             PhaseGateRecord(
-                spec.phase,
+                phase,
                 GateDecision.BLOCKED,
-                reasons=(reason,),
+                reasons=tuple(reasons),
             )
         )
     return tuple(records)
@@ -252,8 +289,21 @@ def validate_phase_gate_records(
 
     for spec, record in zip(PHASE_GATE_SPECS, ordered):
         if record.decision == GateDecision.PASS:
-            if record.phase > 0 and ordered[record.phase - 1].decision != GateDecision.PASS:
-                errors.append(f"phase {record.phase} cannot PASS before phase {record.phase - 1}")
+            blocked_dependencies = tuple(
+                dependency
+                for dependency in _PHASE_DEPENDENCIES[record.phase]
+                if ordered[dependency].decision != GateDecision.PASS
+            )
+            if blocked_dependencies:
+                if blocked_dependencies == (record.phase - 1,):
+                    errors.append(
+                        f"phase {record.phase} cannot PASS before phase {record.phase - 1}"
+                    )
+                else:
+                    errors.append(
+                        f"phase {record.phase} cannot PASS before dependencies "
+                        f"{list(blocked_dependencies)}"
+                    )
             supplied = {item.output: item for item in record.evidence}
             if len(supplied) != len(record.evidence):
                 errors.append(f"phase {record.phase} contains duplicate evidence outputs")
@@ -340,7 +390,7 @@ def phase_is_pass(path: Path, root: Path, phase: int) -> bool:
 def _ledger_payload(records: tuple[PhaseGateRecord, ...]) -> dict[str, object]:
     return {
         "schema_version": 1,
-        "policy": "AURA mandatory sequential phase gates 0-15",
+        "policy": "AURA dependency-aware mandatory phase gates 0-15",
         "specs": [asdict(spec) for spec in PHASE_GATE_SPECS],
         "records": [
             {

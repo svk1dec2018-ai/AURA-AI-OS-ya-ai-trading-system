@@ -1406,6 +1406,78 @@
         "to": "aura/portfolio/ledger.py"
       },
       {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/execution/resilience.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/ceo_decision_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/knowledge_rag_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/multi_agent_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/operator_interface_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/paper_trading_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/persistence/recovery.py"
+      },
+      {
+        "from": "aura/ops/end_to_end_gate.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
         "from": "aura/ops/knowledge_rag_gate.py",
         "to": "aura/knowledge/firewall.py"
       },
@@ -1552,6 +1624,126 @@
       {
         "from": "aura/ops/multi_agent_gate.py",
         "to": "aura/ops/strategy_research_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/interface/alerts.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/interface/voice_alerts.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/interface/web_command_center.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/interface/web_command_center_v2.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/ceo_decision_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/knowledge_rag_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/multi_agent_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/paper_trading_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/operator_interface_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/backtest_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/broker_conformance_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/ceo_decision_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/core_contracts.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/knowledge_rag_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/market_data_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/multi_agent_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/repository_audit.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/risk_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/state_engine_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/ops/strategy_research_gate.py"
+      },
+      {
+        "from": "aura/ops/paper_trading_gate.py",
+        "to": "aura/runtime/multi_market_paper.py"
       },
       {
         "from": "aura/ops/preflight.py",
@@ -4478,6 +4670,10 @@
         "to": "aura/data/shoonya.py"
       },
       {
+        "from": "tests/test_software_phase_dependencies.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
         "from": "tests/test_specialists.py",
         "to": "aura/agents/models.py"
       },
@@ -4701,6 +4897,10 @@
     },
     {
       "kind": "python-main",
+      "path": "aura/ops/end_to_end_gate.py"
+    },
+    {
+      "kind": "python-main",
       "path": "aura/ops/knowledge_rag_gate.py"
     },
     {
@@ -4710,6 +4910,14 @@
     {
       "kind": "python-main",
       "path": "aura/ops/multi_agent_gate.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/operator_interface_gate.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/paper_trading_gate.py"
     },
     {
       "kind": "python-main",
@@ -4843,9 +5051,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 5737,
+      "bytes": 6074,
       "path": ".github/workflows/ci.yml",
-      "sha256": "858e87a4721e0871178a7b08b1793c92ca73a56d6542bf5b7f27f47135f4c7a0"
+      "sha256": "dd13e3d2c8143fbf6c1d23d6532a62a562db25429cac0686e091e74b1a9b7062"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -5701,6 +5909,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 8056,
+      "path": "aura/ops/end_to_end_gate.py",
+      "sha256": "31245f3ca3c3a899254132786740a41b79373a875778f07755f7b0d716b22c9d"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 2498,
       "path": "aura/ops/health.py",
       "sha256": "53e8aebd54d9db37c663f58b72c0685b54f70338c130aff7ec157bdf8cd408ed"
@@ -5725,9 +5939,21 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 14737,
+      "bytes": 9066,
+      "path": "aura/ops/operator_interface_gate.py",
+      "sha256": "d4b4f39c23dce76ac30b353db083310db6f01d120c7db2ab21d545bcbf1382d5"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6144,
+      "path": "aura/ops/paper_trading_gate.py",
+      "sha256": "387898d6748fe2ec8be28173173966ddec256319b9101db977c5b536435f3486"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 16331,
       "path": "aura/ops/phase_gates.py",
-      "sha256": "9e37c3630d6fa4c0c350af003603e9fb50d16b2be502d8d7d527ac0b2d5345f6"
+      "sha256": "56715655304a0fb0d71e8180d492888b5b3205aea20002b37199609ce714e106"
     },
     {
       "asset_class": "python_module",
@@ -7303,6 +7529,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 2565,
+      "path": "tests/test_software_phase_dependencies.py",
+      "sha256": "fe6dbca828daae3b5a603ece83dd265b0c3228961e0e0363ba8bca33ab020f85"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 3820,
       "path": "tests/test_specialists.py",
       "sha256": "884233f8d8cbd8faccfbc50945754d28becefda2ba7c04f7371c7b582aece72c"
@@ -7447,6 +7679,9 @@
       "aura/data/normalization.py",
       "aura/execution/fill_model.py",
       "aura/observability/logging.py",
+      "aura/ops/end_to_end_gate.py",
+      "aura/ops/operator_interface_gate.py",
+      "aura/ops/paper_trading_gate.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
       "aura/runtime/dhan_learning_daemon.py",
@@ -11653,6 +11888,50 @@
     },
     {
       "component": "ops",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/domain/models.py",
+        "aura/execution/resilience.py",
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/ceo_decision_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/multi_agent_gate.py",
+        "aura/ops/operator_interface_gate.py",
+        "aura/ops/paper_trading_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/ops/strategy_research_gate.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 207,
+      "module": "aura.ops.end_to_end_gate",
+      "parsed": true,
+      "path": "aura/ops/end_to_end_gate.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "31245f3ca3c3a899254132786740a41b79373a875778f07755f7b0d716b22c9d",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "decimal",
+        "json",
+        "pathlib",
+        "tempfile",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
       "direct_test_files": [
         "tests/test_maintenance_authority.py",
         "tests/test_production_ops.py"
@@ -11804,6 +12083,89 @@
     },
     {
       "component": "ops",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/interface/alerts.py",
+        "aura/interface/voice_alerts.py",
+        "aura/interface/web_command_center.py",
+        "aura/interface/web_command_center_v2.py",
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/ceo_decision_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/multi_agent_gate.py",
+        "aura/ops/paper_trading_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/ops/strategy_research_gate.py"
+      ],
+      "lines": 237,
+      "module": "aura.ops.operator_interface_gate",
+      "parsed": true,
+      "path": "aura/ops/operator_interface_gate.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "d4b4f39c23dce76ac30b353db083310db6f01d120c7db2ab21d545bcbf1382d5",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "datetime",
+        "http",
+        "json",
+        "pathlib",
+        "tempfile",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ops/backtest_gate.py",
+        "aura/ops/broker_conformance_gate.py",
+        "aura/ops/ceo_decision_gate.py",
+        "aura/ops/core_contracts.py",
+        "aura/ops/knowledge_rag_gate.py",
+        "aura/ops/market_data_gate.py",
+        "aura/ops/multi_agent_gate.py",
+        "aura/ops/phase_gates.py",
+        "aura/ops/repository_audit.py",
+        "aura/ops/risk_engine_gate.py",
+        "aura/ops/state_engine_gate.py",
+        "aura/ops/strategy_research_gate.py",
+        "aura/runtime/multi_market_paper.py"
+      ],
+      "lines": 152,
+      "module": "aura.ops.paper_trading_gate",
+      "parsed": true,
+      "path": "aura/ops/paper_trading_gate.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "387898d6748fe2ec8be28173173966ddec256319b9101db977c5b536435f3486",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "datetime",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
       "direct_test_files": [
         "tests/test_backtest_gate.py",
         "tests/test_broker_conformance_gate.py",
@@ -11815,11 +12177,12 @@
         "tests/test_phase_gates.py",
         "tests/test_production_ops.py",
         "tests/test_risk_engine_gate.py",
+        "tests/test_software_phase_dependencies.py",
         "tests/test_state_engine_gate.py",
         "tests/test_strategy_research_gate.py"
       ],
       "internal_dependencies": [],
-      "lines": 371,
+      "lines": 421,
       "module": "aura.ops.phase_gates",
       "parsed": true,
       "path": "aura/ops/phase_gates.py",
@@ -11828,7 +12191,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "9e37c3630d6fa4c0c350af003603e9fb50d16b2be502d8d7d527ac0b2d5345f6",
+      "sha256": "56715655304a0fb0d71e8180d492888b5b3205aea20002b37199609ce714e106",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -17754,6 +18117,28 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/ops/phase_gates.py"
+      ],
+      "lines": 64,
+      "module": "tests.test_software_phase_dependencies",
+      "parsed": true,
+      "path": "tests/test_software_phase_dependencies.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "fe6dbca828daae3b5a603ece83dd265b0c3228961e0e0363ba8bca33ab020f85",
+      "standard_library_dependencies": [
+        "__future__",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/agents/models.py",
         "aura/agents/orchestrator.py",
         "aura/agents/specialists.py",
@@ -18086,7 +18471,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "83971adc7d4a6f4e3ed37bc706276fb0dadaf53114096a42c169563c08fe8749",
+  "repository_tree_sha256": "086aa6ea8e83496a9cfbb9ef21f127e925e58e79b6efe21831bd7428c6bccebb",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -18624,14 +19009,14 @@
   ],
   "summary": {
     "directly_tested_source_modules": 174,
-    "entrypoints": 41,
+    "entrypoints": 44,
     "parse_errors": 0,
-    "python_modules": 361,
-    "repository_files": 427,
-    "source_modules": 188,
-    "static_test_functions": 589,
+    "python_modules": 365,
+    "repository_files": 431,
+    "source_modules": 191,
+    "static_test_functions": 593,
     "stub_candidates": 87,
-    "test_modules": 149,
+    "test_modules": 150,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
