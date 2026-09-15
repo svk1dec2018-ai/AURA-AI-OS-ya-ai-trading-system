@@ -89,19 +89,19 @@ def test_protected_prices_are_on_correct_side_of_entry():
     buy_sl, buy_tp = _protected_prices(
         raw,
         side="BUY",
-        entry=Decimal("3000"),
-        stop_bps=Decimal("50"),
-        target_bps=Decimal("100"),
+        entry=Decimal(3000),
+        stop_bps=Decimal(50),
+        target_bps=Decimal(100),
     )
     sell_sl, sell_tp = _protected_prices(
         raw,
         side="SELL",
-        entry=Decimal("3000"),
-        stop_bps=Decimal("50"),
-        target_bps=Decimal("100"),
+        entry=Decimal(3000),
+        stop_bps=Decimal(50),
+        target_bps=Decimal(100),
     )
-    assert buy_sl < Decimal("3000") < buy_tp
-    assert sell_tp < Decimal("3000") < sell_sl
+    assert buy_sl < Decimal(3000) < buy_tp
+    assert sell_tp < Decimal(3000) < sell_sl
 
 
 def test_existing_aura_position_blocks_duplicate_demo_entry():
@@ -113,8 +113,8 @@ def test_existing_aura_position_blocks_duplicate_demo_entry():
             requested_symbol="XAUUSD",
             side="BUY",
             volume=None,
-            stop_bps=Decimal("50"),
-            target_bps=Decimal("100"),
+            stop_bps=Decimal(50),
+            target_bps=Decimal(100),
             auto_close_seconds=None,
         )
     assert gateway.sent is False
