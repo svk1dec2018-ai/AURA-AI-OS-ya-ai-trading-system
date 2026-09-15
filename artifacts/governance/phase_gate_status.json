@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "ac2496134c127246aac2dc7159e14cdda339ab8dced260b99de4794b174301fc",
+  "ledger_sha256": "078367d65ac2eaa0edf18d919a47cd7e61f85c56473e2558e6c5003bdef4debb",
   "policy": "AURA dependency-aware mandatory phase gates 0-15",
   "records": [
     {
@@ -8,12 +8,12 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "ca9fed34d2fec87c44b91db0e0301e261b2f2f348f9da7cceba9a7269c39b089"
+          "sha256": "299752b8db9a4b22172cc350ecd3125a2150680389271f3c1a30669b3bc795ff"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "d4193514a4a16828a29831263efa5bf7023d2d48be4d50b6bc84de40fb1811f1"
+          "sha256": "634392736541ca4b11cf51998b1536103e937f6e734c96f954033098b55c7b6f"
         },
         {
           "output": "test_inventory.json",
@@ -25,136 +25,200 @@
       "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Contract validation suite",
+          "path": "artifacts/governance/core_contract_validation_suite.json",
+          "sha256": "38167cc5d56d93121c40a216126fe6e7e36c7b6c9ac4f4563113afeac800cdcf"
+        },
+        {
+          "output": "Schema test report",
+          "path": "artifacts/governance/core_contract_schema_report.json",
+          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
+        }
+      ],
       "phase": 1,
-      "reasons": [
-        "Phase 1 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Reconciliation test report",
+          "path": "artifacts/governance/reconciliation_test_report.json",
+          "sha256": "0d08a23ca06db9d1ac7d2f09a39f702d14fed0275d66cc1bfef216dc84584e7f"
+        },
+        {
+          "output": "State transition logs",
+          "path": "artifacts/governance/state_transition_logs.json",
+          "sha256": "84bd8fcbce689ca78cdef8a4da68bef14e46f14b30642aebd23cd4f340871042"
+        }
+      ],
       "phase": 2,
-      "reasons": [
-        "Phase 2 is blocked until required phase(s) 1 remain PASS.",
-        "Phase 2 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Risk stress test report",
+          "path": "artifacts/governance/risk_stress_test_report.json",
+          "sha256": "db0bbcca5b27214f2071b9e0a19699c73478dea3884bf0f3737dc391548d5456"
+        },
+        {
+          "output": "Violation simulation logs",
+          "path": "artifacts/governance/risk_violation_simulation_logs.json",
+          "sha256": "9293d9b5ed372c3e311dadfe50727c53104821c5efc6bf8501489a6981f7563a"
+        }
+      ],
       "phase": 3,
-      "reasons": [
-        "Phase 3 is blocked until required phase(s) 2 remain PASS.",
-        "Phase 3 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Adapter conformance report",
+          "path": "artifacts/governance/broker_adapter_conformance_report.json",
+          "sha256": "3c5796385234a3dc8e1001d8a2735bf57f74db775f2efdd34ce9685191d6de1c"
+        }
+      ],
       "phase": 4,
-      "reasons": [
-        "Phase 4 is blocked until required phase(s) 3 remain PASS.",
-        "Phase 4 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Anomaly detection logs",
+          "path": "artifacts/governance/anomaly_detection_logs.json",
+          "sha256": "fc63f0f0959a491b0a27eddc219be707bdff98636b85e5a3d947f4b38aee9d44"
+        },
+        {
+          "output": "Data quality report",
+          "path": "artifacts/governance/data_quality_report.json",
+          "sha256": "a9761264824af642f82bc6a4572f3a4e8a40d10565d9a01867c38f70259df8ca"
+        }
+      ],
       "phase": 5,
-      "reasons": [
-        "Phase 5 is blocked until required phase(s) 4 remain PASS.",
-        "Phase 5 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Backtest report",
+          "path": "artifacts/governance/backtest_report.json",
+          "sha256": "fcf42a5ddbe7fece6aad7a126df4ed5d5f0cd187571e05b3688cfec422192049"
+        },
+        {
+          "output": "Bias detection report",
+          "path": "artifacts/governance/bias_detection_report.json",
+          "sha256": "d301473c2c6d9e36d9b33265abd5fc8532835513cbec74cf83870cfd17eb0151"
+        }
+      ],
       "phase": 6,
-      "reasons": [
-        "Phase 6 is blocked until required phase(s) 5 remain PASS.",
-        "Phase 6 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Strategy evaluation report",
+          "path": "artifacts/governance/strategy_evaluation_report.json",
+          "sha256": "76956c44e3fdabe53edf900711e1c7c92706cf45d355d086dd849b98b89e1de6"
+        }
+      ],
       "phase": 7,
-      "reasons": [
-        "Phase 7 is blocked until required phase(s) 6 remain PASS.",
-        "Phase 7 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Retrieval benchmark report",
+          "path": "artifacts/governance/retrieval_benchmark_report.json",
+          "sha256": "c6403704410dfc5f02416135d901a6df78b45edb9e0908c25c5ce4066d290bdc"
+        }
+      ],
       "phase": 8,
-      "reasons": [
-        "Phase 8 is blocked until required phase(s) 7 remain PASS.",
-        "Phase 8 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Agent consistency report",
+          "path": "artifacts/governance/agent_consistency_report.json",
+          "sha256": "22aab0cea91beac83cc2db0667e287c67ce153f05adb5b17460bff1bcb0b59f7"
+        }
+      ],
       "phase": 9,
-      "reasons": [
-        "Phase 9 is blocked until required phase(s) 8 remain PASS.",
-        "Phase 9 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Decision trace logs",
+          "path": "artifacts/governance/decision_trace_logs.json",
+          "sha256": "ed9f0fa328ecbf3dd089566e37c70f56f51710425ba16974d43c20bf1354d52b"
+        }
+      ],
       "phase": 10,
-      "reasons": [
-        "Phase 10 is blocked until required phase(s) 9 remain PASS.",
-        "Phase 10 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",
       "evidence": [],
       "phase": 11,
       "reasons": [
-        "Phase 11 is blocked until required phase(s) 10 remain PASS.",
         "Phase 11 validation evidence has not been produced or accepted."
       ]
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Paper versus live parity report",
+          "path": "artifacts/governance/paper_execution_parity_report.json",
+          "sha256": "f20eb3a426897ac6f3a04a8ed7789d454836aa23ca0de563a96853754e168dca"
+        }
+      ],
       "phase": 12,
-      "reasons": [
-        "Phase 12 is blocked until required phase(s) 10 remain PASS.",
-        "Phase 12 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Alert delivery logs",
+          "path": "artifacts/governance/alert_ui_voice_validation.json",
+          "sha256": "7740426918c3b685903e5ac3f9a63a359f3ad35466161d13649b8434928194aa"
+        }
+      ],
       "phase": 13,
-      "reasons": [
-        "Phase 13 is blocked until required phase(s) 12 remain PASS.",
-        "Phase 13 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
-      "decision": "BLOCKED",
-      "evidence": [],
+      "decision": "PASS",
+      "evidence": [
+        {
+          "output": "Full system audit report",
+          "path": "artifacts/governance/full_system_audit_report.json",
+          "sha256": "037d5278707f08bb605640450e5fc3e895a63aef30af71c0d4fcb7adf642504a"
+        }
+      ],
       "phase": 14,
-      "reasons": [
-        "Phase 14 is blocked until required phase(s) 13 remain PASS.",
-        "Phase 14 validation evidence has not been produced or accepted."
-      ]
+      "reasons": []
     },
     {
       "decision": "BLOCKED",
       "evidence": [],
       "phase": 15,
       "reasons": [
-        "Phase 15 is blocked until required phase(s) 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 remain PASS.",
+        "Phase 15 is blocked until required phase(s) 11 remain PASS.",
         "Phase 15 validation evidence has not been produced or accepted."
       ]
     }
