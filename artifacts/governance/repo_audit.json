@@ -1570,6 +1570,14 @@
         "to": "aura/runtime/mt5_paper_daemon.py"
       },
       {
+        "from": "aura/ops/mt5_autonomous_demo.py",
+        "to": "aura/runtime/mt5_demo_execution_daemon.py"
+      },
+      {
+        "from": "aura/ops/mt5_autonomous_demo.py",
+        "to": "aura/runtime/mt5_paper_daemon.py"
+      },
+      {
         "from": "aura/ops/mt5_demo_readiness.py",
         "to": "aura/data/mt5_demo.py"
       },
@@ -2412,6 +2420,26 @@
       {
         "from": "aura/runtime/learning_scanner.py",
         "to": "aura/runtime/scanner.py"
+      },
+      {
+        "from": "aura/runtime/mt5_demo_execution_daemon.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/runtime/mt5_demo_execution_daemon.py",
+        "to": "aura/execution/mt5_demo_broker.py"
+      },
+      {
+        "from": "aura/runtime/mt5_demo_execution_daemon.py",
+        "to": "aura/persistence/recovery.py"
+      },
+      {
+        "from": "aura/runtime/mt5_demo_execution_daemon.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "aura/runtime/mt5_demo_execution_daemon.py",
+        "to": "aura/runtime/mt5_paper_daemon.py"
       },
       {
         "from": "aura/runtime/mt5_learning_daemon.py",
@@ -4893,6 +4921,10 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "RUN_MT5_AURA_DEMO_AUTO.ps1"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "START_AURA_OLLAMA.cmd"
     },
     {
@@ -4954,6 +4986,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/mt5_all_market_runner.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/mt5_autonomous_demo.py"
     },
     {
       "kind": "python-main",
@@ -5152,6 +5188,12 @@
       "bytes": 1968,
       "path": "RUN_MT5_AURA_ALL_MARKETS.ps1",
       "sha256": "f4e34bd00d308558eb997e6165bd40807ab9b05c5a9598d932b6a358b168df71"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 2173,
+      "path": "RUN_MT5_AURA_DEMO_AUTO.ps1",
+      "sha256": "d38c3b7fc1d3a645bbdc35aa7510233c6ba3c10412298c98690b71cc654b4082"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -5701,9 +5743,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 16973,
+      "bytes": 19823,
       "path": "aura/execution/mt5_demo_broker.py",
-      "sha256": "724cfe590842b95936c4482b5139160b347db097fa1875b42797699cad4506b8"
+      "sha256": "a5352e656b4576ccd63361d1c7c9b64b1811f55f7aa08b33e2b251c853b7dc36"
     },
     {
       "asset_class": "python_module",
@@ -6013,6 +6055,12 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 2947,
+      "path": "aura/ops/mt5_autonomous_demo.py",
+      "sha256": "1c45f3a53ce6d3528c0febc7c27c28ee7e4977fbabb2a252573a9798a4f699f9"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 10269,
       "path": "aura/ops/mt5_demo_readiness.py",
       "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651"
@@ -6310,6 +6358,12 @@
       "bytes": 2476,
       "path": "aura/runtime/learning_scanner.py",
       "sha256": "e9598170483de5ea436213d31fccc12b1a05c9265a807d3fc30ba348aff0f81a"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 11259,
+      "path": "aura/runtime/mt5_demo_execution_daemon.py",
+      "sha256": "216618d290a653f737578a5939a12d65e86e76ac6b942562d7131d1f1a9dc852"
     },
     {
       "asset_class": "python_module",
@@ -7791,12 +7845,14 @@
       "aura/observability/logging.py",
       "aura/ops/end_to_end_gate.py",
       "aura/ops/mt5_all_market_runner.py",
+      "aura/ops/mt5_autonomous_demo.py",
       "aura/ops/operator_interface_gate.py",
       "aura/ops/paper_trading_gate.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
       "aura/runtime/dhan_learning_daemon.py",
       "aura/runtime/learning_scanner.py",
+      "aura/runtime/mt5_demo_execution_daemon.py",
       "aura/runtime/mt5_learning_daemon.py",
       "aura/runtime/mt5_paper_daemon.py"
     ]
@@ -10576,7 +10632,7 @@
         "aura/execution/demo_guard.py",
         "aura/execution/reconciliation.py"
       ],
-      "lines": 401,
+      "lines": 467,
       "module": "aura.execution.mt5_demo_broker",
       "parsed": true,
       "path": "aura/execution/mt5_demo_broker.py",
@@ -10585,7 +10641,7 @@
       ],
       "primary_phase": 4,
       "role": "source",
-      "sha256": "724cfe590842b95936c4482b5139160b347db097fa1875b42797699cad4506b8",
+      "sha256": "a5352e656b4576ccd63361d1c7c9b64b1811f55f7aa08b33e2b251c853b7dc36",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -12164,6 +12220,33 @@
       "primary_phase": 15,
       "role": "source",
       "sha256": "07d76ad8488062767face3eb08ff89a1e8e376bd73b37fa350ad52845e8978eb",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "decimal",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/runtime/mt5_demo_execution_daemon.py",
+        "aura/runtime/mt5_paper_daemon.py"
+      ],
+      "lines": 88,
+      "module": "aura.ops.mt5_autonomous_demo",
+      "parsed": true,
+      "path": "aura/ops/mt5_autonomous_demo.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "1c45f3a53ce6d3528c0febc7c27c28ee7e4977fbabb2a252573a9798a4f699f9",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -13810,6 +13893,37 @@
       "sha256": "e9598170483de5ea436213d31fccc12b1a05c9265a807d3fc30ba348aff0f81a",
       "standard_library_dependencies": [
         "__future__"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "runtime",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/execution/mt5_demo_broker.py",
+        "aura/persistence/recovery.py",
+        "aura/persistence/wal.py",
+        "aura/runtime/mt5_paper_daemon.py"
+      ],
+      "lines": 270,
+      "module": "aura.runtime.mt5_demo_execution_daemon",
+      "parsed": true,
+      "path": "aura/runtime/mt5_demo_execution_daemon.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "216618d290a653f737578a5939a12d65e86e76ac6b942562d7131d1f1a9dc852",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "json",
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -18716,7 +18830,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "bd1b5f14acb37e3c509982db48616a423f2e3286de245fc4673d60869fb9bde2",
+  "repository_tree_sha256": "cc125f994b95f45ff3c9a0a63969ed8f3ac7133a018dd08faef1b28b7c384370",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19254,11 +19368,11 @@
   ],
   "summary": {
     "directly_tested_source_modules": 176,
-    "entrypoints": 50,
+    "entrypoints": 52,
     "parse_errors": 0,
-    "python_modules": 370,
-    "repository_files": 440,
-    "source_modules": 194,
+    "python_modules": 372,
+    "repository_files": 443,
+    "source_modules": 196,
     "static_test_functions": 600,
     "stub_candidates": 87,
     "test_modules": 152,
