@@ -120,7 +120,8 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add aura/agents/service.py aura/runtime/scanner.py aura/agents/orchestrator.py tests/test_agents.py artifacts/governance
+          git add -u -- aura/agents/service.py aura/agents/orchestrator.py aura/runtime/scanner.py tests/test_agents.py artifacts/governance
+          git add -- artifacts/governance
           if git diff --cached --quiet; then
             echo "Code and governance artifacts already current."
           else
