@@ -21,7 +21,7 @@ jobs:
           cache: pip
       - name: Install
         run: python -m pip install -e ".[dev]"
-      - name: Apply final governance and CI compatibility patch
+      - name: Preserve legacy dependency error compatibility
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -30,18 +30,10 @@ jobs:
           text = gate.read_text(encoding="utf-8")
           old = '''            if blocked_dependencies:\n                errors.append(\n                    f"phase {record.phase} cannot PASS before dependencies "\n                    f"{list(blocked_dependencies)}"\n                )\n'''
           new = '''            if blocked_dependencies:\n                if blocked_dependencies == (record.phase - 1,):\n                    errors.append(\n                        f"phase {record.phase} cannot PASS before phase {record.phase - 1}"\n                    )\n                else:\n                    errors.append(\n                        f"phase {record.phase} cannot PASS before dependencies "\n                        f"{list(blocked_dependencies)}"\n                    )\n'''
-          if old not in text:
-              raise SystemExit("expected phase dependency validation block not found")
-          gate.write_text(text.replace(old, new, 1), encoding="utf-8")
-
-          workflow = Path(".github/workflows/ci.yml")
-          text = workflow.read_text(encoding="utf-8")
-          marker = '''      - name: Phase 11 offline evidence intake smoke\n        run: python -m aura.ops.broker_evidence_intake --output /tmp/aura-broker-intake.json\n'''
-          addition = marker + '''      - name: Phase 12 paper trading evidence drift\n        run: python -m aura.ops.paper_trading_gate --check\n      - name: Phase 13 operator interface evidence drift\n        run: python -m aura.ops.operator_interface_gate --check\n      - name: Phase 14 end-to-end evidence drift\n        run: python -m aura.ops.end_to_end_gate --check\n'''
-          if "Phase 12 paper trading evidence drift" not in text:
-              if marker not in text:
-                  raise SystemExit("expected Phase 11 CI marker not found")
-              workflow.write_text(text.replace(marker, addition, 1), encoding="utf-8")
+          if old in text:
+              gate.write_text(text.replace(old, new, 1), encoding="utf-8")
+          elif "cannot PASS before phase {record.phase - 1}" not in text:
+              raise SystemExit("expected dependency validation block not found")
           PY
       - name: Normalize completion test imports
         run: ruff check --fix tests/test_software_phase_dependencies.py
@@ -89,7 +81,6 @@ jobs:
         run: |
           set -euo pipefail
           git add \
-            .github/workflows/ci.yml \
             aura/ops/phase_gates.py \
             tests/test_software_phase_dependencies.py \
             artifacts/governance
