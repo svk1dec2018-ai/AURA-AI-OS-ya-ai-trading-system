@@ -38,19 +38,23 @@
       "phase_coverage": [
         1,
         2,
-        9
+        9,
+        10
       ],
-      "sha256": "38feb96f7b3ba08fdd378b99e7075605d65978fd6b2f0cc389f8638e823d3bfc",
+      "sha256": "f298d185ab65728b7602484962bcc836809a8371b151f35bdadb51ffca16f48c",
       "source_dependencies": [
         "aura/agents/audit.py",
         "aura/agents/models.py",
         "aura/domain/models.py",
+        "aura/lineage/decision.py",
+        "aura/lineage/replay.py",
         "aura/persistence/wal.py"
       ],
-      "static_test_functions": 1,
+      "static_test_functions": 2,
       "test_classes": [],
       "test_functions": [
-        "test_agent_round_is_persisted_with_context_and_ceo_memo"
+        "test_agent_round_is_persisted_with_context_ceo_and_lineage",
+        "test_replay_verifier_accepts_exact_decision_and_rejects_changed_context"
       ]
     },
     {
@@ -950,6 +954,33 @@
         "test_duplicate_and_out_of_order_bars_are_blocked",
         "test_future_bar_is_blocked",
         "test_gap_and_staleness_are_blocked"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_decision_lineage.py",
+      "phase_coverage": [
+        1,
+        9,
+        10,
+        12
+      ],
+      "sha256": "cc760a13e9d74d163d2e53b33e0843f66fe685ad56f667ece4a48b1801716959",
+      "source_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/lineage/decision.py",
+        "aura/runtime/scanner.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_decision_lineage_detects_metadata_tampering",
+        "test_decision_lineage_is_deterministic_and_verifiable",
+        "test_decision_lineage_rejects_future_observed_evidence",
+        "test_scan_candidate_verifies_exact_lineage"
       ]
     },
     {
@@ -3309,7 +3340,7 @@
   "summary": {
     "async_test_functions": 95,
     "modules_without_static_tests": [],
-    "static_test_functions": 583,
-    "test_modules": 148
+    "static_test_functions": 588,
+    "test_modules": 149
   }
 }

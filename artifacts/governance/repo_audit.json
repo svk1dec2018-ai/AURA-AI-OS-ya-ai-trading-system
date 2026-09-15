@@ -87,6 +87,18 @@
       },
       {
         "from": "aura/agents/audit.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "aura/agents/audit.py",
+        "to": "aura/data/quality.py"
+      },
+      {
+        "from": "aura/agents/audit.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
+        "from": "aura/agents/audit.py",
         "to": "aura/persistence/wal.py"
       },
       {
@@ -272,6 +284,10 @@
       {
         "from": "aura/agents/service.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/agents/service.py",
+        "to": "aura/lineage/decision.py"
       },
       {
         "from": "aura/agents/specialists.py",
@@ -1020,6 +1036,34 @@
       {
         "from": "aura/knowledge/retrieval.py",
         "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/lineage/__init__.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
+        "from": "aura/lineage/decision.py",
+        "to": "aura/agents/deliberation.py"
+      },
+      {
+        "from": "aura/lineage/decision.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/lineage/decision.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "aura/lineage/decision.py",
+        "to": "aura/data/quality.py"
+      },
+      {
+        "from": "aura/lineage/replay.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
+        "from": "aura/lineage/replay.py",
+        "to": "aura/persistence/wal.py"
       },
       {
         "from": "aura/maintenance/__init__.py",
@@ -2410,6 +2454,10 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/runtime/scanner.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
         "from": "aura/runtime/supervisor.py",
         "to": "aura/execution/reconciliation.py"
       },
@@ -2648,6 +2696,14 @@
       {
         "from": "tests/test_agent_audit.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_agent_audit.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
+        "from": "tests/test_agent_audit.py",
+        "to": "aura/lineage/replay.py"
       },
       {
         "from": "tests/test_agent_audit.py",
@@ -3196,6 +3252,30 @@
       {
         "from": "tests/test_data_quality.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/agents/deliberation.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/agents/risk_policy.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/lineage/decision.py"
+      },
+      {
+        "from": "tests/test_decision_lineage.py",
+        "to": "aura/runtime/scanner.py"
       },
       {
         "from": "tests/test_deliberation.py",
@@ -4780,6 +4860,12 @@
       "sha256": "2d32fd99b3bee007be0d4f94254233c901329f49b0a11ec472fa30ea27f92422"
     },
     {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 4367,
+      "path": "CLAUDE.md",
+      "sha256": "c9c5ddf8e27d06124c89f267c554412d9d169e2e7a61df545e0da01106f03b56"
+    },
+    {
       "asset_class": "container_configuration",
       "bytes": 609,
       "path": "Dockerfile",
@@ -4829,9 +4915,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 2405,
+      "bytes": 3945,
       "path": "aura/agents/audit.py",
-      "sha256": "c8b9d892a6bf4cdaa68edbcd2dd5b8bea9ddfe164635b519164ed23400f94819"
+      "sha256": "2253cd72911655ea56673a91b05aafdb588830ba2d9c4c68758ccb2bd29f3b86"
     },
     {
       "asset_class": "python_module",
@@ -4913,9 +4999,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5506,
+      "bytes": 6575,
       "path": "aura/agents/service.py",
-      "sha256": "c123bc39c9fed83d04574d03ae9b3670b6bc6df58eb067e54d67067ed4b4694a"
+      "sha256": "2f9f67a1a1af0285c99de548f562b104b8f0483f46bd64aa172968f66abebafe"
     },
     {
       "asset_class": "python_module",
@@ -5447,6 +5533,24 @@
     },
     {
       "asset_class": "python_module",
+      "bytes": 150,
+      "path": "aura/lineage/__init__.py",
+      "sha256": "edb9a163fe389da302f556874c5835aceae351765807a2c83c19ea4735603233"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 8256,
+      "path": "aura/lineage/decision.py",
+      "sha256": "640e54b9d5d30afcace5b269d0723bed2ff4f5d339dfccb5ed52fbe4b791c9ef"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 1943,
+      "path": "aura/lineage/replay.py",
+      "sha256": "a6643881a361e0e89666acac7f0a0f5b171c5f8a8926f3a924927ebca561b0d7"
+    },
+    {
+      "asset_class": "python_module",
       "bytes": 335,
       "path": "aura/maintenance/__init__.py",
       "sha256": "a29af060f35f75ae54874894b59604a3f816079afe00bb844a2ac51cbd9f30dd"
@@ -5639,9 +5743,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 31353,
+      "bytes": 31372,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "a498e909ef7cc012cade858b8cdeafa4fc4ac8f00fc199cff95c9bd9e1258fd7"
+      "sha256": "d324a182f2250960bdb76966b7b16f9e3ce253ee7d197cc4892b2ded2f8b37b7"
     },
     {
       "asset_class": "python_module",
@@ -5903,9 +6007,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 12237,
+      "bytes": 13474,
       "path": "aura/runtime/multi_market_paper.py",
-      "sha256": "e3d2d9c7dbc78f11b8148616f7cb515d77692e4d670fd4c294b44b551f18851a"
+      "sha256": "8660b7c968096c159eca475af87747fdad8802c8780a3b6d3b9c7dd522a08dd0"
     },
     {
       "asset_class": "python_module",
@@ -5927,9 +6031,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5900,
+      "bytes": 7330,
       "path": "aura/runtime/scanner.py",
-      "sha256": "589a59ea18d2e24d7085c64c1e2cd9ae883136b96a388b68ade9bb18f8da7877"
+      "sha256": "da8ce5120c4ff5d06fdc7ed109ec03f2d289c7393820f4db97e8ae3c3fec3da8"
     },
     {
       "asset_class": "python_module",
@@ -5980,6 +6084,12 @@
       "sha256": "73076c99f3af1e8c3f9f670bc440476865772860fdd3b269324b1671533393c2"
     },
     {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 8294,
+      "path": "decision_lineage_validation.txt",
+      "sha256": "a2795c9a48a648cea8a23db0c01d0c8af59853f69469c64da976fb33dc769e93"
+    },
+    {
       "asset_class": "repository_asset",
       "bytes": 849,
       "path": "deploy/systemd/aura-paper.service.in",
@@ -6002,6 +6112,12 @@
       "bytes": 14850,
       "path": "docs/AURA_MASTER_BLUEPRINT_2026.md",
       "sha256": "5ecfc1e98b41f7e829c26f146b3c567db8cb4da5de407481d4c4d836a454c32c"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 38632,
+      "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
+      "sha256": "26fb8cc4ad1a52ec3793819fbf1446977bb2cc64bc00cdb7617ac7393f09ffb6"
     },
     {
       "asset_class": "documentation",
@@ -6116,6 +6232,12 @@
       "bytes": 1553,
       "path": "docs/PARAMETER_STABILITY.md",
       "sha256": "22162167c3683fcb71a39795d76a84613870f234e1eb48c851520cc3c5e7efa2"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 5592,
+      "path": "docs/PHASE2_DECISION_LINEAGE_EVIDENCE_2026-09-15.md",
+      "sha256": "e5bc2db959bf55ccee6e0357befe6faad46d96d09a4bef13702387cbbac39abc"
     },
     {
       "asset_class": "documentation",
@@ -6268,6 +6390,12 @@
       "sha256": "9e915b7a54660d614c08723d1b63e53c6c12e17bbb891d620c9a4663463bdabd"
     },
     {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 1006,
+      "path": "final_decision_lineage_validation.txt",
+      "sha256": "61e89fb4990c47ead77a41880a309c64987983f4e00f86d0cae692f71605e810"
+    },
+    {
       "asset_class": "knowledge_corpus_asset",
       "bytes": 887,
       "path": "knowledge/public_corpus/README.md",
@@ -6281,6 +6409,12 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
+      "bytes": 1006,
+      "path": "lineage_replay_final_validation.txt",
+      "sha256": "8cd77065e67985eb95e7eacc652685fd7c4118f97468a9d6254548b13fe38ce5"
+    },
+    {
+      "asset_class": "documentation_or_validation_evidence",
       "bytes": 394,
       "path": "multi_ai_validation.txt",
       "sha256": "d32e6c483363f044c67d2e734b6bf1d40c90a3406114e04bf417287692bfd88c"
@@ -6290,6 +6424,18 @@
       "bytes": 30673,
       "path": "output/pdf/AURA_SETUP_AND_OPERATIONS.pdf",
       "sha256": "4ba715dbbf199cd2af492540a2c0b21aa26a4cb84f7f469f5b1afb1cc0dfdd7c"
+    },
+    {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 5282,
+      "path": "phase2_clock_lineage_validation.txt",
+      "sha256": "c5010bcef986302f93d10c9ce89bb75fa352f85fd1c7e4d1157ad0b987cb0356"
+    },
+    {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 1006,
+      "path": "phase2_replay_determinism_validation.txt",
+      "sha256": "6645928a7746d2be045dfb9f9d4572c52f7aeab03b0497dbce9ac31a34647e57"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -6347,9 +6493,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 2807,
+      "bytes": 4496,
       "path": "tests/test_agent_audit.py",
-      "sha256": "38feb96f7b3ba08fdd378b99e7075605d65978fd6b2f0cc389f8638e823d3bfc"
+      "sha256": "f298d185ab65728b7602484962bcc836809a8371b151f35bdadb51ffca16f48c"
     },
     {
       "asset_class": "python_module",
@@ -6590,6 +6736,12 @@
       "bytes": 2368,
       "path": "tests/test_data_quality.py",
       "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e"
+    },
+    {
+      "asset_class": "python_module",
+      "bytes": 6129,
+      "path": "tests/test_decision_lineage.py",
+      "sha256": "cc760a13e9d74d163d2e53b33e0843f66fe685ad56f667ece4a48b1801716959"
     },
     {
       "asset_class": "python_module",
@@ -7425,9 +7577,12 @@
       "internal_dependencies": [
         "aura/agents/deliberation.py",
         "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/data/quality.py",
+        "aura/lineage/decision.py",
         "aura/persistence/wal.py"
       ],
-      "lines": 65,
+      "lines": 104,
       "module": "aura.agents.audit",
       "parsed": true,
       "path": "aura/agents/audit.py",
@@ -7436,7 +7591,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "c8b9d892a6bf4cdaa68edbcd2dd5b8bea9ddfe164635b519164ed23400f94819",
+      "sha256": "2253cd72911655ea56673a91b05aafdb588830ba2d9c4c68758ccb2bd29f3b86",
       "standard_library_dependencies": [
         "__future__",
         "enum"
@@ -7503,6 +7658,7 @@
       "component": "agents",
       "direct_test_files": [
         "tests/test_brain_policy.py",
+        "tests/test_decision_lineage.py",
         "tests/test_deliberation.py",
         "tests/test_opportunity_radar.py",
         "tests/test_shadow_outcomes.py"
@@ -7604,6 +7760,7 @@
         "tests/test_brain_policy.py",
         "tests/test_ceo_decision_trace.py",
         "tests/test_context_enrichment.py",
+        "tests/test_decision_lineage.py",
         "tests/test_deliberation.py",
         "tests/test_external_specialists.py",
         "tests/test_forecast_specialist.py",
@@ -7847,6 +8004,7 @@
       "component": "agents",
       "direct_test_files": [
         "tests/test_agent_risk_policy.py",
+        "tests/test_decision_lineage.py",
         "tests/test_opportunity_radar.py",
         "tests/test_runtime_bridge.py"
       ],
@@ -7886,9 +8044,10 @@
         "aura/agents/risk_policy.py",
         "aura/core/pipeline.py",
         "aura/data/quality.py",
-        "aura/domain/models.py"
+        "aura/domain/models.py",
+        "aura/lineage/decision.py"
       ],
-      "lines": 142,
+      "lines": 165,
       "module": "aura.agents.service",
       "parsed": true,
       "path": "aura/agents/service.py",
@@ -7897,7 +8056,7 @@
       ],
       "primary_phase": 9,
       "role": "source",
-      "sha256": "c123bc39c9fed83d04574d03ae9b3670b6bc6df58eb067e54d67067ed4b4694a",
+      "sha256": "2f9f67a1a1af0285c99de548f562b104b8f0483f46bd64aa172968f66abebafe",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -9377,6 +9536,7 @@
         "tests/test_core_contracts.py",
         "tests/test_corporate_actions.py",
         "tests/test_data_quality.py",
+        "tests/test_decision_lineage.py",
         "tests/test_deliberation.py",
         "tests/test_dhan_history.py",
         "tests/test_dhan_radar.py",
@@ -10641,6 +10801,88 @@
       "third_party_dependencies": []
     },
     {
+      "component": "lineage",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/lineage/decision.py"
+      ],
+      "lines": 5,
+      "module": "aura.lineage",
+      "parsed": true,
+      "path": "aura/lineage/__init__.py",
+      "phase_coverage": [
+        10
+      ],
+      "primary_phase": 10,
+      "role": "package_marker",
+      "sha256": "edb9a163fe389da302f556874c5835aceae351765807a2c83c19ea4735603233",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "lineage",
+      "direct_test_files": [
+        "tests/test_agent_audit.py",
+        "tests/test_decision_lineage.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/data/quality.py"
+      ],
+      "lines": 217,
+      "module": "aura.lineage.decision",
+      "parsed": true,
+      "path": "aura/lineage/decision.py",
+      "phase_coverage": [
+        10
+      ],
+      "primary_phase": 10,
+      "role": "source",
+      "sha256": "640e54b9d5d30afcace5b269d0723bed2ff4f5d339dfccb5ed52fbe4b791c9ef",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "datetime",
+        "decimal",
+        "enum",
+        "hashlib",
+        "json",
+        "math",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "lineage",
+      "direct_test_files": [
+        "tests/test_agent_audit.py"
+      ],
+      "internal_dependencies": [
+        "aura/lineage/decision.py",
+        "aura/persistence/wal.py"
+      ],
+      "lines": 49,
+      "module": "aura.lineage.replay",
+      "parsed": true,
+      "path": "aura/lineage/replay.py",
+      "phase_coverage": [
+        10
+      ],
+      "primary_phase": 10,
+      "role": "source",
+      "sha256": "a6643881a361e0e89666acac7f0a0f5b171c5f8a8926f3a924927ebca561b0d7",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses"
+      ],
+      "third_party_dependencies": []
+    },
+    {
       "component": "maintenance",
       "direct_test_files": [],
       "internal_dependencies": [
@@ -11667,7 +11909,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 828,
+      "lines": 829,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -11676,7 +11918,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "a498e909ef7cc012cade858b8cdeafa4fc4ac8f00fc199cff95c9bd9e1258fd7",
+      "sha256": "d324a182f2250960bdb76966b7b16f9e3ce253ee7d197cc4892b2ded2f8b37b7",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -13111,7 +13353,7 @@
         "aura/runtime/allocation.py",
         "aura/runtime/scanner.py"
       ],
-      "lines": 305,
+      "lines": 330,
       "module": "aura.runtime.multi_market_paper",
       "parsed": true,
       "path": "aura/runtime/multi_market_paper.py",
@@ -13120,7 +13362,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "e3d2d9c7dbc78f11b8148616f7cb515d77692e4d670fd4c294b44b551f18851a",
+      "sha256": "8660b7c968096c159eca475af87747fdad8802c8780a3b6d3b9c7dd522a08dd0",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -13224,6 +13466,7 @@
     {
       "component": "runtime",
       "direct_test_files": [
+        "tests/test_decision_lineage.py",
         "tests/test_mt5_demo_runtime.py",
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
@@ -13239,9 +13482,10 @@
         "aura/agents/orchestrator.py",
         "aura/agents/risk_policy.py",
         "aura/data/quality.py",
-        "aura/domain/models.py"
+        "aura/domain/models.py",
+        "aura/lineage/decision.py"
       ],
-      "lines": 151,
+      "lines": 185,
       "module": "aura.runtime.scanner",
       "parsed": true,
       "path": "aura/runtime/scanner.py",
@@ -13250,7 +13494,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "589a59ea18d2e24d7085c64c1e2cd9ae883136b96a388b68ade9bb18f8da7877",
+      "sha256": "da8ce5120c4ff5d06fdc7ed109ec03f2d289c7393820f4db97e8ae3c3fec3da8",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -13862,27 +14106,32 @@
         "aura/agents/audit.py",
         "aura/agents/models.py",
         "aura/domain/models.py",
+        "aura/lineage/decision.py",
+        "aura/lineage/replay.py",
         "aura/persistence/wal.py"
       ],
-      "lines": 91,
+      "lines": 139,
       "module": "tests.test_agent_audit",
       "parsed": true,
       "path": "tests/test_agent_audit.py",
       "phase_coverage": [
         1,
         2,
-        9
+        9,
+        10
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "38feb96f7b3ba08fdd378b99e7075605d65978fd6b2f0cc389f8638e823d3bfc",
+      "sha256": "f298d185ab65728b7602484962bcc836809a8371b151f35bdadb51ffca16f48c",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
         "decimal",
         "pathlib"
       ],
-      "third_party_dependencies": []
+      "third_party_dependencies": [
+        "pytest"
+      ]
     },
     {
       "component": "validation",
@@ -14969,6 +15218,38 @@
         "decimal"
       ],
       "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/agents/deliberation.py",
+        "aura/agents/models.py",
+        "aura/agents/risk_policy.py",
+        "aura/domain/models.py",
+        "aura/lineage/decision.py",
+        "aura/runtime/scanner.py"
+      ],
+      "lines": 213,
+      "module": "tests.test_decision_lineage",
+      "parsed": true,
+      "path": "tests/test_decision_lineage.py",
+      "phase_coverage": [
+        1,
+        9,
+        10,
+        12
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "cc760a13e9d74d163d2e53b33e0843f66fe685ad56f667ece4a48b1801716959",
+      "standard_library_dependencies": [
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
     },
     {
       "component": "validation",
@@ -17805,7 +18086,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "2e65973ed248440c043695e82c5d035044951be1e5ecb05b0521bd9a48378194",
+  "repository_tree_sha256": "66d627b3fc3a7153a9d96cd66e8a2b03179729bb7888a6fb3fe6ecfa251ad403",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -18169,6 +18450,12 @@
     {
       "classification": "intentional",
       "kind": "marker-exception",
+      "line": 10,
+      "path": "aura/lineage/replay.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "marker-exception",
       "line": 41,
       "path": "aura/maintenance/authority.py"
     },
@@ -18336,15 +18623,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 172,
+    "directly_tested_source_modules": 174,
     "entrypoints": 41,
     "parse_errors": 0,
-    "python_modules": 357,
-    "repository_files": 415,
-    "source_modules": 186,
-    "static_test_functions": 583,
-    "stub_candidates": 86,
-    "test_modules": 148,
+    "python_modules": 361,
+    "repository_files": 427,
+    "source_modules": 188,
+    "static_test_functions": 588,
+    "stub_candidates": 87,
+    "test_modules": 149,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

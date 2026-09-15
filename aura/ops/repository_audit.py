@@ -36,6 +36,7 @@ _PHASE_BY_PACKAGE = {
     "forecast": 7,
     "interface": 13,
     "knowledge": 8,
+    "lineage": 10,
     "markets": 1,
     "maintenance": 15,
     "memory": 9,

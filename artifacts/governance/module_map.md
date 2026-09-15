@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 415
-- Python modules: 357
-- Source modules: 186
-- Test modules: 148
-- Static test functions: 583
+- Repository files: 427
+- Python modules: 361
+- Source modules: 188
+- Test modules: 149
+- Static test functions: 588
 - Entrypoints: 41
-- Known stub/incomplete candidates: 86
+- Known stub/incomplete candidates: 87
 
 ## Repository structure
 
@@ -24,30 +24,36 @@ It inventories the repository; it does not certify later implementation phases.
 | `.gitattributes` | 1 |
 | `.github` | 3 |
 | `.gitignore` | 1 |
+| `CLAUDE.md` | 1 |
 | `Dockerfile` | 1 |
 | `README.md` | 1 |
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
-| `aura` | 192 |
+| `aura` | 195 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
 | `contextual_reliability_validation.txt` | 1 |
+| `decision_lineage_validation.txt` | 1 |
 | `deploy` | 1 |
-| `docs` | 28 |
+| `docs` | 30 |
 | `examples` | 16 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
+| `final_decision_lineage_validation.txt` | 1 |
 | `knowledge` | 2 |
+| `lineage_replay_final_validation.txt` | 1 |
 | `multi_ai_validation.txt` | 1 |
 | `output` | 1 |
+| `phase2_clock_lineage_validation.txt` | 1 |
+| `phase2_replay_determinism_validation.txt` | 1 |
 | `public_multi_ai_validation.txt` | 1 |
 | `pyproject.toml` | 1 |
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 148 |
+| `tests` | 149 |
 
 ## Entrypoints
 
@@ -103,21 +109,21 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/agents/adaptive_model_router.py` | source | agents | 9 | 4 | 1 |
 | `aura/agents/advisory_specialists.py` | source | agents | 9 | 3 | 0 |
 | `aura/agents/ai_council.py` | source | agents | 9 | 7 | 1 |
-| `aura/agents/audit.py` | source | agents | 9 | 3 | 4 |
+| `aura/agents/audit.py` | source | agents | 9 | 6 | 4 |
 | `aura/agents/base.py` | source | agents | 9 | 1 | 5 |
 | `aura/agents/context_enrichment.py` | source | agents | 9 | 5 | 1 |
-| `aura/agents/deliberation.py` | source | agents | 9 | 2 | 4 |
+| `aura/agents/deliberation.py` | source | agents | 9 | 2 | 5 |
 | `aura/agents/external_specialists.py` | source | agents | 9 | 5 | 3 |
 | `aura/agents/forecast_specialist.py` | source | agents | 9 | 3 | 1 |
-| `aura/agents/models.py` | source | agents | 9 | 1 | 28 |
+| `aura/agents/models.py` | source | agents | 9 | 1 | 29 |
 | `aura/agents/ollama_provider.py` | source | agents | 9 | 4 | 1 |
 | `aura/agents/openai_provider.py` | source | agents | 9 | 4 | 1 |
 | `aura/agents/orchestrator.py` | source | agents | 9 | 5 | 9 |
 | `aura/agents/providers.py` | source | agents | 9 | 3 | 3 |
 | `aura/agents/registry.py` | source | agents | 9 | 2 | 1 |
 | `aura/agents/reliability.py` | source | agents | 9 | 2 | 3 |
-| `aura/agents/risk_policy.py` | source | agents | 9 | 2 | 3 |
-| `aura/agents/service.py` | source | agents | 9 | 7 | 3 |
+| `aura/agents/risk_policy.py` | source | agents | 9 | 2 | 4 |
+| `aura/agents/service.py` | source | agents | 9 | 8 | 3 |
 | `aura/agents/specialists.py` | source | agents | 9 | 3 | 1 |
 | `aura/agents/team.py` | source | agents | 9 | 11 | 3 |
 | `aura/ai/__init__.py` | package_marker | ai | 9 | 3 | 0 |
@@ -167,7 +173,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 1 | 7 |
 | `aura/data/shoonya.py` | source | data | 5 | 2 | 1 |
 | `aura/domain/instruments.py` | source | domain | 1 | 0 | 1 |
-| `aura/domain/models.py` | source | domain | 1 | 0 | 62 |
+| `aura/domain/models.py` | source | domain | 1 | 0 | 63 |
 | `aura/domain/serialization.py` | source | domain | 1 | 2 | 1 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 3 | 1 |
@@ -206,6 +212,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/knowledge/firewall.py` | source | knowledge | 8 | 1 | 7 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 2 | 1 |
 | `aura/knowledge/retrieval.py` | source | knowledge | 8 | 1 | 1 |
+| `aura/lineage/__init__.py` | package_marker | lineage | 10 | 1 | 0 |
+| `aura/lineage/decision.py` | source | lineage | 10 | 4 | 2 |
+| `aura/lineage/replay.py` | source | lineage | 10 | 2 | 1 |
 | `aura/maintenance/__init__.py` | package_marker | maintenance | 15 | 1 | 0 |
 | `aura/maintenance/authority.py` | source | maintenance | 15 | 0 | 3 |
 | `aura/maintenance/change_control.py` | source | maintenance | 15 | 3 | 1 |
@@ -286,7 +295,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 3 | 1 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 3 | 2 |
 | `aura/runtime/paper.py` | source | runtime | 12 | 9 | 1 |
-| `aura/runtime/scanner.py` | source | runtime | 12 | 6 | 8 |
+| `aura/runtime/scanner.py` | source | runtime | 12 | 7 | 9 |
 | `aura/runtime/supervisor.py` | source | runtime | 12 | 2 | 1 |
 | `aura/strategy/base.py` | source | strategy | 7 | 1 | 3 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 2 | 7 |
@@ -309,7 +318,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/send_telegram_test_alert.py` | entrypoint | examples | 13 | 1 | 0 |
 | `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 5 | 0 |
-| `tests/test_agent_audit.py` | test | validation | 1 | 4 | 0 |
+| `tests/test_agent_audit.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_agent_registry.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_reliability.py` | test | validation | 1 | 4 | 0 |
 | `tests/test_agent_risk_policy.py` | test | validation | 1 | 10 | 0 |
@@ -350,6 +359,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_corporate_actions.py` | test | validation | 1 | 2 | 0 |
 | `tests/test_cross_feed.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_data_quality.py` | test | validation | 1 | 2 | 0 |
+| `tests/test_decision_lineage.py` | test | validation | 1 | 6 | 0 |
 | `tests/test_deliberation.py` | test | validation | 1 | 3 | 0 |
 | `tests/test_deployment_assets.py` | test | validation | 0 | 0 | 0 |
 | `tests/test_dhan_deep_service.py` | test | validation | 1 | 4 | 0 |
