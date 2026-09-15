@@ -10,6 +10,7 @@ from aura.agents.risk_policy import AgentPolicyDecision, AgentRiskPolicy
 from aura.core.pipeline import DecisionPipeline, DecisionResult
 from aura.data.quality import CandleQualityGate, DataQualityReport
 from aura.domain.models import PortfolioSnapshot, SignalIntent, StrategySignal
+from aura.lineage.decision import DecisionLineageRecord
 
 
 @dataclass(slots=True, frozen=True)
@@ -20,6 +21,7 @@ class MultiAgentDecisionOutcome:
     data_quality_report: DataQualityReport | None = None
     agent_policy_decision: AgentPolicyDecision | None = None
     deliberation: DeliberationMemo | None = None
+    lineage: DecisionLineageRecord | None = None
 
 
 class MultiAgentDecisionService:
@@ -86,6 +88,14 @@ class MultiAgentDecisionService:
                     if self.agent_risk_policy is not None
                     else None
                 )
+                lineage = DecisionLineageRecord.build(
+                    context=context,
+                    round_result=round_result,
+                    memo=memo,
+                    data_quality=quality_report,
+                    agent_policy=policy_decision,
+                    deliberation=None,
+                )
                 return MultiAgentDecisionOutcome(
                     round=round_result,
                     memo=memo,
@@ -93,15 +103,24 @@ class MultiAgentDecisionService:
                     data_quality_report=quality_report,
                     agent_policy_decision=policy_decision,
                     deliberation=None,
+                    lineage=lineage,
                 )
 
         round_result = await self.orchestrator.run_round(context)
         deliberation = self.deliberation_engine.deliberate(round_result)
-        memo = self.ceo.synthesize(round_result)
+        memo = self.ceo.synthesize(round_result, context=context)
         policy_decision = (
             self.agent_risk_policy.evaluate(round_result=round_result, memo=memo)
             if self.agent_risk_policy is not None
             else None
+        )
+        lineage = DecisionLineageRecord.build(
+            context=context,
+            round_result=round_result,
+            memo=memo,
+            data_quality=quality_report,
+            agent_policy=policy_decision,
+            deliberation=deliberation,
         )
         if (
             not memo.quorum_met
@@ -115,6 +134,7 @@ class MultiAgentDecisionService:
                 data_quality_report=quality_report,
                 agent_policy_decision=policy_decision,
                 deliberation=deliberation,
+                lineage=lineage,
             )
 
         signal = StrategySignal(
@@ -141,4 +161,5 @@ class MultiAgentDecisionService:
             data_quality_report=quality_report,
             agent_policy_decision=policy_decision,
             deliberation=deliberation,
+            lineage=lineage,
         )
