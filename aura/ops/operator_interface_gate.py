@@ -85,7 +85,7 @@ async def _alert_probe(receipt_path: Path) -> dict[str, bool]:
 
 
 async def _voice_probe() -> dict[str, bool]:
-    calls: list[tuple[list[str], dict[str, Any]]] = []
+    calls: list[tuple[list[str] | tuple[str, ...], dict[str, Any]]] = []
 
     def runner(command, **kwargs):
         calls.append((command, kwargs))
@@ -101,7 +101,7 @@ async def _voice_probe() -> dict[str, bool]:
     return {
         "voice_available": announcer.available,
         "voice_probe_spoken": spoken,
-        "voice_uses_argument_vector": isinstance(command, list),
+        "voice_uses_argument_vector": isinstance(command, (list, tuple)),
         "voice_avoids_shell_interpolation": "shell" not in kwargs,
         "voice_text_passed_by_environment": (
             kwargs.get("env", {}).get("AURA_VOICE_TEXT")
