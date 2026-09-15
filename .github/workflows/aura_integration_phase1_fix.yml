@@ -1,0 +1,40 @@
+name: AURA integration Phase 1 repair
+
+on:
+  push:
+    branches:
+      - agent/aura-master-integration
+    paths:
+      - .github/workflows/aura_integration_phase1_fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair-phase1:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: agent/aura-master-integration
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install project
+        run: python -m pip install -e ".[dev]"
+      - name: Regenerate and verify Phase 1 evidence
+        run: |
+          python -m aura.ops.repository_audit --check
+          python -m aura.ops.core_contracts --write
+          python -m aura.ops.core_contracts --check
+      - name: Commit verified Phase 1 evidence and remove one-shot workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/aura_integration_phase1_fix.yml
+          git add artifacts/governance/core_contract_schema_report.json \
+                  artifacts/governance/core_contract_validation_suite.json \
+                  artifacts/governance/phase_gate_status.json
+          git commit -m "repair Phase 1 governance evidence"
+          git push origin HEAD:agent/aura-master-integration
