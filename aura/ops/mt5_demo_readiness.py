@@ -123,7 +123,7 @@ def inspect_mt5_demo_readiness(
     server = str(account.get("server", "")) or None
     try:
         DemoExecutionGuard.assert_mt5_demo_account(account_info)
-    except Exception as exc:
+    except RuntimeError as exc:
         return _report(
             preferred_symbol,
             None,
@@ -164,7 +164,7 @@ def inspect_mt5_demo_readiness(
             gateway,
             preferred_symbol=preferred_symbol,
         )
-    except Exception as exc:
+    except RuntimeError as exc:
         return _report(
             preferred_symbol,
             None,
@@ -267,7 +267,7 @@ def inspect_mt5_demo_readiness(
             "1m",
             count=2,
         )
-    except Exception as exc:
+    except (RuntimeError, ValueError) as exc:
         return _report(
             preferred_symbol,
             resolved_symbol,
@@ -339,7 +339,7 @@ def main() -> int:
         report = inspect_mt5_demo_readiness(gateway)
         print(json.dumps(report.to_dict(), indent=2, sort_keys=True))
         return 0 if report.ready else 2
-    except Exception as exc:
+    except (RuntimeError, ValueError, TypeError, KeyError, AttributeError) as exc:
         safe_error = {
             "ready": False,
             "order_submission_attempted": False,
