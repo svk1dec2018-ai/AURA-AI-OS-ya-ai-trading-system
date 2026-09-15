@@ -23,6 +23,66 @@ jobs:
           python-version: '3.11'
       - name: Install project
         run: python -m pip install -e ".[dev]"
+      - name: Enforce mandatory data quality and deterministic CEO decision time
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          service = Path("aura/agents/service.py")
+          text = service.read_text()
+          text = text.replace(
+              "data_quality_gate: CandleQualityGate | None = None,",
+              "data_quality_gate: CandleQualityGate,",
+          )
+          text = text.replace(
+              "        self.decision_pipeline = decision_pipeline\n        self.data_quality_gate = data_quality_gate\n",
+              "        self.decision_pipeline = decision_pipeline\n        if data_quality_gate is None:\n            raise ValueError(\"data_quality_gate is required for every decision boundary\")\n        self.data_quality_gate = data_quality_gate\n",
+          )
+          service.write_text(text)
+
+          scanner = Path("aura/runtime/scanner.py")
+          text = scanner.read_text()
+          text = text.replace(
+              "data_quality_gate: CandleQualityGate | None = None,",
+              "data_quality_gate: CandleQualityGate,",
+          )
+          text = text.replace(
+              "        self.ceo = ceo\n        self.data_quality_gate = data_quality_gate\n",
+              "        self.ceo = ceo\n        if data_quality_gate is None:\n            raise ValueError(\"data_quality_gate is required for every scan boundary\")\n        self.data_quality_gate = data_quality_gate\n",
+          )
+          scanner.write_text(text)
+
+          orchestrator = Path("aura/agents/orchestrator.py")
+          text = orchestrator.read_text()
+          text = text.replace(
+              "                reason_code=reason_code,\n                quorum_met=quorum,\n            )",
+              "                reason_code=reason_code,\n                quorum_met=quorum,\n                generated_at=(\n                    context.created_at if context is not None else round_result.completed_at\n                ),\n            )",
+          )
+          text = text.replace(
+              "        reason_code: DecisionReasonCode,\n        quorum_met: bool,\n    ) -> CEODecisionMemo:",
+              "        reason_code: DecisionReasonCode,\n        quorum_met: bool,\n        generated_at: datetime,\n    ) -> CEODecisionMemo:",
+          )
+          text = text.replace(
+              "            generated_at=round_result.completed_at,\n",
+              "            generated_at=generated_at,\n",
+          )
+          orchestrator.write_text(text)
+
+          tests = Path("tests/test_agents.py")
+          text = tests.read_text()
+          marker = "def test_ceo_memo_uses_context_decision_time_for_replay()"
+          if marker not in text:
+              text += '''\n\n@pytest.mark.asyncio\nasync def test_ceo_memo_uses_context_decision_time_for_replay() -> None:\n    started: list[str] = []\n    gate = asyncio.Event()\n    context_time = datetime(2026, 1, 1, 0, 5, tzinfo=UTC)\n    context = AgentContext(\n        correlation_id="replay-round",\n        symbol="X",\n        decision_timeframe="5m",\n        candles=(_candle(),),\n        created_at=context_time,\n    )\n    agents = [\n        BarrierAgent(\n            agent_id="htf-replay",\n            role=AgentRole.HTF_BIAS,\n            intent=SignalIntent.LONG,\n            started=started,\n            gate=gate,\n            expected=1,\n        )\n    ]\n    round_result = await MultiAgentOrchestrator(agents, timeout_seconds=1).run_round(context)\n    memo = CEOAggregator(min_agents=1, min_distinct_roles=1).synthesize(\n        round_result, context=context\n    )\n    assert memo.generated_at == context_time\n'''
+              tests.write_text(text)
+          PY
+          grep -R -n "MultiAgentDecisionService(" aura tests examples || true
+          grep -R -n "MultiMarketIntelligenceScanner(" aura tests examples || true
+      - name: Validate code before governance rebuild
+        run: |
+          set -euo pipefail
+          python -m compileall -q aura examples
+          ruff check --output-format=github aura tests examples
+          pytest -q
       - name: Rebuild sequential governance evidence
         run: |
           set -euo pipefail
@@ -48,15 +108,15 @@ jobs:
           python -m aura.ops.multi_agent_gate --check
           python -m aura.ops.ceo_decision_gate --write
           python -m aura.ops.ceo_decision_gate --check
-      - name: Commit verified governance evidence to integration branch
+      - name: Commit verified code and governance evidence to integration branch
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add artifacts/governance
+          git add aura/agents/service.py aura/runtime/scanner.py aura/agents/orchestrator.py tests/test_agents.py artifacts/governance
           if git diff --cached --quiet; then
-            echo "Governance artifacts already current."
+            echo "Code and governance artifacts already current."
           else
-            git commit -m "rebuild Phase 0-10 governance evidence"
+            git commit -m "enforce market-data gate and deterministic CEO replay"
             git push origin HEAD:agent/aura-master-integration
           fi
