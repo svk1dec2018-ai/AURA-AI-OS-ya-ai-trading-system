@@ -7295,9 +7295,9 @@
     },
     {
       "asset_class": "python_module",
-      "bytes": 5223,
+      "bytes": 5226,
       "path": "tests/test_mt5_demo_readiness.py",
-      "sha256": "862b2228e6fd4edbcfbb27ac34728e118c8812b3d928bc863d8d66b6acd209fa"
+      "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01"
     },
     {
       "asset_class": "python_module",
@@ -16903,7 +16903,7 @@
       ],
       "primary_phase": 5,
       "role": "test",
-      "sha256": "862b2228e6fd4edbcfbb27ac34728e118c8812b3d928bc863d8d66b6acd209fa",
+      "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01",
       "standard_library_dependencies": [
         "__future__",
         "decimal"
@@ -18579,7 +18579,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "afc5fdbf9d581ca181936107a12cf7812311d5c1f07905f0ad8cf4b1dbed9341",
+  "repository_tree_sha256": "9f850a2427255db8c631878dba1a8b84a6fef96d478ccbe9bdd12425993e2d08",
   "schema_version": 1,
   "scope": {
     "excluded": [
