@@ -27,11 +27,11 @@ def _context(*, metadata: dict | None = None) -> AgentContext:
         timeframe="1m",
         open_time=close_time - timedelta(minutes=1),
         close_time=close_time,
-        open=Decimal("100"),
-        high=Decimal("102"),
-        low=Decimal("99"),
-        close=Decimal("101"),
-        volume=Decimal("12"),
+        open=Decimal(100),
+        high=Decimal(102),
+        low=Decimal(99),
+        close=Decimal(101),
+        volume=Decimal(12),
         closed=True,
     )
     return AgentContext(
