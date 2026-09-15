@@ -1,0 +1,29 @@
+{
+  "checks": {
+    "cash_not_double_debited": true,
+    "circuit_opens_after_failure_threshold": true,
+    "duplicate_fill_replay_is_idempotent": true,
+    "external_live_broker_execution_claimed": false,
+    "kill_switch_survives_restart": true,
+    "live_money_enabled": false,
+    "no_open_order_after_full_fill": true,
+    "open_circuit_blocks_new_requests": true,
+    "operator_interface_gate_required": true,
+    "paper_demo_gate_required": true,
+    "portfolio_quantity_not_double_counted": true,
+    "risk_authority_preserved": true,
+    "wal_recovery_rebuilds_order_state": true
+  },
+  "classification": "software_end_to_end_resilience_validated",
+  "decision": "PASS",
+  "phase": 14,
+  "phase_11_external_live_readiness_required_for_phase_15": true,
+  "phase_15_live_deployment_unlocked": false,
+  "schema_version": 1,
+  "simulated_failures": [
+    "connector circuit-open condition",
+    "process restart from append-only financial WAL",
+    "duplicate fill replay",
+    "persisted kill-switch state"
+  ]
+}

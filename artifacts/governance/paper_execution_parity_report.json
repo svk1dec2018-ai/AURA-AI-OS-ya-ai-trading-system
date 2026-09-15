@@ -1,0 +1,29 @@
+{
+  "checks": {
+    "closed_candle_runtime_contract_present": true,
+    "deterministic_replay_clock": true,
+    "external_broker_microstructure_parity_claimed": false,
+    "fee_matches_validated_execution_model": true,
+    "fill_price_matches_validated_execution_model": true,
+    "live_money_enabled": false,
+    "quantity_matches_validated_execution_model": true,
+    "risk_engine_remains_upstream": true,
+    "shared_fill_and_cost_model": true
+  },
+  "classification": "software_paper_demo_execution_ready",
+  "decision": "PASS",
+  "execution_assumptions": {
+    "fee_bps": "10",
+    "fill_timing": "next eligible candle",
+    "slippage_bps": "10"
+  },
+  "phase": 12,
+  "phase_15_live_deployment_unlocked": false,
+  "requires_phase_11_live_broker_evidence": false,
+  "schema_version": 1,
+  "scope": "AURA internal execution semantics, deterministic replay clock and paper broker parity. External broker microstructure and real-money readiness are excluded.",
+  "shared_components": {
+    "decision_pipeline": "aura.core.pipeline.DecisionPipeline",
+    "fill_and_cost_model": "aura.execution.fill_model.CandleExecutionModel"
+  }
+}

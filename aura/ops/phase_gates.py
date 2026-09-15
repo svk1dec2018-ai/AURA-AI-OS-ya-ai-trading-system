@@ -295,10 +295,15 @@ def validate_phase_gate_records(
                 if ordered[dependency].decision != GateDecision.PASS
             )
             if blocked_dependencies:
-                errors.append(
-                    f"phase {record.phase} cannot PASS before dependencies "
-                    f"{list(blocked_dependencies)}"
-                )
+                if blocked_dependencies == (record.phase - 1,):
+                    errors.append(
+                        f"phase {record.phase} cannot PASS before phase {record.phase - 1}"
+                    )
+                else:
+                    errors.append(
+                        f"phase {record.phase} cannot PASS before dependencies "
+                        f"{list(blocked_dependencies)}"
+                    )
             supplied = {item.output: item for item in record.evidence}
             if len(supplied) != len(record.evidence):
                 errors.append(f"phase {record.phase} contains duplicate evidence outputs")
