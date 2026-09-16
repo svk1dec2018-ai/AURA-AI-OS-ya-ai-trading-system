@@ -30,20 +30,20 @@ jobs:
       - name: Regenerate deterministic governance evidence
         run: |
           python -m aura.ops.repository_audit
-          python -m aura.ops.core_contracts
-          python -m aura.ops.state_engine_gate
-          python -m aura.ops.risk_engine_gate
-          python -m aura.ops.broker_conformance_gate
-          python -m aura.ops.market_data_gate
-          python -m aura.ops.backtest_gate
-          python -m aura.ops.strategy_research_gate
-          python -m aura.ops.knowledge_rag_gate
-          python -m aura.ops.multi_agent_gate
-          python -m aura.ops.ceo_decision_gate
-          python -m aura.ops.broker_evidence_readiness
-          python -m aura.ops.paper_trading_gate
-          python -m aura.ops.operator_interface_gate
-          python -m aura.ops.end_to_end_gate
+          python -m aura.ops.core_contracts --write
+          python -m aura.ops.state_engine_gate --write
+          python -m aura.ops.risk_engine_gate --write
+          python -m aura.ops.broker_conformance_gate --write
+          python -m aura.ops.market_data_gate --write
+          python -m aura.ops.backtest_gate --write
+          python -m aura.ops.strategy_research_gate --write
+          python -m aura.ops.knowledge_rag_gate --write
+          python -m aura.ops.multi_agent_gate --write
+          python -m aura.ops.ceo_decision_gate --write
+          python -m aura.ops.broker_evidence_readiness --write
+          python -m aura.ops.paper_trading_gate --write
+          python -m aura.ops.operator_interface_gate --write
+          python -m aura.ops.end_to_end_gate --write
       - name: Commit refreshed evidence when needed
         id: sync
         shell: bash
