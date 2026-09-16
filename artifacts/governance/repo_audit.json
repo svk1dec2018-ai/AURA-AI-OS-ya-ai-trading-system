@@ -2750,6 +2750,10 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/webapp/read_models.py",
+        "to": "aura/persistence/wal.py"
+      },
+      {
         "from": "aura/webapp/server.py",
         "to": "aura/research/autonomy.py"
       },
@@ -5622,9 +5626,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 5297,
+      "bytes": 6715,
       "path": "aura/data/intelligence_service.py",
-      "sha256": "12e7d0c00b16f4ea95a34b6dc5320779c3db36cd881bc326349732df40a4442a"
+      "sha256": "b53f42d867cb964977fbaca3cd0ece386660eb05379e1487d04d56ee05178c4f"
     },
     {
       "asset_class": "python",
@@ -6543,6 +6547,12 @@
       "bytes": 21378,
       "path": "aura/webapp/catalog.py",
       "sha256": "fb21a21de97f2dd582857d1e94738ef23e05290801f64c359588b0a66bf974a3"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 5443,
+      "path": "aura/webapp/read_models.py",
+      "sha256": "aaa7e7d214f142b1654c37d9cd2743f0521e1abbbf6fec6fd55bafb6d838f5ea"
     },
     {
       "asset_class": "python",
@@ -8048,7 +8058,8 @@
       "aura/runtime/mt5_demo_execution_daemon.py",
       "aura/runtime/mt5_learning_daemon.py",
       "aura/runtime/mt5_paper_daemon.py",
-      "aura/webapp/catalog.py"
+      "aura/webapp/catalog.py",
+      "aura/webapp/read_models.py"
     ]
   },
   "limitations": [
@@ -9661,7 +9672,7 @@
       "internal_dependencies": [
         "aura/data/free_intelligence.py"
       ],
-      "lines": 143,
+      "lines": 177,
       "module": "aura.data.intelligence_service",
       "parsed": true,
       "path": "aura/data/intelligence_service.py",
@@ -9670,7 +9681,7 @@
       ],
       "primary_phase": 5,
       "role": "source",
-      "sha256": "12e7d0c00b16f4ea95a34b6dc5320779c3db36cd881bc326349732df40a4442a",
+      "sha256": "b53f42d867cb964977fbaca3cd0ece386660eb05379e1487d04d56ee05178c4f",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -14591,6 +14602,31 @@
     },
     {
       "component": "webapp",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/persistence/wal.py"
+      ],
+      "lines": 149,
+      "module": "aura.webapp.read_models",
+      "parsed": true,
+      "path": "aura/webapp/read_models.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "aaa7e7d214f142b1654c37d9cd2743f0521e1abbbf6fec6fd55bafb6d838f5ea",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
       "direct_test_files": [
         "tests/test_aura_webapp.py"
       ],
@@ -19243,7 +19279,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "3a3e4d3f321407e784c26f58057b0ba4320208a2f72e2e88086237756785fb88",
+  "repository_tree_sha256": "e0a97bb875dbebb6597f9b34ca1f200246fb7b0ed8f765857bb71cf4c35c4cfa",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19831,9 +19867,9 @@
     "directly_tested_source_modules": 177,
     "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 380,
-    "repository_files": 459,
-    "source_modules": 200,
+    "python_modules": 381,
+    "repository_files": 460,
+    "source_modules": 201,
     "static_test_functions": 611,
     "stub_candidates": 95,
     "test_modules": 154,
