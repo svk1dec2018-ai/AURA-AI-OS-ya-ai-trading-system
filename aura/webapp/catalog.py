@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any
 
-
 # UI status vocabulary is deliberately product-facing and conservative.
 # `ui_connected` means this local PWA has a working surface today.
 # `backend_ready` means concrete code/tests exist but this PWA still needs wiring.

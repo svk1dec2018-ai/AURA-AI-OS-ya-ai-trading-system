@@ -19,17 +19,13 @@ from urllib.parse import urlparse
 
 from aura.research.autonomy import ResearchHypothesis
 from aura.research.blueprint_compiler import (
-    BlueprintCompilationError,
     EXECUTABLE_CONFIRMATION_PRIMITIVES,
     EXECUTABLE_ENTRY_PRIMITIVES,
     EXECUTABLE_EXIT_PRIMITIVES,
+    BlueprintCompilationError,
     compile_blueprint,
 )
-from aura.research.strategy_factory import (
-    AutonomousStrategyFactory,
-    ExitPrimitive,
-    StrategyPrimitive,
-)
+from aura.research.strategy_factory import AutonomousStrategyFactory
 from aura.webapp.catalog import capability_catalog
 from aura.webapp.operator_assistant import answer_owner_query
 from aura.webapp.read_models import (
@@ -39,7 +35,6 @@ from aura.webapp.read_models import (
     learning_snapshot,
 )
 from aura.webapp.security import owner_auth_required, owner_authorized
-
 
 ROOT = Path(__file__).resolve().parents[2]
 STATIC_DIR = Path(__file__).resolve().parent / "static"
@@ -415,7 +410,7 @@ class AuraWebController:
     def shutdown(self) -> None:
         try:
             self.stop()
-        except Exception:
+        except (OSError, subprocess.SubprocessError):
             self._close_log()
 
 
@@ -452,7 +447,7 @@ def _enum_tuple(
     max_items: int,
 ) -> tuple[Any, ...]:
     if not isinstance(value, list):
-        raise ValueError(f"{field} must be a list")
+        raise TypeError(f"{field} must be a list")
     if not min_items <= len(value) <= max_items:
         raise ValueError(f"{field} must contain between {min_items} and {max_items} items")
     allowed_values = {item.value: item for item in allowed}
@@ -513,7 +508,7 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
         raw = self.rfile.read(length)
         value = json.loads(raw.decode("utf-8"))
         if not isinstance(value, dict):
-            raise ValueError("request body must be a JSON object")
+            raise TypeError("request body must be a JSON object")
         return value
 
     def _require_owner(self) -> bool:
@@ -602,7 +597,14 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
                 self._json({"ok": False, "error": "not found"}, HTTPStatus.NOT_FOUND)
                 return
             self._json(payload)
-        except (ValueError, RuntimeError, OSError, subprocess.SubprocessError, json.JSONDecodeError) as exc:
+        except (
+            TypeError,
+            ValueError,
+            RuntimeError,
+            OSError,
+            subprocess.SubprocessError,
+            json.JSONDecodeError,
+        ) as exc:
             self._json({"ok": False, "error": str(exc)}, HTTPStatus.BAD_REQUEST)
 
     def _serve_static(self, request_path: str) -> None:

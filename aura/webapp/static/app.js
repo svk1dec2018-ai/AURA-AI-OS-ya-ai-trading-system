@@ -186,7 +186,7 @@ function featureCard(item) {
 function renderFeatureSets() {
   Object.entries(featureSets).forEach(([containerId, ids]) => { const node=$(containerId); if (node) node.innerHTML=ids.map((id)=>featureCard(featureById(id))).join(""); });
   const names=[["HTF Bias","Higher-timeframe directional context"],["SMC / ICT","Structure, liquidity and imbalance evidence"],["Technical","EMA/RSI/MACD/volatility evidence"],["Volume / VWAP","Participation and value evidence"],["Forecast","Calibrated probability / quantile view"]];
-  if ($("homeAgents")) $("homeAgents").innerHTML=names.map(([name,desc],i)=>`<div class="agent-row"><div><b>${esc(name)}</b><small>${esc(desc)}</small><div class="progress"><i style="width:${72-i*5}%"></i></div></div><span class="badge backend_ready">ready</span></div>`).join("");
+  if ($("homeAgents")) $("homeAgents").innerHTML=names.map(([name,desc])=>`<div class="agent-row"><div><b>${esc(name)}</b><small>${esc(desc)}</small></div><span class="badge backend_ready">implemented</span></div>`).join("");
 }
 
 function renderCapabilityMatrix() {

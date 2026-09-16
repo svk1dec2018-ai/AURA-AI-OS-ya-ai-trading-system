@@ -3,7 +3,6 @@ from __future__ import annotations
 import hmac
 import os
 
-
 OWNER_TOKEN_ENV = "AURA_OWNER_TOKEN"
 
 

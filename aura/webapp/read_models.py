@@ -7,7 +7,6 @@ from typing import Any
 
 from aura.persistence.wal import CorruptWalError, JsonlWriteAheadLog, WalEvent
 
-
 MAX_OPERATOR_EVENTS = 250
 
 

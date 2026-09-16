@@ -265,12 +265,12 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "0af0b4db17c8cc6a9249c52094ea09580fd778647275538ffe4de2310f96fd97",
+      "sha256": "bc97a3d2f4d8c80c6fa78938972bc843096527563fea742dc3356241086b6bac",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 8,
+      "static_test_functions": 10,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -278,7 +278,9 @@
         "test_algo_options_do_not_expose_arbitrary_code_or_live_approval",
         "test_capability_catalog_is_truthful_and_has_blocked_money_actions",
         "test_controller_status_is_safe_without_runtime_files",
+        "test_dashboard_does_not_render_fabricated_agent_percentages",
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
+        "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
         "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
       ]
@@ -542,7 +544,7 @@
         4,
         11
       ],
-      "sha256": "ddd5502470aacf25aebb2c98f3f00163adb56234de08680cfcbd638c70bcbbcb",
+      "sha256": "5f291c4111182714c655a6fa2112b2dba495fe9ee8c06e257c9a10c78474c6be",
       "source_dependencies": [
         "aura/execution/broker.py",
         "aura/execution/broker_evidence.py",
@@ -596,7 +598,7 @@
         4,
         11
       ],
-      "sha256": "24eda22f8b16382c5fd8f36ffda8ff0664628a843972038c3bb1527d67c5cea5",
+      "sha256": "569ca75b91c91b4b7ca8077c623c9328b29e754c5dce25455ae1f9b8e33f53cf",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/execution/broker.py",
@@ -2849,14 +2851,15 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "baa80d32ad0aa513377c01f825d7076163172f168682bb7a7a57a7f573395a6b",
+      "sha256": "8ce8d89704de8c09d5186ad3d3f461a0d93000519d1c59fa04d936b26d73ed16",
       "source_dependencies": [
         "aura/ops/repository_audit.py"
       ],
-      "static_test_functions": 5,
+      "static_test_functions": 6,
       "test_classes": [],
       "test_functions": [
         "test_audit_exposes_stub_candidates_without_calling_them_completed",
+        "test_audit_hashes_are_checkout_newline_independent",
         "test_audit_includes_git_tracked_runtime_despite_generic_ignore_rule",
         "test_generated_phase_zero_artifacts_are_current",
         "test_packaging_outputs_are_excluded_but_source_is_not",
@@ -3441,7 +3444,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 611,
+    "static_test_functions": 614,
     "test_modules": 154
   }
 }

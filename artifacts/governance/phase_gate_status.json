@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "5671cd1862c14bd86de97d143024cc129472c15875be9b96b767f80ea4c1c533",
+  "ledger_sha256": "f486d4bfce7e6652bbd8f821838bb13c5e732d621964a6c5d89b1364cf5bf89a",
   "policy": "AURA dependency-aware mandatory phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "56aa1bc52e2ad366c53640a6d5dfa8d2b24c3ed9e58779efb4dd103cc0e35cef"
+          "sha256": "e4fe1f3ff6fa186f0fc657bef5f0a632f7134756c70277ee89ed027308afc65a"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "4c0f4ac086f70092e6eda839e53ed27c7fc3644f215044682ade5e2b238639a3"
+          "sha256": "98f9a3669cf920a68c23b9f75c3089deae4d2d1f12ea9df1e5d3aaf4fc7eb501"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "1128aad778a73bcf3e4a59dfbbcdbc646e4af488973427af49c7975024e0784d"
+          "sha256": "2aa9d33780cc4db1bef70c6e89b69f33be7264052cc3436d67de44d3da81c7c8"
         }
       ],
       "phase": 0,
@@ -30,12 +30,12 @@
         {
           "output": "Contract validation suite",
           "path": "artifacts/governance/core_contract_validation_suite.json",
-          "sha256": "38167cc5d56d93121c40a216126fe6e7e36c7b6c9ac4f4563113afeac800cdcf"
+          "sha256": "c83e1e70b3efd6bd1e4296babd0cc6785f956d8d7d8bc956e76dad3d764dc7ac"
         },
         {
           "output": "Schema test report",
           "path": "artifacts/governance/core_contract_schema_report.json",
-          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
+          "sha256": "e58cd2ba55b0d88d6faf6489233c4a1e07442bf49fd4faa2b3499668875b184e"
         }
       ],
       "phase": 1,
@@ -47,12 +47,12 @@
         {
           "output": "Reconciliation test report",
           "path": "artifacts/governance/reconciliation_test_report.json",
-          "sha256": "0d08a23ca06db9d1ac7d2f09a39f702d14fed0275d66cc1bfef216dc84584e7f"
+          "sha256": "fa38f1c8a43813be4db49f61c24f4d8168c3ef5728f5b589146ed7d245961f42"
         },
         {
           "output": "State transition logs",
           "path": "artifacts/governance/state_transition_logs.json",
-          "sha256": "84bd8fcbce689ca78cdef8a4da68bef14e46f14b30642aebd23cd4f340871042"
+          "sha256": "d4d33093f3f103882c0b44370c0fa98a5d1cc0c12329c3763324ab1ab1ebf684"
         }
       ],
       "phase": 2,
@@ -64,12 +64,12 @@
         {
           "output": "Risk stress test report",
           "path": "artifacts/governance/risk_stress_test_report.json",
-          "sha256": "db0bbcca5b27214f2071b9e0a19699c73478dea3884bf0f3737dc391548d5456"
+          "sha256": "09efee951c2e3147f581d217256c8fcc2c2602f12f49bcadbf6984be6a24b56c"
         },
         {
           "output": "Violation simulation logs",
           "path": "artifacts/governance/risk_violation_simulation_logs.json",
-          "sha256": "9293d9b5ed372c3e311dadfe50727c53104821c5efc6bf8501489a6981f7563a"
+          "sha256": "e5dc324f6d51bf736a4437d03adfda76f12886ffdfc448faf626890acdf31692"
         }
       ],
       "phase": 3,
@@ -81,7 +81,7 @@
         {
           "output": "Adapter conformance report",
           "path": "artifacts/governance/broker_adapter_conformance_report.json",
-          "sha256": "3c5796385234a3dc8e1001d8a2735bf57f74db775f2efdd34ce9685191d6de1c"
+          "sha256": "6a8f77cc1433a2c61c47c91d1f157508030defc2d6a200c4ea5f67580c5685cb"
         }
       ],
       "phase": 4,
@@ -93,12 +93,12 @@
         {
           "output": "Anomaly detection logs",
           "path": "artifacts/governance/anomaly_detection_logs.json",
-          "sha256": "fc63f0f0959a491b0a27eddc219be707bdff98636b85e5a3d947f4b38aee9d44"
+          "sha256": "9d10a9e6c5dbdb480a8266ba9ab34d86c71dd3dba474825cfb49c7c34f9b4dcf"
         },
         {
           "output": "Data quality report",
           "path": "artifacts/governance/data_quality_report.json",
-          "sha256": "a9761264824af642f82bc6a4572f3a4e8a40d10565d9a01867c38f70259df8ca"
+          "sha256": "950b51fc0c8908dfda01cc9f0cd06fbfd550699fc20c005cff54c651febccc35"
         }
       ],
       "phase": 5,
@@ -110,12 +110,12 @@
         {
           "output": "Backtest report",
           "path": "artifacts/governance/backtest_report.json",
-          "sha256": "fcf42a5ddbe7fece6aad7a126df4ed5d5f0cd187571e05b3688cfec422192049"
+          "sha256": "f21f39b822da206a4b5b06f2b321f65d96fe8ae326bf6555dbd63e6bd3b99c5b"
         },
         {
           "output": "Bias detection report",
           "path": "artifacts/governance/bias_detection_report.json",
-          "sha256": "d301473c2c6d9e36d9b33265abd5fc8532835513cbec74cf83870cfd17eb0151"
+          "sha256": "d1b6a2e98a4cdb6f4ef1f62bfe5406f313bdd49371fefdcda0f5772a37cdf5d4"
         }
       ],
       "phase": 6,
@@ -127,7 +127,7 @@
         {
           "output": "Strategy evaluation report",
           "path": "artifacts/governance/strategy_evaluation_report.json",
-          "sha256": "76956c44e3fdabe53edf900711e1c7c92706cf45d355d086dd849b98b89e1de6"
+          "sha256": "2f97c4b689369752950d87c27018f148b7d8f529e75480cda9708ded1605e101"
         }
       ],
       "phase": 7,
@@ -139,7 +139,7 @@
         {
           "output": "Retrieval benchmark report",
           "path": "artifacts/governance/retrieval_benchmark_report.json",
-          "sha256": "c6403704410dfc5f02416135d901a6df78b45edb9e0908c25c5ce4066d290bdc"
+          "sha256": "7747a6ac591be8a1ef8f696551c4e7ea61167c40e174a4c5029f63f3600eb919"
         }
       ],
       "phase": 8,
@@ -151,7 +151,7 @@
         {
           "output": "Agent consistency report",
           "path": "artifacts/governance/agent_consistency_report.json",
-          "sha256": "22aab0cea91beac83cc2db0667e287c67ce153f05adb5b17460bff1bcb0b59f7"
+          "sha256": "dc9a488d56f048fee23a596e743e6a0e784c8237abe2324267427d4767bc9bac"
         }
       ],
       "phase": 9,
@@ -163,7 +163,7 @@
         {
           "output": "Decision trace logs",
           "path": "artifacts/governance/decision_trace_logs.json",
-          "sha256": "ed9f0fa328ecbf3dd089566e37c70f56f51710425ba16974d43c20bf1354d52b"
+          "sha256": "c974a70eeed76b491374af94c06d5702d2a5d8b56ceae55b7116b4eef0b60a3d"
         }
       ],
       "phase": 10,
@@ -183,7 +183,7 @@
         {
           "output": "Paper versus live parity report",
           "path": "artifacts/governance/paper_execution_parity_report.json",
-          "sha256": "f20eb3a426897ac6f3a04a8ed7789d454836aa23ca0de563a96853754e168dca"
+          "sha256": "0d529aa15d357cb24b7932ebc6f8e26abdc4455a0e74d8bf880f041ffcf4a53a"
         }
       ],
       "phase": 12,
@@ -195,7 +195,7 @@
         {
           "output": "Alert delivery logs",
           "path": "artifacts/governance/alert_ui_voice_validation.json",
-          "sha256": "7740426918c3b685903e5ac3f9a63a359f3ad35466161d13649b8434928194aa"
+          "sha256": "28d9dddd6d72f5de2764f6e9285265a843b88f5f050c0278c7530de302783824"
         }
       ],
       "phase": 13,
@@ -207,7 +207,7 @@
         {
           "output": "Full system audit report",
           "path": "artifacts/governance/full_system_audit_report.json",
-          "sha256": "037d5278707f08bb605640450e5fc3e895a63aef30af71c0d4fcb7adf642504a"
+          "sha256": "3207a0705d5448a4c885319920eae971ab27fa84a106efd9c47f4f52d929b05c"
         }
       ],
       "phase": 14,

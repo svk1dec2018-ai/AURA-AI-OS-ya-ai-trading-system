@@ -1,3 +1,4 @@
+import tomllib
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,13 @@ def test_pwa_static_assets_exist() -> None:
     assert expected.issubset(present)
 
 
+def test_pwa_static_assets_are_included_in_distribution() -> None:
+    root = Path(__file__).resolve().parents[1]
+    pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
+    package_data = pyproject["tool"]["setuptools"]["package-data"]
+    assert "static/*" in package_data["aura.webapp"]
+
+
 def test_dashboard_keeps_safety_copy_and_owner_surfaces() -> None:
     html = (server.STATIC_DIR / "index.html").read_text(encoding="utf-8")
     assert "DEMO ONLY" in html
@@ -30,6 +38,14 @@ def test_dashboard_keeps_safety_copy_and_owner_surfaces() -> None:
     assert "/app.js" in html
     assert "/api/start" in html
     assert "/api/kill" in html
+    assert "fake-line" not in html
+    assert "simulated performance curve" in html
+
+
+def test_dashboard_does_not_render_fabricated_agent_percentages() -> None:
+    javascript = (server.STATIC_DIR / "app.js").read_text(encoding="utf-8")
+    assert "72-i*5" not in javascript
+    assert "implemented" in javascript
 
 
 def test_controller_status_is_safe_without_runtime_files(tmp_path: Path, monkeypatch) -> None:

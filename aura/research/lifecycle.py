@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from pathlib import Path
 
@@ -84,7 +84,7 @@ class StrategyVersion:
         return replace(
             self,
             evidence=(*self.evidence, evidence),
-            updated_at=datetime.now(UTC),
+            updated_at=_next_timestamp(self.updated_at),
         )
 
     def has_passed(self, kind: EvidenceKind) -> bool:
@@ -152,7 +152,13 @@ class StrategyGovernance:
         if missing:
             raise GovernanceError(f"missing passed evidence: {', '.join(missing)}")
 
-        return replace(strategy, stage=target, updated_at=datetime.now(UTC))
+        return replace(strategy, stage=target, updated_at=_next_timestamp(strategy.updated_at))
+
+
+def _next_timestamp(previous: datetime) -> datetime:
+    """Return a strictly advancing UTC timestamp even on coarse host clocks."""
+
+    return max(datetime.now(UTC), previous + timedelta(microseconds=1))
 
 
 class StrategyRegistry:

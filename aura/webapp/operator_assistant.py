@@ -4,7 +4,6 @@ from typing import Any
 
 from aura.interface.command_center import AssistantIntent, CommandRouter
 
-
 _ROUTER = CommandRouter(
     allow_research=True,
     allow_development=True,

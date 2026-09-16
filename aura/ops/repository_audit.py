@@ -365,11 +365,12 @@ def _is_audit_excluded(path: PurePosixPath) -> bool:
 
 def _file_record(root: Path, path: PurePosixPath) -> dict[str, object]:
     file_path = root / path
+    canonical = _canonical_file_bytes(file_path)
     return {
         "path": path.as_posix(),
         "asset_class": _asset_class(path),
-        "bytes": file_path.stat().st_size,
-        "sha256": _file_sha256(file_path),
+        "bytes": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
     }
 
 
@@ -777,7 +778,18 @@ def _render_module_map(audit: dict[str, object]) -> str:
 
 
 def _file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(_canonical_file_bytes(path)).hexdigest()
+
+
+def _canonical_file_bytes(path: Path) -> bytes:
+    """Make text evidence independent of Git's checkout newline policy."""
+
+    raw = path.read_bytes()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw
+    return text.replace("\r\n", "\n").encode("utf-8")
 
 
 def _line_count(path: Path) -> int:
