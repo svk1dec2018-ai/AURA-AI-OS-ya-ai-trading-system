@@ -66,7 +66,7 @@ echo Browser address: http://127.0.0.1:8765
 echo Keep this window open while using AURA.
 echo MT5 connectivity and symbols are checked inside the AURA app.
 echo.
-"%AURA_PYTHON%" -m aura.webapp.server --open
+"%AURA_PYTHON%" -m aura.webapp.server_v3 --open
 set "AURA_EXIT=%errorlevel%"
 
 echo.
