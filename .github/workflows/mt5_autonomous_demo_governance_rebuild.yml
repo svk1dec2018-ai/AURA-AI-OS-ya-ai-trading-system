@@ -87,3 +87,5 @@ jobs:
           fi
           git commit -m "Refresh governance evidence for MT5 autonomous demo"
           git push origin HEAD:agent/mt5-autonomous-demo-bridge
+
+# rerun: 2
