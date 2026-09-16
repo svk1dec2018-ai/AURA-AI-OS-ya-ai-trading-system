@@ -4,22 +4,10 @@
     "unresolved_internal_imports": []
   },
   "dependency_graph": {
-    "declared_dependencies": {
-      "build_system": [
-        "setuptools>=69",
-        "wheel"
-      ],
-      "optional": [
-        "build>=1.2,<2",
-        "pytest-asyncio>=0.23,<1",
-        "pytest>=8,<9",
-        "ruff>=0.6,<1"
-      ],
-      "runtime": [
-        "pydantic>=2.8,<3",
-        "websockets>=12,<16"
-      ]
-    },
+    "declared_dependencies": [
+      "pydantic>=2.8,<3",
+      "websockets>=12,<16"
+    ],
     "internal_edges": [
       {
         "from": "aura/agents/adaptive_model_router.py",
@@ -2762,6 +2750,22 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/webapp/server.py",
+        "to": "aura/research/autonomy.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/research/blueprint_compiler.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/research/strategy_factory.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/webapp/catalog.py"
+      },
+      {
         "from": "examples/check_angel_one_account.py",
         "to": "aura/execution/angel_one.py"
       },
@@ -3168,6 +3172,14 @@
       {
         "from": "tests/test_angel_one_adapter.py",
         "to": "aura/execution/demo_guard.py"
+      },
+      {
+        "from": "tests/test_aura_webapp.py",
+        "to": "aura/webapp/__init__.py"
+      },
+      {
+        "from": "tests/test_aura_webapp.py",
+        "to": "aura/webapp/server.py"
       },
       {
         "from": "tests/test_autonomous_paper.py",
@@ -4912,6 +4924,7 @@
       "argparse",
       "ast",
       "asyncio",
+      "atexit",
       "collections",
       "concurrent",
       "copy",
@@ -4931,6 +4944,7 @@
       "json",
       "logging",
       "math",
+      "mimetypes",
       "os",
       "pathlib",
       "platform",
@@ -4951,6 +4965,7 @@
       "typing",
       "urllib",
       "uuid",
+      "webbrowser",
       "xml",
       "zoneinfo"
     ],
@@ -4978,6 +4993,10 @@
     {
       "kind": "shell-launcher",
       "path": "RUN_MT5_AURA_DEMO_AUTO.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "START_AURA_APP.cmd"
     },
     {
       "kind": "shell-launcher",
@@ -5082,6 +5101,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/strategy_research_gate.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/webapp/server.py"
     },
     {
       "kind": "python-main",
@@ -5196,16 +5219,16 @@
       "sha256": "547f59603028195ff9f8a87d04c4651551e8bd0d68f075257dfd549cd846b25b"
     },
     {
-      "asset_class": "ci_or_repository_policy",
+      "asset_class": "configuration_or_structured_evidence",
       "bytes": 261,
       "path": ".github/dependabot.yml",
       "sha256": "0cc189950ab019ee91ef79c70c423935f283275c3986c4dc8036f64f772b839c"
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 2952,
+      "bytes": 5214,
       "path": ".github/workflows/ci.yml",
-      "sha256": "a8d655299139fe6fb8569a13bc56805bbacd0931f43b27eaf53c2af869cbe3b5"
+      "sha256": "0c06a09c52c2b78346770788e72d03c93f4261c84a34f399a3ec9bdb2d240526"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -5263,6 +5286,12 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 796,
+      "path": "START_AURA_APP.cmd",
+      "sha256": "11d61595d3a6452b6822c2b803ac3201998428c83eb0658ba75ef3981a1ad18f"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 646,
       "path": "START_AURA_OLLAMA.cmd",
       "sha256": "ba9daffcad589e4cd1d37edcf96569ad8ccf4d8435f4e35d4148ac31cf964de4"
@@ -5274,1234 +5303,1288 @@
       "sha256": "e4ac20eca6aeed7a770ec2c1f7cc601e0989e9bdb5ae3875085944300013375e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 54,
       "path": "aura/__init__.py",
       "sha256": "efa1c97683c8d0e9925e7eaa469545769be989e2e36fa210f628ce3946be2f43"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7380,
       "path": "aura/agents/adaptive_model_router.py",
       "sha256": "43533c61c81ae7ce1eec7240fc70de9b9ecb1cbfdc7a27ce38a16bd1aa9cf3cb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4793,
       "path": "aura/agents/advisory_specialists.py",
       "sha256": "659e8a67f87f8cf278edb549e6974370f4b175c8ba88b7622ed2cd1ecb886a5a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6488,
       "path": "aura/agents/ai_council.py",
       "sha256": "110d4dc5a39e3370a7284e70051f6e379b038a02ea613f7597c35fad042e5ec5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3945,
       "path": "aura/agents/audit.py",
       "sha256": "2253cd72911655ea56673a91b05aafdb588830ba2d9c4c68758ccb2bd29f3b86"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 623,
       "path": "aura/agents/base.py",
       "sha256": "ad4fdb0f3b8b9e8c7c99c075240f99ac412da0bfe9f82bc230830ba79d7d28ac"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4240,
       "path": "aura/agents/context_enrichment.py",
       "sha256": "e04a9b05dd42efa37c4009f92a4aa17d5f9fa0dee05ad19aa24e438fde2c4cb5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4465,
       "path": "aura/agents/deliberation.py",
       "sha256": "c331e71f8b61a2a92426b1abb39298915168bdc337aff1bbffb937df721713fa"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 20416,
       "path": "aura/agents/external_specialists.py",
       "sha256": "a5b3a70a98c32619317507ee6af83641f97271a9daf3e57e2f3b30713ea528fa"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6293,
       "path": "aura/agents/forecast_specialist.py",
       "sha256": "383b9834593d3b7f1a313135215ba27d4fea67a97efb1f6e0db34034fce11d46"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7711,
       "path": "aura/agents/models.py",
       "sha256": "b5c39cece8675e37dff3e4bbc2af28b297c28e7c04e0b6f3d22e90911d884bfe"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13932,
       "path": "aura/agents/ollama_provider.py",
       "sha256": "a66b9ef4e79788cd3dac84904e1b80fa6e48d117ba136e5b8e6a4c509a1dcb96"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8467,
       "path": "aura/agents/openai_provider.py",
       "sha256": "7cf23da7d06e90804018a94037e1b4147b30dcb90ced5a6820e8dcfc0fbf02ec"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 16454,
       "path": "aura/agents/orchestrator.py",
       "sha256": "fd9b0745c280d38fa7f3fef2b0c2e2e25e6dccbd267dcd0c282b7010ef97a253"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2289,
       "path": "aura/agents/providers.py",
       "sha256": "5ab348f2b2ce7ca04180a78f3922dde6ed839a2e47e4d7be3970a1b8b0fa4bec"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3224,
       "path": "aura/agents/registry.py",
       "sha256": "85e1a4b3e3238e68199ce1477d3f4ab88deecd11b9fded2bba49608f044009d6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 12507,
       "path": "aura/agents/reliability.py",
       "sha256": "64faa0c1a4c0bf7313733752085eaf619f0c0044c0468086032cd520ae526f3e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4750,
       "path": "aura/agents/risk_policy.py",
       "sha256": "2ca3c802e36cfc9b909800420742709ee6b179fad54b6ad5a826cf35b95fdb9b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6689,
       "path": "aura/agents/service.py",
       "sha256": "b4ee79ec6790ae9e4f32fe31073bd1786ca94d4e5be5282d76b09bd17b99e82c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11883,
       "path": "aura/agents/specialists.py",
       "sha256": "6ff72eb4748b89edda22dd41749916de77b49cfa0724bf371ff3c5628fea53db"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3419,
       "path": "aura/agents/team.py",
       "sha256": "c6dc50a6e00237ac60f4303b3704c22c87abbdf15e7c4fc5d82a5321adf257a7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 681,
       "path": "aura/ai/__init__.py",
       "sha256": "ed4f6de9ff97cdb6f5f7f664599e44c6bb09dbecea2f63896d488bbb4467349f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4735,
       "path": "aura/ai/free_ai_cli.py",
       "sha256": "0221915b04e08e5cadb02143572e758142ede5d02eb45e26d9bba119ec0ad4ef"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5867,
       "path": "aura/ai/free_models.py",
       "sha256": "2154a1c12dcf4496b9afe63b51437893497163c4105c7fb1e269ab68c60c951c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9159,
       "path": "aura/ai/ollama_structured.py",
       "sha256": "d515e9d8e891a6833bdfca7770602ed7697c9a8acc2114e6fdbd90bdd1df548a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8722,
       "path": "aura/ai/openai_responses.py",
       "sha256": "a429bac1816964545434eb26347aac50810afdbb8b129c829b88b8c87dd06842"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8677,
       "path": "aura/backtest/engine.py",
       "sha256": "fb6eb3cf0690242b5bff14dda2d46ce48e5f855ca5e425d794f9e653066c27e8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8075,
       "path": "aura/backtest/multi_engine.py",
       "sha256": "f9772e58153c1a42e6bd90077318a66b4f1f6307028d847fbead7a557092e917"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2674,
       "path": "aura/backtest/scheduler.py",
       "sha256": "84256b7c40745c0b59aa92620d0cf2af459c8051925fc68bc69d5130237e64e6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 436,
       "path": "aura/connectors/__init__.py",
       "sha256": "7abe2d97619037b473a9924b66e13583b8936eeeca4e6c3a1324ecca84f39b95"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 16654,
       "path": "aura/connectors/catalog.py",
       "sha256": "8ff730d2fbf4188895e31e98ade300e3581d8cbf1520da2784645c91ce70afbc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2262,
       "path": "aura/connectors/public_no_key.py",
       "sha256": "4334524c9022efa975a378c67dee153a18d0c697649e91c72364e862fccbb297"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5336,
       "path": "aura/core/pipeline.py",
       "sha256": "717db30e98a1556136bd4b3d7dfde60b7ad1fd0719e8d6546b50d7d7eb59df04"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9352,
       "path": "aura/data/binance_spot.py",
       "sha256": "dbaa3406ea0cb92d8d4ba65b7724ca0b5e70c826ce6e6a321379984e768bb4df"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2608,
       "path": "aura/data/binance_transport.py",
       "sha256": "e3ff0c6a96a97569c8ce9e9678d9f1afc6be350dadfdfc52b5599e376c4782bc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6427,
       "path": "aura/data/candle_aggregation.py",
       "sha256": "e61eef38bf74bef2cc468decd7605c2f317c8e34203ddb0f1bbf3ba61362801f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8037,
       "path": "aura/data/corporate_actions.py",
       "sha256": "1745fdf043f79a1e2ed45384ee1600006dc844a5fe237eff4a329e3eabaa2ee0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6752,
       "path": "aura/data/cross_feed.py",
       "sha256": "29e40def7efe239bdfd8a523ca5c34e2d2d3734f83f87c26243fbaf84c1e8373"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6373,
       "path": "aura/data/dhan_deep_service.py",
       "sha256": "118d49baf8e9fcc5ebc03859636f9b2c3d80d1f9a7642bfa80d17d2c111df9b4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10387,
       "path": "aura/data/dhan_history.py",
       "sha256": "8fb506a5acc4623c16ad83f57facf65779d704ba8a9db8e96f8d2663281479dc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 12510,
       "path": "aura/data/dhan_instruments.py",
       "sha256": "bac2586906070e67418beff1520c6bb9b0731c7836314467c93dd936f699f633"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11333,
       "path": "aura/data/dhan_live_full.py",
       "sha256": "11ecf6e1dea4bcae21f83a0b540030304b9799253c497d12f6aa926e7b351229"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11806,
       "path": "aura/data/dhan_live_ticker.py",
       "sha256": "69ecfe65f4a39c64c832073000f150be3ee916677fee5a51cd7e6d89a972e067"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8168,
       "path": "aura/data/dhan_option_chain_client.py",
       "sha256": "821814424b55b9cda7d5a7864db121294ad814cf011826eba61c9e867d84d2b0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19873,
       "path": "aura/data/dhan_option_context.py",
       "sha256": "a18eb226cd09b1212738db8c9486b831abed7e5c269234fc417ce0345da64a27"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7037,
       "path": "aura/data/dhan_options.py",
       "sha256": "0a12a28f79cc2ece7a357d317511ee88644e67bdc46ddce589c33c41b3c5f6f4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2948,
       "path": "aura/data/dhan_transport.py",
       "sha256": "ae6fb8541fd8a828dcb5df161b8c0d2386578a0b9d5841e327caf4b21f4190d5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6362,
       "path": "aura/data/dhan_universe_planner.py",
       "sha256": "b5f93a7f3f1d0f888630a4656e7bc122eda9d9c47a355f524557f1e645166de9"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13879,
       "path": "aura/data/dhan_v2.py",
       "sha256": "c151d172cc28754c5145c36c850e8e94cd801058bf3da2d966b7126fe53f34a5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 15986,
       "path": "aura/data/flattrade.py",
       "sha256": "3f94fc5d88a8a4fef55543cb3709816f2f65549a3b5f795e359a364420bf8689"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19509,
       "path": "aura/data/free_intelligence.py",
       "sha256": "7be217d0581aa902ead7d9ad392fa083a1fdb618e4b857701788e37988d266f3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 14629,
       "path": "aura/data/futures_roll.py",
       "sha256": "6adc6dc388ad721c5829343457493c7d84e5dff44d1020e2570cf14464e26d4a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2475,
       "path": "aura/data/intelligence_bridge.py",
       "sha256": "43cc0484c90ec8fe7a0352158611130aa4d4ea9a94948e642a3855e8a98ba3c9"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5297,
       "path": "aura/data/intelligence_service.py",
       "sha256": "12e7d0c00b16f4ea95a34b6dc5320779c3db36cd881bc326349732df40a4442a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4577,
       "path": "aura/data/kraken.py",
       "sha256": "4e4e0f423683b82c51b240987065e8a430b5a752b2b23db56b6a5b51a252e1c1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5237,
       "path": "aura/data/live_plane.py",
       "sha256": "66e5814d059df4be2d432e208c1744d1b42228d384113200832932a56a147fc5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6014,
       "path": "aura/data/mt5_contracts.py",
       "sha256": "7380d035cbb0cb1708aa5fbb1476fb7388cd0d8718fb947b77163064c6a3343d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 12624,
       "path": "aura/data/mt5_demo.py",
       "sha256": "71b773d7f0a1a66daf872f52cfee4f80785c049b9534408b90ef3f5e4f4626cc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9036,
       "path": "aura/data/mt5_polling.py",
       "sha256": "c3e3261f88ff3f3104b0edde9ec883d7f7d663793ebf395e4a2e78d0c3e07cd2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1469,
       "path": "aura/data/normalization.py",
       "sha256": "439d9d121aee90526c7f14e9704d673c49543d977b810dd026baa94652959efb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9138,
       "path": "aura/data/oanda.py",
       "sha256": "d2f8fe843b2bcca619bb40a58f22f9050f796318ebf2dbbea132f3dcaa89d8dc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10571,
       "path": "aura/data/options_replay.py",
       "sha256": "1d2e08d1868e6db240ea68d4ff9816e8212d2718e4fbc1d371c9083337da71f6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4011,
       "path": "aura/data/pipeline.py",
       "sha256": "896a54f45beffe5f856015e2208ab63fe5c11611dfce639f1f3ae84af788209b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 17349,
       "path": "aura/data/public_crypto_feeds.py",
       "sha256": "818342a90d3a2b58960a6fbe6cc7b33427ea6f4870d0b63f3408e77237ebb19c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11901,
       "path": "aura/data/public_history.py",
       "sha256": "dafe329ff023ed4a09c21032faf8099a2b985403949a3ae8aa7f0c736481d063"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6921,
       "path": "aura/data/quality.py",
       "sha256": "14976fe15b43c21cfae1f03a188b011a3571878294faca88d43d004a77273c28"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 17446,
       "path": "aura/data/shoonya.py",
       "sha256": "f032475f23284d4ec371e8a2fa8b9c2601d56177933487e0cf1aa8738cb2b89b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3947,
       "path": "aura/domain/instruments.py",
       "sha256": "50ff20b51619d48d4d3690dbff3a5f96a4e2abb7ff8c2d8a553ba1c938124a04"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6735,
       "path": "aura/domain/models.py",
       "sha256": "db677731afcf1f403926ce1ac5c18a07c656eb0d4a602e2cac1ad5dccf5158c5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2823,
       "path": "aura/domain/serialization.py",
       "sha256": "ab8995e50798d8c03d66c039d4d597e0a94c159f6d17cd0b01d61f5e85a4f165"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11421,
       "path": "aura/evolution/brain_online.py",
       "sha256": "1c2574fc1795da15f6e6b98fcf5a75a55aaedbf50c9039157d71c8964ecd725c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7884,
       "path": "aura/evolution/brain_optimizer.py",
       "sha256": "9093e43e20d866ff4de5aafe9ab1e727629c691237d207eab41c36fb455c0ab7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5532,
       "path": "aura/evolution/brain_policy.py",
       "sha256": "e43134e410e58576384ce0ce40a6b0f47aec7a52a8e89e0453b2b7a6ca808bc6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7678,
       "path": "aura/evolution/brain_replay.py",
       "sha256": "0010c668be3aaea6cd328a4d100305838f7533b9ae8796c6f8f1b3186bf78e19"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 15752,
       "path": "aura/evolution/core.py",
       "sha256": "38c7fcdae5f3e2f8415517a254b3d638f140e0551e3915248fbde5248424a798"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8844,
       "path": "aura/evolution/evaluator.py",
       "sha256": "56b36d1f0dd7d911092e7bcb81674605148276d6bd6e6798c706d06748bb5b24"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3749,
       "path": "aura/evolution/online_bridge.py",
       "sha256": "37ecd2ff32797cd7015d7c272285467717df6abf93e650a1c76b9b17284c5621"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10825,
       "path": "aura/evolution/online_learning.py",
       "sha256": "d971ced2a21c1d6da4e69da82581986f08b83cbcfc4ba88690da0dec79389d8e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 17098,
       "path": "aura/evolution/opportunity_audit.py",
       "sha256": "93d6021e3d34c090fdab9f21fe0ff406da36581c1bd3e70ff03fbf903594d5e5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11255,
       "path": "aura/evolution/paper_tracker.py",
       "sha256": "07a0e233bec3c17a031c3203ef3204ad6e4202e638f8e931c9946223a14e8b6a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 24186,
       "path": "aura/evolution/shadow_outcomes.py",
       "sha256": "19f109b7976cfca0cfa3c347dedeb8bb068d9b2f3ea8a80384a1ff3816ccb7db"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 18093,
       "path": "aura/execution/angel_one.py",
       "sha256": "3469195b594949791fa9769517514fe09055e9bbad8dc1b2bcffd290acbaf461"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3460,
       "path": "aura/execution/broker.py",
       "sha256": "284d5a74aeacd6d63273a6cbc0248be10763e41fb2d1f753d6e2057441f997e0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 17648,
       "path": "aura/execution/broker_evidence.py",
       "sha256": "c7817bb7b77fdea15891fa849fede69f30121f564b6ac3693c2b3059b9d15d2e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7358,
       "path": "aura/execution/broker_evidence_recorder.py",
       "sha256": "a82087ffdb3998dbf6574d648b5e1dd626973bac63cfcbe60488290e1caa45ec"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3213,
       "path": "aura/execution/demo_guard.py",
       "sha256": "c4698ccf381a2be0f97691ac5cc47a769b909a2e66ba8b7e82c3affd10e5cbe2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8662,
       "path": "aura/execution/dhan_sandbox.py",
       "sha256": "2b3fa66ab9bd1c403c56af1c9cf0a7e09dcdba7c7d5621aa3059d4290184bde2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3838,
       "path": "aura/execution/fill_model.py",
       "sha256": "f6e6d34d6c2b09b2030a719328f4587c3d7625b3c9f6e3c84c4448873124e135"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19823,
       "path": "aura/execution/mt5_demo_broker.py",
       "sha256": "a5352e656b4576ccd63361d1c7c9b64b1811f55f7aa08b33e2b251c853b7dc36"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13401,
       "path": "aura/execution/mt5_protected_demo.py",
       "sha256": "1e556f74584e49b541ccfae60323e9ed44b7f9352a58914b0fb219689058af01"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6525,
       "path": "aura/execution/paper.py",
       "sha256": "fddfedb7af5bbaf6ac895d0973eee3aa6235331405cf15004d31778f155a3935"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7410,
       "path": "aura/execution/reconciliation.py",
       "sha256": "d9aab72e61cd27deef4a01cf1ac3a3a1276ded307f6b600a3ee2e13a597bd165"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5890,
       "path": "aura/execution/resilience.py",
       "sha256": "c0a31f32a460cc38e5ec0fc19ed3502730faddb58b647030830bbcb4ca5f1b8a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3870,
       "path": "aura/execution/state.py",
       "sha256": "a0948b98417588117e76a26fbec2f2bdbca66719dd61c69d38679c468bedac0c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5780,
       "path": "aura/forecast/baselines.py",
       "sha256": "7bbc34117a90cb30883e5f99a423a16c38d460c1c6fcf44fc1203cc7eeddcd67"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4471,
       "path": "aura/forecast/ensemble.py",
       "sha256": "f20fd141eda0a8eaeed4213dfbe5e8c1a131a46e335446a71fba05f8d79824cb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5512,
       "path": "aura/forecast/providers.py",
       "sha256": "f37da9a9a523660b7892968125b6eab75f2289341301fe256ad71bc9adc99fe1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 369,
       "path": "aura/interface/__init__.py",
       "sha256": "a28ed984321ece8657b64e34f0803296abb3981a884dbc17e9beb9d304258991"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13116,
       "path": "aura/interface/alerts.py",
       "sha256": "4a1c4190a0c5437d722774b622ceb7f2e6a685a9cfde4f20fe3e0c22fa0ab02d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10068,
       "path": "aura/interface/command_center.py",
       "sha256": "d4b127bf467e4492618f2d954d85c0078a153b966bcd6aef4c0d36de6c05eb34"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7311,
       "path": "aura/interface/operator_read_model.py",
       "sha256": "563c92c7ae2ced74295efe903b816d6825b8ffca7caf091e17dd9462f72ae3eb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11672,
       "path": "aura/interface/runtime_bridge.py",
       "sha256": "73a545de4b66f0d9960ba6aa96b6aabde49d117189ed2feb998cdef3f7bd4e60"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5074,
       "path": "aura/interface/voice_alerts.py",
       "sha256": "7d018e24ee281668435f25eae66f93161aa9f674b7e8410eacad9907c3e8cbdd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 25241,
       "path": "aura/interface/web_command_center.py",
       "sha256": "06ffd501de8fcc5ff295b27cca9c81725cfe1b195947db3bb082d9d04e25deca"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 25453,
       "path": "aura/interface/web_command_center_v2.py",
       "sha256": "4486a72993ca713d9292c79b06e0fdf9aae29c921ee76b39ab47bac2cf34d0c4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7410,
       "path": "aura/knowledge/firewall.py",
       "sha256": "4f49eec70fd7b9b67577df2dbd4019cf3dc4dabf47938736a99c4b9fd05fe0a0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7085,
       "path": "aura/knowledge/local_corpus.py",
       "sha256": "4a7350c9de7c2f9aa4470f02b84a949fb31cb733b2c71e7a35f6452f00454166"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3174,
       "path": "aura/knowledge/retrieval.py",
       "sha256": "fc6e3960e1492fa0fdfdbfaa57864375a219972b4bcb470aa48f6d9a017c4c14"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 150,
       "path": "aura/lineage/__init__.py",
       "sha256": "edb9a163fe389da302f556874c5835aceae351765807a2c83c19ea4735603233"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8256,
       "path": "aura/lineage/decision.py",
       "sha256": "640e54b9d5d30afcace5b269d0723bed2ff4f5d339dfccb5ed52fbe4b791c9ef"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1943,
       "path": "aura/lineage/replay.py",
       "sha256": "a6643881a361e0e89666acac7f0a0f5b171c5f8a8926f3a924927ebca561b0d7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 335,
       "path": "aura/maintenance/__init__.py",
       "sha256": "a29af060f35f75ae54874894b59604a3f816079afe00bb844a2ac51cbd9f30dd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4622,
       "path": "aura/maintenance/authority.py",
       "sha256": "d0d9eef537d70aa8aa69128317686424c90745fdbf57ba15f8bc52a7014547bd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 35439,
       "path": "aura/maintenance/change_control.py",
       "sha256": "887039843cc94574ff5ec17eb3a26bc28e2b36a53fe7904bafa31f095996fc9e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19574,
       "path": "aura/maintenance/cli.py",
       "sha256": "d8cc51e8a4d1e7bd6c9f15beab02552ef3d1b49229cb2cd49de7a9dfafe144c5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8713,
       "path": "aura/maintenance/financial_corrections.py",
       "sha256": "1e0a22260ca900fcb3f8552cf70732776ccb3cb94b83529683c2d8d62e043315"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 16421,
       "path": "aura/maintenance/models.py",
       "sha256": "1f246d374478bfbce9a6a01069ea85543f987b1f74794f710068156b510a5687"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5002,
       "path": "aura/maintenance/monitor.py",
       "sha256": "36f2521c60fef96d0032b440a07198820a48c1473cf7d2947566df28097b1e18"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8340,
       "path": "aura/maintenance/openai_developer.py",
       "sha256": "d4101d606c694239143cbab333c57c7eaa1e6bd59dc1c1ecbe404d91a3a1eb01"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6310,
       "path": "aura/markets/universe.py",
       "sha256": "4675260a3181e3a9b635bbce672650ed8d339c9db911820ce6ddbc6c7b7a2c82"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4532,
       "path": "aura/memory/cognitive.py",
       "sha256": "dfea6fd126a4d8a141057b18f82f731326ed7de6bca68d84aeb5b304760c546f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3177,
       "path": "aura/models/cognitive_router.py",
       "sha256": "c048acaed6916ae0d2068ccb5d19f68a50d6080699088fa924565a33af1202e3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6102,
       "path": "aura/models/drift.py",
       "sha256": "7ab30644bd40c9114afb3a98c5df0e9a0cd47146edd74a7f2257a411347174d8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2466,
       "path": "aura/models/open_catalog.py",
       "sha256": "484b974bbe952bafadc3fbb8425c278f5a0338913beea7458dd4a1bb273093fe"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5921,
       "path": "aura/models/performance.py",
       "sha256": "1303c14fdedff104f38ab7130545867216cbffcc5de4be1965c90aad3ce7f9c0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5104,
       "path": "aura/models/registry.py",
       "sha256": "2e657c1ed4b7ff95e47965eb2eb6d5ab6cf4d4d70a62dc3fd49f9501b399a8b1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1070,
       "path": "aura/observability/logging.py",
       "sha256": "1a48cd301c05f4bdb470b2e78a3858ad67067e2c839f6467761569a2f099f0ab"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 930,
       "path": "aura/ops/__init__.py",
       "sha256": "ae800ff54634fc8bbca81614b38e59972e64889eb961849227a2a77d3108b66d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11244,
       "path": "aura/ops/backtest_gate.py",
       "sha256": "1a8c20f69f70a9ceffc93b542b371ec6ee509e356cf88141f754903a73d8d298"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8782,
       "path": "aura/ops/broker_conformance_gate.py",
       "sha256": "06b0f585528bd1486082d85454ec77024565d51fd4ae321fa51464a0797068c7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1976,
       "path": "aura/ops/broker_evidence_checkpoint.py",
       "sha256": "38a671a566d8635bf4645e9cb64cc69372561e11b4c3c6202e2e57ac76fb52c6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10013,
       "path": "aura/ops/broker_evidence_custody.py",
       "sha256": "d97e784c405292ae572d8f07591db0749ac558f9c4bc37ccc06644012fc989f6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3826,
       "path": "aura/ops/broker_evidence_intake.py",
       "sha256": "cc036175134d5b9b96fb862dafa87b81a61f1ef7f3db0e318dd737a786301c1e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9437,
       "path": "aura/ops/broker_evidence_readiness.py",
       "sha256": "db8ed36cfb4d27cfaf8386df0b129c74ee7eed2658bc8f171e9c861faaa0480e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10563,
       "path": "aura/ops/ceo_decision_gate.py",
       "sha256": "f9834cab9070c1529f0a009c10086461c358e912378684adfeae51345f3019d2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10646,
       "path": "aura/ops/core_contracts.py",
       "sha256": "165fbafe7a61bc4e1c3acb3393a546ed6be7e261d88145c61239ccc1d8f31455"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8056,
       "path": "aura/ops/end_to_end_gate.py",
       "sha256": "31245f3ca3c3a899254132786740a41b79373a875778f07755f7b0d716b22c9d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2498,
       "path": "aura/ops/health.py",
       "sha256": "53e8aebd54d9db37c663f58b72c0685b54f70338c130aff7ec157bdf8cd408ed"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10552,
       "path": "aura/ops/knowledge_rag_gate.py",
       "sha256": "cb40f42cd532d200ea75d3a891bf961c6c41c55653ea383d31ee38db3e721702"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8588,
       "path": "aura/ops/market_data_gate.py",
       "sha256": "16176f656e8772176bb0dbb9ecc44eb3961e71a2719e6c9a43f0999919db787e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2993,
       "path": "aura/ops/mt5_all_market_runner.py",
       "sha256": "07d76ad8488062767face3eb08ff89a1e8e376bd73b37fa350ad52845e8978eb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3757,
       "path": "aura/ops/mt5_autonomous_demo.py",
       "sha256": "df73ad7e8ad2ce41124a5bff11016ee773dffa084e33d4e43669650307e89de8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10269,
       "path": "aura/ops/mt5_demo_readiness.py",
       "sha256": "6ad6f67e97dacdf60aa9b1349af3fdafbec1aaa26362d51ca5a7143b8e432651"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13079,
       "path": "aura/ops/mt5_demo_trade.py",
       "sha256": "c74a11a7fc9602ddf3c7f246622c8d5b81022b6fb1d61ea69377bb572498d997"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11388,
       "path": "aura/ops/multi_agent_gate.py",
       "sha256": "506018afeafe9b8d80f74944b9d7bf79d72b0a5bb08aca2a26f1cd082e797a77"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9066,
       "path": "aura/ops/operator_interface_gate.py",
       "sha256": "d4b4f39c23dce76ac30b353db083310db6f01d120c7db2ab21d545bcbf1382d5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6144,
       "path": "aura/ops/paper_trading_gate.py",
       "sha256": "387898d6748fe2ec8be28173173966ddec256319b9101db977c5b536435f3486"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 16331,
       "path": "aura/ops/phase_gates.py",
       "sha256": "56715655304a0fb0d71e8180d492888b5b3205aea20002b37199609ce714e106"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7911,
       "path": "aura/ops/preflight.py",
       "sha256": "fc250edb29de1b875e6f23749a204c8b57fdfe6daf9698d8199be2cc3a7b63ff"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6446,
       "path": "aura/ops/release_gate.py",
       "sha256": "26493c1a14dd6df45e99de34c65e7f1de8a48fffa2ebb054ffc425689918fea5"
     },
     {
-      "asset_class": "python_module",
-      "bytes": 31372,
+      "asset_class": "python",
+      "bytes": 30885,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "d324a182f2250960bdb76966b7b16f9e3ce253ee7d197cc4892b2ded2f8b37b7"
+      "sha256": "43974465699f814e7b9603e7c009e2daecb51b0db3557da9624106c61ec0d0a5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11091,
       "path": "aura/ops/risk_engine_gate.py",
       "sha256": "e5b47e598b81e6a7a36cbbf0a46e3ab872b263060c4c2cfeaa6f8d4b7ff393b4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11637,
       "path": "aura/ops/state_engine_gate.py",
       "sha256": "7cf3f1b87b380ef7afb937c3beacc918d44fca6814ee8f651c74d43bda240788"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9164,
       "path": "aura/ops/strategy_research_gate.py",
       "sha256": "08330dd7850b96034350401a858bef91f4034bbdcea349892321894fd71e16ef"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9031,
       "path": "aura/options/intelligence.py",
       "sha256": "328d903f9070f6871147c8acb1edde8790417d8c5f120422d48292119fee679b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10820,
       "path": "aura/persistence/broker_evidence_archive.py",
       "sha256": "ee23a6be6ecf51d88cd000eb9026a5b1fee49585f8af7ddf82664ffc9250678b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11965,
       "path": "aura/persistence/checkpoint.py",
       "sha256": "5b343c3bd4f8f73f13657dc8140171062dc664997f25f609ee3e0e47eea9bd67"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8262,
       "path": "aura/persistence/recovery.py",
       "sha256": "83a61971a36d3e753f3a7816e0fea8159f512ca972a26d61dc633eef06c18034"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4858,
       "path": "aura/persistence/wal.py",
       "sha256": "608da417c3d168f58fc3d4110f84cea3df1951c6b95c2cd0bf703c28471f94f4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 959,
       "path": "aura/portfolio/instruments.py",
       "sha256": "3b70944891292a6ac989a39ba2f6b1d88fac0d75c542476eddbbe0a9f258c7e3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6121,
       "path": "aura/portfolio/ledger.py",
       "sha256": "23d5cfeb82a5308700793d7af246906969a59bb0bbefad61757a65bded19f9e9"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4461,
       "path": "aura/portfolio/targets.py",
       "sha256": "d6f229c0ea6da016128b4d4ef5d3a7ceeaeda204cd0858efd6e96d22c497cc27"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10591,
       "path": "aura/research/ai_strategy_architect.py",
       "sha256": "affa0d52cc38dc54b4f634c21f0944f3e87c4c82483abf3e3606353bcbfb471f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 13915,
       "path": "aura/research/autonomous_strategy_lab.py",
       "sha256": "06d26c73e8cbf1f5d89e4042ffd56824bb52c17fea73274fe209040422767c3d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6729,
       "path": "aura/research/autonomy.py",
       "sha256": "83cb7145fe24da65c8fd69de8adb077c4e9ef548189e57577330249a2713d034"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19181,
       "path": "aura/research/blueprint_compiler.py",
       "sha256": "994fba9ffd751f20bc48c7aa085d0c1f4a58ebf6d897c5a75cf4540131885fe3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3235,
       "path": "aura/research/evidence.py",
       "sha256": "f6b3376453fc06cdca5a43ec24fa044ab793b67bb863041f71c5d3c967a0db02"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 24080,
       "path": "aura/research/holdout.py",
       "sha256": "a3ed18aed5cb2821c4a95694d505484a1b4f275b180926551719c19cbdebfbdb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2715,
       "path": "aura/research/hypothesis_generator.py",
       "sha256": "b69e31ad9b59965567d3e20d972d4ab3f7b158f608eaf70114637e7d977653cd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19880,
       "path": "aura/research/lifecycle.py",
       "sha256": "28b47abce619b927a55127ae64991a4c45b7c651e50bc676ea6256b54362799b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 19562,
       "path": "aura/research/live_shadow_strategy_lab.py",
       "sha256": "89ff0a56ffa782d10515f3804d48bb1ed6b4bddcc7a86518dc3dda5a24969e16"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7980,
       "path": "aura/research/manifest.py",
       "sha256": "c89e83470eb1024ad073f1155cfc0c63394874b5014466d68fc4d66d57c65203"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6819,
       "path": "aura/research/paper_evidence.py",
       "sha256": "3e11fc2a25777f23fb52d3e105d72d4df3ffc43ccfbacbe0b7359f12890ab16f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11508,
       "path": "aura/research/parameter_stability.py",
       "sha256": "a763980a53cfb8d58676496ec85d950b16f5124e27569b07e3e9af00934e1897"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8079,
       "path": "aura/research/regime_validation.py",
       "sha256": "661cb9d953abed6de16eb480c0cc8552548c4361478a1897ed79447195b70895"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9613,
       "path": "aura/research/robustness.py",
       "sha256": "ccdc9e935ad3d85b885f62a07de449e6ba430e2ce5e67bb9586105fe2693e254"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 17193,
       "path": "aura/research/strategy_factory.py",
       "sha256": "c3a7c41cc2815ef97dc53853f261e8df8a804657c4fbc2916249dc5c8c79b4b6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4618,
       "path": "aura/research/strategy_farm.py",
       "sha256": "81c45d15d890e8481cc621477967f1beeec845c6d613e85af16d0a30d6276bf6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4685,
       "path": "aura/research/strategy_mutation.py",
       "sha256": "1f27d0723345b24cd1a0750b2ffca675b98d47699740e5a816b46befd87e58b8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10391,
       "path": "aura/risk/engine.py",
       "sha256": "996aa820996a4cb665c7cabc3a1758e71d1af8a179bb3730e8034c906adc091a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5031,
       "path": "aura/risk/overlays.py",
       "sha256": "734f2545795b423fc8626c9213208a67efa09d24a6627bdbcae7d009bc24237c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 921,
       "path": "aura/risk/quantity.py",
       "sha256": "6613b5047359bd6eaab2762c8c7dc27e9fb2aed8593d17dd60ea250f9d924f1f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6294,
       "path": "aura/risk/statistics.py",
       "sha256": "364574370e9dd0a6bd4d1a6049d96be74c28e6027bcbfeda78426173ee57cb16"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4478,
       "path": "aura/runtime/allocation.py",
       "sha256": "f40119ead5c5daff2abdb2da737978906a87a8d56311994b9bf6aa7b36ddf0fd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4025,
       "path": "aura/runtime/autonomous_paper.py",
       "sha256": "36a1d8d702ebbe54d68cf32824d97ee4e23607f96a5af68604899cb88d41b798"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2335,
       "path": "aura/runtime/brain_scanner.py",
       "sha256": "d09ea5c43f481f91676d458760a2e34e3d7c7d2de1e3385310d0416ae5c261b8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 29610,
       "path": "aura/runtime/dhan_learning_daemon.py",
       "sha256": "280a05133e073c87b761269e442f65019a05f09e51ce80b76f8419b26c8de1eb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5321,
       "path": "aura/runtime/dhan_radar.py",
       "sha256": "0fea191ea3fd07a66183ceca3ea6aabb37348f3174bb1c9046f4f5d444f3bc02"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6689,
       "path": "aura/runtime/evolution_supervisor.py",
       "sha256": "97b73340e4b630dd869a9db6724bee7482daea6d671b27be4f4fc333fce45121"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 29506,
       "path": "aura/runtime/free_public_ai_council.py",
       "sha256": "b573b1df0b0cd537c177efb0fdc3de3333076f41545a6cb9790c7df965e4a0cf"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11618,
       "path": "aura/runtime/free_public_strategy_lab.py",
       "sha256": "a75743f4720df6c5f5c35d7fe1fbb9beb349e7b65359c49272b7450cf1c25088"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2476,
       "path": "aura/runtime/learning_scanner.py",
       "sha256": "e9598170483de5ea436213d31fccc12b1a05c9265a807d3fc30ba348aff0f81a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6285,
       "path": "aura/runtime/mt5_autonomous_demo.py",
       "sha256": "cd48ed1ba7d71c4efcbc1478732530d8ecf9d2c5aa42db0ffed137d7a1bcfdd0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 11259,
       "path": "aura/runtime/mt5_demo_execution_daemon.py",
       "sha256": "216618d290a653f737578a5939a12d65e86e76ac6b942562d7131d1f1a9dc852"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 14471,
       "path": "aura/runtime/mt5_learning_daemon.py",
       "sha256": "5c477860262e30bbb6af1bfad5a6e095b181c8dfdddd9f344738c0bc6f016533"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 15110,
       "path": "aura/runtime/mt5_paper_daemon.py",
       "sha256": "9e1f001e05693cdb96e82d38b0a70d6dd3857201f28a7ac1b6640b29766369b8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 14178,
       "path": "aura/runtime/multi_market_paper.py",
       "sha256": "6f8f338db7da2d849f6733910ee8cf08617f17323e5769c5984f2dac516c1a65"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1914,
       "path": "aura/runtime/observable_public_council.py",
       "sha256": "0ab938da5d533b8b6cfddf6ed873117d4a6fdaee1b915d743b51ad7bce880f07"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8613,
       "path": "aura/runtime/opportunity_radar.py",
       "sha256": "29292d6afc46216064d21e9e6ddf2dbb35af72ce74bb6f9dc433c4fbf7f7c311"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7208,
       "path": "aura/runtime/paper.py",
       "sha256": "502feec7274c33e4d1aba9c0f0366bea026c895576def45066392354ab90d373"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7440,
       "path": "aura/runtime/scanner.py",
       "sha256": "67d76870c91201cbb223605fff9f3c1086364684040620eb31ee414f57139e8f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4826,
       "path": "aura/runtime/supervisor.py",
       "sha256": "7f8bb1a23a8590d1b8d6d96028ec3ead38b644c3e1e923b86e4f2c0948eccaf1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1944,
       "path": "aura/strategy/base.py",
       "sha256": "6eecc88f85e71484c81d2ca4cbaa9de733651ceb485889ab808fb10abb9cb23a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2552,
       "path": "aura/strategy/ema.py",
       "sha256": "b9aedd5c5f28e06a3609b37393a3d0c457a18d13d736abafd1eb99ef8f36ed7e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 14764,
       "path": "aura/strategy/features.py",
       "sha256": "066d511e1f33b0a26ac1e90f7181241ebe16d1ac67340e18dc0adb81297f4e9c"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 63,
+      "path": "aura/webapp/__init__.py",
+      "sha256": "97faf96a606e49a16f7619c78d4f25e6444360ec0c601c6ee6245880e8f74c58"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 21378,
+      "path": "aura/webapp/catalog.py",
+      "sha256": "fb21a21de97f2dd582857d1e94738ef23e05290801f64c359588b0a66bf974a3"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 22287,
+      "path": "aura/webapp/server.py",
+      "sha256": "9e6a691bf2425eb88807a14b71ac63a4b3655b5813df317464d81b8667778d93"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 24938,
+      "path": "aura/webapp/static/app.js",
+      "sha256": "77d1d18288e50f441624c22b8749059171c68657a14bf14f3573c3d1ce8a4e29"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 443,
+      "path": "aura/webapp/static/icon.svg",
+      "sha256": "c40838d6a0075128e70875c9193b5e0b4d1ecd5f5ffe31a2b733dd1f4991ddbf"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 35003,
+      "path": "aura/webapp/static/index.html",
+      "sha256": "093d895b02e33132be58eaf5f83d599dd6f14b06480c4a6adb705355ba61aeaa"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 459,
+      "path": "aura/webapp/static/manifest.webmanifest",
+      "sha256": "309f22f93b5182400f9b3decd24fa47b5e41c40113edee6e5c7c2685b4d3a89b"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 20521,
+      "path": "aura/webapp/static/styles.css",
+      "sha256": "90c80f17626f0192461935b2ff8e2197ad0d6a9bfd389cf3ec5c539396639c8c"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 793,
+      "path": "aura/webapp/static/sw.js",
+      "sha256": "976c5a3783321809ca0068f5dfa87eb17b9267c85ea75ea0fc25231e622ceb31"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -6544,6 +6627,12 @@
       "bytes": 8557,
       "path": "docs/ARCHITECTURE.md",
       "sha256": "2d71c76e82557669d810746aad66f9dab92ad9f168e6a8f8fd703c1336f92a43"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 2598,
+      "path": "docs/AURA_LOCAL_PWA.md",
+      "sha256": "03596ceec1afe1e199a78c2fe4c6396646f03c05ba51b6aab03fcd5aceeecfb2"
     },
     {
       "asset_class": "documentation",
@@ -6726,103 +6815,103 @@
       "sha256": "de5fbf28d640befd249f3cdde5955f8fa32696c9f4c387aa178efc12f7c1ff7e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 990,
       "path": "examples/check_angel_one_account.py",
       "sha256": "72a7a8818e2348cafa947096c8fc58c5ca8fdb1450c7d03e42860e70399ccaa7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1744,
       "path": "examples/check_dhan_universe.py",
       "sha256": "6700fd90fef49b7defe94f9cff5b012bde25571676cf5c6f30f0b81057e05e6e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1811,
       "path": "examples/evaluate_production_release.py",
       "sha256": "2d55e83b96beeb6467ce5f98eb51390d81f03e0577c02330d9cec5eade42a95f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2105,
       "path": "examples/run_backtest.py",
       "sha256": "940ed1e883e92d918ed007626df79259ac2c1bf7b3cd541c14391ee4f8b0a694"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1047,
       "path": "examples/run_command_center.py",
       "sha256": "b52b2cb6342c640c3a4fb116b5cc3279bbe5a088449c69f66082c9a51f75b179"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3485,
       "path": "examples/run_dhan_self_evolving_paper.py",
       "sha256": "0c449a9c78f2ced83a1a33f53894740f3e31300ed47323674dc0f8b571b500fe"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3954,
       "path": "examples/run_free_public_ai_council.py",
       "sha256": "8316a6b8eade65d31d9306c850b3d9273cedb51cf84c6df0786afb74110bd955"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5681,
       "path": "examples/run_free_public_autonomy.py",
       "sha256": "4efaa3ed0bfe25daf440ac46bce0a3126616e74a1c9c774855c335794fbc96d4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2151,
       "path": "examples/run_free_public_strategy_lab.py",
       "sha256": "7446c263eeb18b2f5c6fff466e71911a4119587359d22446021523fa1d86fd56"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2612,
       "path": "examples/run_mt5_all_market_paper.py",
       "sha256": "6d5ad61b010454cbdf93682a6af8dabbbe53cde4612a0e6df296704712506244"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2566,
       "path": "examples/run_mt5_autonomous_demo.py",
       "sha256": "857844d4520041b75dab9eda65c2cbb29c75e965cfb09e777192b67442381629"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5712,
       "path": "examples/run_mt5_demo_evolution.py",
       "sha256": "b1e0f1e33efb914ae21a00889e8e7890e69e15a434016b902d2042855bd7dc21"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2942,
       "path": "examples/run_mt5_self_evolving_paper.py",
       "sha256": "2bff0ffb468c322817115c0262503a6569aa1a140fb52dcdac55d2cc0feba240"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2141,
       "path": "examples/run_production_preflight.py",
       "sha256": "b5721f6ab510be58ebac3ba476d9e7599eb3ae8971831c313ded7411d3068cd7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7271,
       "path": "examples/run_public_command_center.py",
       "sha256": "ff5e818b3fccf030cc05bcbe34e3b8cdbd9ebecd84858af80f57c8c366767d2f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1235,
       "path": "examples/run_public_crypto_live.py",
       "sha256": "fa5137dabcc7a85128c13cdde06c33992257ed44a0822c889c994bfab73a3b3b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 880,
       "path": "examples/send_telegram_test_alert.py",
       "sha256": "6dbd3983d371fc9a8caf0c7477b6de4d5b5eda05254496b0598bc6067d0cdd15"
@@ -6906,7 +6995,7 @@
       "sha256": "d909187ccab632e81af41d9da9680bd137d97964e861ea003561928e4b7840c7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 31974,
       "path": "scripts/generate_setup_pdf.py",
       "sha256": "65a556e61769beb77cfe329ede4f692549bc3fc8024a898e0835f0ef7a549819"
@@ -6942,919 +7031,925 @@
       "sha256": "b6e491ae6fcd833699973221de726039565b7c3c14bf37e15867a03a904eba71"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7327,
       "path": "tests/test_adaptive_model_router.py",
       "sha256": "1c5650a066b6d444f83e1e4bacaf665e1f888d9afadceeaccb1f8f3b15564259"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4496,
       "path": "tests/test_agent_audit.py",
       "sha256": "f298d185ab65728b7602484962bcc836809a8371b151f35bdadb51ffca16f48c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2018,
       "path": "tests/test_agent_registry.py",
       "sha256": "c0568931772a6a91bcb99544f2c1577c8366000d90ba387c689719925363ea9c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7313,
       "path": "tests/test_agent_reliability.py",
       "sha256": "772ae145a2da095c0dee2fe440042b544bf04d1146a64a361d0e4fc439e79700"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6984,
       "path": "tests/test_agent_risk_policy.py",
       "sha256": "fd3d7a35a6a8d4a9bfb6a3a635e7d17310deb213dace543c612344cc0f2e759c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6490,
       "path": "tests/test_agent_service.py",
       "sha256": "228787465e7f037483b90c547fe3dd3f37c96a7566090b55e998f927c31151a0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5653,
       "path": "tests/test_agent_team.py",
       "sha256": "62cfbb5a5ad6a41cc52cebbd57f1f286ec8110fc0283cf6c252ae7eef2b86287"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6156,
       "path": "tests/test_agents.py",
       "sha256": "aec0fc62831b3a8f4089a63d1a446e8979132facc7f5edc6afead646d861ae68"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5554,
       "path": "tests/test_ai_strategy_architect.py",
       "sha256": "6784347f84b0b3d36d3b5db4760dbbdae5517d0c81000aca0f0d4b3bb8a30bbd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10545,
       "path": "tests/test_angel_one_adapter.py",
       "sha256": "0d827029863a510a1b282692cca8a6d47231f7aafbdd98e12787448c40bcf782"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
+      "bytes": 6138,
+      "path": "tests/test_aura_webapp.py",
+      "sha256": "0af0b4db17c8cc6a9249c52094ea09580fd778647275538ffe4de2310f96fd97"
+    },
+    {
+      "asset_class": "python",
       "bytes": 3156,
       "path": "tests/test_autonomous_paper.py",
       "sha256": "cc46dfd138fc2c1353d725427d606cce973f497aeb31b26be0a1f6d0dc895151"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3700,
       "path": "tests/test_autonomous_research.py",
       "sha256": "6c2639ff8e00ccfe49fd79616eee753f56ca0b4e2a42bcb4850d25105da38950"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4359,
       "path": "tests/test_autonomous_strategy_lab.py",
       "sha256": "2acbe29171215061048e38ee912f188bcbbaba912da5c8f03f8e0cbbc4310676"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2133,
       "path": "tests/test_backtest.py",
       "sha256": "235c5424934b0502310958b43cf19f77a0b891044a920d3986af9b31deab0457"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 871,
       "path": "tests/test_backtest_gate.py",
       "sha256": "6e4e4a1014e3e7a97df72a1a82e933b287e2602dd111caa0de7afac9564e74c3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4500,
       "path": "tests/test_binance_spot.py",
       "sha256": "ea5514fc2ac554dd976f3e0d1f59ce9642665a69015e586f79861f9420be2384"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1536,
       "path": "tests/test_binance_transport.py",
       "sha256": "6904d09f0046232bf797249d996ea10b71c652944937b18cde40a57f7778c8f1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3401,
       "path": "tests/test_brain_online_evolution.py",
       "sha256": "24af607f50a81d203a88a53e8005c403e6ba18a5ce4277671c0dc95da11620b2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3683,
       "path": "tests/test_brain_policy.py",
       "sha256": "d397ed1a891d8b1a247a681450ac241a1f02add56f73b86ebf83153762e9c6d7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1057,
       "path": "tests/test_broker_conformance_gate.py",
       "sha256": "7d8bb506fbf778a8bc890702d182d728922585b82597c451bce24c2499bc938d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1505,
       "path": "tests/test_broker_contract.py",
       "sha256": "fdf3b57d5c76fe89715c8dc6a54784b3dd3b0e7182a09df8db9f926b99d27e48"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5748,
       "path": "tests/test_broker_evidence.py",
       "sha256": "bbd1f496f7c0394713110670ac6c49ae70dddc52cc8bff8b4a6e5bebfe085dc3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8184,
       "path": "tests/test_broker_evidence_archive.py",
       "sha256": "ddd5502470aacf25aebb2c98f3f00163adb56234de08680cfcbd638c70bcbbcb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3731,
       "path": "tests/test_broker_evidence_checkpoint.py",
       "sha256": "9d803828169440d9ffdec3c97432e13283c0d4905079de9c5ea11e30cf0071d5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10671,
       "path": "tests/test_broker_evidence_custody.py",
       "sha256": "24eda22f8b16382c5fd8f36ffda8ff0664628a843972038c3bb1527d67c5cea5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7320,
       "path": "tests/test_broker_evidence_intake.py",
       "sha256": "7867d3a29bd7aff9f8371ebc852957f128d019e073b934387fff50d962cb166a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1212,
       "path": "tests/test_broker_evidence_readiness.py",
       "sha256": "469564f63698666de3b3c473c8648557dbf9a86276e12aec4d18cde3d645aef4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6005,
       "path": "tests/test_broker_evidence_recorder.py",
       "sha256": "ce69959a09204faa3f6188f4802c3d135bbd8a8f9462617ac5e04c0184ba8ca7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3055,
       "path": "tests/test_candle_aggregation.py",
       "sha256": "7c894d764ceb634632b6b222a274f4922555e35b0928f12c17ec7d17915e8fc4"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1062,
       "path": "tests/test_ceo_decision_gate.py",
       "sha256": "1724950ea80e4ab2c7eb78d1af7d58e72e01dbecebbf93a53ca045969ef196a9"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3745,
       "path": "tests/test_ceo_decision_trace.py",
       "sha256": "d9cad866ab0275f68824962cc58f6337ce5835e8e8f5ec01fa3fb7860d25c467"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6229,
       "path": "tests/test_checkpoint.py",
       "sha256": "508688d34c4d5152c4c2dcaa25c7d74328ba07949e6afc3a81cd3943f88585c5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2890,
       "path": "tests/test_cognitive_memory.py",
       "sha256": "e25d15fc4b471a3abcb390c5b59db4dfa89036a83861c854b013439c6e9e5d45"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3134,
       "path": "tests/test_cognitive_router.py",
       "sha256": "5e738ead593d3079cca98a8407839d33f6d1961d1ccea735155cd83c8c159c54"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2494,
       "path": "tests/test_command_center.py",
       "sha256": "f41c3df791c48f6eeca0c620560f6f50c4bdaf0a7bdd6b7a05d56068c4412cb8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1624,
       "path": "tests/test_connector_catalog.py",
       "sha256": "5b6625d74a70e96e994483474da5a0e4685f47506d02ce736954f7e85457dd63"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3463,
       "path": "tests/test_context_enrichment.py",
       "sha256": "940e75f2613bfd1df04d8ef7d50171b04825236a15f1ce8353affbe92e3a4c5e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3365,
       "path": "tests/test_contract_accounting.py",
       "sha256": "f7b88fef78560f926f2e56ea047f9595519cc411feca92be171060b4acafabe3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3322,
       "path": "tests/test_core_contracts.py",
       "sha256": "d34d422e3128f069611544f282736d47649d6a4775eefff08bb86a8347d4ef52"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7670,
       "path": "tests/test_corporate_actions.py",
       "sha256": "7bfed90ab7dc0b1cc9d10d745cb3ce72510ba529b8072b726d9a87ead133d20b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1662,
       "path": "tests/test_cross_feed.py",
       "sha256": "31f7e020a404d89fc8a8eee25a89b60e54a87d1ed4e8a5f0d52f534d423cefb0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2368,
       "path": "tests/test_data_quality.py",
       "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6129,
       "path": "tests/test_decision_lineage.py",
       "sha256": "cc760a13e9d74d163d2e53b33e0843f66fe685ad56f667ece4a48b1801716959"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2773,
       "path": "tests/test_deliberation.py",
       "sha256": "35b42616efde2d059e8a4c173a60774b5e179f385317e95a7116d045af1a0124"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2813,
       "path": "tests/test_deployment_assets.py",
       "sha256": "09e31a8d20bde46a23bd31222628ab35a7b2c13407dda0118322c2f191dc5b10"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3444,
       "path": "tests/test_dhan_deep_service.py",
       "sha256": "f5920f50ec379d8582d9e6630eff5927bfdc9016c7bb1ec019659c0b8a028cf0"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3195,
       "path": "tests/test_dhan_history.py",
       "sha256": "efbb320dbc644cf8d399f68c1447693848a4d08f2ed527e79539fe14cf5acd0b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3225,
       "path": "tests/test_dhan_instruments.py",
       "sha256": "1ed352d42305f8af5f36c06c4ebef97935b4bb68011bced36c1cebba622687b5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1907,
       "path": "tests/test_dhan_live_full.py",
       "sha256": "32cfb824f1604a4170163db55aebfa6ff53d95a5faa1fd5d502451c378b40177"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5127,
       "path": "tests/test_dhan_option_context.py",
       "sha256": "b93bc5d4f93c4b5ba58588659d6418664e6ab1b8b11d36ae68aaaf56c004f654"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3554,
       "path": "tests/test_dhan_options.py",
       "sha256": "fe17506cb4820b6f17014159491a0912928717cf8bc8d4df838decb9e0ca1f28"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3223,
       "path": "tests/test_dhan_radar.py",
       "sha256": "3911fb9d8d695c93c20c50df474729d244324238b3998696cd0f79e1ee445c32"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1686,
       "path": "tests/test_dhan_transport.py",
       "sha256": "b0c92eb3ccdfe27df9fb7883ac433037bac6679ae5471c2d4df35cf289b78bf5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4302,
       "path": "tests/test_dhan_v2.py",
       "sha256": "a9da005a4fbb2939a51640159c0d0a3382898bd7e647015eb02e8965f2b3d53a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7473,
       "path": "tests/test_evolution_demo_stack.py",
       "sha256": "da7c8e82caf8d576ab8d1a7761c4359b46337357849a9661dca8426f2028fc3a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5580,
       "path": "tests/test_evolution_evaluator.py",
       "sha256": "7fcdae04766a31dcad55ee3d6dbdbd3a0eba64f9824b48d4e374043837382c3f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5115,
       "path": "tests/test_evolution_paper_tracker.py",
       "sha256": "dc97135bb4e35ce85240a4b2f2143fafcadfd5b4f9ef99bf3a9ebb08ab663dcc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4302,
       "path": "tests/test_execution_parity.py",
       "sha256": "27a9998e692633d554e3da87688dcfeb2184d62988c5a9ed31fa5a1051daaa8a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7108,
       "path": "tests/test_external_specialists.py",
       "sha256": "9279c8d6f2f6f1f1a91d30e434919908602a9ff3c09e4dc87ab1a12378ae5a3a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7789,
       "path": "tests/test_financial_corrections.py",
       "sha256": "db21c954e0d024ef14645ed6e87f0867304987f55903298b81ae725e396dd67b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1785,
       "path": "tests/test_flattrade.py",
       "sha256": "bfba482b61b4df60473aa5893cbf33f70de540f1f505da5dfe73b08ee67030ca"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2497,
       "path": "tests/test_forecast_baselines.py",
       "sha256": "e27e9e240956fc251a2da99e4d9eb287a1889529565485dc77da4435c5bf5e39"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2060,
       "path": "tests/test_forecast_ensemble.py",
       "sha256": "415bc6952d93432fb5000ad1542ae88b6a69f2a6f31ac0cdbdba792b80151232"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2977,
       "path": "tests/test_forecast_providers.py",
       "sha256": "febe12a00936d401f18b10ffe1f955d5a4e68f45d0c1cd3a668a213724d91668"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3110,
       "path": "tests/test_forecast_specialist.py",
       "sha256": "2f78e08470f32ed1e48bc03ed2ea83fddbfcf63a02752dbcaf2c1d856578b1e3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3552,
       "path": "tests/test_free_ai_models.py",
       "sha256": "49fad725b17e0827676ae69f45db8124928ae0349253ccf955a240cd9b1c60d7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1218,
       "path": "tests/test_free_intelligence.py",
       "sha256": "774ee503fea375781f7aa9593d8f1b6887339de6d36db0a6d25bcf389ca2a43d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8656,
       "path": "tests/test_free_public_ai_context.py",
       "sha256": "c715d1a9aeb9ba44ff66bcbb96605881ca6a46a1d5f337ccab813a0270411520"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8128,
       "path": "tests/test_futures_roll.py",
       "sha256": "7ae66e0d8c4d997159e8b1253b0d860a6c1038d3ae7ef4d731a183668cb85258"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1536,
       "path": "tests/test_hypothesis_generator.py",
       "sha256": "f1e7e2b9acad2a036c7df785ed43cc90555ac6f3ca15071e8573e7e3499e1af3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1618,
       "path": "tests/test_instruments.py",
       "sha256": "a198788b6a9c3a353b4ecc556cc186cb55ce5908d92d18d414b88909746120d3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1439,
       "path": "tests/test_intelligence_service.py",
       "sha256": "e39fcc3075cd580416027ebe05c3c7bed675f42feb45af4092ea2d5fd468a860"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3290,
       "path": "tests/test_knowledge_firewall.py",
       "sha256": "4d45ac75d7c91bf489a317259b09ef189654ee2b013dd88175514b626c3fb43e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 962,
       "path": "tests/test_knowledge_rag_gate.py",
       "sha256": "602a76bf399b2a24fb1938a0e462e6571a6947c68bfc4f7115b3a3dd3b14842a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2407,
       "path": "tests/test_knowledge_retrieval.py",
       "sha256": "567c4679e290c9cb522df1e75c8190692fb3151cccf6f468a22ec31582356e7f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2578,
       "path": "tests/test_live_data_plane.py",
       "sha256": "9c46e471b536f14facd1efbb7e195f21cb11af2f34d6404be780aedc4494bd84"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10385,
       "path": "tests/test_live_shadow_strategy_lab.py",
       "sha256": "193a1b1594a990e57942c97d7745f383d90d7100b7ef878017a666aee1d235ac"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2406,
       "path": "tests/test_local_knowledge_corpus.py",
       "sha256": "a112162713b0511fd249a01cf24588d5666d5edaba0c950c3e95bb2f63c4542b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2990,
       "path": "tests/test_macro_external_intelligence.py",
       "sha256": "706ee93e7f843fd6de99ae91fa3c908e7bb0b17347e0493673a4951d2e197aa6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6539,
       "path": "tests/test_maintenance_authority.py",
       "sha256": "cb8ba6a94e13407f29f972edfa17e3bd7f57d0744e842966965ab3044a5f9a63"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9211,
       "path": "tests/test_maintenance_change_control.py",
       "sha256": "009e4195826e16687b4cc3b88a47f0e6fbb98f2255f1ac26230e2f51161395cd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5272,
       "path": "tests/test_maintenance_cli.py",
       "sha256": "8a3a9a54dc1abb5006de8a58692c23023316aae7bb025b160b3296eba10a9629"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 915,
       "path": "tests/test_market_data_gate.py",
       "sha256": "7f73dbd95ab4e26972d96e01cc56f6a416dc5dd034e127b7c67f2441dc9278e8"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2288,
       "path": "tests/test_market_data_pipeline.py",
       "sha256": "396665a72e14fdbb92ca9ad80da82d20dcd77185207edbca804126675c43ce1a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3199,
       "path": "tests/test_market_universe.py",
       "sha256": "57750c5133d07ed47dfe6b1bc58984558661716d04a51c44cb33c74b437656f1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3287,
       "path": "tests/test_model_drift.py",
       "sha256": "b540855f590f47dd31b0a5350bc3d737e339a120317745f856f6d598f17f7e6f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3648,
       "path": "tests/test_model_performance.py",
       "sha256": "83921a54c1cf286d4dcd31bd692611ca599872846d2306198a41ee9824d5f0f1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2965,
       "path": "tests/test_model_registry.py",
       "sha256": "7383b38875eade60d39429a492ba0277bcbf37921897471e0c165121f8c31085"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3064,
       "path": "tests/test_mt5_contracts.py",
       "sha256": "f1cdea6b49294dab0406391da748d41483814e6e63ae104033703669d417aa77"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2139,
       "path": "tests/test_mt5_current_session.py",
       "sha256": "503a4e2fc146def40204dea6773fa479fcbc4968a603b2f1f1f878d1232927cc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5226,
       "path": "tests/test_mt5_demo_readiness.py",
       "sha256": "a1d1749a6593f7349737cb2be08ea9c4c69ef3e20dc0feefd9263aea39d3ff01"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10559,
       "path": "tests/test_mt5_demo_runtime.py",
       "sha256": "aad42b3c437ac9c184b638b41515304e37dbeb6612124b7ccb13b9a95b6f60a1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3519,
       "path": "tests/test_mt5_demo_trade.py",
       "sha256": "3e92c4ec8eaf8d1380099403184c0948d1a3c6bdd79baf72c4ec520b59fb5518"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 967,
       "path": "tests/test_multi_agent_gate.py",
       "sha256": "382416972ac53618427c8d9e69d9c8e53a88a8eaea9bf2b9a6d8e46264d22f4b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4123,
       "path": "tests/test_multi_backtest.py",
       "sha256": "c97f73de0674702fcda12ce6ec033e57915c862704f88f26fd62995ee258c777"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5161,
       "path": "tests/test_multi_market_paper.py",
       "sha256": "d6fc50a8500fdb1003be339b633fb67c669f931a69393fcf22ad383fb8558fa1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5427,
       "path": "tests/test_multi_market_scanner.py",
       "sha256": "9b037d4082aaf1db3d990f69355fb76bac7b328cb0640672d514c3eb75b86903"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2171,
       "path": "tests/test_oanda.py",
       "sha256": "ec6240c7337387c71a2c8f07ab45109f64acbe43fdc6f3a6358f8c56ec52cf80"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3707,
       "path": "tests/test_observable_public_council.py",
       "sha256": "36874971d5c9b17fa739027d90fb83de1e0b07ad7f13c944450c0a51765e384e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8760,
       "path": "tests/test_ollama_ai_council.py",
       "sha256": "d6461baf5b199958fa4722d3e05f8d96e8c72e5a50e69cecacc124ee6d791815"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4018,
       "path": "tests/test_ollama_structured.py",
       "sha256": "55374d0a46b5b2c74a358716aa498eb4a7e202e68599715c528c1ba8e36fe58d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2464,
       "path": "tests/test_online_bridge.py",
       "sha256": "d77f8c7fdf92b09f8714bb81115795934a98787be1578aed03f5f0a5708b3f24"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2011,
       "path": "tests/test_online_learning.py",
       "sha256": "8e4c48c97fcdf06fafd11bf779ca61c50cc65f77140c117dc74cb7365116da23"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 966,
       "path": "tests/test_open_model_catalog.py",
       "sha256": "95ff207fbc1982a62ff182996a9634b4f7b31fc40b953ecd21aacc896c97abd5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6597,
       "path": "tests/test_openai_integration.py",
       "sha256": "630cbd8101034aa543adca955d09b12397d1642bef69944b8da06a3cafd126f3"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4436,
       "path": "tests/test_operator_read_model.py",
       "sha256": "7dac4c305c9addd2e7ae48f33cb79d57544e29c30fe3f09c221de6c8dd1ab3ad"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6355,
       "path": "tests/test_opportunity_audit.py",
       "sha256": "2e525ca42b1b16706b7bd02ef3f859910682b0fd080ed08d6920d3ebaaa64a20"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6166,
       "path": "tests/test_opportunity_radar.py",
       "sha256": "a43fffcadc058f90fda8ea8c39c7430868d12164239e7ee3de22ab3af1592aed"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2504,
       "path": "tests/test_option_intelligence.py",
       "sha256": "888ae8521111af983520c43ebc431d08a42dc5bfd78da6a066c63c61fcccfbf6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7087,
       "path": "tests/test_options_replay.py",
       "sha256": "2389e4c2bd2875d715944f30eb8464387fec7b5e393d530607843ac4b6e03506"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3003,
       "path": "tests/test_options_volatility_context.py",
       "sha256": "71a055600fb5eba1c352c8af90fcacdf38b9e3adb7adec4192f39620b43ffa74"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1986,
       "path": "tests/test_order_state.py",
       "sha256": "a4710bd52d006f2e1b49be09363316f9d2e6f18b118fc79a41d6c221440d7514"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3745,
       "path": "tests/test_paper_broker.py",
       "sha256": "bd215716d7f6c8fa871908c24fb4dce6c6c1650a622b94336f207ea24737056c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2502,
       "path": "tests/test_paper_evidence.py",
       "sha256": "244e15cc7f16f1d7d5de3ca19ceaa8e569a570bf1e182faeb5a030f10b5749cd"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5245,
       "path": "tests/test_paper_runtime.py",
       "sha256": "9726e732d7b2a9cd56ae1674676e7262dfb8e7c7ab46d2f0ced8976fdc838f60"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6991,
       "path": "tests/test_parameter_stability.py",
       "sha256": "cb49574dd11b4b5e700a0533be282ee8c8cf9bba2fdda5fe9b596ae85070c5f1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3488,
       "path": "tests/test_phase_gates.py",
       "sha256": "a399d1dfd790a75b8e025649ee6f163d75a1b3703d87d206cf68104c70aa00de"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1407,
       "path": "tests/test_portfolio.py",
       "sha256": "751f9f5848515fa773811c109534ad4eddc7ee3c9e9faa2bb1d408994038974a"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1708,
       "path": "tests/test_portfolio_targets.py",
       "sha256": "0c387ea3ae094600562bcba58524c4515174b0f67d197e74d9de39712d1836e5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6136,
       "path": "tests/test_production_ops.py",
       "sha256": "39e4cf1fd96fee6ada00d6cab85a60eae412ade353e54f822e4b8c7654d2e234"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4811,
       "path": "tests/test_public_crypto_feeds.py",
       "sha256": "91eb74abb062e53f9b064510bdb4ccf63d80e33a2738821f22fac15c1917e19f"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3547,
       "path": "tests/test_public_history.py",
       "sha256": "fa34b4a04ac74eb4b897b7c366de4041c02d35530af922d9be35d14f851f1f84"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 843,
       "path": "tests/test_public_no_key_connectors.py",
       "sha256": "c7921b2bbfbe85bf8801b740e59ab23d5298e3882f77fc02f921dc05370bc437"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5525,
       "path": "tests/test_reconciliation.py",
       "sha256": "f60b0c8f3fa2b39676ce6441b6d5103193f4ed1a9ff342eec993266063490582"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5196,
       "path": "tests/test_recovery.py",
       "sha256": "e3ffd8628de247bea3d4d125ac54c4885e87ca0ac9fd3316019ce8ed1393436d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 5149,
       "path": "tests/test_regime_validation.py",
       "sha256": "a42bad8bbcd22386cd346e62a0155dfe9fe9a0fbc37d640c76ab120636a5a944"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2172,
       "path": "tests/test_repository_audit.py",
       "sha256": "baa80d32ad0aa513377c01f825d7076163172f168682bb7a7a57a7f573395a6b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3455,
       "path": "tests/test_research_evidence.py",
       "sha256": "8d37acbb3d37573fe2e055dfb41765bfd59aeae418b83b23c2e718853b8d8a5b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4774,
       "path": "tests/test_research_manifest.py",
       "sha256": "c4f23167cf8a902dcabcdf7679a03db753e3b86187dc60f31b0b8d1284b788f7"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4253,
       "path": "tests/test_resilience.py",
       "sha256": "6572be38596cbd3897faf4a3f0ecfcb98149b06f77904093368860811a5d19e6"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4922,
       "path": "tests/test_risk.py",
       "sha256": "d87561ba8230b4a9cbdf5bdcc7cf1bc86186738b790b5ba55e5a6887339bc75e"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1058,
       "path": "tests/test_risk_engine_gate.py",
       "sha256": "82d366dca96d8141094d4925a1d3a85449d4ae1f03e318e832648faf98ef7af5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3974,
       "path": "tests/test_risk_overlays.py",
       "sha256": "26240bbe86c0f0c2e9f5480c33e3c201a6103be2ee20d93661014914248fd820"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1992,
       "path": "tests/test_risk_statistics.py",
       "sha256": "4754db9d52f179734ebb9872ed99feeff489c26cceb4447dc7070bc807fc0e15"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4719,
       "path": "tests/test_robustness.py",
       "sha256": "6ae386342e9e4d2a53557c59911cbbef90de467cc62001f6b3a2885096af6a83"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7078,
       "path": "tests/test_runtime_bridge.py",
       "sha256": "b3acf68f5cd0d9a8acbcb9ad38ba456f60f5199ed707b31eee98c1460210099b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 8857,
       "path": "tests/test_sealed_holdout.py",
       "sha256": "ff3859f464c2b7f12d4894fc7a2710b33366086317ccadd228e797c7a7e9e481"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 14323,
       "path": "tests/test_shadow_outcomes.py",
       "sha256": "2fd4b4911ba7551b2086b0d13f547dd37662c36894503781d03603a2bc4abbf5"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1789,
       "path": "tests/test_shoonya.py",
       "sha256": "0cbb7010f61958968061f95d3bce870819fca655f8f4f4fbbc17f54dc79126bb"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2565,
       "path": "tests/test_software_phase_dependencies.py",
       "sha256": "fe6dbca828daae3b5a603ece83dd265b0c3228961e0e0363ba8bca33ab020f85"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 3820,
       "path": "tests/test_specialists.py",
       "sha256": "884233f8d8cbd8faccfbc50945754d28becefda2ba7c04f7371c7b582aece72c"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 970,
       "path": "tests/test_state_engine_gate.py",
       "sha256": "69820ec4922a2c5dbc6134bd4750dfa0a652063d71fe13e10c8c3ddbc1899361"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1953,
       "path": "tests/test_strategy_farm.py",
       "sha256": "a208a02908eacabf11a01a6e028c4d97a580cfa7b53e356ef2ba679f2513601d"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 7666,
       "path": "tests/test_strategy_governance.py",
       "sha256": "250433b1e092ec0e81441db9edcbb5b2445fb614bec013b2a0a994ab84b0c2bc"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 989,
       "path": "tests/test_strategy_mutation.py",
       "sha256": "8a527839a807c8ca6d53e0cc954faf7077d404cd421abbf4004364b912fadc89"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1022,
       "path": "tests/test_strategy_research_gate.py",
       "sha256": "4c1d1a5eef7e58bc8b4b2818e8bc513de579f33b864fa31e686076960e0c81b1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2197,
       "path": "tests/test_supervisor.py",
       "sha256": "856e833b3615cb959a63b8ec39abac2ae7304ff61408eaac44c0321cbb30024b"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 6849,
       "path": "tests/test_telegram_alerts.py",
       "sha256": "f794090c00dc9223b0ad8661790e8365086dc7325da95d37289f3641f1cf3337"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 4626,
       "path": "tests/test_unified_features.py",
       "sha256": "3c319f115199efa179a902cddd7d490cccd49cfa7472087d06517c35ecc9aca2"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 1686,
       "path": "tests/test_voice_alerts.py",
       "sha256": "3a9cdf87ef7e71cd0497b153bebeb80369b5ea22b42dc5e6bb414c3a0cb1f4e1"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 2318,
       "path": "tests/test_wal.py",
       "sha256": "2f730f84494637013766ca82628e2b50994a48182021690d1c09d692a639a318"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 10008,
       "path": "tests/test_web_command_center.py",
       "sha256": "11b3cfa5105f32562a5b7f4e6579b008660bfc9056bfe02e9045742f770c2a09"
     },
     {
-      "asset_class": "python_module",
+      "asset_class": "python",
       "bytes": 9211,
       "path": "tests/test_web_command_center_v2.py",
       "sha256": "06eb57f9797460154e036fa28d52284daf47b7cb9582fdd3346a1780db66aeaa"
@@ -7892,6 +7987,18 @@
         "kind": "not-implemented",
         "line": 282,
         "path": "aura/data/public_crypto_feeds.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "suppressed-exception",
+        "line": 220,
+        "path": "aura/webapp/server.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "suppressed-exception",
+        "line": 587,
+        "path": "aura/webapp/server.py"
       },
       {
         "classification": "review-required",
@@ -7940,7 +8047,8 @@
       "aura/runtime/mt5_autonomous_demo.py",
       "aura/runtime/mt5_demo_execution_daemon.py",
       "aura/runtime/mt5_learning_daemon.py",
-      "aura/runtime/mt5_paper_daemon.py"
+      "aura/runtime/mt5_paper_daemon.py",
+      "aura/webapp/catalog.py"
     ]
   },
   "limitations": [
@@ -12670,7 +12778,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 829,
+      "lines": 814,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -12679,7 +12787,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "d324a182f2250960bdb76966b7b16f9e3ce253ee7d197cc4892b2ded2f8b37b7",
+      "sha256": "43974465699f814e7b9603e7c009e2daecb51b0db3557da9624106c61ec0d0a5",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -14442,6 +14550,87 @@
       "third_party_dependencies": []
     },
     {
+      "component": "webapp",
+      "direct_test_files": [
+        "tests/test_aura_webapp.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 1,
+      "module": "aura.webapp",
+      "parsed": true,
+      "path": "aura/webapp/__init__.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "package_marker",
+      "sha256": "97faf96a606e49a16f7619c78d4f25e6444360ec0c601c6ee6245880e8f74c58",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [],
+      "internal_dependencies": [],
+      "lines": 506,
+      "module": "aura.webapp.catalog",
+      "parsed": true,
+      "path": "aura/webapp/catalog.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "fb21a21de97f2dd582857d1e94738ef23e05290801f64c359588b0a66bf974a3",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [
+        "tests/test_aura_webapp.py"
+      ],
+      "internal_dependencies": [
+        "aura/research/autonomy.py",
+        "aura/research/blueprint_compiler.py",
+        "aura/research/strategy_factory.py",
+        "aura/webapp/catalog.py"
+      ],
+      "lines": 595,
+      "module": "aura.webapp.server",
+      "parsed": true,
+      "path": "aura/webapp/server.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "9e6a691bf2425eb88807a14b71ac63a4b3655b5813df317464d81b8667778d93",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "atexit",
+        "datetime",
+        "hashlib",
+        "http",
+        "json",
+        "mimetypes",
+        "os",
+        "pathlib",
+        "subprocess",
+        "sys",
+        "threading",
+        "typing",
+        "urllib",
+        "webbrowser"
+      ],
+      "third_party_dependencies": []
+    },
+    {
       "component": "examples",
       "direct_test_files": [],
       "internal_dependencies": [
@@ -15225,6 +15414,30 @@
       "standard_library_dependencies": [
         "__future__",
         "decimal"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/server.py"
+      ],
+      "lines": 145,
+      "module": "tests.test_aura_webapp",
+      "parsed": true,
+      "path": "tests/test_aura_webapp.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "test",
+      "sha256": "0af0b4db17c8cc6a9249c52094ea09580fd778647275538ffe4de2310f96fd97",
+      "standard_library_dependencies": [
+        "pathlib"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -19030,7 +19243,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "a2c9bc1d450baa20a5d5ec67b2cc29f0cd9894d2c6d26bf47bba1c5cad189878",
+  "repository_tree_sha256": "3a3e4d3f321407e784c26f58057b0ba4320208a2f72e2e88086237756785fb88",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19579,6 +19792,18 @@
     },
     {
       "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 220,
+      "path": "aura/webapp/server.py"
+    },
+    {
+      "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 587,
+      "path": "aura/webapp/server.py"
+    },
+    {
+      "classification": "review-required",
       "kind": "not-implemented",
       "line": 22,
       "path": "tests/test_agent_registry.py"
@@ -19603,15 +19828,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 176,
-    "entrypoints": 53,
+    "directly_tested_source_modules": 177,
+    "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 376,
-    "repository_files": 447,
-    "source_modules": 198,
-    "static_test_functions": 603,
-    "stub_candidates": 93,
-    "test_modules": 153,
+    "python_modules": 380,
+    "repository_files": 459,
+    "source_modules": 200,
+    "static_test_functions": 611,
+    "stub_candidates": 95,
+    "test_modules": 154,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

@@ -260,6 +260,30 @@
       ]
     },
     {
+      "async_test_functions": 0,
+      "path": "tests/test_aura_webapp.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "0af0b4db17c8cc6a9249c52094ea09580fd778647275538ffe4de2310f96fd97",
+      "source_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/server.py"
+      ],
+      "static_test_functions": 8,
+      "test_classes": [],
+      "test_functions": [
+        "test_algo_builder_creates_research_only_compiled_candidate",
+        "test_algo_builder_rejects_non_allowlisted_component",
+        "test_algo_options_do_not_expose_arbitrary_code_or_live_approval",
+        "test_capability_catalog_is_truthful_and_has_blocked_money_actions",
+        "test_controller_status_is_safe_without_runtime_files",
+        "test_dashboard_keeps_safety_copy_and_owner_surfaces",
+        "test_pwa_static_assets_exist",
+        "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
+      ]
+    },
+    {
       "async_test_functions": 2,
       "path": "tests/test_autonomous_paper.py",
       "phase_coverage": [
@@ -3417,7 +3441,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 603,
-    "test_modules": 153
+    "static_test_functions": 611,
+    "test_modules": 154
   }
 }
