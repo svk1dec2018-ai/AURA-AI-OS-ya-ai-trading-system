@@ -4,7 +4,7 @@ import asyncio
 import hashlib
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any
+from typing import Any, Iterable
 
 from aura.data.mt5_demo import OfficialMT5Gateway
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, Side
@@ -22,6 +22,7 @@ class ProtectedMT5DemoConfig:
     stop_bps: Decimal = Decimal("35")
     target_bps: Decimal = Decimal("70")
     block_pyramiding: bool = True
+    recovery_lookback_seconds: int = 604800
 
     def __post_init__(self) -> None:
         if self.magic <= 0:
@@ -30,6 +31,8 @@ class ProtectedMT5DemoConfig:
             raise ValueError("deviation_points cannot be negative")
         if self.stop_bps <= 0 or self.target_bps <= 0:
             raise ValueError("native stop/target distances must be positive")
+        if self.recovery_lookback_seconds <= 0:
+            raise ValueError("recovery_lookback_seconds must be positive")
 
 
 class ProtectedMT5DemoBroker(MT5DemoBroker):
@@ -53,8 +56,15 @@ class ProtectedMT5DemoBroker(MT5DemoBroker):
             config=MT5DemoBrokerConfig(
                 magic=self.protected_config.magic,
                 deviation_points=self.protected_config.deviation_points,
+                history_lookback_seconds=self.protected_config.recovery_lookback_seconds,
             ),
         )
+
+    def restore_orders(self, orders: Iterable[OrderRequest]) -> None:
+        """Rebuild client-token mappings from the append-only financial WAL."""
+        for order in orders:
+            token = hashlib.sha1(order.client_order_id.encode("utf-8")).hexdigest()[:12]
+            self._order_by_token[token] = order
 
     async def on_candle(self, candle: NormalizedCandle) -> list[Fill]:
         """Poll broker-origin fills on the same cadence as closed-candle decisions."""
