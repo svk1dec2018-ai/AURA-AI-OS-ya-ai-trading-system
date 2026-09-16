@@ -8,11 +8,23 @@ from aura.ops.phase_gates import (
     GateDecision,
     GateEvidence,
     PhaseGateRecord,
+    build_sequential_phase_records,
     phase_is_pass,
     validate_phase_gate_ledger,
     validate_phase_gate_records,
     write_phase_gate_ledger,
 )
+
+
+def test_phase_gate_evidence_hash_is_newline_independent(tmp_path) -> None:
+    artifact = tmp_path / "evidence.txt"
+    artifact.write_bytes(b"first\r\nsecond\r\n")
+    records = build_sequential_phase_records(
+        tmp_path,
+        {0: {output: "evidence.txt" for output in PHASE_GATE_SPECS[0].validation_outputs}},
+    )
+    artifact.write_bytes(b"first\nsecond\n")
+    assert validate_phase_gate_records(records, tmp_path) == ()
 
 
 def _evidence(path: Path, output: str) -> GateEvidence:

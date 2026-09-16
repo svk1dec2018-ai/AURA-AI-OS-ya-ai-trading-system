@@ -6255,9 +6255,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 16331,
+      "bytes": 16640,
       "path": "aura/ops/phase_gates.py",
-      "sha256": "56715655304a0fb0d71e8180d492888b5b3205aea20002b37199609ce714e106"
+      "sha256": "ab7fe904b16005b0d26f444113e4cc90470da280af4dc5163c0f6adfdd9c4363"
     },
     {
       "asset_class": "python",
@@ -7833,9 +7833,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 3488,
+      "bytes": 3963,
       "path": "tests/test_phase_gates.py",
-      "sha256": "a399d1dfd790a75b8e025649ee6f163d75a1b3703d87d206cf68104c70aa00de"
+      "sha256": "c5a0e1f09b1ed3bf93ee6145c2082e2fb7cdb4aa6878334549f9270851f69804"
     },
     {
       "asset_class": "python",
@@ -12792,7 +12792,7 @@
         "tests/test_strategy_research_gate.py"
       ],
       "internal_dependencies": [],
-      "lines": 421,
+      "lines": 432,
       "module": "aura.ops.phase_gates",
       "parsed": true,
       "path": "aura/ops/phase_gates.py",
@@ -12801,7 +12801,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "56715655304a0fb0d71e8180d492888b5b3205aea20002b37199609ce714e106",
+      "sha256": "ab7fe904b16005b0d26f444113e4cc90470da280af4dc5163c0f6adfdd9c4363",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -18543,7 +18543,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 100,
+      "lines": 112,
       "module": "tests.test_phase_gates",
       "parsed": true,
       "path": "tests/test_phase_gates.py",
@@ -18552,7 +18552,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "a399d1dfd790a75b8e025649ee6f163d75a1b3703d87d206cf68104c70aa00de",
+      "sha256": "c5a0e1f09b1ed3bf93ee6145c2082e2fb7cdb4aa6878334549f9270851f69804",
       "standard_library_dependencies": [
         "__future__",
         "hashlib",
@@ -19484,7 +19484,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "7fccdb35cd1df245191bb37c35db4e0bf5d76c5548f6b87a3aa7033ee835c6cc",
+  "repository_tree_sha256": "0e9ecd30b35ac6a9d61175f1928ca3b9e3874e43f1885f5e735081d28ff7f08c",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20075,7 +20075,7 @@
     "python_modules": 385,
     "repository_files": 464,
     "source_modules": 205,
-    "static_test_functions": 616,
+    "static_test_functions": 617,
     "stub_candidates": 95,
     "test_modules": 154,
     "unclassified_modules": 0,

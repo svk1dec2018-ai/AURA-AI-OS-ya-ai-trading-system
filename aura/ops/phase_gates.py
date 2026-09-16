@@ -330,6 +330,17 @@ def validate_phase_gate_records(
     return tuple(errors)
 
 
+def _canonical_file_bytes(path: Path) -> bytes:
+    """Hash text evidence consistently across Git LF/CRLF checkouts."""
+
+    raw = path.read_bytes()
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw
+    return text.replace("\r\n", "\n").encode("utf-8")
+
+
 def write_phase_gate_ledger(
     path: Path,
     records: Iterable[PhaseGateRecord],
@@ -413,7 +424,7 @@ def _resolve_evidence_path(root: Path, relative: str) -> Path:
 
 
 def _file_sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return hashlib.sha256(_canonical_file_bytes(path)).hexdigest()
 
 
 def _json_sha256(payload: object) -> str:

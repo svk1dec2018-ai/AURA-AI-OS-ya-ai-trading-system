@@ -2631,16 +2631,17 @@
       "phase_coverage": [
         0
       ],
-      "sha256": "a399d1dfd790a75b8e025649ee6f163d75a1b3703d87d206cf68104c70aa00de",
+      "sha256": "c5a0e1f09b1ed3bf93ee6145c2082e2fb7cdb4aa6878334549f9270851f69804",
       "source_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_all_phase_specs_have_complete_non_skippable_contracts",
         "test_committed_ledger_passes_through_ceo_decision_only",
         "test_later_phase_cannot_pass_before_previous_phase",
+        "test_phase_gate_evidence_hash_is_newline_independent",
         "test_phase_gate_evidence_hash_is_tamper_evident"
       ]
     },
@@ -3446,7 +3447,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 616,
+    "static_test_functions": 617,
     "test_modules": 154
   }
 }
