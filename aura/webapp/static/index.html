@@ -3,194 +3,229 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#050912" />
-  <meta name="description" content="AURA AI OS owner command center for governed market intelligence, research, paper/demo trading and strategy development." />
+  <meta name="theme-color" content="#060a11" />
+  <meta name="description" content="AURA AI OS owner command center for governed multi-market intelligence, research, learning and protected DEMO execution." />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/app.css" />
-  <title>AURA AI OS · Owner Command Center</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <title>AURA AI OS — Owner Command Center</title>
 </head>
 <body>
-<div class="shell">
-  <aside id="sidebar" class="sidebar">
-    <div class="brand"><div class="logo">A</div><div><div class="brand-title">AURA AI OS</div><div class="brand-sub">Owner Command Center v2</div></div></div>
-    <nav class="nav">
-      <button class="active" data-view="overview" data-title="Command Center" data-sub="Live system, portfolio, risk and opportunities"><span>⌂ Overview</span><small>01</small></button>
-      <button data-view="markets" data-title="Market Intelligence" data-sub="Scanner, opportunities and execution context"><span>◉ Markets</span><small>02</small></button>
-      <button data-view="ai" data-title="AI & Reasoning" data-sub="Specialist agents, CEO synthesis and evidence"><span>✦ AI Brain</span><small>03</small></button>
-      <button data-view="algo" data-title="Strategy & Algo Studio" data-sub="Build immutable research algos from safe components"><span>⌁ Algo Studio</span><small>04</small></button>
-      <button data-view="risk" data-title="Trading & Risk" data-sub="Independent financial authority and broker controls"><span>◇ Trading & Risk</span><small>05</small></button>
-      <button data-view="capabilities" data-title="AURA A→Z" data-sub="Truthful feature coverage and implementation status"><span>▦ A→Z Features</span><small>06</small></button>
-      <button data-view="owner" data-title="Owner & Developer" data-sub="Governance, operations and protected authority"><span>⚙ Owner Console</span><small>07</small></button>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div class="brand-copy"><b>AURA AI OS</b><span>Owner Command Center</span></div>
+    </div>
+    <div class="owner-chip"><div><small>Authority</small><div>Owner workspace</div></div><b>LOCAL</b></div>
+    <nav class="nav-scroll">
+      <div class="nav-group">
+        <div class="nav-title">Core</div>
+        <button class="nav-item active" data-view="command"><span class="nav-icon">CC</span><span class="nav-label">Command Center</span></button>
+        <button class="nav-item" data-view="scanner"><span class="nav-icon">SC</span><span class="nav-label">Market Scanner</span></button>
+        <button class="nav-item" data-view="charts"><span class="nav-icon">CH</span><span class="nav-label">Charts</span></button>
+        <button class="nav-item" data-view="opportunities"><span class="nav-icon">OP</span><span class="nav-label">Opportunities</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Trading</div>
+        <button class="nav-item" data-view="trading"><span class="nav-icon">TR</span><span class="nav-label">Trading Desk</span><span class="nav-badge">DEMO</span></button>
+        <button class="nav-item" data-view="portfolio"><span class="nav-icon">PF</span><span class="nav-label">Portfolio</span></button>
+        <button class="nav-item" data-view="risk"><span class="nav-icon">RK</span><span class="nav-label">Risk Center</span></button>
+        <button class="nav-item" data-view="journal"><span class="nav-icon">JR</span><span class="nav-label">Trade Journal</span></button>
+        <button class="nav-item" data-view="performance"><span class="nav-icon">PA</span><span class="nav-label">Performance</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">AI Intelligence</div>
+        <button class="nav-item" data-view="agents"><span class="nav-icon">AI</span><span class="nav-label">AI Agents</span></button>
+        <button class="nav-item" data-view="ceo"><span class="nav-icon">CEO</span><span class="nav-label">CEO Decisions</span></button>
+        <button class="nav-item" data-view="forecast"><span class="nav-icon">PR</span><span class="nav-label">Forecasts</span></button>
+        <button class="nav-item" data-view="news"><span class="nav-icon">NW</span><span class="nav-label">News / Macro</span></button>
+        <button class="nav-item" data-view="knowledge"><span class="nav-icon">KG</span><span class="nav-label">Knowledge / RAG</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Research & Algo</div>
+        <button class="nav-item" data-view="strategies"><span class="nav-icon">SL</span><span class="nav-label">Strategy Library</span></button>
+        <button class="nav-item" data-view="algo"><span class="nav-icon">AS</span><span class="nav-label">Algo Studio</span><span class="nav-badge">NEW</span></button>
+        <button class="nav-item" data-view="backtest"><span class="nav-icon">BT</span><span class="nav-label">Backtesting</span></button>
+        <button class="nav-item" data-view="learning"><span class="nav-icon">EV</span><span class="nav-label">Learning / Evolution</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Operations</div>
+        <button class="nav-item" data-view="brokers"><span class="nav-icon">BR</span><span class="nav-label">Brokers & Data</span></button>
+        <button class="nav-item" data-view="alerts"><span class="nav-icon">AL</span><span class="nav-label">Alerts</span></button>
+        <button class="nav-item" data-view="health"><span class="nav-icon">HL</span><span class="nav-label">System Health</span></button>
+      </div>
+      <div class="nav-group">
+        <div class="nav-title">Owner</div>
+        <button class="nav-item" data-view="developer"><span class="nav-icon">DV</span><span class="nav-label">Developer / Repair AI</span></button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">ST</span><span class="nav-label">Settings</span></button>
+        <button class="nav-item" data-view="owner"><span class="nav-icon">OW</span><span class="nav-label">Owner Control</span></button>
+      </div>
     </nav>
-    <div class="side-bottom">
-      <div class="status-row"><span id="liveDot" class="dot"></span><span id="sideRuntime">Runtime stopped</span></div>
-      <div class="status-row"><span class="good">●</span><span>Fund transfer disabled</span></div>
-      <div class="status-row"><span class="good">●</span><span>Withdrawal disabled</span></div>
+    <div class="sidebar-footer">
+      <div class="safety-mini">
+        <span><i class="mini-dot"></i>DEMO / research execution boundary</span>
+        <span><i class="mini-dot"></i>Fund transfer disabled</span>
+        <span><i class="mini-dot"></i>Withdrawal disabled</span>
+      </div>
     </div>
   </aside>
 
+  <div class="drawer-scrim" id="scrim"></div>
+
   <main class="main">
     <header class="topbar">
-      <div class="top-left">
-        <button id="mobileMenu" class="btn ghost mobile-menu" type="button">☰</button>
-        <div><div id="pageTitle" class="page-title">Command Center</div><div id="pageSub" class="page-sub">Live system, portfolio, risk and opportunities</div></div>
+      <button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button>
+      <div class="command-search">
+        <span>⌕</span><input id="globalSearch" placeholder="Search AURA modules, strategies, brokers..." />
+        <kbd>Ctrl K</kbd>
       </div>
-      <div class="top-actions">
-        <span id="toast" class="pill hidden"></span>
-        <span id="runtimeBadge" class="pill">RUNTIME STOPPED</span>
-        <span class="pill good">DEMO / RESEARCH</span>
-        <button id="refreshBtn" class="btn secondary" type="button">Refresh</button>
+      <div class="top-status">
+        <span class="status-pill" id="runtimePill"><i class="dot"></i><span>Runtime stopped</span></span>
+        <span class="status-pill" id="mt5Pill"><i class="dot"></i><span>MT5 waiting</span></span>
+        <span class="status-pill good"><i class="dot"></i><span>DEMO ONLY</span></span>
       </div>
+      <button class="top-action primary" id="installBtn">Install App</button>
     </header>
 
-    <div class="content">
-      <section id="view-overview" class="view active">
+    <div class="workspace">
+      <section class="view active" id="view-command">
+        <div class="page-head">
+          <div><p class="eyebrow">AURA AI OS · OWNER COCKPIT</p><h1>Command Center</h1><p>One governed workspace for market perception, multi-agent reasoning, research, protected DEMO execution, learning and owner control.</p></div>
+          <div class="head-actions"><button class="btn good" id="quickStart">Start AURA DEMO</button><button class="btn" id="quickStop">Stop</button><button class="btn danger" id="quickKill">Emergency Lock</button></div>
+        </div>
+
         <div class="hero">
-          <article class="hero-card">
-            <div class="eyebrow">AURA VISION</div>
-            <h1>One governed AI operating system for market intelligence, strategy research, learning and protected execution.</h1>
-            <p>AURA continuously observes connected markets, combines technical/SMC/volume/options/macro/news evidence, challenges its own conclusions, learns from outcomes, creates research candidates and routes every financial action through an independent risk authority.</p>
-            <div class="hero-actions">
-              <button id="jumpAlgo" class="btn" type="button">Open Algo Studio</button>
-              <button id="jumpCapabilities" class="btn secondary" type="button">View A→Z Coverage</button>
-              <button id="startBtn" class="btn secondary" type="button" onclick="action('/api/start')">Start DEMO Runtime</button>
+          <div class="hero-grid">
+            <div>
+              <div class="hero-title">Governed cognitive trading system — not a signal bot</div>
+              <div class="hero-copy">AURA continuously perceives connected markets, remembers context, evaluates competing evidence, produces probabilistic forecasts, challenges its own thesis, lets an independent RiskEngine decide financial permission, then learns from forward outcomes.</div>
+              <div class="flow"><span class="flow-step">PERCEIVE</span><span class="flow-arrow">→</span><span class="flow-step">ORIENT</span><span class="flow-arrow">→</span><span class="flow-step">RECALL</span><span class="flow-arrow">→</span><span class="flow-step">FORECAST</span><span class="flow-arrow">→</span><span class="flow-step">CHALLENGE</span><span class="flow-arrow">→</span><span class="flow-step">CEO</span><span class="flow-arrow">→</span><span class="flow-step">RISK</span><span class="flow-arrow">→</span><span class="flow-step">EXECUTE</span><span class="flow-arrow">→</span><span class="flow-step">LEARN</span></div>
             </div>
-          </article>
-          <article class="hero-card owner-card">
-            <div class="eyebrow center">OWNER GOVERNANCE</div>
-            <div class="ring"><b id="ownerSafety">PROTECTED</b></div>
-            <div class="center"><div class="panel-title">Full governed owner access</div><div class="mini" id="releaseBoundary">PAPER / DEMO / RESEARCH</div></div>
-            <div class="notice">Owner can inspect, research, configure, stop, validate and approve governed changes. AI and strategy candidates cannot bypass risk, approval, fund-transfer or withdrawal boundaries.</div>
-          </article>
+            <div class="release-card"><b>Protected release boundary</b><p>Real-money disabled in this PWA. New strategy candidates begin in RESEARCH and must pass causal backtest, walk-forward, robustness, holdout, paper/demo evidence and human approval before any future live canary.</p></div>
+          </div>
         </div>
 
         <div class="metric-grid">
-          <div class="metric-card"><div class="metric-label">MT5 Account</div><div id="account" class="metric-value">—</div><div id="server" class="metric-foot">Waiting for DEMO runtime</div></div>
-          <div class="metric-card"><div class="metric-label">Portfolio Equity</div><div id="equity" class="metric-value">—</div><div id="currency" class="metric-foot">—</div></div>
-          <div class="metric-card"><div class="metric-label">Drawdown</div><div id="drawdown" class="metric-value">—</div><div class="metric-foot">Independent risk state</div></div>
-          <div class="metric-card"><div class="metric-label">Opportunities</div><div id="opportunities" class="metric-value">0</div><div class="metric-foot">Scanner-detected candidates</div></div>
-          <div class="metric-card"><div class="metric-label">Orders / Fills</div><div id="orders" class="metric-value">0 / 0</div><div class="metric-foot">Protected broker DEMO</div></div>
-          <div class="metric-card"><div class="metric-label">Closed Batches</div><div id="batches" class="metric-value">0</div><div id="lastUpdated" class="metric-foot">No runtime snapshot yet</div></div>
+          <div class="metric-card"><div class="metric-label">MT5 Account</div><div class="metric-value" id="metricAccount">—</div><div class="metric-sub" id="metricServer">Waiting for runtime</div></div>
+          <div class="metric-card"><div class="metric-label">Portfolio Equity</div><div class="metric-value" id="metricEquity">—</div><div class="metric-sub" id="metricCurrency">—</div></div>
+          <div class="metric-card"><div class="metric-label">Drawdown</div><div class="metric-value" id="metricDrawdown">—</div><div class="metric-sub">Independent risk authority</div></div>
+          <div class="metric-card"><div class="metric-label">Opportunities</div><div class="metric-value" id="metricOpps">0</div><div class="metric-sub">Latest scanner batch</div></div>
+          <div class="metric-card"><div class="metric-label">Orders / Fills</div><div class="metric-value" id="metricOrders">0 / 0</div><div class="metric-sub">Protected broker DEMO</div></div>
+          <div class="metric-card"><div class="metric-label">Algo Candidates</div><div class="metric-value" id="metricAlgos">0</div><div class="metric-sub">Research-only immutable drafts</div></div>
         </div>
 
-        <div class="grid-2 section">
-          <article class="panel">
-            <div class="panel-head"><div><div class="panel-title">Live Opportunities</div><div class="panel-sub">Closed-candle, agent-reviewed opportunities from the current runtime</div></div><span class="pill">Governed</span></div>
-            <div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>TF</th><th>Intent</th><th>Confidence</th><th>Agent Policy</th></tr></thead><tbody id="oppRows"><tr><td colspan="5" class="empty">No governed runtime data yet.</td></tr></tbody></table></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><div class="panel-title">Runtime Control</div><div class="panel-sub">Protected MT5 DEMO child runtime</div></div></div>
-            <div class="panel-pad">
-              <div class="controls">
-                <div class="field"><label>Max symbols</label><input id="maxSymbols" class="input control-input" type="number" min="1" max="1000" value="10"></div>
-                <div class="field"><label>Max batches</label><input id="maxBatches" class="input control-input" type="number" min="1" max="1000000" value="100"></div>
-                <button id="stopBtn" class="btn secondary" onclick="action('/api/stop')">Stop</button>
-                <button id="killBtn" class="btn danger" onclick="killAura()">Emergency Lock</button>
-                <button id="resetBtn" class="btn ghost hidden" onclick="action('/api/reset-kill')">Reset Lock</button>
-              </div>
-              <div class="guard-grid section">
-                <div class="guard"><span class="good">●</span> <strong>DEMO guard:</strong> active</div>
-                <div class="guard"><span class="good">●</span> <strong>Real money:</strong> disabled</div>
-                <div class="guard"><span class="good">●</span> <strong>Fund transfer:</strong> disabled</div>
-                <div class="guard"><span class="good">●</span> <strong>Withdrawal:</strong> disabled</div>
-                <div id="riskKill" class="guard"><span class="good">●</span> <strong>Risk kill switch:</strong> clear</div>
-                <div class="guard"><span class="good">●</span> <strong>AI broker bypass:</strong> disabled</div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="view-markets" class="view">
-        <div class="grid-3">
-          <div class="metric-card"><div class="metric-label">Scanner</div><div class="metric-value">Multi-market</div><div class="metric-foot">1m → Daily, feed-dependent</div></div>
-          <div class="metric-card"><div class="metric-label">Evidence</div><div class="metric-value">10 Roles</div><div class="metric-foot">Technical → Execution Quality</div></div>
-          <div class="metric-card"><div class="metric-label">Decision Rule</div><div class="metric-value">Closed Candle</div><div class="metric-foot">Point-in-time / freshness gated</div></div>
-        </div>
-        <div class="grid-2 section">
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Opportunity Radar</div><div class="panel-sub">Current protected runtime opportunities</div></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>TF</th><th>Intent</th><th>Confidence</th><th>Agent Policy</th></tr></thead><tbody id="oppRowsMarkets"><tr><td colspan="5" class="empty">Use Overview for the live runtime table in this build.</td></tr></tbody></table></div></article>
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Evidence Universe</div><div class="panel-sub">AURA treats all signals as hypotheses requiring measured value</div></div></div><div class="panel-pad chip-list"><span class="pill">EMA 8/21/50/200</span><span class="pill">RSI</span><span class="pill">MACD</span><span class="pill">Bollinger</span><span class="pill">Keltner</span><span class="pill">VWAP</span><span class="pill">OBV/VPT</span><span class="pill">BOS/CHoCH</span><span class="pill">Liquidity Sweeps</span><span class="pill">FVG</span><span class="pill">Options PCR/IV/Greeks</span><span class="pill">Macro/News</span><span class="pill">Cross-market</span><span class="pill">Regime/Chop</span></div></article>
-        </div>
-      </section>
-
-      <section id="view-ai" class="view">
-        <div class="hero-card"><div class="eyebrow">HUMAN-LIKE COGNITIVE ARCHITECTURE</div><h1>Perceive → Orient → Recall → Forecast → Challenge → Synthesize → Risk → Execute → Learn.</h1><p>“Human-like” in AURA means explicit cognitive functions and adversarial review, not consciousness. Specialist agents generate structured evidence, Bull/Bear/Counterfactual views challenge it, and the deterministic CEO synthesizes before independent financial risk gets final authority.</p></div>
-        <div class="grid-3 section">
-          <article class="panel panel-pad"><div class="panel-title">Specialist Team</div><div class="mini section">HTF Bias · SMC/ICT · Technical · Volume/VWAP · Forecast · Options/Volatility · Macro/Sentiment · Cross-Market · Regime · Execution Quality</div></article>
-          <article class="panel panel-pad"><div class="panel-title">AI Council</div><div class="mini section">Multiple local/provider models can act as independent challengers. Reliability is measured by task, market and regime rather than model reputation.</div></article>
-          <article class="panel panel-pad"><div class="panel-title">CEO Synthesis</div><div class="mini section">Support, opposition, abstentions, uncertainty and evidence lineage are preserved. CEO has no direct broker credentials.</div></article>
-        </div>
-        <div class="notice section">AURA can forecast probabilities and scenarios, but it must not present uncertain market outcomes as guaranteed predictions. Every action remains subject to evidence, costs, liquidity and risk gates.</div>
-      </section>
-
-      <section id="view-algo" class="view">
-        <div class="hero-card"><div class="eyebrow">ONE-CLICK ALGO STUDIO</div><h1>Turn an owner strategy idea into an immutable research algo candidate.</h1><p>Select allow-listed entry, confirmation and exit components. AURA compiles a deterministic strategy candidate, saves its content hash, and routes it into the validation lifecycle. It cannot own portfolio-risk limits or auto-deploy itself live.</p></div>
-        <div class="algo-grid section">
-          <article class="panel">
-            <div class="panel-head"><div><div class="panel-title">Strategy Builder</div><div class="panel-sub">Research-only · bounded compiler · no arbitrary executable code</div></div><span class="pill good">SAFE DSL</span></div>
-            <div class="panel-pad">
-              <div class="field"><label>Strategy name</label><input id="algoName" class="input" value="AURA Adaptive Trend Liquidity" maxlength="120"></div>
-              <div class="field section"><label>Research thesis</label><textarea id="algoThesis" class="textarea" maxlength="1600">Trade only when trend structure and momentum align, with confirmation and bounded exits, then validate whether the edge survives costs and different regimes.</textarea></div>
-              <div class="grid-2 section"><div class="field"><label>Markets (comma separated)</label><input id="algoMarkets" class="input" value="XAUUSD,NIFTY,BTCUSD"></div><div class="field"><label>Timeframes</label><input id="algoTimeframes" class="input" value="1m,5m,15m,1h"></div></div>
-              <div class="field section"><label>Entry primitives · choose 1–3</label><div id="entryChoices" class="chip-list"></div></div>
-              <div class="field section"><label>Confirmation primitives · choose 0–5</label><div id="confirmChoices" class="chip-list"></div></div>
-              <div class="field section"><label>Exit primitives · choose 1–3</label><div id="exitChoices" class="chip-list"></div></div>
-              <button id="buildAlgoBtn" class="btn section" type="button">Compile Research Algo</button>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><div class="panel-title">Candidate Output</div><div class="panel-sub">Immutable hash + lifecycle state</div></div></div>
-            <div class="panel-pad">
-              <div class="grid-3"><div class="guard">Stage<br><strong id="algoStage">—</strong></div><div class="guard">Hash<br><strong id="algoHash">—</strong></div><div class="guard">Next<br><strong id="algoNext">—</strong></div></div>
-              <div id="algoResult" class="algo-result section">Build a candidate to inspect its blueprint and validation requirements.</div>
-            </div>
-          </article>
-        </div>
-        <div class="grid-2 section">
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Validation Pipeline</div><div class="panel-sub">No strategy skips evidence stages</div></div></div><div id="pipeline" class="panel-pad pipeline"></div></article>
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Candidate Library</div><div class="panel-sub"><span id="candidateCount">0</span> locally saved research candidates</div></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Name</th><th>Stage</th><th>Compiler</th><th>Next Gate</th><th>Hash</th></tr></thead><tbody id="candidateRows"><tr><td colspan="5" class="empty">No research algo candidates yet.</td></tr></tbody></table></div></article>
-        </div>
-      </section>
-
-      <section id="view-risk" class="view">
         <div class="grid-2">
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Independent Financial Authority</div><div class="panel-sub">AI cannot bypass this layer</div></div></div><div class="panel-pad guard-grid"><div class="guard">Mode<br><strong id="mode">—</strong></div><div class="guard">Gross exposure<br><strong id="gross">—</strong></div><div class="guard">Active symbols<br><strong id="activeSymbols">—</strong></div><div class="guard">Reconciliations<br><strong id="reconciliations">0</strong></div><div class="guard"><span class="good">●</span> Kill switch</div><div class="guard"><span class="good">●</span> Daily loss / drawdown gates</div><div class="guard"><span class="good">●</span> Order notional / exposure limits</div><div class="guard"><span class="good">●</span> Reconciliation freezes</div></div></article>
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Submitted DEMO Orders</div><div class="panel-sub">Broker-demo execution evidence</div></div></div><div class="table-wrap"><table class="table"><thead><tr><th>Symbol</th><th>Side</th><th>Qty</th><th>Broker Order ID</th></tr></thead><tbody id="orderRows"><tr><td colspan="4" class="empty">No governed runtime data yet.</td></tr></tbody></table></div></article>
+          <div class="panel"><div class="panel-head"><div><h2>Live Opportunity Radar</h2><p>Evidence-ranked setups from the active runtime</p></div><span class="badge backend_ready">Scanner</span></div><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>TF</th><th>Intent</th><th>Confidence</th><th>Policy</th></tr></thead><tbody id="homeOppRows"><tr><td colspan="5" class="empty">No fresh opportunities yet.</td></tr></tbody></table></div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Cognitive Loop</h2><p>Human-inspired functions, without claiming consciousness</p></div></div><div class="panel-body cognitive-loop"><div class="cognitive-step"><span>01</span><b>Perceive</b><p>Ticks, candles, depth, options, news and broker state.</p></div><div class="cognitive-step"><span>02</span><b>Orient</b><p>Regime, volatility, liquidity and HTF context.</p></div><div class="cognitive-step"><span>03</span><b>Recall</b><p>Working, episodic, semantic and failure memory.</p></div><div class="cognitive-step"><span>04</span><b>Reason</b><p>Specialists, forecasts and adversarial debate.</p></div><div class="cognitive-step"><span>05</span><b>Learn</b><p>Forward outcomes, drift and challenger evidence.</p></div></div></div>
         </div>
-        <div class="danger-notice notice section">Unrestricted real-money trading is not treated as “complete” merely because order-routing code exists. Broker-origin forward evidence, incident-free operation, release gates and explicit owner approval remain mandatory.</div>
-      </section>
 
-      <section id="view-capabilities" class="view">
-        <div class="metric-grid">
-          <div class="metric-card"><div class="metric-label">Total Catalogued</div><div id="capTotal" class="metric-value">0</div><div class="metric-foot">AURA product capabilities</div></div>
-          <div class="metric-card"><div class="metric-label">UI Connected</div><div id="capConnected" class="metric-value">0</div><div class="metric-foot">Operable in this owner PWA</div></div>
-          <div class="metric-card"><div class="metric-label">Backend Ready</div><div id="capBackend" class="metric-value">0</div><div class="metric-foot">Concrete code/test evidence</div></div>
-          <div class="metric-card"><div class="metric-label">Partial / Gated / Pending</div><div id="capGated" class="metric-value">0</div><div class="metric-foot">Not falsely advertised as complete</div></div>
-        </div>
-        <article class="panel section">
-          <div class="panel-head"><div><div class="panel-title">AURA A→Z Capability Matrix</div><div class="panel-sub">Client-facing truth layer: working, backend-ready, partial, externally gated, pending or blocked</div></div></div>
-          <div class="feature-toolbar"><input id="capSearch" class="input search" placeholder="Search AURA features…"><select id="capGroup" class="select"><option>All</option></select><select id="capStatus" class="select"><option>All</option><option value="ui_connected">UI Connected</option><option value="backend_ready">Backend Ready</option><option value="partial">Partial</option><option value="external_gate">External Gate</option><option value="pending">Pending</option><option value="blocked">Blocked</option></select></div>
-          <div id="featureGrid" class="feature-grid"></div>
-        </article>
-      </section>
-
-      <section id="view-owner" class="view">
         <div class="grid-3">
-          <article class="panel panel-pad"><div class="eyebrow">OWNER AUTHORITY</div><div class="panel-title section">Governed configuration & approvals</div><div class="mini section">Inspect system state, start/stop protected runtimes, create research candidates, review evidence and approve governed changes.</div></article>
-          <article class="panel panel-pad"><div class="eyebrow">DEVELOPER AI</div><div class="panel-title section">Monitor → propose → sandbox validate</div><div class="mini section">Maintenance AI can propose code/config changes under owner change-control. No silent auto-merge/deploy.</div></article>
-          <article class="panel panel-pad"><div class="eyebrow">FINANCIAL TRUTH</div><div class="panel-title section">Append-only corrections</div><div class="mini section">Reporting corrections do not rewrite original fills, broker truth, cash or position history.</div></article>
-        </div>
-        <div class="grid-2 section">
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Protected Owner Boundaries</div><div class="panel-sub">These are deliberate design constraints, not missing permissions</div></div></div><div class="panel-pad guard-grid"><div class="guard"><span class="bad">●</span> <strong>Fund transfer:</strong> blocked</div><div class="guard"><span class="bad">●</span> <strong>Withdrawal:</strong> blocked</div><div class="guard"><span class="good">●</span> <strong>Emergency stop:</strong> owner accessible</div><div class="guard"><span class="good">●</span> <strong>Research/evolution:</strong> owner accessible</div><div class="guard"><span class="good">●</span> <strong>Developer change control:</strong> owner gated</div><div class="guard"><span class="good">●</span> <strong>Live approval:</strong> explicit human gate</div></div></article>
-          <article class="panel"><div class="panel-head"><div><div class="panel-title">Runtime Log</div><div class="panel-sub">Local AURA process output</div></div></div><div class="panel-pad"><div id="logs" class="console">AURA app ready.</div></div></article>
+          <div class="panel"><div class="panel-head"><div><h2>AI Council</h2><p>Independent specialist evidence</p></div><span class="badge backend_ready">Backend ready</span></div><div class="panel-body agent-stack" id="homeAgents"></div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Safety Authority</h2><p>Non-negotiable financial boundaries</p></div></div><div class="panel-body guard-grid"><div class="guard-item good">Independent RiskEngine</div><div class="guard-item good">Native SL/TP required</div><div class="guard-item good">DEMO-only broker guard</div><div class="guard-item good">AI cannot bypass risk</div><div class="guard-item bad">Real-money disabled</div><div class="guard-item bad">Fund / withdrawal disabled</div></div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Research Pipeline</h2><p>Every strategy must earn promotion</p></div></div><div class="panel-body"><div class="pipeline" id="homePipeline"></div><div class="notice info" style="margin-top:10px">One-click Algo Studio compiles allow-listed strategy components into a RESEARCH candidate. It does not create a shortcut around validation.</div></div></div>
         </div>
       </section>
 
-      <div class="footer">AURA AI OS · broker-agnostic · evidence-driven · risk-first · local owner command center · unrestricted live money remains gated</div>
+      <section class="view" id="view-scanner">
+        <div class="page-head"><div><p class="eyebrow">MARKET INTELLIGENCE</p><h1>Market Scanner</h1><p>Multi-market, multi-timeframe opportunity discovery with data-quality, regime and evidence gates.</p></div><div class="head-actions"><span class="badge backend_ready">Backend implemented</span></div></div>
+        <div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Scanner Surface</h2><p>Active DEMO runtime opportunities are shown here now</p></div></div><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Timeframe</th><th>Intent</th><th>Confidence</th><th>Agent Policy</th></tr></thead><tbody id="scannerRows"><tr><td colspan="5" class="empty">Start AURA to populate live scanner results.</td></tr></tbody></table></div></div><div class="panel"><div class="panel-head"><div><h2>Coverage</h2><p>Connected feeds determine what can be scanned live</p></div></div><div class="panel-body feature-grid" id="scannerFeatures"></div></div></div>
+      </section>
+
+      <section class="view" id="view-charts">
+        <div class="page-head"><div><p class="eyebrow">VISUAL ANALYSIS</p><h1>Charts</h1><p>Trading-terminal workspace for multi-timeframe candles, indicators, structure, entries, invalidation and execution overlays.</p></div><div class="head-actions"><span class="badge partial">UI adapter pending</span></div></div>
+        <div class="panel"><div class="panel-head"><div><h2>XAUUSD · Multi-timeframe workspace</h2><p>Chart rendering adapter is not yet attached to this PWA; backend data/analysis remains separate.</p></div></div><div class="panel-body"><div class="placeholder-chart"><div class="fake-line"></div></div><div class="notice" style="margin-top:10px">This panel intentionally does not fake a live chart. The final adapter must render governed candle data plus EMA 8/21/50/200, VWAP, RSI, MACD, Bollinger/Keltner, volume and SMC overlays.</div></div></div>
+      </section>
+
+      <section class="view" id="view-opportunities">
+        <div class="page-head"><div><p class="eyebrow">EVIDENCE CARDS</p><h1>Opportunities</h1><p>Setup cards combine entry thesis, probability, invalidation, agent agreement, risk policy and source lineage.</p></div></div>
+        <div class="panel"><div class="panel-head"><div><h2>Latest governed opportunities</h2><p>No forecast is presented as certain.</p></div></div><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>TF</th><th>Intent</th><th>Confidence</th><th>Agent policy</th></tr></thead><tbody id="opportunityRows"><tr><td colspan="5" class="empty">No fresh opportunity snapshot.</td></tr></tbody></table></div></div>
+      </section>
+
+      <section class="view" id="view-trading">
+        <div class="page-head"><div><p class="eyebrow">PROTECTED EXECUTION</p><h1>Trading Desk</h1><p>Primary execution surface for protected MT5 DEMO today; manual/semi-auto tickets stay visibly separated until validated and wired.</p></div><div class="head-actions"><span class="badge ui_connected">MT5 DEMO surface</span></div></div>
+        <div class="grid-2">
+          <div class="panel"><div class="panel-head"><div><h2>Autonomous DEMO Control</h2><p>Uses the existing risk-approved MT5 autonomous runtime</p></div></div><div class="panel-body"><div class="trading-controls"><div class="field"><label>Max symbols</label><input id="maxSymbols" type="number" min="1" max="1000" value="10" /></div><div class="field"><label>Closed-candle batches</label><input id="maxBatches" type="number" min="1" max="1000000" value="100" /></div><button class="btn primary" id="startBtn">Start AURA</button><button class="btn" id="stopBtn">Stop</button><button class="btn danger" id="killBtn">Emergency Lock</button><button class="btn hidden" id="resetBtn">Reset Lock</button></div><div id="tradeMessage" class="notice info" style="margin-top:11px">Keep MetaTrader 5 open and logged into a DEMO account. The web UI never requests your MT5 password.</div></div></div>
+          <div class="panel"><div class="panel-head"><div><h2>Manual / Semi-auto Ticket</h2><p>Execution backend exists; owner ticket is not yet fully exposed.</p></div><span class="badge partial">Wiring pending</span></div><div class="panel-body form-grid"><div class="field"><label>Symbol</label><input value="XAUUSD" disabled /></div><div class="field"><label>Side</label><select disabled><option>BUY</option><option>SELL</option></select></div><div class="field"><label>Risk</label><input value="RiskEngine controlled" disabled /></div><div class="field"><label>Order type</label><select disabled><option>Market</option><option>Limit</option></select></div><div class="span-2"><button class="btn" disabled>Preview protected DEMO order</button></div></div></div>
+        </div>
+        <div class="panel"><div class="panel-head"><div><h2>Submitted DEMO Orders</h2><p>Broker-origin identifiers from the active runtime</p></div></div><div class="table-wrap"><table><thead><tr><th>Symbol</th><th>Side</th><th>Quantity</th><th>Broker order ID</th></tr></thead><tbody id="tradeOrderRows"><tr><td colspan="4" class="empty">No submitted orders yet.</td></tr></tbody></table></div></div>
+      </section>
+
+      <section class="view" id="view-portfolio">
+        <div class="page-head"><div><p class="eyebrow">PORTFOLIO SOURCE OF TRUTH</p><h1>Portfolio</h1><p>Positions, cash, equity, exposure, realized/unrealized P&L and reconciliation belong here.</p></div><div class="head-actions"><span class="badge backend_ready">Ledger implemented</span></div></div>
+        <div class="metric-grid"><div class="metric-card"><div class="metric-label">Equity</div><div class="metric-value" id="portfolioEquity">—</div></div><div class="metric-card"><div class="metric-label">Gross Exposure</div><div class="metric-value" id="portfolioGross">—</div></div><div class="metric-card"><div class="metric-label">Reconciliations</div><div class="metric-value" id="portfolioRecons">0</div></div><div class="metric-card"><div class="metric-label">Orders</div><div class="metric-value" id="portfolioOrders">0</div></div><div class="metric-card"><div class="metric-label">Fills</div><div class="metric-value" id="portfolioFills">0</div></div><div class="metric-card"><div class="metric-label">Currency</div><div class="metric-value" id="portfolioCurrency">—</div></div></div>
+        <div class="panel"><div class="panel-head"><div><h2>Portfolio capabilities</h2><p>Full multi-broker read model still needs local PWA bridge wiring.</p></div></div><div class="panel-body feature-grid" id="portfolioFeatures"></div></div>
+      </section>
+
+      <section class="view" id="view-risk">
+        <div class="page-head"><div><p class="eyebrow">INDEPENDENT FINANCIAL AUTHORITY</p><h1>Risk Center</h1><p>No model, CEO agent or owner chat command can bypass the deterministic RiskEngine.</p></div></div>
+        <div class="grid-2 equal"><div class="panel"><div class="panel-head"><div><h2>Runtime Risk State</h2><p>Current DEMO runtime snapshot</p></div></div><div class="panel-body guard-grid"><div class="guard-item good">Order risk cap</div><div class="guard-item good">Gross exposure cap</div><div class="guard-item good">Symbol exposure cap</div><div class="guard-item good">Daily loss cap</div><div class="guard-item good">Drawdown cap</div><div class="guard-item good" id="riskKillCard">Kill switch clear</div></div></div><div class="panel"><div class="panel-head"><div><h2>Authority Chain</h2><p>Financial permission is deterministic</p></div></div><div class="panel-body"><div class="flow"><span class="flow-step">SIGNAL</span><span class="flow-arrow">→</span><span class="flow-step">CEO</span><span class="flow-arrow">→</span><span class="flow-step">RISK POLICY</span><span class="flow-arrow">→</span><span class="flow-step">RISK ENGINE</span><span class="flow-arrow">→</span><span class="flow-step">ORDER</span><span class="flow-arrow">→</span><span class="flow-step">BROKER</span></div><div class="notice good" style="margin-top:12px">Fund transfer and withdrawal remain outside AURA automation authority.</div></div></div></div>
+        <div class="panel"><div class="panel-head"><div><h2>Risk capabilities</h2></div></div><div class="panel-body feature-grid" id="riskFeatures"></div></div>
+      </section>
+
+      <section class="view" id="view-journal"><div class="page-head"><div><p class="eyebrow">AUDITABLE EXPERIENCE</p><h1>Trade Journal</h1><p>Executed trades, missed trades, rationale, fills, costs, outcomes and post-mortems converge here.</p></div><div class="head-actions"><span class="badge backend_ready">Lineage backend</span></div></div><div class="notice info">The financial WAL, decision lineage and outcome-learning layers exist. A polished journal timeline is a UI integration task; this page does not invent trade history that is not attached.</div></section>
+
+      <section class="view" id="view-performance"><div class="page-head"><div><p class="eyebrow">MEASURED EVIDENCE</p><h1>Performance Analytics</h1><p>Equity curve, expectancy, profit factor, drawdown, calibration and strategy/regime attribution.</p></div></div><div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Equity / P&L</h2><p>Awaiting unified read-model attachment</p></div></div><div class="panel-body"><div class="placeholder-chart"><div class="fake-line"></div></div></div></div><div class="panel"><div class="panel-head"><div><h2>Evidence standard</h2></div></div><div class="panel-body"><div class="notice">AURA does not treat headline win rate as proof. Performance decisions should use expectancy, costs, drawdown, robustness, sample size, calibration and regime stability.</div></div></div></div></section>
+
+      <section class="view" id="view-agents"><div class="page-head"><div><p class="eyebrow">MULTI-AGENT INTELLIGENCE</p><h1>AI Agents</h1><p>Independent specialists produce structured evidence; disagreement is preserved instead of hidden.</p></div><div class="head-actions"><span class="badge backend_ready">Council implemented</span></div></div><div class="feature-grid" id="agentFeatures"></div></section>
+
+      <section class="view" id="view-ceo"><div class="page-head"><div><p class="eyebrow">EXECUTIVE SYNTHESIS</p><h1>CEO Decision Center</h1><p>Reliability-weighted synthesis of support, opposition, abstentions, uncertainty and invalidation. CEO has no broker credentials.</p></div></div><div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Decision anatomy</h2></div></div><div class="panel-body timeline"><div class="timeline-item"><i class="timeline-dot"></i><div><b>Collect evidence</b><p>Specialists submit point-in-time evidence and confidence.</p></div></div><div class="timeline-item"><i class="timeline-dot"></i><div><b>Challenge thesis</b><p>Bull, bear and counterfactual review expose disagreement.</p></div></div><div class="timeline-item"><i class="timeline-dot"></i><div><b>Reliability weight</b><p>Market/regime-specific reliability informs synthesis.</p></div></div><div class="timeline-item"><i class="timeline-dot"></i><div><b>Risk veto</b><p>CEO remains advisory until the RiskEngine approves.</p></div></div></div></div><div class="panel"><div class="panel-head"><div><h2>Latest decision</h2><p>Fresh agent read-model bridge is not yet attached here</p></div></div><div class="panel-body"><div class="empty">No fresh CEO memo attached.</div></div></div></div></section>
+
+      <section class="view" id="view-forecast"><div class="page-head"><div><p class="eyebrow">PROBABILISTIC FORECASTS</p><h1>Forecast Center</h1><p>Heterogeneous model outputs normalized into calibrated probabilities/quantiles with disagreement and reliability visible.</p></div></div><div class="notice info">AURA can forecast, but it must not claim certainty. This surface will show probability distributions, calibration, horizon and invalidation rather than a guaranteed prediction.</div><div class="feature-grid" id="forecastFeatures" style="margin-top:12px"></div></section>
+
+      <section class="view" id="view-news"><div class="page-head"><div><p class="eyebrow">EXTERNAL INTELLIGENCE</p><h1>News / Macro / Sentiment</h1><p>Trusted news, macro and event context are timestamped, source-scored, contradiction-checked and fed into evidence.</p></div></div><div class="feature-grid" id="newsFeatures"></div></section>
+
+      <section class="view" id="view-knowledge"><div class="page-head"><div><p class="eyebrow">TRUSTED MEMORY</p><h1>Knowledge / RAG</h1><p>Point-in-time retrieval, provenance, trust weighting, contradiction handling and negative/failure memory.</p></div></div><div class="feature-grid" id="knowledgeFeatures"></div></section>
+
+      <section class="view" id="view-strategies">
+        <div class="page-head"><div><p class="eyebrow">STRATEGY INTELLIGENCE</p><h1>Strategy Library</h1><p>One place for owner ideas, learned setups, AI-generated candidates, versions, evidence and champion/challenger state.</p></div><div class="head-actions"><button class="btn primary" data-open-view="algo">Create Algo Candidate</button></div></div>
+        <div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Immutable candidates created in this PWA</h2><p>Research-only until validation and promotion</p></div></div><div class="panel-body" id="strategyCandidates"><div class="empty">No local Algo Studio candidates yet.</div></div></div><div class="panel"><div class="panel-head"><div><h2>Strategy engine capabilities</h2></div></div><div class="panel-body feature-grid" id="strategyFeatures"></div></div></div>
+      </section>
+
+      <section class="view" id="view-algo">
+        <div class="page-head"><div><p class="eyebrow">ONE-CLICK STRATEGY → ALGO</p><h1>Algo Studio</h1><p>Turn a structured setup into an immutable executable RESEARCH algorithm candidate using allow-listed causal primitives. Portfolio risk and live approval stay outside the strategy.</p></div><div class="head-actions"><span class="badge ui_connected">Compiler connected</span></div></div>
+        <div class="grid-2">
+          <div class="panel"><div class="panel-head"><div><h2>Build Algo Candidate</h2><p>No arbitrary code, leverage, quantity or broker permissions</p></div></div><form class="panel-body form-grid" id="algoForm"><div class="field"><label>Strategy name</label><input id="algoName" type="text" maxlength="120" value="XAUUSD Liquidity Momentum" required /></div><div class="field"><label>Markets</label><input id="algoMarkets" type="text" value="XAUUSD" required /></div><div class="field"><label>Timeframes</label><input id="algoTimeframes" type="text" value="5m,15m" required /></div><div class="field"><label>Mode</label><input value="RESEARCH ONLY" disabled /></div><div class="field span-2"><label>Falsifiable thesis</label><textarea id="algoThesis" maxlength="1600" required>After a liquidity sweep and structural break, momentum aligned with higher participation may persist long enough to capture a bounded move before regime invalidation.</textarea></div><div class="field span-2"><label>Entry primitives · choose 1–3</label><div class="choice-group" id="algoEntries"></div></div><div class="field span-2"><label>Confirmations · choose up to 5</label><div class="choice-group" id="algoConfirmations"></div></div><div class="field span-2"><label>Exit primitives · choose 1–3</label><div class="choice-group" id="algoExits"></div></div><div class="span-2"><button class="btn primary" type="submit" id="buildAlgoBtn">Compile Research Algo</button></div></form></div>
+          <div class="panel"><div class="panel-head"><div><h2>Validation Gate</h2><p>Compilation is only step one</p></div></div><div class="panel-body"><div class="pipeline" id="algoPipeline"></div><div class="notice good" style="margin-top:10px">The compiler produces a strategy object that can run in AURA's shared strategy path. It cannot own portfolio-risk parameters, broker credentials, fund transfer, withdrawal or live approval.</div><div class="algo-result" id="algoResult" style="margin-top:10px">Choose components and compile a research candidate.</div></div></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-backtest"><div class="page-head"><div><p class="eyebrow">REPRODUCIBLE VALIDATION</p><h1>Backtesting & Stress Lab</h1><p>Causal backtest → purged walk-forward → Monte Carlo → holdout → parameter stability → regime validation → forward paper/demo.</p></div><div class="head-actions"><span class="badge backend_ready">Engines implemented</span></div></div><div class="panel"><div class="panel-head"><div><h2>Validation Pipeline</h2><p>UI execution wiring is still being consolidated</p></div></div><div class="panel-body"><div class="pipeline" id="backtestPipeline"></div><div class="feature-grid" id="backtestFeatures" style="margin-top:12px"></div></div></div></section>
+
+      <section class="view" id="view-learning"><div class="page-head"><div><p class="eyebrow">CONTROLLED SELF-IMPROVEMENT</p><h1>Learning / Evolution</h1><p>AURA learns from forward outcomes, failures, missed opportunities, model reliability and regimes — then creates challengers instead of silently rewriting live logic.</p></div></div><div class="feature-grid" id="learningFeatures"></div></section>
+
+      <section class="view" id="view-brokers"><div class="page-head"><div><p class="eyebrow">BROKER-AGNOSTIC CONNECTIVITY</p><h1>Brokers & Data Feeds</h1><p>Normalized interfaces across MT5/Exness, Dhan, Angel One, Binance, Kraken, OANDA and future adapters.</p></div></div><div class="feature-grid" id="brokerFeatures"></div></section>
+
+      <section class="view" id="view-alerts"><div class="page-head"><div><p class="eyebrow">NOTIFICATIONS</p><h1>Alerts & Automation</h1><p>Delivery status must be validated per destination; notification channels do not receive unrestricted broker authority.</p></div></div><div class="feature-grid" id="alertFeatures"></div></section>
+
+      <section class="view" id="view-health"><div class="page-head"><div><p class="eyebrow">OBSERVABILITY</p><h1>System Health</h1><p>Runtime state, broker/data/AI readiness, release gates, logs, reconciliation and incident visibility.</p></div></div><div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Runtime Log</h2><p>Local child process output</p></div></div><div class="panel-body"><pre class="logs" id="runtimeLogs">AURA app ready.</pre></div></div><div class="panel"><div class="panel-head"><div><h2>Operational capabilities</h2></div></div><div class="panel-body feature-grid" id="healthFeatures"></div></div></div></section>
+
+      <section class="view" id="view-developer">
+        <div class="page-head"><div><p class="eyebrow">OWNER-GATED ENGINEERING</p><h1>Developer / Self-repair AI</h1><p>Monitor, diagnose, propose and sandbox-validate code changes. No automatic merge/deploy and no fund authority.</p></div><div class="head-actions"><span class="badge backend_ready">Maintenance backend</span></div></div>
+        <div class="grid-2"><div class="panel"><div class="panel-head"><div><h2>Authority model</h2></div></div><div class="panel-body owner-access"><div class="access-card"><b>Observe</b><small>System health, errors and regressions.</small></div><div class="access-card"><b>Propose</b><small>Generate bounded code-change plans.</small></div><div class="access-card"><b>Validate</b><small>Run changes in isolated worktree/tests.</small></div><div class="access-card"><b>Approve</b><small>Owner approval required before protected changes.</small></div></div></div><div class="panel"><div class="panel-head"><div><h2>Hard exclusions</h2></div></div><div class="panel-body guard-grid"><div class="guard-item bad">No automatic merge</div><div class="guard-item bad">No silent live deploy</div><div class="guard-item bad">No withdrawal</div><div class="guard-item bad">No fund transfer</div><div class="guard-item bad">No risk bypass</div><div class="guard-item good">Full audit trail</div></div></div></div><div class="feature-grid" id="developerFeatures"></div>
+      </section>
+
+      <section class="view" id="view-settings"><div class="page-head"><div><p class="eyebrow">CONFIGURATION</p><h1>Settings</h1><p>Unified configuration for markets, timeframes, providers, risk profiles, alerts and UI preferences. Secrets must never be echoed into the page or repository.</p></div></div><div class="panel"><div class="panel-head"><div><h2>Current local launch defaults</h2></div></div><div class="panel-body form-grid"><div class="field"><label>Max symbols</label><input value="10" disabled /></div><div class="field"><label>Closed-candle batches</label><input value="100" disabled /></div><div class="field"><label>Execution boundary</label><input value="MT5 DEMO / research" disabled /></div><div class="field"><label>Live money</label><input value="LOCKED" disabled /></div></div></div></section>
+
+      <section class="view" id="view-owner">
+        <div class="page-head"><div><p class="eyebrow">FULL OWNER VISIBILITY</p><h1>Owner Control</h1><p>A-to-Z capability inventory with truthful status, evidence paths and hard authority boundaries.</p></div><div class="head-actions"><button class="btn" id="refreshOwner">Refresh inventory</button></div></div>
+        <div class="capability-summary" id="capabilitySummary"></div>
+        <div class="panel" style="margin-top:12px"><div class="panel-head"><div><h2>AURA Capability Matrix</h2><p>UI connected ≠ backend ready ≠ externally validated</p></div></div><div class="table-wrap"><table><thead><tr><th>Group</th><th>Capability</th><th>Status</th><th>Description</th><th>Evidence</th></tr></thead><tbody id="capabilityRows"><tr><td colspan="5" class="empty">Loading capability inventory...</td></tr></tbody></table></div></div>
+        <div class="notice" style="margin-top:12px"><b>Permanent safety:</b> Real-money disabled in this PWA. Fund transfer and withdrawal are intentionally blocked. Owner access governs AURA research, DEMO execution, configuration and development without granting bank-like transfer authority.</div>
+      </section>
     </div>
   </main>
 </div>
+
+<button class="assistant-fab" id="assistantFab" aria-label="Open AURA assistant">A</button>
+<aside class="assistant" id="assistantDrawer">
+  <div class="assistant-head"><div><b>AURA Operator Assistant</b><small>Local deterministic status helper · provider AI bridge remains separate</small></div><div><button class="icon-btn" id="voiceBtn" title="Voice input">🎙</button> <button class="icon-btn" id="closeAssistant">×</button></div></div>
+  <div class="chat-body" id="chatBody"><div class="bubble aura">Hi. I can explain current runtime status, safety, capabilities and local Algo Studio candidates. I will not pretend a disconnected backend is live.</div></div>
+  <form class="chat-form" id="chatForm"><input id="chatInput" maxlength="500" placeholder="Ask AURA status, risk, brokers, algo..." /><button type="submit">↗</button></form>
+</aside>
+<div class="toast" id="toast"></div>
+
+<!-- Automated safety assertions: DEMO ONLY · Real-money disabled · /api/start · /api/kill -->
 <script src="/app.js" defer></script>
 </body>
 </html>
