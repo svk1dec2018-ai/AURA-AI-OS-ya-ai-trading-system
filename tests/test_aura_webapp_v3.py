@@ -1,0 +1,109 @@
+from pathlib import Path
+
+import pytest
+
+from aura.webapp import server as base
+from aura.webapp import server_v3
+
+
+def test_v3_mt5_preflight_delegates_to_read_only_validator(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        server_v3,
+        "mt5_demo_preflight",
+        lambda max_symbols: {
+            "ok": True,
+            "demo_verified": True,
+            "connected": True,
+            "tradable_symbol_count": max_symbols,
+            "account": {"server": "Demo-Server"},
+            "symbols": [],
+        },
+    )
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    payload = controller.mt5_preflight(max_symbols=25)
+    assert payload["ok"] is True
+    assert payload["demo_verified"] is True
+    assert payload["tradable_symbol_count"] == 25
+
+
+def test_v3_start_fails_closed_when_mt5_preflight_is_not_ready(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(
+        controller,
+        "mt5_preflight",
+        lambda max_symbols: {
+            "ok": False,
+            "error": "terminal not connected",
+            "tradable_symbol_count": 0,
+        },
+    )
+    with pytest.raises(RuntimeError, match="MT5 DEMO preflight failed"):
+        controller.start(max_symbols=10, max_batches=100)
+
+
+def test_v3_start_requires_tradable_symbols(tmp_path: Path, monkeypatch) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(
+        controller,
+        "mt5_preflight",
+        lambda max_symbols: {
+            "ok": True,
+            "demo_verified": True,
+            "account": {"server": "Demo-Server"},
+            "tradable_symbol_count": 0,
+        },
+    )
+    with pytest.raises(RuntimeError, match="no tradable symbols"):
+        controller.start(max_symbols=10, max_batches=100)
+
+
+def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(
+        controller,
+        "mt5_preflight",
+        lambda max_symbols: {
+            "ok": True,
+            "demo_verified": True,
+            "account": {"server": "Demo-Server"},
+            "tradable_symbol_count": 123,
+        },
+    )
+    monkeypatch.setattr(
+        base.AuraWebController,
+        "start",
+        lambda self, max_symbols, max_batches: {
+            "ok": True,
+            "started": True,
+            "max_symbols": max_symbols,
+            "max_batches": max_batches,
+        },
+    )
+    payload = controller.start(max_symbols=10, max_batches=100)
+    assert payload["started"] is True
+    assert payload["mt5_preflight"]["demo_verified"] is True
+    assert payload["mt5_preflight"]["server"] == "Demo-Server"
+    assert payload["mt5_preflight"]["tradable_symbol_count"] == 123
+
+
+def test_one_click_launcher_uses_fresh_v3_server_after_setup() -> None:
+    root = Path(__file__).resolve().parents[1]
+    launcher = (root / "START_AURA_AI_OS.cmd").read_text(encoding="utf-8")
+    assert 'pip install --disable-pip-version-check -e ".[mt5]"' in launcher
+    assert "MetaTrader5 bridge ready" in launcher
+    assert "aura.webapp.server_v3 --port 8766 --open" in launcher
+    assert "http://127.0.0.1:8766/api/mt5/preflight" in launcher
+    assert 'start "" "http://127.0.0.1:8766' not in launcher
+
+
+def test_distribution_exposes_owner_and_mt5_demo_entrypoints() -> None:
+    root = Path(__file__).resolve().parents[1]
+    text = (root / "pyproject.toml").read_text(encoding="utf-8")
+    assert 'aura-owner-app = "aura.webapp.server_v3:main"' in text
+    assert 'aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"' in text

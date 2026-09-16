@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aura-ai-os"
-version = "0.1.0"
-description = "Broker-agnostic multi-market trading operating system foundation"
+version = "0.2.0"
+description = "Governed broker-agnostic multi-market AI trading operating system"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -15,6 +15,8 @@ dependencies = [
 ]
 
 [project.scripts]
+aura-owner-app = "aura.webapp.server_v3:main"
+aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"
 aura-free-ai = "aura.ai.free_ai_cli:main"
 aura-maintenance = "aura.maintenance.cli:main"
 
