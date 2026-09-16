@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
@@ -240,7 +241,16 @@ async def build_mt5_all_market_paper_daemon(
     config = config or MT5AllMarketPaperConfig()
     config.state_dir.mkdir(parents=True, exist_ok=True)
     gateway = gateway or OfficialMT5Gateway()
-    account = gateway.connect_demo(credentials or load_mt5_demo_credentials_from_env())
+    if credentials is not None:
+        account = gateway.connect_demo(credentials)
+    else:
+        try:
+            environment_credentials = load_mt5_demo_credentials_from_env()
+        except RuntimeError:
+            terminal_path = os.environ.get("AURA_MT5_TERMINAL_PATH", "").strip() or None
+            account = gateway.connect_current_demo_session(terminal_path)
+        else:
+            account = gateway.connect_demo(environment_credentials)
 
     try:
         discovered = tuple(item for item in gateway.discover_universe() if item.tradable)

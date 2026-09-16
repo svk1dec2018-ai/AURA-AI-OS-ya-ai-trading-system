@@ -4,13 +4,14 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from typing import Any, Protocol
 
 from aura.agents.audit import AgentAuditJournal
 from aura.agents.models import AgentContext
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, PortfolioSnapshot
-from aura.execution.paper import PaperBroker
 from aura.execution.reconciliation import (
+    BrokerOrderSnapshot,
+    BrokerPositionSnapshot,
     ReconciliationEngine,
     ReconciliationReport,
     ReconciliationSupervisor,
@@ -27,6 +28,23 @@ BatchMetadataProvider = Callable[
 ]
 RequestedQuantityProvider = Callable[[str], Decimal]
 DecisionTimeProvider = Callable[[datetime], datetime]
+
+
+class ExecutionBroker(Protocol):
+    """Minimal broker surface shared by internal paper and broker DEMO runtimes."""
+
+    async def connect(self) -> None: ...
+
+    async def disconnect(self) -> None: ...
+
+    async def on_candle(self, candle: NormalizedCandle) -> list[Fill]: ...
+
+    async def submit_order(self, order: OrderRequest) -> str: ...
+
+    def open_order_snapshots(self) -> list[BrokerOrderSnapshot]: ...
+
+    def position_snapshots(self) -> list[BrokerPositionSnapshot]: ...
+
 
 _HTF_MAP = {
     "1m": "5m",
@@ -67,11 +85,13 @@ class MultiMarketPaperStep:
 
 
 class MultiMarketPaperCoordinator:
-    """Coordinated multi-market paper loop with explicit decision-time authority.
+    """Coordinated multi-market execution loop with explicit decision-time authority.
 
-    Live runtimes default to wall-clock capture. Deterministic replay must inject
-    an event/captured-time provider so replay never silently substitutes today's
-    wall clock for the original decision timestamp.
+    Despite the historical class name, the broker is intentionally protocol-based:
+    internal paper simulation and a guarded DEMO broker can share the exact scanner,
+    allocation, financial journal and reconciliation path. Live runtimes default to
+    wall-clock capture. Deterministic replay must inject an event/captured-time
+    provider so replay never silently substitutes today's wall clock.
     """
 
     def __init__(
@@ -79,7 +99,7 @@ class MultiMarketPaperCoordinator:
         *,
         scanner: MultiMarketIntelligenceScanner,
         allocator: PortfolioRiskCoordinator,
-        broker: PaperBroker,
+        broker: ExecutionBroker,
         ledger: PortfolioLedger,
         financial_journal: FinancialEventJournal,
         agent_audit_journal: AgentAuditJournal,

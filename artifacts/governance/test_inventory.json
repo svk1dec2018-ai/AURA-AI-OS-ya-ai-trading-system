@@ -1951,6 +1951,24 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_mt5_current_session.py",
+      "phase_coverage": [
+        5
+      ],
+      "sha256": "503a4e2fc146def40204dea6773fa479fcbc4968a603b2f1f1f878d1232927cc",
+      "source_dependencies": [
+        "aura/data/mt5_demo.py"
+      ],
+      "static_test_functions": 3,
+      "test_classes": [],
+      "test_functions": [
+        "test_current_demo_session_reused_without_credentials",
+        "test_current_session_rejects_disconnected_terminal",
+        "test_current_session_rejects_non_demo_account"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_mt5_demo_readiness.py",
       "phase_coverage": [
         5,
@@ -3399,7 +3417,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 600,
-    "test_modules": 152
+    "static_test_functions": 603,
+    "test_modules": 153
   }
 }
