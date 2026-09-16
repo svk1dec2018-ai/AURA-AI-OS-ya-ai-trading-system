@@ -15,7 +15,7 @@ echo.
 
 where git >nul 2>&1
 if %errorlevel%==0 (
-  echo [1/5] Checking latest AURA main branch...
+  echo [1/6] Checking latest AURA main branch...
   git pull --ff-only origin main
   if errorlevel 1 (
     echo.
@@ -24,7 +24,7 @@ if %errorlevel%==0 (
     echo.
   )
 ) else (
-  echo [1/5] Git not found - using current local AURA files.
+  echo [1/6] Git not found - using current local AURA files.
 )
 
 call :detect_python
@@ -33,7 +33,7 @@ if not defined AURA_PYTHON (
   echo Python 3.11 or newer was not detected.
   where winget >nul 2>&1
   if %errorlevel%==0 (
-    echo [2/5] Installing free Python 3.11 automatically with Windows Package Manager...
+    echo [2/6] Installing free Python 3.11 automatically with Windows Package Manager...
     winget install --id Python.Python.3.11 -e --source winget --accept-package-agreements --accept-source-agreements --silent
     if errorlevel 1 goto :python_missing
     call :detect_python
@@ -43,28 +43,32 @@ if not defined AURA_PYTHON (
 if not defined AURA_PYTHON goto :python_missing
 
 if not exist ".venv\Scripts\python.exe" (
-  echo [2/5] Creating local AURA Python environment...
+  echo [2/6] Creating local AURA Python environment...
   %AURA_PYTHON% -m venv .venv
   if errorlevel 1 goto :setup_failed
   set "AURA_PYTHON=.venv\Scripts\python.exe"
 ) else (
-  echo [2/5] Local Python environment ready.
+  echo [2/6] Local Python environment ready.
   set "AURA_PYTHON=.venv\Scripts\python.exe"
 )
 
-echo [3/5] Synchronizing AURA and official MetaTrader5 bridge...
+echo [3/6] Synchronizing AURA and official MetaTrader5 bridge...
 "%AURA_PYTHON%" -m pip install --disable-pip-version-check -e ".[mt5]"
 if errorlevel 1 goto :setup_failed
 
-echo [4/5] Verifying MetaTrader5 Python bridge...
+echo [4/6] Verifying MetaTrader5 Python bridge...
 "%AURA_PYTHON%" -c "import MetaTrader5 as mt5; print('MetaTrader5 bridge ready:', getattr(mt5, '__version__', 'installed'))"
 if errorlevel 1 goto :mt5_bridge_failed
 
-echo [5/5] Opening AURA AI OS...
+echo [5/6] Closing any stale AURA web server on port 8765...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$connections=Get-NetTCPConnection -LocalPort 8765 -State Listen -ErrorAction SilentlyContinue; foreach($c in $connections){$p=Get-CimInstance Win32_Process -Filter ('ProcessId='+$c.OwningProcess) -ErrorAction SilentlyContinue; if($p -and $p.CommandLine -match 'aura\.webapp\.server(_v3)?'){Write-Host ('Stopping stale AURA server PID '+$p.ProcessId); Stop-Process -Id $p.ProcessId -Force -ErrorAction SilentlyContinue}}" >nul 2>&1
+timeout /t 1 /nobreak >nul
+
+echo [6/6] Opening AURA AI OS with MT5 preflight...
 echo.
 echo Browser address: http://127.0.0.1:8765
 echo Keep this window open while using AURA.
-echo MT5 connectivity and symbols are checked inside the AURA app.
+echo The Command Center will show MT5 DEMO connection and live broker symbols.
 echo.
 "%AURA_PYTHON%" -m aura.webapp.server_v3 --open
 set "AURA_EXIT=%errorlevel%"
@@ -72,7 +76,8 @@ set "AURA_EXIT=%errorlevel%"
 echo.
 if not "%AURA_EXIT%"=="0" (
   echo AURA exited with code %AURA_EXIT%.
-  echo Check the message above, then run this launcher again.
+  echo If port 8765 is still in use, close every old AURA black CMD window and run this launcher again.
+  echo Otherwise check the message above and retry.
 ) else (
   echo AURA stopped normally.
 )
@@ -114,15 +119,12 @@ if exist "%ProgramFiles%\Python313\python.exe" set "AURA_PYTHON=^"%ProgramFiles%
 if defined AURA_PYTHON exit /b 0
 if exist "%ProgramFiles%\Python312\python.exe" set "AURA_PYTHON=^"%ProgramFiles%\Python312\python.exe^""
 if defined AURA_PYTHON exit /b 0
-if exist "%ProgramFiles%\Python311\python.exe" set "AURA_PYTHON=^"%ProgramFiles%\Python311\python.exe^""
+if exist "%ProgramFiles%\Python311\python.exe" set "AURA_PYTHON=^"%ProgramFiles%\Python\Python311\python.exe^""
 exit /b 0
 
 :python_missing
 echo.
 echo ERROR: Working Python 3.11 or newer could not be started.
-echo The launcher tried py, python, python3, common Windows install paths,
-echo and Windows Package Manager when available.
-echo.
 echo Install Python 3.11+ from the Microsoft Store or python.org, then run this file again.
 pause
 exit /b 1
