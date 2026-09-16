@@ -2750,6 +2750,10 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/webapp/operator_assistant.py",
+        "to": "aura/interface/command_center.py"
+      },
+      {
         "from": "aura/webapp/read_models.py",
         "to": "aura/persistence/wal.py"
       },
@@ -2768,6 +2772,18 @@
       {
         "from": "aura/webapp/server.py",
         "to": "aura/webapp/catalog.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/webapp/operator_assistant.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/webapp/read_models.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/webapp/security.py"
       },
       {
         "from": "examples/check_angel_one_account.py",
@@ -6550,6 +6566,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 8500,
+      "path": "aura/webapp/operator_assistant.py",
+      "sha256": "cc841b86675f7f9330101bf93d5757174d984c5d20cef97ad404663a679a03aa"
+    },
+    {
+      "asset_class": "python",
       "bytes": 5443,
       "path": "aura/webapp/read_models.py",
       "sha256": "aaa7e7d214f142b1654c37d9cd2743f0521e1abbbf6fec6fd55bafb6d838f5ea"
@@ -6562,9 +6584,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 22287,
+      "bytes": 25206,
       "path": "aura/webapp/server.py",
-      "sha256": "9e6a691bf2425eb88807a14b71ac63a4b3655b5813df317464d81b8667778d93"
+      "sha256": "8d26489b8953498a5749ac05f63470984fac6845e30da4e6fc0f089c8c0d4ef9"
     },
     {
       "asset_class": "repository_asset",
@@ -8007,13 +8029,13 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 220,
+        "line": 259,
         "path": "aura/webapp/server.py"
       },
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 587,
+        "line": 664,
         "path": "aura/webapp/server.py"
       },
       {
@@ -8065,6 +8087,7 @@
       "aura/runtime/mt5_learning_daemon.py",
       "aura/runtime/mt5_paper_daemon.py",
       "aura/webapp/catalog.py",
+      "aura/webapp/operator_assistant.py",
       "aura/webapp/read_models.py",
       "aura/webapp/security.py"
     ]
@@ -14611,6 +14634,28 @@
       "component": "webapp",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/interface/command_center.py"
+      ],
+      "lines": 197,
+      "module": "aura.webapp.operator_assistant",
+      "parsed": true,
+      "path": "aura/webapp/operator_assistant.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "cc841b86675f7f9330101bf93d5757174d984c5d20cef97ad404663a679a03aa",
+      "standard_library_dependencies": [
+        "__future__",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/persistence/wal.py"
       ],
       "lines": 149,
@@ -14662,9 +14707,12 @@
         "aura/research/autonomy.py",
         "aura/research/blueprint_compiler.py",
         "aura/research/strategy_factory.py",
-        "aura/webapp/catalog.py"
+        "aura/webapp/catalog.py",
+        "aura/webapp/operator_assistant.py",
+        "aura/webapp/read_models.py",
+        "aura/webapp/security.py"
       ],
-      "lines": 595,
+      "lines": 672,
       "module": "aura.webapp.server",
       "parsed": true,
       "path": "aura/webapp/server.py",
@@ -14673,7 +14721,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "9e6a691bf2425eb88807a14b71ac63a4b3655b5813df317464d81b8667778d93",
+      "sha256": "8d26489b8953498a5749ac05f63470984fac6845e30da4e6fc0f089c8c0d4ef9",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -19307,7 +19355,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "225eef00719ce5126fe4e3840e652b4d9a025712ecb20ed4f715d858c510b63f",
+  "repository_tree_sha256": "91d6cb3d65b6601c67491833bb84d1e755e2085f326eee0805459895fd5c3bcd",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19857,13 +19905,13 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 220,
+      "line": 259,
       "path": "aura/webapp/server.py"
     },
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 587,
+      "line": 664,
       "path": "aura/webapp/server.py"
     },
     {
@@ -19895,9 +19943,9 @@
     "directly_tested_source_modules": 177,
     "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 382,
-    "repository_files": 461,
-    "source_modules": 202,
+    "python_modules": 383,
+    "repository_files": 462,
+    "source_modules": 203,
     "static_test_functions": 611,
     "stub_candidates": 95,
     "test_modules": 154,
