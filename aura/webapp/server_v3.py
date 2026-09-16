@@ -9,14 +9,19 @@ from urllib.parse import parse_qs, urlparse
 
 from aura.webapp import server as base
 from aura.webapp.mt5_preflight import mt5_demo_preflight
+from aura.webapp.readiness import build_readiness
 from aura.webapp.security import owner_auth_required
 
 
 class AuraWebControllerV3(base.AuraWebController):
-    """Owner controller with explicit MT5 connectivity/symbol preflight."""
+    """Canonical owner controller with explicit MT5 connectivity and release readiness."""
 
     def mt5_preflight(self, *, max_symbols: int = 200) -> dict:
         return mt5_demo_preflight(max_symbols=max_symbols)
+
+    def readiness(self) -> dict:
+        preflight = self.mt5_preflight(max_symbols=100)
+        return build_readiness(self.status(), preflight)
 
     def start(self, *, max_symbols: int = 10, max_batches: int = 100) -> dict:
         preflight = self.mt5_preflight(max_symbols=max(50, max_symbols))
@@ -44,7 +49,7 @@ atexit.register(CONTROLLER.shutdown)
 
 
 class AuraRequestHandlerV3(base.AuraRequestHandler):
-    server_version = "AuraLocalPWA/3.0"
+    server_version = "AuraLocalPWA/3.1"
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -56,20 +61,27 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             except (TypeError, ValueError, RuntimeError, OSError) as exc:
                 self._json({"ok": False, "error": str(exc)}, 400)
             return
+        if parsed.path == "/api/readiness":
+            try:
+                self._json(CONTROLLER.readiness())
+            except (TypeError, ValueError, RuntimeError, OSError) as exc:
+                self._json({"ok": False, "error": str(exc)}, 400)
+            return
         super().do_GET()
 
     def _serve_static(self, request_path: str) -> None:
-        # Inject the MT5 owner bridge without duplicating the large client shell.
+        # Inject product bridges without duplicating the large client shell.
         if request_path in {"", "/", "/index.html"}:
             index_path = base.STATIC_DIR / "index.html"
             text = index_path.read_text(encoding="utf-8")
             marker = '<script src="/app.js" defer></script>'
-            injection = (
-                '<script src="/mt5-bridge.js" defer></script>\n' + marker
-                if "/mt5-bridge.js" not in text
-                else marker
-            )
-            text = text.replace(marker, injection)
+            scripts: list[str] = []
+            if "/mt5-bridge.js" not in text:
+                scripts.append('<script src="/mt5-bridge.js" defer></script>')
+            if "/readiness-bridge.js" not in text:
+                scripts.append('<script src="/readiness-bridge.js" defer></script>')
+            if scripts:
+                text = text.replace(marker, "\n".join(scripts + [marker]))
             raw = text.encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -99,6 +111,7 @@ def main() -> int:
     server = ThreadingHTTPServer(("127.0.0.1", args.port), AuraRequestHandlerV3)
     url = f"http://127.0.0.1:{args.port}"
     print(f"AURA AI OS owner command center: {url}")
+    print("Release: AURA AI OS 0.2 / protected MT5 DEMO production candidate")
     print("MT5 DEMO preflight is enabled. Keep MT5 open and logged into a DEMO account.")
     if owner_auth_required():
         print("Owner-token protection: enabled (AURA_OWNER_TOKEN)")
