@@ -7,13 +7,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 443
-- Python modules: 372
-- Source modules: 196
-- Test modules: 152
-- Static test functions: 600
-- Entrypoints: 52
-- Known stub/incomplete candidates: 87
+- Repository files: 447
+- Python modules: 376
+- Source modules: 198
+- Test modules: 153
+- Static test functions: 603
+- Entrypoints: 53
+- Known stub/incomplete candidates: 93
 
 ## Repository structure
 
@@ -33,7 +33,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `SECURITY.md` | 1 |
 | `START_AURA_OLLAMA.cmd` | 1 |
 | `TRADE_MT5_DEMO.ps1` | 1 |
-| `aura` | 203 |
+| `aura` | 205 |
 | `autonomous_lab_final_validation.txt` | 1 |
 | `autonomous_lab_final_validation_v2.txt` | 1 |
 | `compose.paper.yml` | 1 |
@@ -41,7 +41,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `decision_lineage_validation.txt` | 1 |
 | `deploy` | 1 |
 | `docs` | 31 |
-| `examples` | 16 |
+| `examples` | 17 |
 | `final_adaptive_intelligence_validation.txt` | 1 |
 | `final_agent_reliability_validation.txt` | 1 |
 | `final_contextual_reliability_validation.txt` | 1 |
@@ -57,7 +57,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts` | 4 |
 | `strategy_lab_validation.txt` | 1 |
 | `strategy_lab_validation_v2.txt` | 1 |
-| `tests` | 152 |
+| `tests` | 153 |
 
 ## Entrypoints
 
@@ -103,6 +103,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_free_public_autonomy.py` | python-main |
 | `examples/run_free_public_strategy_lab.py` | python-main |
 | `examples/run_mt5_all_market_paper.py` | python-main |
+| `examples/run_mt5_autonomous_demo.py` | python-main |
 | `examples/run_mt5_demo_evolution.py` | python-main |
 | `examples/run_mt5_self_evolving_paper.py` | python-main |
 | `examples/run_production_preflight.py` | python-main |
@@ -177,7 +178,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/kraken.py` | source | data | 5 | 1 | 0 |
 | `aura/data/live_plane.py` | source | data | 5 | 0 | 5 |
 | `aura/data/mt5_contracts.py` | source | data | 5 | 1 | 1 |
-| `aura/data/mt5_demo.py` | source | data | 5 | 3 | 3 |
+| `aura/data/mt5_demo.py` | source | data | 5 | 3 | 4 |
 | `aura/data/mt5_polling.py` | source | data | 5 | 2 | 1 |
 | `aura/data/normalization.py` | source | data | 5 | 1 | 0 |
 | `aura/data/oanda.py` | source | data | 5 | 2 | 1 |
@@ -209,6 +210,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/execution/dhan_sandbox.py` | source | execution | 4 | 3 | 2 |
 | `aura/execution/fill_model.py` | source | execution | 4 | 1 | 0 |
 | `aura/execution/mt5_demo_broker.py` | source | execution | 4 | 5 | 2 |
+| `aura/execution/mt5_protected_demo.py` | source | execution | 4 | 5 | 0 |
 | `aura/execution/paper.py` | source | execution | 12 | 5 | 6 |
 | `aura/execution/reconciliation.py` | source | execution | 2 | 4 | 4 |
 | `aura/execution/resilience.py` | source | execution | 4 | 0 | 1 |
@@ -260,7 +262,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/knowledge_rag_gate.py` | source | ops | 8 | 11 | 1 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 10 | 1 |
 | `aura/ops/mt5_all_market_runner.py` | source | ops | 15 | 2 | 0 |
-| `aura/ops/mt5_autonomous_demo.py` | source | ops | 15 | 2 | 0 |
+| `aura/ops/mt5_autonomous_demo.py` | source | ops | 15 | 3 | 0 |
 | `aura/ops/mt5_demo_readiness.py` | source | ops | 15 | 2 | 1 |
 | `aura/ops/mt5_demo_trade.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/multi_agent_gate.py` | source | ops | 9 | 16 | 1 |
@@ -311,10 +313,11 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/free_public_ai_council.py` | source | runtime | 12 | 20 | 2 |
 | `aura/runtime/free_public_strategy_lab.py` | source | runtime | 12 | 6 | 1 |
 | `aura/runtime/learning_scanner.py` | source | runtime | 12 | 4 | 0 |
+| `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 5 | 0 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 5 | 0 |
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 14 | 0 |
 | `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 18 | 0 |
-| `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 10 | 3 |
+| `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 9 | 3 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 3 | 1 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 3 | 2 |
 | `aura/runtime/paper.py` | source | runtime | 12 | 9 | 1 |
@@ -333,6 +336,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_free_public_autonomy.py` | entrypoint | examples | 12 | 3 | 0 |
 | `examples/run_free_public_strategy_lab.py` | entrypoint | examples | 12 | 1 | 0 |
 | `examples/run_mt5_all_market_paper.py` | entrypoint | examples | 12 | 1 | 0 |
+| `examples/run_mt5_autonomous_demo.py` | entrypoint | examples | 4 | 3 | 0 |
 | `examples/run_mt5_demo_evolution.py` | entrypoint | examples | 2 | 8 | 0 |
 | `examples/run_mt5_self_evolving_paper.py` | entrypoint | examples | 7 | 5 | 0 |
 | `examples/run_production_preflight.py` | entrypoint | examples | 7 | 2 | 0 |
@@ -429,6 +433,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_model_performance.py` | test | validation | 9 | 2 | 0 |
 | `tests/test_model_registry.py` | test | validation | 9 | 1 | 0 |
 | `tests/test_mt5_contracts.py` | test | validation | 1 | 2 | 0 |
+| `tests/test_mt5_current_session.py` | test | validation | 5 | 1 | 0 |
 | `tests/test_mt5_demo_readiness.py` | test | validation | 5 | 2 | 0 |
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 15 | 0 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 1 | 0 |
