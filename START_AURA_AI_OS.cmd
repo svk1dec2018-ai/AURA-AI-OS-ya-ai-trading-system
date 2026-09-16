@@ -15,7 +15,7 @@ echo.
 
 where git >nul 2>&1
 if %errorlevel%==0 (
-  echo [1/4] Checking latest AURA main branch...
+  echo [1/5] Checking latest AURA main branch...
   git pull --ff-only origin main
   if errorlevel 1 (
     echo.
@@ -24,7 +24,7 @@ if %errorlevel%==0 (
     echo.
   )
 ) else (
-  echo [1/4] Git not found - using current local AURA files.
+  echo [1/5] Git not found - using current local AURA files.
 )
 
 call :detect_python
@@ -33,7 +33,7 @@ if not defined AURA_PYTHON (
   echo Python 3.11 or newer was not detected.
   where winget >nul 2>&1
   if %errorlevel%==0 (
-    echo [2/4] Installing free Python 3.11 automatically with Windows Package Manager...
+    echo [2/5] Installing free Python 3.11 automatically with Windows Package Manager...
     winget install --id Python.Python.3.11 -e --source winget --accept-package-agreements --accept-source-agreements --silent
     if errorlevel 1 goto :python_missing
     call :detect_python
@@ -43,26 +43,28 @@ if not defined AURA_PYTHON (
 if not defined AURA_PYTHON goto :python_missing
 
 if not exist ".venv\Scripts\python.exe" (
-  echo [2/4] Creating local AURA Python environment...
+  echo [2/5] Creating local AURA Python environment...
   %AURA_PYTHON% -m venv .venv
   if errorlevel 1 goto :setup_failed
   set "AURA_PYTHON=.venv\Scripts\python.exe"
-  echo [3/4] Installing AURA locally...
-  "%AURA_PYTHON%" -m pip install --disable-pip-version-check -e .
-  if errorlevel 1 goto :setup_failed
 ) else (
-  echo [2/4] Local Python environment ready.
+  echo [2/5] Local Python environment ready.
   set "AURA_PYTHON=.venv\Scripts\python.exe"
-  echo [3/4] Synchronizing AURA package...
-  "%AURA_PYTHON%" -m pip install --disable-pip-version-check -e . >nul
-  if errorlevel 1 goto :setup_failed
 )
 
-echo [4/4] Opening AURA AI OS...
+echo [3/5] Synchronizing AURA and official MetaTrader5 bridge...
+"%AURA_PYTHON%" -m pip install --disable-pip-version-check -e ".[mt5]"
+if errorlevel 1 goto :setup_failed
+
+echo [4/5] Verifying MetaTrader5 Python bridge...
+"%AURA_PYTHON%" -c "import MetaTrader5 as mt5; print('MetaTrader5 bridge ready:', getattr(mt5, '__version__', 'installed'))"
+if errorlevel 1 goto :mt5_bridge_failed
+
+echo [5/5] Opening AURA AI OS...
 echo.
 echo Browser address: http://127.0.0.1:8765
-echo Close this window only when you want to stop the local web server.
-echo Trading itself is controlled from the AURA Trading Desk.
+echo Keep this window open while using AURA.
+echo MT5 connectivity and symbols are checked inside the AURA app.
 echo.
 "%AURA_PYTHON%" -m aura.webapp.server --open
 set "AURA_EXIT=%errorlevel%"
@@ -122,6 +124,14 @@ echo The launcher tried py, python, python3, common Windows install paths,
 echo and Windows Package Manager when available.
 echo.
 echo Install Python 3.11+ from the Microsoft Store or python.org, then run this file again.
+pause
+exit /b 1
+
+:mt5_bridge_failed
+echo.
+echo ERROR: The official MetaTrader5 Python bridge could not be installed or imported.
+echo Make sure Windows is online, then run this launcher again.
+echo.
 pause
 exit /b 1
 
