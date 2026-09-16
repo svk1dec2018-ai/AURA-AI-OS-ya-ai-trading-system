@@ -31,6 +31,14 @@ from aura.research.strategy_factory import (
     StrategyPrimitive,
 )
 from aura.webapp.catalog import capability_catalog
+from aura.webapp.operator_assistant import answer_owner_query
+from aura.webapp.read_models import (
+    decision_feed,
+    financial_journal,
+    intelligence_feed,
+    learning_snapshot,
+)
+from aura.webapp.security import owner_auth_required, owner_authorized
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -109,6 +117,7 @@ class AuraWebController:
             "runtime_exit_code": exit_code,
             "app_kill_locked": kill is not None,
             "app_kill_reason": (kill or {}).get("reason"),
+            "owner_auth_required": owner_auth_required(),
             "status": status,
             "baseline": {
                 "login": baseline.get("login"),
@@ -130,12 +139,30 @@ class AuraWebController:
             },
         }
 
+    def decisions(self, *, limit: int = 60) -> dict[str, Any]:
+        return decision_feed(self.state_dir, limit=limit)
+
+    def journal(self, *, limit: int = 120) -> dict[str, Any]:
+        return financial_journal(self.state_dir, limit=limit)
+
+    def learning(self) -> dict[str, Any]:
+        return learning_snapshot(self.state_dir)
+
+    def intelligence(self, *, limit: int = 80) -> dict[str, Any]:
+        return intelligence_feed(self.state_dir, limit=limit)
+
     def workspace(self) -> dict[str, Any]:
+        decisions = self.decisions(limit=10)
+        learning = self.learning()
+        intelligence = self.intelligence(limit=12)
         return {
             "ok": True,
             "generated_at": datetime.now(UTC).isoformat(),
             "runtime": self.status(),
             "capabilities": capability_catalog(),
+            "decisions": decisions,
+            "learning": learning,
+            "intelligence": intelligence,
             "algo": {
                 "candidate_count": len(self.algo_candidates()),
                 "validation_pipeline": list(VALIDATION_PIPELINE),
@@ -143,6 +170,18 @@ class AuraWebController:
                 "auto_live_deploy": False,
             },
         }
+
+    def owner_command(self, text: str) -> dict[str, Any]:
+        query = _required_text(text, "text", max_length=2000)
+        return answer_owner_query(
+            query,
+            runtime=self.status(),
+            decisions=self.decisions(limit=20),
+            learning=self.learning(),
+            intelligence=self.intelligence(limit=30),
+            candidates=self.algo_candidates(),
+            capabilities=capability_catalog(),
+        )
 
     def start(self, *, max_symbols: int = 10, max_batches: int = 100) -> dict[str, Any]:
         if not 1 <= max_symbols <= 1000:
@@ -244,7 +283,6 @@ class AuraWebController:
         entries = _enum_tuple(
             body.get("entries"),
             "entries",
-            StrategyPrimitive,
             allowed=EXECUTABLE_ENTRY_PRIMITIVES,
             min_items=1,
             max_items=3,
@@ -252,7 +290,6 @@ class AuraWebController:
         confirmations = _enum_tuple(
             body.get("confirmations", []),
             "confirmations",
-            StrategyPrimitive,
             allowed=EXECUTABLE_CONFIRMATION_PRIMITIVES,
             min_items=0,
             max_items=5,
@@ -260,7 +297,6 @@ class AuraWebController:
         exits = _enum_tuple(
             body.get("exits"),
             "exits",
-            ExitPrimitive,
             allowed=EXECUTABLE_EXIT_PRIMITIVES,
             min_items=1,
             max_items=3,
@@ -316,12 +352,11 @@ class AuraWebController:
                 "error": None,
             }
 
-        now = datetime.now(UTC).isoformat()
         candidate = {
             "ok": True,
             "candidate_id": blueprint.blueprint_id,
             "owner_name": name,
-            "created_at": now,
+            "created_at": datetime.now(UTC).isoformat(),
             "request_hash": request_hash,
             "stage": strategy.stage.value,
             "research_only": True,
@@ -411,7 +446,6 @@ def _string_tuple(value: Any, field: str, *, max_items: int) -> tuple[str, ...]:
 def _enum_tuple(
     value: Any,
     field: str,
-    enum_type: type[StrategyPrimitive] | type[ExitPrimitive],
     *,
     allowed: tuple[Any, ...],
     min_items: int,
@@ -445,19 +479,27 @@ atexit.register(CONTROLLER.shutdown)
 
 
 class AuraRequestHandler(BaseHTTPRequestHandler):
-    server_version = "AuraLocalPWA/2.0"
+    server_version = "AuraLocalPWA/2.1"
 
     def log_message(self, format: str, *args: Any) -> None:
         return
+
+    def _security_headers(self) -> None:
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; "
+            "script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+        )
 
     def _json(self, payload: dict[str, Any] | list[dict[str, Any]], status: int = 200) -> None:
         raw = json.dumps(payload, ensure_ascii=False, allow_nan=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Cache-Control", "no-store")
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "no-referrer")
-        self.send_header("X-Frame-Options", "DENY")
+        self._security_headers()
         self.send_header("Content-Length", str(len(raw)))
         self.end_headers()
         self.wfile.write(raw)
@@ -474,6 +516,19 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
             raise ValueError("request body must be a JSON object")
         return value
 
+    def _require_owner(self) -> bool:
+        if owner_authorized(self.headers.get("Authorization")):
+            return True
+        self._json(
+            {
+                "ok": False,
+                "error": "owner authorization required",
+                "owner_auth_required": True,
+            },
+            HTTPStatus.UNAUTHORIZED,
+        )
+        return False
+
     def do_GET(self) -> None:
         path = urlparse(self.path).path
         if path == "/api/status":
@@ -484,6 +539,21 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
             return
         if path == "/api/capabilities":
             self._json(capability_catalog())
+            return
+        if path == "/api/decisions":
+            self._json(CONTROLLER.decisions())
+            return
+        if path == "/api/journal":
+            self._json(CONTROLLER.journal())
+            return
+        if path == "/api/learning":
+            self._json(CONTROLLER.learning())
+            return
+        if path == "/api/intelligence":
+            self._json(CONTROLLER.intelligence())
+            return
+        if path == "/api/security":
+            self._json({"ok": True, "owner_auth_required": owner_auth_required()})
             return
         if path == "/api/algo/options":
             self._json(CONTROLLER.algo_options())
@@ -499,6 +569,7 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
                     "ui_version": 2,
                     "demo_only": True,
                     "real_money_enabled": False,
+                    "owner_auth_required": owner_auth_required(),
                 }
             )
             return
@@ -506,6 +577,8 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
+        if path.startswith("/api/") and not self._require_owner():
+            return
         try:
             body = self._body_json()
             if path == "/api/start":
@@ -523,6 +596,8 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
                 payload = CONTROLLER.reset_kill_lock()
             elif path == "/api/algo/build":
                 payload = CONTROLLER.build_algo_candidate(body)
+            elif path == "/api/command":
+                payload = CONTROLLER.owner_command(str(body.get("text") or ""))
             else:
                 self._json({"ok": False, "error": "not found"}, HTTPStatus.NOT_FOUND)
                 return
@@ -553,9 +628,7 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
             "Cache-Control",
             "no-cache" if candidate.name == "index.html" else "public, max-age=300",
         )
-        self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("Referrer-Policy", "no-referrer")
-        self.send_header("X-Frame-Options", "DENY")
+        self._security_headers()
         self.send_header("Content-Length", str(len(raw)))
         self.end_headers()
         self.wfile.write(raw)
@@ -579,6 +652,10 @@ def main() -> int:
     url = f"http://127.0.0.1:{args.port}"
     print(f"AURA AI OS owner command center: {url}")
     print("Protected DEMO/research mode. Keep MT5 open and logged into a DEMO account.")
+    if owner_auth_required():
+        print("Owner-token protection: enabled (AURA_OWNER_TOKEN)")
+    else:
+        print("Owner-token protection: optional/off; server remains loopback-only")
     if args.open_browser:
         threading.Timer(0.7, lambda: webbrowser.open(url)).start()
     try:
