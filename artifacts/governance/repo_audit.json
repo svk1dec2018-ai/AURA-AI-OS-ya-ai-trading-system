@@ -6472,9 +6472,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 14471,
+      "bytes": 15215,
       "path": "aura/runtime/mt5_learning_daemon.py",
-      "sha256": "5c477860262e30bbb6af1bfad5a6e095b181c8dfdddd9f344738c0bc6f016533"
+      "sha256": "a017af7d2d1b364650e06e34f3e38b50adabce5a843e04111530d43f07f3eaa0"
     },
     {
       "asset_class": "python",
@@ -6553,6 +6553,12 @@
       "bytes": 5443,
       "path": "aura/webapp/read_models.py",
       "sha256": "aaa7e7d214f142b1654c37d9cd2743f0521e1abbbf6fec6fd55bafb6d838f5ea"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1051,
+      "path": "aura/webapp/security.py",
+      "sha256": "dade2e9fc5301bac7ca8e5aa46ecd039215f7d9447dba30937e823c2f34727a7"
     },
     {
       "asset_class": "python",
@@ -8059,7 +8065,8 @@
       "aura/runtime/mt5_learning_daemon.py",
       "aura/runtime/mt5_paper_daemon.py",
       "aura/webapp/catalog.py",
-      "aura/webapp/read_models.py"
+      "aura/webapp/read_models.py",
+      "aura/webapp/security.py"
     ]
   },
   "limitations": [
@@ -14214,7 +14221,7 @@
         "aura/runtime/mt5_paper_daemon.py",
         "aura/runtime/scanner.py"
       ],
-      "lines": 361,
+      "lines": 379,
       "module": "aura.runtime.mt5_learning_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_learning_daemon.py",
@@ -14223,7 +14230,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "5c477860262e30bbb6af1bfad5a6e095b181c8dfdddd9f344738c0bc6f016533",
+      "sha256": "a017af7d2d1b364650e06e34f3e38b50adabce5a843e04111530d43f07f3eaa0",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -14622,6 +14629,27 @@
         "json",
         "pathlib",
         "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [],
+      "internal_dependencies": [],
+      "lines": 36,
+      "module": "aura.webapp.security",
+      "parsed": true,
+      "path": "aura/webapp/security.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "dade2e9fc5301bac7ca8e5aa46ecd039215f7d9447dba30937e823c2f34727a7",
+      "standard_library_dependencies": [
+        "__future__",
+        "hmac",
+        "os"
       ],
       "third_party_dependencies": []
     },
@@ -19279,7 +19307,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "e0a97bb875dbebb6597f9b34ca1f200246fb7b0ed8f765857bb71cf4c35c4cfa",
+  "repository_tree_sha256": "225eef00719ce5126fe4e3840e652b4d9a025712ecb20ed4f715d858c510b63f",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19867,9 +19895,9 @@
     "directly_tested_source_modules": 177,
     "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 381,
-    "repository_files": 460,
-    "source_modules": 201,
+    "python_modules": 382,
+    "repository_files": 461,
+    "source_modules": 202,
     "static_test_functions": 611,
     "stub_candidates": 95,
     "test_modules": 154,
