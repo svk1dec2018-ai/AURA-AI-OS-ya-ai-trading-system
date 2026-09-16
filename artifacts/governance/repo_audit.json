@@ -6590,9 +6590,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 24938,
+      "bytes": 27291,
       "path": "aura/webapp/static/app.js",
-      "sha256": "77d1d18288e50f441624c22b8749059171c68657a14bf14f3573c3d1ce8a4e29"
+      "sha256": "9bb5fba69ec8dd4c8f5bb5b3c6a57611a5ff2ee3951263d08fcaf4e55e46ec7d"
     },
     {
       "asset_class": "repository_asset",
@@ -19355,7 +19355,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "91d6cb3d65b6601c67491833bb84d1e755e2085f326eee0805459895fd5c3bcd",
+  "repository_tree_sha256": "bc236f4839671610f2d952068d6a7f53ed556f2981b4b9c5c5a5d3bcd959e132",
   "schema_version": 1,
   "scope": {
     "excluded": [
