@@ -2750,6 +2750,14 @@
         "to": "aura/domain/models.py"
       },
       {
+        "from": "aura/webapp/charting.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/webapp/charting.py",
+        "to": "aura/domain/models.py"
+      },
+      {
         "from": "aura/webapp/operator_assistant.py",
         "to": "aura/interface/command_center.py"
       },
@@ -6566,6 +6574,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 8292,
+      "path": "aura/webapp/charting.py",
+      "sha256": "ae56074c688e851841bb0e253ddb336601cd2fd5456a4e3c6df57db4dd6c1e4c"
+    },
+    {
+      "asset_class": "python",
       "bytes": 8500,
       "path": "aura/webapp/operator_assistant.py",
       "sha256": "cc841b86675f7f9330101bf93d5757174d984c5d20cef97ad404663a679a03aa"
@@ -8087,6 +8101,7 @@
       "aura/runtime/mt5_learning_daemon.py",
       "aura/runtime/mt5_paper_daemon.py",
       "aura/webapp/catalog.py",
+      "aura/webapp/charting.py",
       "aura/webapp/operator_assistant.py",
       "aura/webapp/read_models.py",
       "aura/webapp/security.py"
@@ -14634,6 +14649,32 @@
       "component": "webapp",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/domain/models.py"
+      ],
+      "lines": 244,
+      "module": "aura.webapp.charting",
+      "parsed": true,
+      "path": "aura/webapp/charting.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "ae56074c688e851841bb0e253ddb336601cd2fd5456a4e3c6df57db4dd6c1e4c",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "decimal",
+        "math",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/interface/command_center.py"
       ],
       "lines": 197,
@@ -19355,7 +19396,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "5c61a56c366a6037267e67f2595a838a7813e1c20eb43147d84ffb17686b4b69",
+  "repository_tree_sha256": "dc8ef887fc5d86ee70598ddd7b3f5b9bf64bc81b719ef31cb435920d37bbd3f9",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19943,9 +19984,9 @@
     "directly_tested_source_modules": 177,
     "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 383,
-    "repository_files": 462,
-    "source_modules": 203,
+    "python_modules": 384,
+    "repository_files": 463,
+    "source_modules": 204,
     "static_test_functions": 611,
     "stub_candidates": 95,
     "test_modules": 154,
