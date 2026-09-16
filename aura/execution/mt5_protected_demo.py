@@ -7,11 +7,10 @@ from decimal import Decimal
 from typing import Any
 
 from aura.data.mt5_demo import OfficialMT5Gateway
-from aura.domain.models import Fill, NormalizedCandle, OrderRequest
+from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, Side
 from aura.execution.demo_guard import DemoExecutionGuard
 from aura.execution.mt5_demo_broker import MT5DemoBroker, MT5DemoBrokerConfig
 from aura.execution.reconciliation import BrokerOrderSnapshot, BrokerPositionSnapshot
-from aura.domain.models import OrderStatus, Side
 
 
 @dataclass(slots=True, frozen=True)
@@ -22,7 +21,7 @@ class ProtectedMT5DemoConfig:
     deviation_points: int = 20
     stop_bps: Decimal = Decimal("35")
     target_bps: Decimal = Decimal("70")
-    block_existing_aura_position: bool = True
+    block_pyramiding: bool = True
 
     def __post_init__(self) -> None:
         if self.magic <= 0:
@@ -36,10 +35,10 @@ class ProtectedMT5DemoConfig:
 class ProtectedMT5DemoBroker(MT5DemoBroker):
     """DEMO-only MT5 broker with mandatory native SL/TP and AURA isolation.
 
-    This adapter intentionally refuses live accounts through the inherited demo
-    guard, refuses duplicate AURA positions per symbol, attaches broker-native
-    protection to every entry, and reconciles only orders/positions owned by the
-    configured AURA magic number. It never manages unrelated manual positions.
+    Entries are protected at the broker, pyramiding is blocked by default, and
+    strategy exit orders are allowed only when they reduce a single AURA-owned
+    position. Reconciliation sees only orders/positions carrying AURA's magic
+    number, so unrelated manual positions are never managed by this adapter.
     """
 
     def __init__(
@@ -149,20 +148,40 @@ class ProtectedMT5DemoBroker(MT5DemoBroker):
             raise RuntimeError(f"MT5 could not select {order.symbol} in MarketWatch")
         self._validate_volume(order.quantity, symbol)
 
-        if self.protected_config.block_existing_aura_position:
-            existing = self.gateway.positions_get(symbol=order.symbol)
-            if existing is None:
-                raise RuntimeError(f"MT5 positions_get failed: {self.gateway.last_error()}")
-            aura_positions = [
-                row
-                for row in existing
-                if int(_asdict(row).get("magic", 0)) == self.protected_config.magic
-            ]
-            if aura_positions:
+        existing = self.gateway.positions_get(symbol=order.symbol)
+        if existing is None:
+            raise RuntimeError(f"MT5 positions_get failed: {self.gateway.last_error()}")
+        aura_positions = [
+            row
+            for row in existing
+            if int(_asdict(row).get("magic", 0)) == self.protected_config.magic
+        ]
+        is_exit = False
+        position_ticket: int | None = None
+        if aura_positions:
+            if len(aura_positions) != 1:
                 raise RuntimeError(
-                    f"AURA DEMO safety block: {order.symbol} already has "
-                    f"{len(aura_positions)} AURA position(s)"
+                    f"AURA DEMO safety block: {order.symbol} has multiple AURA positions"
                 )
+            position = _asdict(aura_positions[0])
+            position_side = _position_side(self.gateway, position)
+            position_volume = Decimal(str(position.get("volume", 0)))
+            is_exit = order.side != position_side
+            if not is_exit and self.protected_config.block_pyramiding:
+                raise RuntimeError(
+                    f"AURA DEMO safety block: pyramiding is disabled for {order.symbol}"
+                )
+            if is_exit:
+                if position_volume <= 0:
+                    raise RuntimeError("AURA DEMO position has invalid volume")
+                if order.quantity > position_volume:
+                    raise RuntimeError(
+                        f"AURA DEMO exit volume {order.quantity} exceeds open volume "
+                        f"{position_volume} for {order.symbol}"
+                    )
+                position_ticket = int(position.get("ticket", 0))
+                if position_ticket <= 0:
+                    raise RuntimeError("AURA DEMO position is missing a valid ticket")
 
         tick = self.gateway.symbol_info_tick(order.symbol)
         if tick is None:
@@ -173,13 +192,6 @@ class ProtectedMT5DemoBroker(MT5DemoBroker):
         )
         if entry <= 0:
             raise RuntimeError(f"MT5 returned non-positive tradable price for {order.symbol}")
-        stop, target = _protected_prices(
-            symbol,
-            side=order.side,
-            entry=entry,
-            stop_bps=self.protected_config.stop_bps,
-            target_bps=self.protected_config.target_bps,
-        )
 
         token = hashlib.sha1(order.client_order_id.encode("utf-8")).hexdigest()[:12]
         request: dict[str, Any] = {
@@ -187,14 +199,25 @@ class ProtectedMT5DemoBroker(MT5DemoBroker):
             "symbol": order.symbol,
             "volume": float(order.quantity),
             "type": self._mt5_market_type(order.side),
-            "sl": float(stop),
-            "tp": float(target),
             "deviation": self.protected_config.deviation_points,
             "magic": self.protected_config.magic,
             "comment": f"{self.config.comment_prefix}:{token}",
             "type_time": self.gateway.constant("ORDER_TIME_GTC"),
             "type_filling": self._resolve_filling(symbol),
         }
+        if is_exit:
+            assert position_ticket is not None
+            request["position"] = position_ticket
+        else:
+            stop, target = _protected_prices(
+                symbol,
+                side=order.side,
+                entry=entry,
+                stop_bps=self.protected_config.stop_bps,
+                target_bps=self.protected_config.target_bps,
+            )
+            request["sl"] = float(stop)
+            request["tp"] = float(target)
         if int(symbol.get("trade_exemode", -1)) != self.gateway.constant(
             "SYMBOL_TRADE_EXECUTION_MARKET"
         ):
@@ -231,6 +254,15 @@ class ProtectedMT5DemoBroker(MT5DemoBroker):
         self._order_by_ticket[ticket] = order
         self._order_by_token[token] = order
         return ticket
+
+
+def _position_side(gateway: OfficialMT5Gateway, position: dict[str, Any]) -> Side:
+    position_type = int(position.get("type", -1))
+    if position_type == gateway.constant("POSITION_TYPE_BUY"):
+        return Side.BUY
+    if position_type == gateway.constant("POSITION_TYPE_SELL"):
+        return Side.SELL
+    raise RuntimeError(f"unknown MT5 position type: {position_type}")
 
 
 def _protected_prices(
