@@ -49,9 +49,9 @@ echo.
 echo AURA URL:       http://127.0.0.1:8766
 echo MT5 API check:  http://127.0.0.1:8766/api/mt5/preflight
 echo Keep this window open while using AURA.
+echo Browser will open only after the fresh server starts.
 echo.
-start "" "http://127.0.0.1:8766/?fresh=1"
-"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766
+"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766 --open
 set "AURA_EXIT=%errorlevel%"
 
 echo.
