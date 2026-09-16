@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <title>AURA AI OS</title>
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#e5eefb;background:#08111f;--card:#101b2d;--muted:#92a5bd;--line:#24344b;--good:#42d392;--warn:#f6c85f;--bad:#ff6b6b;--accent:#6ea8fe}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#12233e 0,#08111f 38%,#050b14 100%);min-height:100vh}.wrap{max-width:1320px;margin:auto;padding:18px}.top{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:18px}.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#7bb7ff,#7a5cff);display:grid;place-items:center;font-weight:900;color:#07101d}.title{font-size:22px;font-weight:800}.sub{font-size:12px;color:var(--muted)}.badge{padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px}.good{color:var(--good)}.bad{color:var(--bad)}.warn{color:var(--warn)}.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.card{background:rgba(16,27,45,.93);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 12px 35px rgba(0,0,0,.22)}.metric{font-size:24px;font-weight:800;margin-top:5px}.label{font-size:12px;color:var(--muted)}.section{margin-top:14px}.two{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted)}input{background:#0a1424;color:#eef5ff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:120px}button{border:0;border-radius:11px;padding:11px 14px;font-weight:750;cursor:pointer;background:#2b69ff;color:white}button.secondary{background:#26364d}button.danger{background:#b92c3b}button.lock{background:#7d2530}button:disabled{opacity:.45;cursor:not-allowed}.guard{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.guard div{border:1px solid var(--line);border-radius:12px;padding:10px;font-size:12px}.statusline{display:flex;gap:8px;align-items:center}.dot{width:9px;height:9px;border-radius:50%;background:var(--bad)}.dot.on{background:var(--good);box-shadow:0 0 12px var(--good)}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}.tablewrap{overflow:auto}.logs{background:#050b14;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:180px;max-height:320px;overflow:auto;white-space:pre-wrap;font:12px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace;color:#b9c9db}.foot{font-size:12px;color:var(--muted);text-align:center;padding:18px}.killbox{border-color:#75313b}.hidden{display:none}@media(max-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}}@media(max-width:620px){.grid{grid-template-columns:repeat(2,1fr)}.wrap{padding:12px}.metric{font-size:19px}.controls{align-items:stretch}.field input{width:100%}button{flex:1}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><div class="logo">A</div><div><div class="title">AURA AI OS</div><div class="sub">Local PWA · protected MT5 DEMO control panel</div></div></div>
+    <div class="statusline"><span id="liveDot" class="dot"></span><span id="runtimeBadge" class="badge">Runtime stopped</span><span class="badge good">DEMO ONLY</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card"><div class="label">MT5 Account</div><div id="account" class="metric">—</div><div id="server" class="sub">Waiting for runtime</div></div>
+    <div class="card"><div class="label">Portfolio Equity</div><div id="equity" class="metric">—</div><div id="currency" class="sub">—</div></div>
+    <div class="card"><div class="label">Drawdown</div><div id="drawdown" class="metric">—</div><div class="sub">Risk engine state</div></div>
+    <div class="card"><div class="label">Opportunities</div><div id="opportunities" class="metric">0</div><div class="sub">Detected by scanner</div></div>
+    <div class="card"><div class="label">Orders / Fills</div><div id="orders" class="metric">0 / 0</div><div class="sub">Broker DEMO execution</div></div>
+    <div class="card"><div class="label">Batches</div><div id="batches" class="metric">0</div><div id="updated" class="sub">No status yet</div></div>
+  </div>
+
+  <div class="two section">
+    <div class="card">
+      <div class="title" style="font-size:17px;margin-bottom:12px">Trading control</div>
+      <div class="controls">
+        <div class="field"><label>Max symbols</label><input id="maxSymbols" type="number" min="1" max="1000" value="10"></div>
+        <div class="field"><label>Max closed-candle batches</label><input id="maxBatches" type="number" min="1" max="1000000" value="100"></div>
+        <button id="startBtn" onclick="action('/api/start')">Start AURA</button>
+        <button id="stopBtn" class="secondary" onclick="action('/api/stop')">Stop AURA</button>
+        <button id="killBtn" class="danger" onclick="killAura()">Emergency lock</button>
+        <button id="resetBtn" class="lock hidden" onclick="action('/api/reset-kill')">Reset lock</button>
+      </div>
+      <div id="message" class="sub" style="margin-top:12px">Keep MetaTrader 5 open and logged in to a DEMO account. The web UI never asks for your MT5 password.</div>
+    </div>
+    <div id="guardCard" class="card">
+      <div class="title" style="font-size:17px;margin-bottom:12px">Safety guard</div>
+      <div class="guard">
+        <div><span class="good">●</span> DEMO-only broker guard</div>
+        <div><span class="good">●</span> Real-money disabled</div>
+        <div><span class="good">●</span> Native SL/TP required</div>
+        <div><span class="good">●</span> Fund transfer disabled</div>
+        <div><span class="good">●</span> Withdrawal disabled</div>
+        <div id="riskKill"><span class="good">●</span> Risk kill switch clear</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <div class="title" style="font-size:17px;margin-bottom:10px">Live opportunities</div>
+    <div class="tablewrap"><table><thead><tr><th>Symbol</th><th>Timeframe</th><th>Intent</th><th>Confidence</th><th>Agent policy</th></tr></thead><tbody id="oppRows"><tr><td colspan="5" class="sub">No live opportunities yet.</td></tr></tbody></table></div>
+  </div>
+
+  <div class="two section">
+    <div class="card">
+      <div class="title" style="font-size:17px;margin-bottom:10px">Submitted DEMO orders</div>
+      <div class="tablewrap"><table><thead><tr><th>Symbol</th><th>Side</th><th>Quantity</th><th>Broker order ID</th></tr></thead><tbody id="orderRows"><tr><td colspan="4" class="sub">No submitted orders yet.</td></tr></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="title" style="font-size:17px;margin-bottom:10px">System</div>
+      <div class="guard"><div>Mode<br><b id="mode">—</b></div><div>Gross exposure<br><b id="gross">—</b></div><div>Active symbols<br><b id="activeSymbols">—</b></div><div>Reconciliations<br><b id="reconciliations">0</b></div></div>
+    </div>
+  </div>
+
+  <div class="card section"><div class="title" style="font-size:17px;margin-bottom:10px">Runtime log</div><div id="logs" class="logs">AURA app ready.</div></div>
+  <div class="foot">AURA local PWA binds only to 127.0.0.1 in this release. Closing this app stops the child AURA runtime so it cannot keep trading invisibly.</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function maskedLogin(v){if(!v)return '—';const s=String(v);return s.length>4?'••••'+s.slice(-4):s;}
+async function post(url,body={}){const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||'Request failed');return j;}
+async function action(url){try{$('message').textContent='Working…';const body=url==='/api/start'?{max_symbols:Number($('maxSymbols').value),max_batches:Number($('maxBatches').value)}:{};await post(url,body);await refresh();$('message').textContent='Action completed.';}catch(e){$('message').textContent=e.message;}}
+async function killAura(){if(!confirm('Emergency lock stops the AURA child process and blocks restart until reset. Continue?'))return;try{await post('/api/kill',{reason:'Emergency lock from dashboard'});await refresh();$('message').textContent='Emergency lock engaged.';}catch(e){$('message').textContent=e.message;}}
+function renderRows(items,kind){if(!items?.length)return `<tr><td colspan="${kind==='opp'?5:4}" class="sub">No data yet.</td></tr>`;return items.map(x=>kind==='opp'?`<tr><td>${esc(x.symbol)}</td><td>${esc(x.timeframe)}</td><td>${esc(x.intent)}</td><td>${esc(x.confidence)}</td><td>${x.agent_policy_allowed===true?'Allowed':x.agent_policy_allowed===false?'Blocked':'—'}</td></tr>`:`<tr><td>${esc(x.symbol)}</td><td>${esc(x.side)}</td><td>${esc(x.quantity)}</td><td>${esc(x.broker_order_id)}</td></tr>`).join('');}
+async function refresh(){try{const r=await fetch('/api/status',{cache:'no-store'});const d=await r.json();const s=d.status||{},b=d.baseline||{},c=s.counters||{},l=s.latest||{};$('liveDot').classList.toggle('on',d.runtime_running);$('runtimeBadge').textContent=d.app_kill_locked?'KILL LOCKED':d.runtime_running?'Runtime active':'Runtime stopped';$('runtimeBadge').className='badge '+(d.app_kill_locked?'bad':d.runtime_running?'good':'');$('account').textContent=maskedLogin(b.login||s.bootstrap?.account_login);$('server').textContent=b.server||s.bootstrap?.account_server||'Waiting for runtime';$('currency').textContent=b.currency||s.bootstrap?.account_currency||'—';$('equity').textContent=l.portfolio_equity??b.starting_balance??'—';$('drawdown').textContent=l.drawdown_pct!=null?`${l.drawdown_pct}%`:'—';$('opportunities').textContent=c.opportunities??0;$('orders').textContent=`${c.submitted_orders??0} / ${c.fills??0}`;$('batches').textContent=c.batches??0;$('updated').textContent=s.updated_at?new Date(s.updated_at).toLocaleString():'No status yet';$('mode').textContent=s.mode||d.app_mode;$('gross').textContent=l.gross_exposure??'—';$('activeSymbols').textContent=s.bootstrap?.active_symbols??'—';$('reconciliations').textContent=c.reconciliations??0;$('oppRows').innerHTML=renderRows(l.opportunities,'opp');$('orderRows').innerHTML=renderRows(l.submitted_orders,'order');$('logs').textContent=d.log_tail||'No runtime log yet.';$('resetBtn').classList.toggle('hidden',!d.app_kill_locked);$('startBtn').disabled=d.runtime_running||d.app_kill_locked;$('stopBtn').disabled=!d.runtime_running;$('killBtn').disabled=d.app_kill_locked;const rk=s.risk_kill_switch===true;$('riskKill').innerHTML=rk?`<span class="bad">●</span> Risk kill: ${esc(s.risk_kill_switch_reason||'engaged')}`:'<span class="good">●</span> Risk kill switch clear';$('guardCard').classList.toggle('killbox',rk||d.app_kill_locked);}catch(e){$('message').textContent='Dashboard connection error: '+e.message;}}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(()=>{});}refresh();setInterval(refresh,3000);
+</script>
+</body>
+</html>
