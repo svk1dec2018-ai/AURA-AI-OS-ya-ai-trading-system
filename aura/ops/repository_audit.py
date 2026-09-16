@@ -50,6 +50,7 @@ _PHASE_BY_PACKAGE = {
     "risk": 3,
     "runtime": 12,
     "strategy": 7,
+    "webapp": 13,
 }
 
 _FILE_PHASE_OVERRIDES = {
@@ -132,9 +133,7 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
             if imported == "aura" or imported.startswith("aura."):
                 resolved = _resolve_internal_import(imported, modules_by_name)
                 if resolved is None:
-                    unresolved_imports.append(
-                        {"path": path.as_posix(), "import": imported}
-                    )
+                    unresolved_imports.append({"path": path.as_posix(), "import": imported})
                 elif resolved != path:
                     internal.add(resolved)
             else:
@@ -147,9 +146,7 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
         standard_library_map[path] = tuple(sorted(standard_library))
         third_party_map[path] = tuple(sorted(third_party))
 
-    base_classifications = {
-        path: _base_python_classification(path) for path in python_paths
-    }
+    base_classifications = {path: _base_python_classification(path) for path in python_paths}
     classifications: dict[PurePosixPath, dict[str, object]] = {}
     for path in python_paths:
         classification = dict(base_classifications[path])
@@ -184,9 +181,7 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
                 "component": classification["component"],
                 "primary_phase": classification["primary_phase"],
                 "phase_coverage": classification["phase_coverage"],
-                "internal_dependencies": [
-                    item.as_posix() for item in dependency_map.get(path, ())
-                ],
+                "internal_dependencies": [item.as_posix() for item in dependency_map.get(path, ())],
                 "standard_library_dependencies": list(standard_library_map.get(path, ())),
                 "third_party_dependencies": list(third_party_map.get(path, ())),
                 "direct_test_files": sorted(direct_tests.get(path, [])),
@@ -218,16 +213,9 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
     decision = "PASS" if all(criteria.values()) else "FAIL"
     source_modules = [item for item in module_records if item["role"] == "source"]
     tested_source_modules = [item for item in source_modules if item["direct_test_files"]]
-    repository_hash_payload = [
-        f"{item['path']}:{item['sha256']}" for item in file_records
-    ]
+    repository_hash_payload = [f"{item['path']}:{item['sha256']}" for item in file_records]
 
-    test_inventory = _build_test_inventory(
-        root,
-        test_details,
-        dependency_map,
-        classifications,
-    )
+    test_inventory = _build_test_inventory(root, test_details, dependency_map, classifications)
     audit: dict[str, object] = {
         "schema_version": 1,
         "scope": {
@@ -276,11 +264,7 @@ def build_repository_audit(root: Path) -> tuple[dict[str, object], dict[str, obj
                 {package for values in third_party_map.values() for package in values}
             ),
             "standard_library_packages": sorted(
-                {
-                    package
-                    for values in standard_library_map.values()
-                    for package in values
-                }
+                {package for values in standard_library_map.values() for package in values}
             ),
             "declared_dependencies": _declared_dependencies(root),
         },
@@ -363,11 +347,7 @@ def _repository_paths(root: Path) -> list[PurePosixPath]:
         check=True,
         capture_output=True,
     )
-    paths = {
-        PurePosixPath(item.decode())
-        for item in result.stdout.split(b"\0")
-        if item
-    }
+    paths = {PurePosixPath(item.decode()) for item in result.stdout.split(b"\0") if item}
     return sorted(
         path
         for path in paths
@@ -395,8 +375,8 @@ def _file_record(root: Path, path: PurePosixPath) -> dict[str, object]:
 
 def _asset_class(path: PurePosixPath) -> str:
     if path.suffix == ".py":
-        return "python_module"
-    if path.parts and path.parts[0] == ".github":
+        return "python"
+    if path.parts[:2] == (".github", "workflows"):
         return "ci_or_repository_policy"
     if path.parts and path.parts[0] == "docs":
         return "documentation"
@@ -701,37 +681,29 @@ def _build_test_inventory(
     }
 
 
-def _declared_dependencies(root: Path) -> dict[str, list[str]]:
+def _declared_dependencies(root: Path) -> list[str]:
     pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
-    project = pyproject.get("project", {})
-    return {
-        "runtime": sorted(str(item) for item in project.get("dependencies", [])),
-        "optional": sorted(
-            str(item)
-            for values in project.get("optional-dependencies", {}).values()
-            for item in values
-        ),
-        "build_system": sorted(
-            str(item) for item in pyproject.get("build-system", {}).get("requires", [])
-        ),
-    }
+    return sorted(pyproject.get("project", {}).get("dependencies", []))
 
 
 def _render_module_map(audit: dict[str, object]) -> str:
     summary = audit["summary"]
-    gate = audit["gate"]
-    files = audit["files"]
     modules = audit["modules"]
-    directory_counts = Counter(str(item["path"]).split("/", 1)[0] for item in files)
+    entrypoints = audit["entrypoints"]
+    files = audit["files"]
+    asset_counts = Counter(item["asset_class"] for item in files)
+    component_counts = Counter(item["component"] for item in modules)
+    gap_modules = audit["known_gaps"]["source_modules_without_direct_test_import"]
     lines = [
-        "# AURA Phase 0 repository module map",
+        "# AURA repository module map",
         "",
-        "This file is generated by `python -m aura.ops.repository_audit --write`.",
+        (
+            "Generated by `python -m aura.ops.repository_audit`; this is Phase 0 "
+            "static evidence only."
+        ),
         "It inventories the repository; it does not certify later implementation phases.",
         "",
-        "## Gate decision",
-        "",
-        f"**Phase 0: {gate['decision']}**",
+        f"**Phase 0: {audit['gate']['decision']}**",
         "",
         f"- Repository files: {summary['repository_files']}",
         f"- Python modules: {summary['python_modules']}",
@@ -743,10 +715,22 @@ def _render_module_map(audit: dict[str, object]) -> str:
         "",
         "## Repository structure",
         "",
-        "| Top-level path | Files |",
+        "| Asset class | Count |",
         "|---|---:|",
     ]
-    lines.extend(f"| `{name}` | {count} |" for name, count in sorted(directory_counts.items()))
+    for asset_class, count in sorted(asset_counts.items()):
+        lines.append(f"| `{asset_class}` | {count} |")
+    lines.extend(
+        [
+            "",
+            "## Python components",
+            "",
+            "| Component | Module count |",
+            "|---|---:|",
+        ]
+    )
+    for component, count in sorted(component_counts.items()):
+        lines.append(f"| `{component}` | {count} |")
     lines.extend(
         [
             "",
@@ -756,37 +740,40 @@ def _render_module_map(audit: dict[str, object]) -> str:
             "|---|---|",
         ]
     )
-    lines.extend(
-        f"| `{item['path']}` | {item['kind']} |" for item in audit["entrypoints"]
-    )
+    for entrypoint in entrypoints:
+        lines.append(f"| `{entrypoint['path']}` | {entrypoint['kind']} |")
     lines.extend(
         [
             "",
-            "## Module inventory",
+            "## Python module classifications",
             "",
-            "| Module | Role | Component | Primary phase | Internal deps | Direct tests |",
+            "| Path | Role | Component | Primary phase | Direct tests | Internal deps |",
             "|---|---|---|---:|---:|---:|",
         ]
     )
     for item in modules:
         lines.append(
-            f"| `{item['path']}` | {item['role']} | {item['component']} | "
-            f"{item['primary_phase']} | {len(item['internal_dependencies'])} | "
-            f"{len(item['direct_test_files'])} |"
+            "| "
+            f"`{item['path']}` | {item['role']} | {item['component']} | "
+            f"{item['primary_phase']} | {len(item['direct_test_files'])} | "
+            f"{len(item['internal_dependencies'])} |"
         )
     lines.extend(
         [
             "",
-            "## Interpretation limits",
+            "## Known gaps",
             "",
-            "- Classification coverage means each module has an owner and phase; it is not a claim that the phase is complete.",
-            "- Import-based test mapping is not line, branch, mutation, or behavioral coverage.",
-            "- Stub candidates remain visible in `repo_audit.json`; intentional interfaces and marker exceptions are distinguished from review-required findings.",
-            "- Credential-backed broker behavior and external infrastructure cannot be proven by this static audit.",
-            "",
+            (
+                "Source modules with no direct test import are listed for review; "
+                "this is not a coverage percentage."
+            ),
         ]
     )
-    return "\n".join(lines)
+    if gap_modules:
+        lines.extend(f"- `{path}`" for path in gap_modules)
+    else:
+        lines.append("- None")
+    return "\n".join(lines) + "\n"
 
 
 def _file_sha256(path: Path) -> str:
@@ -801,27 +788,25 @@ def _write_json(path: Path, payload: object) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate or verify AURA Phase 0 audit evidence")
-    parser.add_argument("--root", type=Path, default=Path.cwd())
-    mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--write", action="store_true", help="write deterministic audit artifacts")
-    mode.add_argument("--check", action="store_true", help="fail if artifacts are stale")
-    return parser.parse_args()
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Audit and classify the AURA repository")
+    parser.add_argument("--check", action="store_true", help="Fail if generated audit artifacts drift")
+    return parser
 
 
 def main() -> int:
-    args = _parse_args()
-    if args.write:
-        audit = write_repository_audit(args.root)
-        print(f"Phase 0: {audit['gate']['decision']}")
+    args = _parser().parse_args()
+    root = Path.cwd()
+    if args.check:
+        errors = check_repository_audit(root)
+        if errors:
+            for error in errors:
+                print(error, file=sys.stderr)
+            return 1
+        print("AURA Phase 0 repository audit is current: PASS")
         return 0
-    errors = check_repository_audit(args.root)
-    if errors:
-        for error in errors:
-            print(error)
-        return 1
-    print("Phase 0 audit artifacts are current")
+    audit = write_repository_audit(root)
+    print(json.dumps({"decision": audit["gate"]["decision"], **audit["summary"]}, indent=2))
     return 0
 
 
