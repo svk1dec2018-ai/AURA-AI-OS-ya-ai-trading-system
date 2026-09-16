@@ -72,7 +72,7 @@ def test_algo_builder_creates_research_only_compiled_candidate(tmp_path: Path, m
     )
 
     assert result["ok"] is True
-    assert result["stage"] == "research"
+    assert result["stage"] == "RESEARCH"
     assert result["research_only"] is True
     assert result["live_approved"] is False
     assert result["algorithm"]["compilable"] is True
