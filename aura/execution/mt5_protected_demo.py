@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+from collections.abc import Iterable
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Iterable
+from typing import Any
 
 from aura.data.mt5_demo import OfficialMT5Gateway
 from aura.domain.models import Fill, NormalizedCandle, OrderRequest, OrderStatus, Side
@@ -19,8 +20,8 @@ class ProtectedMT5DemoConfig:
 
     magic: int = 560026
     deviation_points: int = 20
-    stop_bps: Decimal = Decimal("35")
-    target_bps: Decimal = Decimal("70")
+    stop_bps: Decimal = Decimal(35)
+    target_bps: Decimal = Decimal(70)
     block_pyramiding: bool = True
     recovery_lookback_seconds: int = 604800
 
