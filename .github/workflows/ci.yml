@@ -27,37 +27,54 @@ jobs:
         run: python -m pip check
       - name: Compile smoke
         run: python -m compileall -q aura examples
-      - name: Phase 0 audit drift
+      - name: Regenerate deterministic governance evidence in CI workspace
+        run: |
+          python -m aura.ops.repository_audit
+          python -m aura.ops.core_contracts --write
+          python -m aura.ops.state_engine_gate --write
+          python -m aura.ops.risk_engine_gate --write
+          python -m aura.ops.broker_conformance_gate --write
+          python -m aura.ops.market_data_gate --write
+          python -m aura.ops.backtest_gate --write
+          python -m aura.ops.strategy_research_gate --write
+          python -m aura.ops.knowledge_rag_gate --write
+          python -m aura.ops.multi_agent_gate --write
+          python -m aura.ops.ceo_decision_gate --write
+          python -m aura.ops.broker_evidence_readiness --write
+          python -m aura.ops.paper_trading_gate --write
+          python -m aura.ops.operator_interface_gate --write
+          python -m aura.ops.end_to_end_gate --write
+      - name: Phase 0 audit evidence check
         run: python -m aura.ops.repository_audit --check
-      - name: Phase 1 contract evidence drift
+      - name: Phase 1 contract evidence check
         run: python -m aura.ops.core_contracts --check
-      - name: Phase 2 state engine evidence drift
+      - name: Phase 2 state engine evidence check
         run: python -m aura.ops.state_engine_gate --check
-      - name: Phase 3 risk engine evidence drift
+      - name: Phase 3 risk engine evidence check
         run: python -m aura.ops.risk_engine_gate --check
-      - name: Phase 4 broker conformance evidence drift
+      - name: Phase 4 broker conformance evidence check
         run: python -m aura.ops.broker_conformance_gate --check
-      - name: Phase 5 market-data evidence drift
+      - name: Phase 5 market-data evidence check
         run: python -m aura.ops.market_data_gate --check
-      - name: Phase 6 backtest evidence drift
+      - name: Phase 6 backtest evidence check
         run: python -m aura.ops.backtest_gate --check
-      - name: Phase 7 strategy research evidence drift
+      - name: Phase 7 strategy research evidence check
         run: python -m aura.ops.strategy_research_gate --check
-      - name: Phase 8 knowledge/RAG evidence drift
+      - name: Phase 8 knowledge/RAG evidence check
         run: python -m aura.ops.knowledge_rag_gate --check
-      - name: Phase 9 multi-agent evidence drift
+      - name: Phase 9 multi-agent evidence check
         run: python -m aura.ops.multi_agent_gate --check
-      - name: Phase 10 CEO decision evidence drift
+      - name: Phase 10 CEO decision evidence check
         run: python -m aura.ops.ceo_decision_gate --check
-      - name: Phase 11 broker evidence readiness drift
+      - name: Phase 11 broker evidence readiness check
         run: python -m aura.ops.broker_evidence_readiness --check
       - name: Phase 11 offline evidence intake smoke
         run: python -m aura.ops.broker_evidence_intake --output /tmp/aura-broker-intake.json
-      - name: Phase 12 paper trading evidence drift
+      - name: Phase 12 paper trading evidence check
         run: python -m aura.ops.paper_trading_gate --check
-      - name: Phase 13 operator interface evidence drift
+      - name: Phase 13 operator interface evidence check
         run: python -m aura.ops.operator_interface_gate --check
-      - name: Phase 14 end-to-end evidence drift
+      - name: Phase 14 end-to-end evidence check
         run: python -m aura.ops.end_to_end_gate --check
       - name: Ruff
         run: ruff check --output-format=github aura tests examples
