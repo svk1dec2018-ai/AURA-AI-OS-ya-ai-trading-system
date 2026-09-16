@@ -8,7 +8,7 @@ from http.server import ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from aura.webapp import server as base
-from aura.webapp.mt5_preflight import mt5_demo_preflight
+from aura.webapp.mt5_preflight import mt5_demo_execution_check, mt5_demo_preflight
 from aura.webapp.readiness import build_readiness
 from aura.webapp.security import owner_auth_required
 
@@ -18,6 +18,9 @@ class AuraWebControllerV3(base.AuraWebController):
 
     def mt5_preflight(self, *, max_symbols: int = 200) -> dict:
         return mt5_demo_preflight(max_symbols=max_symbols)
+
+    def mt5_execution_check(self, *, symbol: str) -> dict:
+        return mt5_demo_execution_check(symbol)
 
     def readiness(self) -> dict:
         preflight = self.mt5_preflight(max_symbols=100)
@@ -49,7 +52,7 @@ atexit.register(CONTROLLER.shutdown)
 
 
 class AuraRequestHandlerV3(base.AuraRequestHandler):
-    server_version = "AuraLocalPWA/3.1"
+    server_version = "AuraLocalPWA/3.2"
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -58,6 +61,15 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             try:
                 max_symbols = int((query.get("max_symbols") or ["200"])[0])
                 self._json(CONTROLLER.mt5_preflight(max_symbols=max_symbols))
+            except (TypeError, ValueError, RuntimeError, OSError) as exc:
+                self._json({"ok": False, "error": str(exc)}, 400)
+            return
+        if parsed.path == "/api/mt5/execution-check":
+            query = parse_qs(parsed.query)
+            try:
+                symbol = str((query.get("symbol") or ["XAUUSD"])[0])
+                payload = CONTROLLER.mt5_execution_check(symbol=symbol)
+                self._json(payload, 200 if payload.get("ok") else 400)
             except (TypeError, ValueError, RuntimeError, OSError) as exc:
                 self._json({"ok": False, "error": str(exc)}, 400)
             return

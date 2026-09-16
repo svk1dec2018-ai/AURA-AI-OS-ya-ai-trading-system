@@ -26,6 +26,31 @@ def test_v3_mt5_preflight_delegates_to_read_only_validator(tmp_path: Path, monke
     assert payload["tradable_symbol_count"] == 25
 
 
+def test_v3_execution_check_delegates_without_granting_submission(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        server_v3,
+        "mt5_demo_execution_check",
+        lambda symbol: {
+            "ok": True,
+            "execution_ready": True,
+            "symbol": symbol,
+            "order_check_attempted": True,
+            "order_submission_attempted": False,
+            "real_money_enabled": False,
+        },
+    )
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    payload = controller.mt5_execution_check(symbol="XAUUSD")
+    assert payload["execution_ready"] is True
+    assert payload["symbol"] == "XAUUSD"
+    assert payload["order_check_attempted"] is True
+    assert payload["order_submission_attempted"] is False
+    assert payload["real_money_enabled"] is False
+
+
 def test_v3_start_fails_closed_when_mt5_preflight_is_not_ready(
     tmp_path: Path,
     monkeypatch,
@@ -90,6 +115,17 @@ def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
     assert payload["mt5_preflight"]["demo_verified"] is True
     assert payload["mt5_preflight"]["server"] == "Demo-Server"
     assert payload["mt5_preflight"]["tradable_symbol_count"] == 123
+
+
+def test_mt5_bridge_surfaces_no_send_execution_check() -> None:
+    root = Path(__file__).resolve().parents[1]
+    javascript = (root / "aura" / "webapp" / "static" / "mt5-bridge.js").read_text(
+        encoding="utf-8"
+    )
+    assert "Check Execution" in javascript
+    assert "/api/mt5/execution-check" in javascript
+    assert "order_check" in javascript
+    assert "order_send NOT attempted" in javascript
 
 
 def test_one_click_launcher_uses_fresh_v3_server_after_setup() -> None:
