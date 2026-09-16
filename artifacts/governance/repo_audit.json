@@ -2766,6 +2766,38 @@
         "to": "aura/persistence/wal.py"
       },
       {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/backtest/engine.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/core/pipeline.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/portfolio/instruments.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/research/blueprint_compiler.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/research/strategy_factory.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "aura/webapp/research_runner.py",
+        "to": "aura/risk/quantity.py"
+      },
+      {
         "from": "aura/webapp/server.py",
         "to": "aura/research/autonomy.py"
       },
@@ -6592,6 +6624,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 10105,
+      "path": "aura/webapp/research_runner.py",
+      "sha256": "815d7d11d93470604d834f05567689f34eb5019504a5d10d0f7063bd8b723f4d"
+    },
+    {
+      "asset_class": "python",
       "bytes": 1051,
       "path": "aura/webapp/security.py",
       "sha256": "dade2e9fc5301bac7ca8e5aa46ecd039215f7d9447dba30937e823c2f34727a7"
@@ -8104,6 +8142,7 @@
       "aura/webapp/charting.py",
       "aura/webapp/operator_assistant.py",
       "aura/webapp/read_models.py",
+      "aura/webapp/research_runner.py",
       "aura/webapp/security.py"
     ]
   },
@@ -14721,6 +14760,40 @@
     {
       "component": "webapp",
       "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/data/mt5_demo.py",
+        "aura/portfolio/instruments.py",
+        "aura/research/blueprint_compiler.py",
+        "aura/research/strategy_factory.py",
+        "aura/risk/engine.py",
+        "aura/risk/quantity.py"
+      ],
+      "lines": 250,
+      "module": "aura.webapp.research_runner",
+      "parsed": true,
+      "path": "aura/webapp/research_runner.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "source",
+      "sha256": "815d7d11d93470604d834f05567689f34eb5019504a5d10d0f7063bd8b723f4d",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "decimal",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "webapp",
+      "direct_test_files": [],
       "internal_dependencies": [],
       "lines": 36,
       "module": "aura.webapp.security",
@@ -19396,7 +19469,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "dc8ef887fc5d86ee70598ddd7b3f5b9bf64bc81b719ef31cb435920d37bbd3f9",
+  "repository_tree_sha256": "1b10e3f28720a5e5ebceb1cb304674a03d78ce3168b4a767e44b18230e9b3ee0",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -19984,9 +20057,9 @@
     "directly_tested_source_modules": 177,
     "entrypoints": 55,
     "parse_errors": 0,
-    "python_modules": 384,
-    "repository_files": 463,
-    "source_modules": 204,
+    "python_modules": 385,
+    "repository_files": 464,
+    "source_modules": 205,
     "static_test_functions": 611,
     "stub_candidates": 95,
     "test_modules": 154,

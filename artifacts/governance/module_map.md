@@ -5,9 +5,9 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 463
-- Python modules: 384
-- Source modules: 204
+- Repository files: 464
+- Python modules: 385
+- Source modules: 205
 - Test modules: 154
 - Static test functions: 611
 - Entrypoints: 55
@@ -24,7 +24,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `documentation` | 32 |
 | `documentation_or_validation_evidence` | 18 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 384 |
+| `python` | 385 |
 | `repository_asset` | 9 |
 | `repository_configuration` | 2 |
 
@@ -62,7 +62,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `runtime` | 19 |
 | `strategy` | 3 |
 | `validation` | 154 |
-| `webapp` | 7 |
+| `webapp` | 8 |
 
 ## Entrypoints
 
@@ -338,6 +338,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/webapp/charting.py` | source | webapp | 13 | 0 | 2 |
 | `aura/webapp/operator_assistant.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
+| `aura/webapp/research_runner.py` | source | webapp | 13 | 0 | 8 |
 | `aura/webapp/security.py` | source | webapp | 13 | 0 | 0 |
 | `aura/webapp/server.py` | source | webapp | 13 | 1 | 7 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 0 | 1 |
@@ -542,4 +543,5 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/webapp/charting.py`
 - `aura/webapp/operator_assistant.py`
 - `aura/webapp/read_models.py`
+- `aura/webapp/research_runner.py`
 - `aura/webapp/security.py`
