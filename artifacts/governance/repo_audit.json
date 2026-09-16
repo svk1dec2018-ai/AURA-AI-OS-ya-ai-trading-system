@@ -2816,11 +2816,19 @@
       },
       {
         "from": "aura/webapp/server.py",
+        "to": "aura/webapp/charting.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
         "to": "aura/webapp/operator_assistant.py"
       },
       {
         "from": "aura/webapp/server.py",
         "to": "aura/webapp/read_models.py"
+      },
+      {
+        "from": "aura/webapp/server.py",
+        "to": "aura/webapp/research_runner.py"
       },
       {
         "from": "aura/webapp/server.py",
@@ -6607,9 +6615,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 8292,
+      "bytes": 8318,
       "path": "aura/webapp/charting.py",
-      "sha256": "ae56074c688e851841bb0e253ddb336601cd2fd5456a4e3c6df57db4dd6c1e4c"
+      "sha256": "babbf706573efea45de3f05e2a1d878b7299ddbb46c85590d91bb643c1721297"
     },
     {
       "asset_class": "python",
@@ -6625,9 +6633,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 10105,
+      "bytes": 10087,
       "path": "aura/webapp/research_runner.py",
-      "sha256": "815d7d11d93470604d834f05567689f34eb5019504a5d10d0f7063bd8b723f4d"
+      "sha256": "8b1ec5e254fb8a258a9e54ab6ef0ae781cf5ad3939cc61f4f3e848a3b7baae9c"
     },
     {
       "asset_class": "python",
@@ -6637,15 +6645,15 @@
     },
     {
       "asset_class": "python",
-      "bytes": 25274,
+      "bytes": 27350,
       "path": "aura/webapp/server.py",
-      "sha256": "657cdfc73c0ab4dae3aef4c201fc568d50c9574ea835c8d1a88079e3dbd5f130"
+      "sha256": "899abbf6c3def6bf9a567f763fd9893991a59f88c625376e5461f3de70aa8c33"
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 27235,
+      "bytes": 30975,
       "path": "aura/webapp/static/app.js",
-      "sha256": "b066a893e4723c1042460ba6fcd41680ec43d201130d97eb4b2cbf204dfecf7a"
+      "sha256": "d226fee5b3ffd9884c75aa0d1cea6e2b26bd7634d6608b25e40dba17c9924281"
     },
     {
       "asset_class": "repository_asset",
@@ -6655,9 +6663,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 36329,
+      "bytes": 38057,
       "path": "aura/webapp/static/index.html",
-      "sha256": "06d467038f4ce8e9260971954b2a733cd3613b0b09a972517ba9c39d5281b3cc"
+      "sha256": "a70696cdab74d8b21d09eb819678f439b31b7659d525c7f3fb32cf1acba14274"
     },
     {
       "asset_class": "repository_asset",
@@ -6667,9 +6675,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 20542,
+      "bytes": 21190,
       "path": "aura/webapp/static/styles.css",
-      "sha256": "d08f8726b54f79aab3cb351fecc07bb1c1f3441c58d0f8700cf1b03b25e0f64f"
+      "sha256": "c75dcdf479bb785bd97ba1a78962aa289fec8df85a660c69a95ff109b91be415"
     },
     {
       "asset_class": "repository_asset",
@@ -7183,9 +7191,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6788,
+      "bytes": 8671,
       "path": "tests/test_aura_webapp.py",
-      "sha256": "bc97a3d2f4d8c80c6fa78938972bc843096527563fea742dc3356241086b6bac"
+      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9"
     },
     {
       "asset_class": "python",
@@ -8082,13 +8090,13 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 254,
+        "line": 258,
         "path": "aura/webapp/server.py"
       },
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 666,
+        "line": 709,
         "path": "aura/webapp/server.py"
       },
       {
@@ -14701,9 +14709,10 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "ae56074c688e851841bb0e253ddb336601cd2fd5456a4e3c6df57db4dd6c1e4c",
+      "sha256": "babbf706573efea45de3f05e2a1d878b7299ddbb46c85590d91bb643c1721297",
       "standard_library_dependencies": [
         "__future__",
+        "collections",
         "dataclasses",
         "decimal",
         "math",
@@ -14771,7 +14780,7 @@
         "aura/risk/engine.py",
         "aura/risk/quantity.py"
       ],
-      "lines": 250,
+      "lines": 249,
       "module": "aura.webapp.research_runner",
       "parsed": true,
       "path": "aura/webapp/research_runner.py",
@@ -14780,7 +14789,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "815d7d11d93470604d834f05567689f34eb5019504a5d10d0f7063bd8b723f4d",
+      "sha256": "8b1ec5e254fb8a258a9e54ab6ef0ae781cf5ad3939cc61f4f3e848a3b7baae9c",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -14823,11 +14832,13 @@
         "aura/research/blueprint_compiler.py",
         "aura/research/strategy_factory.py",
         "aura/webapp/catalog.py",
+        "aura/webapp/charting.py",
         "aura/webapp/operator_assistant.py",
         "aura/webapp/read_models.py",
+        "aura/webapp/research_runner.py",
         "aura/webapp/security.py"
       ],
-      "lines": 674,
+      "lines": 717,
       "module": "aura.webapp.server",
       "parsed": true,
       "path": "aura/webapp/server.py",
@@ -14836,7 +14847,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "657cdfc73c0ab4dae3aef4c201fc568d50c9574ea835c8d1a88079e3dbd5f130",
+      "sha256": "899abbf6c3def6bf9a567f763fd9893991a59f88c625376e5461f3de70aa8c33",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -15653,7 +15664,7 @@
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "lines": 161,
+      "lines": 213,
       "module": "tests.test_aura_webapp",
       "parsed": true,
       "path": "tests/test_aura_webapp.py",
@@ -15662,7 +15673,7 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "bc97a3d2f4d8c80c6fa78938972bc843096527563fea742dc3356241086b6bac",
+      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9",
       "standard_library_dependencies": [
         "pathlib",
         "tomllib"
@@ -19473,7 +19484,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "38cff00a6993b7c8fc601ccd631139775f9b12f64c5cddbc2384096bafdb006b",
+  "repository_tree_sha256": "7fccdb35cd1df245191bb37c35db4e0bf5d76c5548f6b87a3aa7033ee835c6cc",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20023,13 +20034,13 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 254,
+      "line": 258,
       "path": "aura/webapp/server.py"
     },
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 666,
+      "line": 709,
       "path": "aura/webapp/server.py"
     },
     {
@@ -20064,7 +20075,7 @@
     "python_modules": 385,
     "repository_files": 464,
     "source_modules": 205,
-    "static_test_functions": 614,
+    "static_test_functions": 616,
     "stub_candidates": 95,
     "test_modules": 154,
     "unclassified_modules": 0,

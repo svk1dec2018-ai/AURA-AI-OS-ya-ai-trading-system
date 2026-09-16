@@ -38,6 +38,8 @@ def test_dashboard_keeps_safety_copy_and_owner_surfaces() -> None:
     assert "/app.js" in html
     assert "/api/start" in html
     assert "/api/kill" in html
+    assert "chartForm" in html
+    assert "backtestForm" in html
     assert "fake-line" not in html
     assert "simulated performance curve" in html
 
@@ -46,6 +48,8 @@ def test_dashboard_does_not_render_fabricated_agent_percentages() -> None:
     javascript = (server.STATIC_DIR / "app.js").read_text(encoding="utf-8")
     assert "72-i*5" not in javascript
     assert "implemented" in javascript
+    assert "/api/chart" in javascript
+    assert "/api/backtest/run" in javascript
 
 
 def test_controller_status_is_safe_without_runtime_files(tmp_path: Path, monkeypatch) -> None:
@@ -159,3 +163,51 @@ def test_algo_options_do_not_expose_arbitrary_code_or_live_approval(
     assert options["constraints"]["broker_credentials_allowed"] is False
     assert options["constraints"]["live_approval_allowed"] is False
     assert options["constraints"]["arbitrary_code_allowed"] is False
+
+
+def test_chart_surface_delegates_to_demo_read_model(tmp_path: Path, monkeypatch) -> None:
+    controller = server.AuraWebController(state_dir=tmp_path / "mt5_state")
+    monkeypatch.setattr(
+        server,
+        "mt5_chart_snapshot",
+        lambda symbol, timeframe, bars: {
+            "ok": True,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "bars": bars,
+            "candles": [],
+        },
+    )
+    assert controller.chart(symbol="XAUUSD", timeframe="5m", bars=300) == {
+        "ok": True,
+        "symbol": "XAUUSD",
+        "timeframe": "5m",
+        "bars": 300,
+        "candles": [],
+    }
+
+
+def test_backtest_surface_persists_research_only_result(tmp_path: Path, monkeypatch) -> None:
+    candidate = {"candidate_id": "candidate-1", "research_only": True}
+    monkeypatch.setattr(server, "BACKTEST_DIR", tmp_path / "backtests")
+    monkeypatch.setattr(server.AuraWebController, "algo_candidates", lambda self: [candidate])
+    monkeypatch.setattr(
+        server,
+        "run_candidate_backtest",
+        lambda selected, **kwargs: {
+            "ok": True,
+            "research_only": True,
+            "live_approved": False,
+            "artifact_hash": "abc123",
+            "candidate_id": selected["candidate_id"],
+            "inputs": kwargs,
+        },
+    )
+    controller = server.AuraWebController(state_dir=tmp_path / "mt5_state")
+    result = controller.run_backtest(
+        {"candidate_id": "candidate-1", "symbol": "XAUUSD", "timeframe": "5m", "bars": 500}
+    )
+    assert result["research_only"] is True
+    assert result["live_approved"] is False
+    assert result["artifact_file"] == "abc123.json"
+    assert (tmp_path / "backtests" / "abc123.json").exists()

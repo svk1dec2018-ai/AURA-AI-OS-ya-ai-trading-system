@@ -16,7 +16,6 @@ from aura.research.strategy_factory import StrategyBlueprint
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.risk.quantity import QuantityRule
 
-
 BACKTEST_SCHEMA_VERSION = 1
 
 
@@ -26,10 +25,10 @@ def run_candidate_backtest(
     symbol: str,
     timeframe: str,
     bars: int = 1000,
-    starting_cash: Decimal = Decimal("100000"),
+    starting_cash: Decimal = Decimal(100000),
     requested_quantity: Decimal | None = None,
-    fee_bps: Decimal = Decimal("0"),
-    slippage_bps: Decimal = Decimal("1"),
+    fee_bps: Decimal = Decimal(0),
+    slippage_bps: Decimal = Decimal(1),
     gateway: OfficialMT5Gateway | None = None,
 ) -> dict[str, Any]:
     """Backtest one immutable Algo Studio candidate on closed MT5 DEMO candles.
@@ -51,7 +50,7 @@ def run_candidate_backtest(
 
     blueprint_payload = candidate.get("blueprint")
     if not isinstance(blueprint_payload, dict):
-        raise ValueError("candidate does not contain a valid strategy blueprint")
+        raise TypeError("candidate does not contain a valid strategy blueprint")
     blueprint = StrategyBlueprint.model_validate(blueprint_payload)
     compiled = compile_blueprint(blueprint)
     if bars <= compiled.warmup_bars + 5:
@@ -111,11 +110,11 @@ def run_candidate_backtest(
         )
         risk = RiskEngine(
             RiskLimits(
-                max_order_notional_pct=Decimal("2"),
-                max_gross_exposure_pct=Decimal("100"),
-                max_symbol_exposure_pct=Decimal("25"),
-                max_drawdown_pct=Decimal("10"),
-                max_daily_loss_pct=Decimal("4"),
+                max_order_notional_pct=Decimal(2),
+                max_gross_exposure_pct=Decimal(100),
+                max_symbol_exposure_pct=Decimal(25),
+                max_drawdown_pct=Decimal(10),
+                max_daily_loss_pct=Decimal(4),
                 allow_short=True,
             ),
             notional_multipliers={normalized_symbol: contract_size},

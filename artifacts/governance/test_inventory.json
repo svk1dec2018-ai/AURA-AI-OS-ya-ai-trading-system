@@ -265,18 +265,20 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "bc97a3d2f4d8c80c6fa78938972bc843096527563fea742dc3356241086b6bac",
+      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 10,
+      "static_test_functions": 12,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
         "test_algo_builder_rejects_non_allowlisted_component",
         "test_algo_options_do_not_expose_arbitrary_code_or_live_approval",
+        "test_backtest_surface_persists_research_only_result",
         "test_capability_catalog_is_truthful_and_has_blocked_money_actions",
+        "test_chart_surface_delegates_to_demo_read_model",
         "test_controller_status_is_safe_without_runtime_files",
         "test_dashboard_does_not_render_fabricated_agent_percentages",
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
@@ -3444,7 +3446,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 614,
+    "static_test_functions": 616,
     "test_modules": 154
   }
 }

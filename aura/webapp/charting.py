@@ -1,13 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from decimal import Decimal
 from math import sqrt
-from typing import Any, Sequence
+from typing import Any
 
 from aura.data.mt5_demo import MT5DemoClosedCandleSource, OfficialMT5Gateway
 from aura.domain.models import NormalizedCandle
-
 
 SUPPORTED_TIMEFRAMES = ("1m", "5m", "15m", "30m", "1h", "4h", "1d", "1w")
 

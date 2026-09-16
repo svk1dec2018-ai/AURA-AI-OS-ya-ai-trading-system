@@ -15,7 +15,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 from aura.research.autonomy import ResearchHypothesis
 from aura.research.blueprint_compiler import (
@@ -27,6 +27,7 @@ from aura.research.blueprint_compiler import (
 )
 from aura.research.strategy_factory import AutonomousStrategyFactory
 from aura.webapp.catalog import capability_catalog
+from aura.webapp.charting import SUPPORTED_TIMEFRAMES, mt5_chart_snapshot
 from aura.webapp.operator_assistant import answer_owner_query
 from aura.webapp.read_models import (
     decision_feed,
@@ -34,6 +35,7 @@ from aura.webapp.read_models import (
     intelligence_feed,
     learning_snapshot,
 )
+from aura.webapp.research_runner import persist_backtest, run_candidate_backtest
 from aura.webapp.security import owner_auth_required, owner_authorized
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -43,6 +45,7 @@ DEFAULT_MT5_STATE_DIR = ROOT / "runtime" / "mt5_autonomous_demo"
 KILL_LOCK_PATH = RUNTIME_DIR / "kill_switch.json"
 LOG_PATH = RUNTIME_DIR / "daemon.log"
 ALGO_DIR = RUNTIME_DIR / "algo_candidates"
+BACKTEST_DIR = RUNTIME_DIR / "backtests"
 
 VALIDATION_PIPELINE = (
     "compile",
@@ -76,6 +79,7 @@ class AuraWebController:
         self._log_handle = None
         RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
         ALGO_DIR.mkdir(parents=True, exist_ok=True)
+        BACKTEST_DIR.mkdir(parents=True, exist_ok=True)
 
     def _process_running(self) -> bool:
         return self._process is not None and self._process.poll() is None
@@ -400,6 +404,26 @@ class AuraWebController:
                 candidates.append(value)
         return candidates[:100]
 
+    def chart(self, *, symbol: str, timeframe: str, bars: int) -> dict[str, Any]:
+        return mt5_chart_snapshot(symbol, timeframe, bars=bars)
+
+    def run_backtest(self, body: dict[str, Any]) -> dict[str, Any]:
+        candidate_id = _required_text(body.get("candidate_id"), "candidate_id", max_length=160)
+        candidate = next(
+            (item for item in self.algo_candidates() if item.get("candidate_id") == candidate_id),
+            None,
+        )
+        if candidate is None:
+            raise ValueError("unknown Algo Studio candidate")
+        result = run_candidate_backtest(
+            candidate,
+            symbol=_required_text(body.get("symbol"), "symbol", max_length=120),
+            timeframe=_required_text(body.get("timeframe"), "timeframe", max_length=12),
+            bars=int(body.get("bars", 1000)),
+        )
+        artifact = persist_backtest(result, BACKTEST_DIR)
+        return {**result, "artifact_file": artifact.name}
+
     def _close_log(self) -> None:
         if self._log_handle is not None:
             try:
@@ -525,7 +549,8 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
         return False
 
     def do_GET(self) -> None:
-        path = urlparse(self.path).path
+        parsed = urlparse(self.path)
+        path = parsed.path
         if path == "/api/status":
             self._json(CONTROLLER.status())
             return
@@ -555,6 +580,22 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
             return
         if path == "/api/algo/candidates":
             self._json({"ok": True, "items": CONTROLLER.algo_candidates()})
+            return
+        if path == "/api/chart":
+            try:
+                query = parse_qs(parsed.query)
+                self._json(
+                    CONTROLLER.chart(
+                        symbol=(query.get("symbol") or [""])[0],
+                        timeframe=(query.get("timeframe") or [""])[0],
+                        bars=int((query.get("bars") or ["300"])[0]),
+                    )
+                )
+            except (TypeError, ValueError, RuntimeError, OSError) as exc:
+                self._json({"ok": False, "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+            return
+        if path == "/api/chart/options":
+            self._json({"ok": True, "timeframes": list(SUPPORTED_TIMEFRAMES)})
             return
         if path == "/api/health":
             self._json(
@@ -591,6 +632,8 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
                 payload = CONTROLLER.reset_kill_lock()
             elif path == "/api/algo/build":
                 payload = CONTROLLER.build_algo_candidate(body)
+            elif path == "/api/backtest/run":
+                payload = CONTROLLER.run_backtest(body)
             elif path == "/api/command":
                 payload = CONTROLLER.owner_command(str(body.get("text") or ""))
             else:

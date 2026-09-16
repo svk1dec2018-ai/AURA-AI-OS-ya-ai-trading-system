@@ -9,7 +9,7 @@ It inventories the repository; it does not certify later implementation phases.
 - Python modules: 385
 - Source modules: 205
 - Test modules: 154
-- Static test functions: 614
+- Static test functions: 616
 - Entrypoints: 55
 - Known stub/incomplete candidates: 95
 
@@ -340,7 +340,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/research_runner.py` | source | webapp | 13 | 0 | 8 |
 | `aura/webapp/security.py` | source | webapp | 13 | 0 | 0 |
-| `aura/webapp/server.py` | source | webapp | 13 | 1 | 7 |
+| `aura/webapp/server.py` | source | webapp | 13 | 1 | 9 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 0 | 1 |
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 0 | 2 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 0 | 2 |

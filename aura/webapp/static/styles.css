@@ -264,6 +264,11 @@ textarea{min-height:92px;resize:vertical;line-height:1.55}
 .notice{border:1px solid rgba(239,184,76,.2);background:var(--warn-soft);border-radius:12px;padding:10px;font-size:9px;color:#c6a66d;line-height:1.55}
 .notice.info{border-color:rgba(62,200,255,.18);background:rgba(62,200,255,.06);color:#8fc9df}
 .notice.good{border-color:rgba(43,216,139,.18);background:var(--good-soft);color:#82dcb1}
+.chart-workspace{margin-top:12px;min-height:320px;border:1px solid var(--line);border-radius:14px;background:#080f19;overflow:auto}
+.chart-meta{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-bottom:1px solid var(--line);font-size:9px;color:var(--muted)}
+.chart-meta b{color:var(--text-soft)}
+.market-chart{display:block;width:100%;min-width:760px;height:auto;background:linear-gradient(rgba(148,163,184,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,.04) 1px,transparent 1px);background-size:100% 48px,72px 100%}
+.chart-legend{display:flex;gap:14px;padding:8px 12px;font-size:8px;color:var(--muted)}
 .owner-access{
   display:grid;grid-template-columns:repeat(4,1fr);gap:8px
 }
