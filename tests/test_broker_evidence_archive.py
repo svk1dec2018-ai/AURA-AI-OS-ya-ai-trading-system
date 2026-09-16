@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from pathlib import Path
@@ -192,7 +193,8 @@ def test_checkpoint_export_load_and_exclusive_create(tmp_path: Path) -> None:
 
     assert loaded == exported
     archive.verify_checkpoint(loaded)
-    assert destination.stat().st_mode & 0o777 == 0o600
+    if os.name != "nt":
+        assert destination.stat().st_mode & 0o777 == 0o600
     with pytest.raises(BrokerEvidenceArchiveError, match="already exists"):
         archive.export_checkpoint(destination)
     assert not tuple(destination.parent.glob(".*.tmp"))

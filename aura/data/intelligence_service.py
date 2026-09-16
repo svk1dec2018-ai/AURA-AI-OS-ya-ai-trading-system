@@ -7,7 +7,13 @@ from aura.data.free_intelligence import ExternalIntelligenceEvent, FreeIntellige
 
 
 class LiveIntelligenceService:
-    """Failure-isolated external-information cache with point-in-time reads."""
+    """Failure-isolated external-information cache with point-in-time reads.
+
+    The service is deliberately read-only from the trading system's perspective:
+    fetched text is context/evidence, never an owner command or execution grant.
+    Operator surfaces may use :meth:`recent_events` to display the same bounded,
+    time-aware cache that agents can see.
+    """
 
     def __init__(
         self,
@@ -89,6 +95,44 @@ class LiveIntelligenceService:
         self.last_poll_at = now
         return added
 
+    def recent_events(
+        self,
+        *,
+        decision_time: datetime | None = None,
+        symbol: str | None = None,
+        limit: int = 50,
+    ) -> tuple[ExternalIntelligenceEvent, ...]:
+        """Return a newest-first point-in-time operator/agent view of cached events.
+
+        Future-published or future-observed records are excluded.  A symbol filter
+        retains global events (empty symbol scope) as well as records explicitly
+        tagged for the requested symbol, mirroring ``metadata_for`` semantics.
+        """
+
+        if limit <= 0:
+            raise ValueError("limit must be positive")
+        effective_time = decision_time or datetime.now(UTC)
+        if effective_time.tzinfo is None or effective_time.utcoffset() is None:
+            raise ValueError("decision_time must be timezone-aware")
+        effective_time = effective_time.astimezone(UTC)
+        normalized_symbol = symbol.upper() if symbol else None
+        visible = [
+            item
+            for item in self._events.values()
+            if item.published_at <= effective_time
+            and item.observed_at <= effective_time
+            and (
+                normalized_symbol is None
+                or not item.symbols
+                or normalized_symbol in {value.upper() for value in item.symbols}
+            )
+        ]
+        visible.sort(
+            key=lambda item: (item.published_at, item.observed_at, item.event_id),
+            reverse=True,
+        )
+        return tuple(visible[:limit])
+
     def metadata_for(
         self,
         symbol: str,
@@ -100,26 +144,16 @@ class LiveIntelligenceService:
             raise ValueError("decision_time must be timezone-aware")
         if limit <= 0:
             raise ValueError("limit must be positive")
-        normalized_symbol = symbol.upper()
-        visible = [
-            item
-            for item in self._events.values()
-            if item.published_at <= decision_time
-            and item.observed_at <= decision_time
-            and (
-                not item.symbols
-                or normalized_symbol in {value.upper() for value in item.symbols}
-            )
-        ]
-        visible.sort(
-            key=lambda item: (item.published_at, item.observed_at, item.event_id),
-            reverse=True,
+        visible = self.recent_events(
+            decision_time=decision_time,
+            symbol=symbol,
+            limit=limit,
         )
         if not visible:
             return {}
         return {
             "external_intelligence_events": [
-                item.model_dump(mode="json") for item in visible[:limit]
+                item.model_dump(mode="json") for item in visible
             ]
         }
 

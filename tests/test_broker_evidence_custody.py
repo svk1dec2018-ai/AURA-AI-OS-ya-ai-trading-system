@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -140,7 +141,8 @@ def test_eligible_batch_is_archived_anchored_and_receipted(tmp_path: Path) -> No
     assert sealed.receipt.phase_gate_updated is False
     assert sealed.receipt.phase11_pass_claimed is False
     assert sealed.receipt.execution_authority is False
-    assert receipt_path.stat().st_mode & 0o777 == 0o600
+    if os.name != "nt":
+        assert receipt_path.stat().st_mode & 0o777 == 0o600
 
 
 def test_blocked_batch_performs_no_custody_writes(tmp_path: Path) -> None:

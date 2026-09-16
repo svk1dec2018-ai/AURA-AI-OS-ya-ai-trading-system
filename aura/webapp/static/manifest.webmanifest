@@ -1,11 +1,11 @@
 {
-  "name": "AURA AI OS",
+  "name": "AURA AI OS Owner Command Center",
   "short_name": "AURA",
-  "description": "Local demo-only AURA AI OS control panel",
+  "description": "Owner command center for governed market intelligence, research, paper/demo execution, risk and strategy development.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#08111f",
-  "theme_color": "#0b1220",
+  "background_color": "#050912",
+  "theme_color": "#050912",
   "icons": [
     {
       "src": "/icon.svg",

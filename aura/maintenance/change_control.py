@@ -524,8 +524,7 @@ class SandboxPatchExecutor:
                 applied = subprocess.run(
                     ("git", "apply", "--whitespace=error-all", "-"),
                     cwd=sandbox,
-                    input=proposal.unified_diff,
-                    text=True,
+                    input=proposal.unified_diff.encode("utf-8"),
                     capture_output=True,
                     env=environment,
                     timeout=self.timeout_seconds,
@@ -871,16 +870,19 @@ def _run_check(
 ) -> SandboxCheck:
     started = time.monotonic()
     try:
-        completed = subprocess.run(
-            command,
-            cwd=cwd,
-            input=stdin,
-            text=True,
-            capture_output=True,
-            env=environment,
-            timeout=timeout_seconds,
-            check=False,
-        )
+        run_kwargs: dict[str, object] = {
+            "cwd": cwd,
+            "capture_output": True,
+            "env": environment,
+            "timeout": timeout_seconds,
+        }
+        if stdin is None:
+            run_kwargs["text"] = True
+        else:
+            # Binary stdin prevents Windows newline translation from turning a
+            # canonical LF-only unified diff into a CRLF patch that git rejects.
+            run_kwargs["input"] = stdin.encode("utf-8")
+        completed = subprocess.run(command, check=False, **run_kwargs)
     except subprocess.TimeoutExpired as exc:
         combined = f"{exc.stdout or ''}\n{exc.stderr or ''}\nTIMEOUT"
         duration = int((time.monotonic() - started) * 1000)
@@ -897,11 +899,13 @@ def _run_check(
 
 def _completed_process_check(
     command: tuple[str, ...],
-    completed: subprocess.CompletedProcess[str],
+    completed: subprocess.CompletedProcess[str] | subprocess.CompletedProcess[bytes],
     *,
     duration_ms: int,
 ) -> SandboxCheck:
-    combined = f"{completed.stdout or ''}\n{completed.stderr or ''}".strip()
+    stdout = completed.stdout.decode("utf-8", errors="replace") if isinstance(completed.stdout, bytes) else completed.stdout
+    stderr = completed.stderr.decode("utf-8", errors="replace") if isinstance(completed.stderr, bytes) else completed.stderr
+    combined = f"{stdout or ''}\n{stderr or ''}".strip()
     return SandboxCheck(
         command=command,
         exit_code=completed.returncode,

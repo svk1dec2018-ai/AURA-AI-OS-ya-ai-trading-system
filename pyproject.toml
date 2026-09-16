@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "pydantic>=2.8,<3",
+  "tzdata>=2025.2; platform_system == 'Windows'",
   "websockets>=12,<16",
 ]
 
@@ -27,6 +28,9 @@ dev = [
 
 [tool.setuptools.packages.find]
 include = ["aura*"]
+
+[tool.setuptools.package-data]
+"aura.webapp" = ["static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

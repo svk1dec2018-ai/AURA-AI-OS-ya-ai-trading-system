@@ -205,6 +205,23 @@ class MT5SelfEvolvingPaperDaemon:
             sample for sample in all_samples if sample.origin == SampleOrigin.LIVE_BROKER
         )
         audit = self.opportunity_auditor.store.metrics()
+        recent_intelligence = [
+            {
+                "event_id": item.event_id,
+                "source": item.source,
+                "kind": item.kind.value,
+                "title": item.title,
+                "published_at": item.published_at.isoformat(),
+                "observed_at": item.observed_at.isoformat(),
+                "url": item.url,
+                "summary": item.summary,
+                "symbols": list(item.symbols),
+                "topics": list(item.topics),
+                "sentiment": item.sentiment,
+                "trust_score": item.trust_score,
+            }
+            for item in self.intelligence_service.recent_events(limit=80)
+        ]
         payload = {
             "updated_at": datetime.now(UTC).isoformat(),
             "state": state,
@@ -216,6 +233,7 @@ class MT5SelfEvolvingPaperDaemon:
             "agent_reliability_observations": self.reliability_tracker.observation_count,
             "online_learning": self.online_bridge.status(),
             "live_intelligence": self.intelligence_service.status(),
+            "recent_intelligence": recent_intelligence,
             "opportunity_audit": {
                 "material_opportunities": audit.material_opportunities,
                 "captured": audit.captured,

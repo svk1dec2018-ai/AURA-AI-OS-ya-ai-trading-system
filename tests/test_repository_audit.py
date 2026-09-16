@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path, PurePosixPath
 
 from aura.ops.repository_audit import (
+    _canonical_file_bytes,
+    _file_sha256,
     _is_audit_excluded,
     build_repository_audit,
     check_repository_audit,
@@ -57,3 +59,14 @@ def test_packaging_outputs_are_excluded_but_source_is_not() -> None:
     assert _is_audit_excluded(PurePosixPath("build/lib/aura/ops/preflight.py")) is True
     assert _is_audit_excluded(PurePosixPath("dist/aura_ai_os.whl")) is True
     assert _is_audit_excluded(PurePosixPath("aura/ops/preflight.py")) is False
+
+
+def test_audit_hashes_are_checkout_newline_independent(tmp_path: Path) -> None:
+    lf = tmp_path / "lf.txt"
+    crlf = tmp_path / "crlf.txt"
+    lf.write_bytes(b"first\nsecond\n")
+    crlf.write_bytes(b"first\r\nsecond\r\n")
+
+    assert _canonical_file_bytes(lf) == b"first\nsecond\n"
+    assert _canonical_file_bytes(crlf) == b"first\nsecond\n"
+    assert _file_sha256(lf) == _file_sha256(crlf)
