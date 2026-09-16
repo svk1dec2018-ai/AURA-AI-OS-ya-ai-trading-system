@@ -27,6 +27,21 @@ jobs:
         run: python -m pip check
       - name: Compile smoke
         run: python -m compileall -q aura examples
+      - name: Generate Phase 0 audit candidate
+        if: matrix.python-version == '3.11'
+        run: |
+          rm -rf /tmp/aura-audit
+          cp -a . /tmp/aura-audit
+          cd /tmp/aura-audit
+          python -m aura.ops.repository_audit
+      - name: Upload generated governance candidate
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: aura-governance-generated
+          path: /tmp/aura-audit/artifacts/governance
+          if-no-files-found: error
+          retention-days: 3
       - name: Phase 0 audit drift
         run: python -m aura.ops.repository_audit --check
       - name: Phase 1 contract evidence drift
