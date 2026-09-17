@@ -63,6 +63,25 @@ def _service(
     server = service.make_server()
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
+    # Windows can briefly abort the first localhost request while a newly
+    # started threaded server is entering its accept loop. Warm the exact HTTP
+    # handler rather than assuming Thread.start means it is already serving.
+    ready_url = f"http://127.0.0.1:{server.server_port}/"
+    last_error: OSError | None = None
+    for _ in range(50):
+        try:
+            with urlopen(ready_url, timeout=1) as response:
+                response.read(1)
+            last_error = None
+            break
+        except OSError as exc:
+            last_error = exc
+            threading.Event().wait(0.01)
+    if last_error is not None:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=3)
+        raise last_error
     return service, server, thread
 
 

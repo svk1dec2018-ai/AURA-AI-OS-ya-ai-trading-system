@@ -145,10 +145,14 @@
       matchingCount = data.matched_symbol_count ?? symbolData.length;
       selectedSymbol = chooseDefaultSymbol();
       renderSymbols();
-      setHealth("good", `MT5 DEMO connected. ${data.tradable_symbol_count || 0} broker symbols discovered; this is not active scan coverage or execution readiness. Data and risk checks still apply.`);
+      const clock = data.market_clock || {};
+      const clockSafe = data.market_clock_ok === true;
+      setHealth(clockSafe ? "good" : "bad", clockSafe
+        ? `MT5 DEMO connected. ${data.tradable_symbol_count || 0} broker symbols discovered; this is not active scan coverage or execution readiness. Data and risk checks still apply.`
+        : `MT5 DEMO connected, but trading start is blocked: ${clock.error || "broker clock evidence unavailable"} (${clock.future_skew_seconds ?? "unknown"} seconds future skew).`);
       const execState = document.getElementById("mt5ExecutionState");
       if (execState) execState.textContent = `Connection ready. Selected ${selectedSymbol}; run Check Execution for a no-send broker acceptance test.`;
-      if (execButton) execButton.disabled = false;
+      if (execButton) execButton.disabled = !clockSafe;
     } catch (error) {
       symbolData = [];
       renderSymbols();

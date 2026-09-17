@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from decimal import Decimal
+from threading import RLock
 from typing import Any
 
 from aura.data.mt5_demo import OfficialMT5Gateway
@@ -11,8 +13,20 @@ from aura.execution.mt5_protected_demo import (
     _protected_prices,
 )
 
+_MT5_WEB_LOCK = RLock()
+
 
 def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, Any]:
+    # The MetaTrader5 Python bridge is process-global. Serialize complete
+    # connect/use/shutdown sessions so concurrent web requests cannot shut down
+    # each other's terminal connection.
+    with _MT5_WEB_LOCK:
+        return _mt5_demo_preflight_unlocked(max_symbols=max_symbols, query=query)
+
+
+def _mt5_demo_preflight_unlocked(
+    *, max_symbols: int = 200, query: str = ""
+) -> dict[str, Any]:
     """Read-only validation of the currently logged-in local MT5 DEMO session.
 
     The check intentionally accepts no login/password. It verifies that the
@@ -43,6 +57,11 @@ def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, 
             ).casefold()),
             key=lambda item: (preferred.get(item.venue_symbol, len(preferred)), item.venue_symbol),
         )
+        clock_symbol = next(
+            (name for name in ("XAUUSD", "EURUSD", "GBPUSD") if name in metadata),
+            instruments[0].venue_symbol if instruments else "",
+        )
+        market_clock = _market_clock_payload(gateway, clock_symbol)
         symbols = [
             {
                 "symbol": item.venue_symbol,
@@ -67,6 +86,8 @@ def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, 
             "matched_symbol_count": len(matching),
             "symbols_truncated": len(matching) > max_symbols,
             "query": query,
+            "market_clock": market_clock,
+            "market_clock_ok": market_clock["ok"],
             "symbols": symbols,
             "order_check_attempted": False,
             "order_submission_attempted": False,
@@ -89,6 +110,16 @@ def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, 
 
 
 def mt5_demo_execution_check(
+    symbol: str,
+    *,
+    side: Side = Side.BUY,
+    protection: ProtectedMT5DemoConfig | None = None,
+) -> dict[str, Any]:
+    with _MT5_WEB_LOCK:
+        return _mt5_demo_execution_check_unlocked(symbol, side=side, protection=protection)
+
+
+def _mt5_demo_execution_check_unlocked(
     symbol: str,
     *,
     side: Side = Side.BUY,
@@ -235,6 +266,32 @@ def _account_payload(account: Any) -> dict[str, str]:
         "equity": str(account.equity),
         "margin": str(account.margin),
         "margin_free": str(account.margin_free),
+    }
+
+
+def _market_clock_payload(gateway: OfficialMT5Gateway, symbol: str) -> dict[str, Any]:
+    """Detect broker timestamps that would leak future data into decisions."""
+
+    if not symbol:
+        return {"ok": False, "error": "no tradable symbol available for clock check"}
+    tick = gateway.symbol_info_tick(symbol)
+    if tick is None:
+        return {"ok": False, "symbol": symbol, "error": "broker tick unavailable"}
+    source = _asdict(tick)
+    raw_seconds = source.get("time")
+    if raw_seconds in (None, 0):
+        return {"ok": False, "symbol": symbol, "error": "broker tick timestamp unavailable"}
+    observed_at = datetime.now(UTC)
+    broker_time = datetime.fromtimestamp(float(raw_seconds), UTC)
+    future_skew_seconds = max(0, int((broker_time - observed_at).total_seconds()))
+    ok = future_skew_seconds <= 300
+    return {
+        "ok": ok,
+        "symbol": symbol,
+        "broker_time": broker_time.isoformat(),
+        "observed_at": observed_at.isoformat(),
+        "future_skew_seconds": future_skew_seconds,
+        "error": None if ok else "broker market timestamp is more than 5 minutes in the future",
     }
 
 

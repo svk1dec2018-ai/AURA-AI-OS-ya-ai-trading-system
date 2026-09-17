@@ -37,6 +37,13 @@ class AuraWebControllerV3(base.AuraWebController):
             )
         if int(preflight.get("tradable_symbol_count", 0)) <= 0:
             raise RuntimeError("MT5 DEMO preflight found no tradable symbols")
+        if preflight.get("market_clock_ok") is not True:
+            clock = preflight.get("market_clock") or {}
+            raise RuntimeError(
+                "MT5 DEMO start blocked: broker market timestamps are not safe for "
+                f"point-in-time decisions ({clock.get('error') or 'clock evidence unavailable'}; "
+                f"future_skew_seconds={clock.get('future_skew_seconds')})"
+            )
         result = super().start(max_symbols=max_symbols, max_batches=max_batches)
         return {
             **result,
@@ -92,9 +99,9 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             marker = '<script src="/app.js" defer></script>'
             scripts: list[str] = []
             if "/mt5-bridge.js" not in text:
-                scripts.append('<script src="/mt5-bridge.js" defer></script>')
+                scripts.append('<script src="/mt5-bridge.js?v=3.3" defer></script>')
             if "/readiness-bridge.js" not in text:
-                scripts.append('<script src="/readiness-bridge.js" defer></script>')
+                scripts.append('<script src="/readiness-bridge.js?v=3.3" defer></script>')
             if scripts:
                 text = text.replace(marker, "\n".join(scripts + [marker]))
             raw = text.encode("utf-8")

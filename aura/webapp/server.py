@@ -682,7 +682,11 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type or "application/octet-stream")
         self.send_header(
             "Cache-Control",
-            "no-cache" if candidate.name == "index.html" else "public, max-age=300",
+            (
+                "no-cache, must-revalidate"
+                if candidate.name == "index.html" or candidate.suffix in {".js", ".css"}
+                else "public, max-age=300"
+            ),
         )
         self._security_headers()
         self.send_header("Content-Length", str(len(raw)))

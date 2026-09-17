@@ -1087,6 +1087,28 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — OWNER-RUNTIME-TRUTHFULNESS
+**Commit:** Working tree; see subsequent Git history.
+**Area:** PWA caching, MT5 concurrency and timestamp readiness.
+**What changed:** JavaScript/CSS now revalidate and injected owner bridges use a
+versioned URL. Stopped runtimes cannot display stale self-learning as ACTIVE.
+Complete MT5 web sessions are serialized because the official Python bridge is
+process-global. Read-only preflight now measures a priority symbol tick against
+the host UTC clock; more than five minutes of future skew blocks DEMO start and
+appears as a separate readiness failure.
+**Why:** Browser inspection found an old cached bridge and stale learning claim.
+Concurrent readiness/symbol checks could shut down each other's MT5 session.
+MetaQuotes-Demo returned XAUUSD about 10,800 seconds in the future relative to
+the host, which is unsafe for causal decisions until its clock semantics are
+verified and normalized at the connector boundary.
+**Evidence:** Focused Python/JavaScript tests; actual browser showed Runtime
+stopped, Self-learning WAITING, 11,461 broker symbols and an explicit market-clock
+block. No order_check/order_send or trading start was performed.
+**Status:** PARTIAL
+**Risk impact:** Fail-closed; execution authority unchanged.
+**Follow-up:** Obtain authoritative broker timestamp semantics or corrected demo
+feed, then implement source-specific normalization with provenance and retest.
+
 ### 2026-09-17 — OWNER-SYMBOL-ACCESS
 **Commit:** See Git history for this entry.
 **Area:** Broker instrument search and chart discovery.

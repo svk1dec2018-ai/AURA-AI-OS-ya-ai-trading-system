@@ -50,6 +50,14 @@ def build_readiness(
             f"{int(preflight.get('tradable_symbol_count', 0) or 0)} tradable symbols discovered.",
         ),
         _check(
+            "market_clock",
+            "Broker market timestamp",
+            preflight.get("market_clock_ok") is True,
+            "runtime",
+            str((preflight.get("market_clock") or {}).get("error")
+                or "Broker timestamps are safe for point-in-time decisions."),
+        ),
+        _check(
             "market_intelligence",
             "Scanner + technical/SMC/volume/regime intelligence",
             code_ready(
@@ -119,7 +127,7 @@ def build_readiness(
     mt5_runtime_ready = all(
         item["passed"]
         for item in checks
-        if item["id"] in {"mt5_demo_preflight", "symbol_universe"}
+        if item["id"] in {"mt5_demo_preflight", "symbol_universe", "market_clock"}
     )
     runtime_active = bool(runtime.get("runtime_running"))
     app_kill_locked = bool(runtime.get("app_kill_locked"))
@@ -143,7 +151,7 @@ def build_readiness(
         "software_ready": software_ready,
         "mt5_runtime_ready": mt5_runtime_ready,
         "runtime_active": runtime_active,
-        "self_learning_runtime_active": next(
+        "self_learning_runtime_active": runtime_active and next(
             (item["passed"] for item in checks if item["id"] == "brain_runtime"),
             False,
         ),

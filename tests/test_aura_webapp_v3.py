@@ -26,6 +26,21 @@ def test_v3_mt5_preflight_delegates_to_read_only_validator(tmp_path: Path, monke
     assert payload["tradable_symbol_count"] == 25
 
 
+def test_readiness_does_not_report_stale_learning_as_active(monkeypatch, tmp_path: Path) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(controller, "status", lambda: {
+        "runtime_running": False,
+        "status": {"brain": {"state": "running"}},
+        "safety": {"real_money_enabled": False, "fund_transfers_enabled": False,
+                   "withdrawals_enabled": False},
+    })
+    monkeypatch.setattr(controller, "mt5_preflight", lambda max_symbols: {
+        "ok": True, "demo_verified": True, "connected": True,
+        "tradable_symbol_count": 1,
+    })
+    assert controller.readiness()["self_learning_runtime_active"] is False
+
+
 def test_v3_execution_check_delegates_without_granting_submission(
     tmp_path: Path,
     monkeypatch,
@@ -98,6 +113,7 @@ def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
             "demo_verified": True,
             "account": {"server": "Demo-Server"},
             "tradable_symbol_count": 123,
+            "market_clock_ok": True,
         },
     )
     monkeypatch.setattr(
@@ -115,6 +131,17 @@ def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
     assert payload["mt5_preflight"]["demo_verified"] is True
     assert payload["mt5_preflight"]["server"] == "Demo-Server"
     assert payload["mt5_preflight"]["tradable_symbol_count"] == 123
+
+
+def test_v3_start_blocks_future_broker_clock(tmp_path: Path, monkeypatch) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(controller, "mt5_preflight", lambda max_symbols: {
+        "ok": True, "demo_verified": True, "account": {"server": "Demo"},
+        "tradable_symbol_count": 1, "market_clock_ok": False,
+        "market_clock": {"error": "timestamp future", "future_skew_seconds": 10800},
+    })
+    with pytest.raises(RuntimeError, match="start blocked.*10800"):
+        controller.start(max_symbols=1, max_batches=1)
 
 
 def test_mt5_bridge_surfaces_no_send_execution_check() -> None:

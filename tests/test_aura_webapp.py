@@ -55,6 +55,11 @@ def test_pwa_static_assets_are_included_in_distribution() -> None:
     assert "static/*" in package_data["aura.webapp"]
 
 
+def test_javascript_and_css_require_revalidation(tmp_path: Path) -> None:
+    handler_source = Path(server.__file__).read_text(encoding="utf-8")
+    assert 'candidate.suffix in {".js", ".css"}' in handler_source
+
+
 def test_dashboard_keeps_safety_copy_and_owner_surfaces() -> None:
     html = (server.STATIC_DIR / "index.html").read_text(encoding="utf-8")
     assert "DEMO ONLY" in html

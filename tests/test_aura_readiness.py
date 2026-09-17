@@ -38,6 +38,7 @@ def test_readiness_marks_verified_demo_as_ready_to_start() -> None:
             "ok": True,
             "demo_verified": True,
             "tradable_symbol_count": 250,
+            "market_clock_ok": True,
         },
     )
     assert payload["software_ready"] is True
@@ -52,6 +53,7 @@ def test_readiness_marks_active_self_learning_demo_runtime() -> None:
             "ok": True,
             "demo_verified": True,
             "tradable_symbol_count": 250,
+            "market_clock_ok": True,
         },
     )
     assert payload["demo_state"] == "MT5_DEMO_RUNNING"
@@ -69,6 +71,29 @@ def test_readiness_fail_closes_on_kill_switch() -> None:
             "ok": True,
             "demo_verified": True,
             "tradable_symbol_count": 250,
+            "market_clock_ok": True,
         },
     )
     assert payload["demo_state"] == "BLOCKED_BY_KILL_SWITCH"
+
+
+def test_readiness_blocks_future_broker_timestamp() -> None:
+    payload = build_readiness(
+        _runtime(),
+        {
+            "ok": True,
+            "demo_verified": True,
+            "tradable_symbol_count": 250,
+            "market_clock_ok": False,
+            "market_clock": {"error": "broker timestamp is in the future"},
+        },
+    )
+    assert payload["mt5_runtime_ready"] is False
+    assert payload["demo_state"] == "SOFTWARE_READY_MT5_RUNTIME_REQUIRED"
+    assert next(item for item in payload["checks"] if item["id"] == "market_clock") == {
+        "id": "market_clock",
+        "name": "Broker market timestamp",
+        "passed": False,
+        "scope": "runtime",
+        "detail": "broker timestamp is in the future",
+    }

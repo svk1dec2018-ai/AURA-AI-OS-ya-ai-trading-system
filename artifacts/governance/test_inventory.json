@@ -265,13 +265,14 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "e896e1285b40702a6acd1193234694e455a68fdb68194876abef2e4ec69924fd",
+      "sha256": "893fc2634645da251d7971e77635cc70a67d8bf604821ed2d4fd32a88e847d5b",
       "source_dependencies": [
         "aura/webapp/readiness.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
+        "test_readiness_blocks_future_broker_timestamp",
         "test_readiness_fail_closes_on_kill_switch",
         "test_readiness_marks_active_self_learning_demo_runtime",
         "test_readiness_marks_verified_demo_as_ready_to_start",
@@ -284,12 +285,12 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "320f4ff6e248c7c2dac7697eb474b2698eb76bc7541b1ab3e0df5ece72b511e5",
+      "sha256": "7de229cdf6526d2000261f06960c07d496aa824140777087ebb7bac9b61b319c",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 14,
+      "static_test_functions": 15,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -301,6 +302,7 @@
         "test_controller_status_is_safe_without_runtime_files",
         "test_dashboard_does_not_render_fabricated_agent_percentages",
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
+        "test_javascript_and_css_require_revalidation",
         "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
         "test_windows_stop_does_not_claim_success_when_tree_stop_fails",
@@ -314,20 +316,22 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "3a36714e3102876561adc51dfc297590332bd03eccb80b5d407ef8c5a9eb44b8",
+      "sha256": "a2b14639822e9e19a53c48aeaa03a7b47efd8e2c17c086d21618a28acb4f048e",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/server.py",
         "aura/webapp/server_v3.py"
       ],
-      "static_test_functions": 8,
+      "static_test_functions": 10,
       "test_classes": [],
       "test_functions": [
         "test_distribution_exposes_owner_and_mt5_demo_entrypoints",
         "test_mt5_bridge_surfaces_no_send_execution_check",
         "test_one_click_launcher_uses_fresh_v3_server_after_setup",
+        "test_readiness_does_not_report_stale_learning_as_active",
         "test_v3_execution_check_delegates_without_granting_submission",
         "test_v3_mt5_preflight_delegates_to_read_only_validator",
+        "test_v3_start_blocks_future_broker_clock",
         "test_v3_start_fails_closed_when_mt5_preflight_is_not_ready",
         "test_v3_start_preserves_base_runtime_and_returns_preflight_summary",
         "test_v3_start_requires_tradable_symbols"
@@ -2152,16 +2156,18 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "77c5800ee3b0a85df22b84a6f6093f16b180c381ebd52209515a0e28ac7a3124",
+      "sha256": "5290eba532a1b59d5cb5f3747e7cc74a56e3d2b3a4a97f0a6ef464499de94489",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/mt5_preflight.py"
       ],
-      "static_test_functions": 2,
+      "static_test_functions": 4,
       "test_classes": [],
       "test_functions": [
+        "test_preflight_surfaces_future_broker_clock_and_never_sends",
         "test_search_filters_full_universe_before_limit_and_preserves_metadata",
-        "test_symbol_search_rejects_excessive_query"
+        "test_symbol_search_rejects_excessive_query",
+        "test_web_preflights_are_serialized"
       ]
     },
     {
@@ -3512,7 +3518,7 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "06eb57f9797460154e036fa28d52284daf47b7cb9582fdd3346a1780db66aeaa",
+      "sha256": "938d9fd90767faf514d9e3c82b7c0432d160e6a027baf3920d5487a8d0697fb8",
       "source_dependencies": [
         "aura/interface/operator_read_model.py",
         "aura/interface/web_command_center.py",
@@ -3536,7 +3542,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 639,
+    "static_test_functions": 645,
     "test_modules": 158
   }
 }
