@@ -63,6 +63,30 @@ class AuraWebControllerV3(base.AuraWebController):
                 f"point-in-time decisions ({clock.get('error') or 'clock evidence unavailable'}; "
                 f"future_skew_seconds={clock.get('future_skew_seconds')})"
             )
+
+        # Make Start AURA self-contained: use the active clock contract as the
+        # broker-side execution probe, then require a successful NO-SEND
+        # order_check before the autonomous DEMO child process can start.
+        clock = preflight.get("market_clock") or {}
+        probe_symbol = str(clock.get("symbol") or "").strip()
+        if not probe_symbol:
+            probe_symbol = next(
+                (
+                    str(item.get("symbol") or "").strip()
+                    for item in preflight.get("symbols", [])
+                    if str(item.get("symbol") or "").strip()
+                ),
+                "",
+            )
+        if not probe_symbol:
+            raise RuntimeError("MT5 DEMO start blocked: no symbol available for execution check")
+        execution = mt5_demo_execution_check(probe_symbol, side=Side.BUY)
+        if execution.get("execution_ready") is not True:
+            raise RuntimeError(
+                "MT5 DEMO execution readiness failed: "
+                + str(execution.get("error") or "broker order_check did not approve the protected probe")
+            )
+
         result = super().start(max_symbols=max_symbols, max_batches=max_batches)
         return {
             **result,
@@ -70,6 +94,14 @@ class AuraWebControllerV3(base.AuraWebController):
                 "demo_verified": True,
                 "server": (preflight.get("account") or {}).get("server"),
                 "tradable_symbol_count": preflight.get("tradable_symbol_count", 0),
+            },
+            "mt5_execution_check": {
+                "execution_ready": True,
+                "requested_symbol": execution.get("requested_symbol", probe_symbol),
+                "symbol": execution.get("symbol", probe_symbol),
+                "order_check_attempted": bool(execution.get("order_check_attempted")),
+                "order_submission_attempted": False,
+                "real_money_enabled": False,
             },
         }
 
@@ -80,7 +112,7 @@ atexit.register(CONTROLLER.shutdown)
 
 
 class AuraRequestHandlerV3(base.AuraRequestHandler):
-    server_version = "AuraLocalPWA/3.2"
+    server_version = "AuraLocalPWA/3.3"
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -119,9 +151,9 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             marker = '<script src="/app.js" defer></script>'
             scripts: list[str] = []
             if "/mt5-bridge.js" not in text:
-                scripts.append('<script src="/mt5-bridge.js?v=3.3" defer></script>')
+                scripts.append('<script src="/mt5-bridge.js?v=3.4" defer></script>')
             if "/readiness-bridge.js" not in text:
-                scripts.append('<script src="/readiness-bridge.js?v=3.3" defer></script>')
+                scripts.append('<script src="/readiness-bridge.js?v=3.4" defer></script>')
             if scripts:
                 text = text.replace(marker, "\n".join(scripts + [marker]))
             raw = text.encode("utf-8")
