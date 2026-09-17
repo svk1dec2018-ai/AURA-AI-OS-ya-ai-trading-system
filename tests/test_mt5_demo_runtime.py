@@ -41,6 +41,21 @@ def test_mt5_universe_prioritizes_owner_markets_before_alphabetical_symbols() ->
     )
 
 
+def test_mt5_universe_prioritizes_broker_suffixed_owner_markets() -> None:
+    instruments = tuple(
+        SimpleNamespace(venue_symbol=symbol)
+        for symbol in ("AAPLm", "USOILm", "BTCUSDm", "XAUUSD247m", "XAUUSDm", "EURUSDm")
+    )
+    ordered = prioritize_mt5_universe(instruments)
+    assert tuple(item.venue_symbol for item in ordered[:5]) == (
+        "XAUUSDm",
+        "XAUUSD247m",
+        "EURUSDm",
+        "BTCUSDm",
+        "USOILm",
+    )
+
+
 class FakeMT5:
     TIMEFRAME_M1 = 1
     TRADE_ACTION_DEAL = 1

@@ -50,16 +50,26 @@ PRIORITY_MT5_SYMBOLS = (
 
 def prioritize_mt5_universe(instruments):
     """Keep all discovered symbols while placing liquid owner markets first."""
-    priority = {symbol: index for index, symbol in enumerate(PRIORITY_MT5_SYMBOLS)}
     return tuple(
         sorted(
             instruments,
             key=lambda item: (
-                priority.get(item.venue_symbol.upper(), len(priority)),
+                *_owner_market_priority(item.venue_symbol),
                 item.venue_symbol,
             ),
         )
     )
+
+
+def _owner_market_priority(symbol: str) -> tuple[int, int]:
+    """Rank canonical and broker-suffixed forms without dropping any symbol."""
+    upper = symbol.upper()
+    for index, canonical in enumerate(PRIORITY_MT5_SYMBOLS):
+        if upper == canonical:
+            return index, 0
+        if upper.startswith(canonical):
+            return index, len(upper) - len(canonical)
+    return len(PRIORITY_MT5_SYMBOLS), len(upper)
 
 
 @dataclass(slots=True, frozen=True)

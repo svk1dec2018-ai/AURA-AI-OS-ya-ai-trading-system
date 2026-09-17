@@ -223,6 +223,27 @@ def test_chart_surface_delegates_to_demo_read_model(tmp_path: Path, monkeypatch)
     }
 
 
+def test_chart_symbol_resolves_shortest_tradable_broker_suffix() -> None:
+    from types import SimpleNamespace
+
+    from aura.webapp.charting import resolve_chart_symbol
+
+    class Gateway:
+        rows = (
+            SimpleNamespace(name="XAUUSD247m", trade_mode=4),
+            SimpleNamespace(name="XAUUSDm", trade_mode=4),
+            SimpleNamespace(name="XAUUSD-disabled", trade_mode=0),
+        )
+
+        def symbol_info(self, symbol):
+            return next((row for row in self.rows if row.name == symbol), None)
+
+        def symbols_get(self):
+            return self.rows
+
+    assert resolve_chart_symbol(Gateway(), "XAUUSD") == "XAUUSDm"
+
+
 def test_backtest_surface_persists_research_only_result(tmp_path: Path, monkeypatch) -> None:
     candidate = {"candidate_id": "candidate-1", "research_only": True}
     monkeypatch.setattr(server, "BACKTEST_DIR", tmp_path / "backtests")

@@ -108,3 +108,18 @@ def test_issuer_description_does_not_override_stock_or_fund_group() -> None:
             point=Decimal("0.01"), volume_min=Decimal(1), volume_step=Decimal(1),
         )
         assert classify_mt5_asset(metadata) == expected
+
+
+def test_contract_identity_overrides_generic_forex_folder() -> None:
+    from aura.data.mt5_contracts import MT5SymbolMetadata, classify_mt5_asset
+
+    for name, description, expected in (
+        ("XAUUSDm", "Gold vs US Dollar", AssetClass.METAL),
+        ("BTCUSDm", "Bitcoin vs US Dollar", AssetClass.CRYPTO_CFD),
+        ("USOILm", "Crude Oil", AssetClass.ENERGY),
+    ):
+        metadata = MT5SymbolMetadata(
+            name=name, path="Standard\\Forex", description=description,
+            point=Decimal("0.01"), volume_min=Decimal(1), volume_step=Decimal(1),
+        )
+        assert classify_mt5_asset(metadata) == expected

@@ -5,24 +5,24 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 477
+- Repository files: 480
 - Python modules: 393
 - Source modules: 208
 - Test modules: 159
-- Static test functions: 647
-- Entrypoints: 60
+- Static test functions: 654
+- Entrypoints: 62
 - Known stub/incomplete candidates: 96
 
 ## Repository structure
 
 | Asset class | Count |
 |---|---:|
-| `automation_entrypoint` | 11 |
+| `automation_entrypoint` | 13 |
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 3 |
 | `container_configuration` | 2 |
 | `documentation` | 33 |
-| `documentation_or_validation_evidence` | 18 |
+| `documentation_or_validation_evidence` | 19 |
 | `knowledge_corpus_asset` | 2 |
 | `python` | 393 |
 | `repository_asset` | 11 |
@@ -70,6 +70,8 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `CHECK_MT5_XAUUSD_DEMO.ps1` | shell-launcher |
 | `Dockerfile` | container-entrypoint |
+| `RUN_AURA_DEV_AUTOPILOT.cmd` | shell-launcher |
+| `RUN_AURA_DEV_AUTOPILOT.ps1` | shell-launcher |
 | `RUN_MT5_AURA_ALL_MARKETS.ps1` | shell-launcher |
 | `RUN_MT5_AURA_DEMO_AUTO.ps1` | shell-launcher |
 | `START_AURA_AI_OS.cmd` | shell-launcher |
@@ -190,7 +192,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/kraken.py` | source | data | 5 | 0 | 1 |
 | `aura/data/live_plane.py` | source | data | 5 | 5 | 0 |
 | `aura/data/mt5_contracts.py` | source | data | 5 | 1 | 1 |
-| `aura/data/mt5_demo.py` | source | data | 5 | 4 | 3 |
+| `aura/data/mt5_demo.py` | source | data | 5 | 5 | 3 |
 | `aura/data/mt5_polling.py` | source | data | 5 | 1 | 2 |
 | `aura/data/normalization.py` | source | data | 5 | 0 | 1 |
 | `aura/data/oanda.py` | source | data | 5 | 1 | 2 |
@@ -340,7 +342,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/strategy/features.py` | source | strategy | 7 | 1 | 1 |
 | `aura/webapp/__init__.py` | package_marker | webapp | 13 | 4 | 0 |
 | `aura/webapp/catalog.py` | source | webapp | 13 | 0 | 0 |
-| `aura/webapp/charting.py` | source | webapp | 13 | 0 | 2 |
+| `aura/webapp/charting.py` | source | webapp | 13 | 1 | 2 |
 | `aura/webapp/mt5_preflight.py` | source | webapp | 13 | 2 | 3 |
 | `aura/webapp/operator_assistant.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
@@ -378,7 +380,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_ai_strategy_architect.py` | test | validation | 7 | 0 | 4 |
 | `tests/test_angel_one_adapter.py` | test | validation | 1 | 0 | 3 |
 | `tests/test_aura_readiness.py` | test | validation | 13 | 0 | 1 |
-| `tests/test_aura_webapp.py` | test | validation | 13 | 0 | 2 |
+| `tests/test_aura_webapp.py` | test | validation | 13 | 0 | 3 |
 | `tests/test_aura_webapp_v3.py` | test | validation | 1 | 0 | 4 |
 | `tests/test_autonomous_paper.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_autonomous_research.py` | test | validation | 7 | 0 | 2 |
@@ -464,7 +466,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_readiness.py` | test | validation | 5 | 0 | 2 |
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
-| `tests/test_mt5_execution_readiness.py` | test | validation | 13 | 0 | 2 |
+| `tests/test_mt5_execution_readiness.py` | test | validation | 5 | 0 | 3 |
 | `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
@@ -551,7 +553,6 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/runtime/mt5_demo_execution_daemon.py`
 - `aura/runtime/mt5_learning_daemon.py`
 - `aura/webapp/catalog.py`
-- `aura/webapp/charting.py`
 - `aura/webapp/operator_assistant.py`
 - `aura/webapp/read_models.py`
 - `aura/webapp/research_runner.py`

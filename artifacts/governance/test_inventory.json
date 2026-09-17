@@ -285,12 +285,13 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "8a5bb14f76d65fd24e63cf8417bf5eaa60c105454aad6995d10fc27b93fdd8a4",
+      "sha256": "223da25f0578e13760289c46aa123349532691897139a2f674759c60a1dfe576",
       "source_dependencies": [
         "aura/webapp/__init__.py",
+        "aura/webapp/charting.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 15,
+      "static_test_functions": 16,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -299,6 +300,7 @@
         "test_backtest_surface_persists_research_only_result",
         "test_capability_catalog_is_truthful_and_has_blocked_money_actions",
         "test_chart_surface_delegates_to_demo_read_model",
+        "test_chart_symbol_resolves_shortest_tradable_broker_suffix",
         "test_controller_status_is_safe_without_runtime_files",
         "test_dashboard_does_not_render_fabricated_agent_percentages",
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
@@ -317,14 +319,14 @@
         1,
         13
       ],
-      "sha256": "85190b0be8056835ceb12678d7097e7d1c94198deddeed96cf9d813023959212",
+      "sha256": "10b8472d22f82b6c523d049166739e7a1fe2054de6d54445212860dc6cb06a7d",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/webapp/__init__.py",
         "aura/webapp/server.py",
         "aura/webapp/server_v3.py"
       ],
-      "static_test_functions": 11,
+      "static_test_functions": 12,
       "test_classes": [],
       "test_functions": [
         "test_distribution_exposes_owner_and_mt5_demo_entrypoints",
@@ -337,6 +339,7 @@
         "test_v3_start_blocks_future_broker_clock",
         "test_v3_start_fails_closed_when_mt5_preflight_is_not_ready",
         "test_v3_start_preserves_base_runtime_and_returns_preflight_summary",
+        "test_v3_start_requires_no_send_execution_readiness",
         "test_v3_start_requires_tradable_symbols"
       ]
     },
@@ -2041,14 +2044,15 @@
         1,
         5
       ],
-      "sha256": "b4b3182f103d1f4e90ef033bd2db9dc73bc63e75d754136d5ad01ad873e5b43a",
+      "sha256": "d471834a3ecdeae8520722eaaa9bb95c3dd8854e46fab9de72658d363517fbbd",
       "source_dependencies": [
         "aura/data/mt5_contracts.py",
         "aura/markets/universe.py"
       ],
-      "static_test_functions": 3,
+      "static_test_functions": 4,
       "test_classes": [],
       "test_functions": [
+        "test_contract_identity_overrides_generic_forex_folder",
         "test_issuer_description_does_not_override_stock_or_fund_group",
         "test_mt5_contract_metadata_preserves_broker_quantity_rules",
         "test_mt5_discovery_enumerates_full_connected_symbol_set"
@@ -2107,7 +2111,7 @@
         10,
         12
       ],
-      "sha256": "3e1305aab691223dbeebe32c9232f18a2e384178e2a5b8141fe11c596bbbaca8",
+      "sha256": "0a5ce735bd4042a7287b4f98e7f266ab9b08ea28416f0aa2eee5590d6d0cea82",
       "source_dependencies": [
         "aura/agents/audit.py",
         "aura/core/pipeline.py",
@@ -2126,12 +2130,13 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "static_test_functions": 5,
+      "static_test_functions": 6,
       "test_classes": [],
       "test_functions": [
         "test_mt5_demo_broker_checks_sends_and_rebuilds_fill",
         "test_mt5_demo_broker_rejects_misaligned_volume",
         "test_mt5_polling_seed_uses_closed_bars_and_tick_volume_fallback",
+        "test_mt5_universe_prioritizes_broker_suffixed_owner_markets",
         "test_mt5_universe_prioritizes_owner_markets_before_alphabetical_symbols",
         "test_seeded_coordinator_exposes_same_timestamp_htf_without_replay_trades"
       ]
@@ -2158,17 +2163,21 @@
       "async_test_functions": 0,
       "path": "tests/test_mt5_execution_readiness.py",
       "phase_coverage": [
+        5,
         13
       ],
-      "sha256": "b47deadd6f3514690c85eb32ba5ea564a1a94ff6b160eb3627631a1ea02a6412",
+      "sha256": "bec765b724af22e9f663b6dae795ef1c2ed5379eedb6d6619d825cb3658c95cb",
       "source_dependencies": [
+        "aura/data/mt5_demo.py",
         "aura/webapp/__init__.py",
         "aura/webapp/mt5_preflight.py"
       ],
-      "static_test_functions": 1,
+      "static_test_functions": 3,
       "test_classes": [],
       "test_functions": [
-        "test_execution_readiness_order_checks_but_never_sends"
+        "test_execution_readiness_order_checks_but_never_sends",
+        "test_execution_readiness_resolves_broker_suffix_and_never_sends",
+        "test_official_gateway_supplies_documented_missing_symbol_filling_flags"
       ]
     },
     {
@@ -2177,15 +2186,16 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "5290eba532a1b59d5cb5f3747e7cc74a56e3d2b3a4a97f0a6ef464499de94489",
+      "sha256": "6a365eb6f0e7395effeb9a3922462d62e71363954638681da402a1ce8d9419ab",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/mt5_preflight.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_preflight_surfaces_future_broker_clock_and_never_sends",
+        "test_preflight_uses_active_broker_suffixed_symbol_for_clock",
         "test_search_filters_full_universe_before_limit_and_preserves_metadata",
         "test_symbol_search_rejects_excessive_query",
         "test_web_preflights_are_serialized"
@@ -3563,7 +3573,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 647,
+    "static_test_functions": 654,
     "test_modules": 159
   }
 }

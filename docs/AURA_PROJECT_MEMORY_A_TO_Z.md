@@ -1087,6 +1087,26 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — MT5-PYTHON-FILLING-COMPATIBILITY
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Official MT5 bridge / protected DEMO execution readiness.
+**What changed:** Added narrowly scoped documented fallback bit values for
+SYMBOL_FILLING_FOK/IOC/BOC when an official MetaTrader5 Python wheel omits those
+names. Unknown missing constants still fail closed. Broker-suffixed owner markets
+are now prioritized in runtime selection, instrument identity overrides overly
+broad broker folders during classification, and chart requests resolve canonical
+owner names such as XAUUSD/BTCUSD/USOIL to their tradable broker contracts.
+**Why:** MetaTrader5 5.0.6180 exposed ORDER_FILLING constants but not the symbol
+capability flags, blocking the no-send execution check before DEMO startup.
+**Evidence:** Regression tests, broker order_check on Exness DEMO with order_send
+remaining uncalled during readiness, and UI/API chart verification using 300
+closed broker candles for XAUUSDm, BTCUSDm and USOILm.
+**Status:** REAL
+**Risk impact:** Compatibility repair only; DEMO guard, native protection,
+RiskEngine and no-send readiness boundary remain intact.
+**Follow-up:** Continue collecting elapsed protected-DEMO broker evidence; the
+real-money canary remains intentionally blocked.
+
 ### 2026-09-17 — PROTECTED-MANUAL-PREVIEW
 **Commit:** Working tree; see subsequent Git history.
 **Area:** Owner Trading Desk.

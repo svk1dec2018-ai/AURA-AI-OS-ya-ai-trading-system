@@ -52,23 +52,23 @@ def mt5_chart_snapshot(
     effective_gateway = gateway or OfficialMT5Gateway()
     try:
         account = effective_gateway.connect_current_demo_session()
-        if effective_gateway.symbol_info(normalized_symbol) is None:
-            raise ValueError(f"symbol is not exposed by MT5: {normalized_symbol}")
-        effective_gateway.symbol_select(normalized_symbol, True)
+        resolved_symbol = resolve_chart_symbol(effective_gateway, normalized_symbol)
+        effective_gateway.symbol_select(resolved_symbol, True)
         candles = MT5DemoClosedCandleSource(effective_gateway).fetch(
-            normalized_symbol,
+            resolved_symbol,
             timeframe,
             count=bars,
         )
         if len(candles) < 2:
             raise RuntimeError(
-                f"insufficient fully closed candles for {normalized_symbol}/{timeframe}"
+                f"insufficient fully closed candles for {resolved_symbol}/{timeframe}"
             )
         indicators = calculate_indicators(candles)
         return {
             "ok": True,
             "mode": "MT5_DEMO_READ_ONLY",
-            "symbol": normalized_symbol,
+            "requested_symbol": normalized_symbol,
+            "symbol": resolved_symbol,
             "timeframe": timeframe,
             "bars": len(candles),
             "account": {
@@ -93,6 +93,44 @@ def mt5_chart_snapshot(
     finally:
         if owned_gateway:
             effective_gateway.shutdown()
+
+
+def resolve_chart_symbol(gateway: OfficialMT5Gateway, requested: str) -> str:
+    """Resolve owner-friendly canonical names to tradable broker aliases."""
+
+    direct = gateway.symbol_info(requested)
+    if direct is not None and int(_record(direct).get("trade_mode", 0) or 0) != 0:
+        return requested
+    rows = gateway.symbols_get()
+    if rows is None:
+        raise ValueError(f"symbol is not exposed by MT5: {requested}")
+    requested_key = requested.casefold()
+    candidates: list[tuple[int, int, str, str]] = []
+    for row in rows:
+        data = _record(row)
+        name = str(data.get("name") or "").strip()
+        if not name:
+            continue
+        key = name.casefold()
+        if key != requested_key and not key.startswith(requested_key):
+            continue
+        trade_mode = int(data.get("trade_mode", 0) or 0)
+        candidates.append((0 if trade_mode != 0 else 1, len(name), key, name))
+    for disabled, _length, _key, name in sorted(candidates):
+        if disabled:
+            continue
+        info = gateway.symbol_info(name)
+        if info is not None and int(_record(info).get("trade_mode", 0) or 0) != 0:
+            return name
+    raise ValueError(f"symbol is not exposed by MT5: {requested}")
+
+
+def _record(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    if hasattr(value, "_asdict"):
+        return dict(value._asdict())
+    return dict(vars(value))
 
 
 def calculate_indicators(

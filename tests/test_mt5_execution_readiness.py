@@ -1,5 +1,8 @@
 from types import SimpleNamespace
 
+import pytest
+
+from aura.data.mt5_demo import OfficialMT5Gateway
 from aura.webapp import mt5_preflight
 
 
@@ -123,3 +126,13 @@ def test_execution_readiness_resolves_broker_suffix_and_never_sends(monkeypatch)
     assert gateway.order_check_calls == 1
     assert gateway.order_send_calls == 0
     assert gateway.shutdown_calls == 1
+
+
+def test_official_gateway_supplies_documented_missing_symbol_filling_flags() -> None:
+    module = SimpleNamespace(ORDER_FILLING_FOK=0, ORDER_FILLING_IOC=1)
+    gateway = OfficialMT5Gateway(module)
+    assert gateway.constant("SYMBOL_FILLING_FOK") == 1
+    assert gateway.constant("SYMBOL_FILLING_IOC") == 2
+    assert gateway.constant("SYMBOL_FILLING_BOC") == 4
+    with pytest.raises(RuntimeError, match="required constant UNKNOWN"):
+        gateway.constant("UNKNOWN")

@@ -12,6 +12,14 @@ from aura.data.mt5_contracts import MT5AccountState, MT5UniverseDiscovery
 from aura.domain.models import NormalizedCandle
 from aura.execution.demo_guard import DemoExecutionGuard
 
+# MetaQuotes documents these as stable bit flags for SYMBOL_FILLING_MODE, but
+# some official MetaTrader5 Python wheels expose only ORDER_FILLING_* constants.
+_MT5_CONSTANT_FALLBACKS = {
+    "SYMBOL_FILLING_FOK": 1,
+    "SYMBOL_FILLING_IOC": 2,
+    "SYMBOL_FILLING_BOC": 4,
+}
+
 
 @dataclass(slots=True, frozen=True)
 class MT5DemoCredentials:
@@ -273,7 +281,12 @@ class OfficialMT5Gateway:
 
     def constant(self, name: str) -> int:
         with self._lock:
-            return int(getattr(self.module, name))
+            value = getattr(self.module, name, None)
+            if value is not None:
+                return int(value)
+            if name in _MT5_CONSTANT_FALLBACKS:
+                return _MT5_CONSTANT_FALLBACKS[name]
+            raise RuntimeError(f"MetaTrader5 package does not expose required constant {name}")
 
     def discover_universe(self):
         return MT5UniverseDiscovery(self).discover()

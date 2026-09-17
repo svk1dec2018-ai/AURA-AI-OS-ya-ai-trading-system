@@ -151,17 +151,19 @@ def classify_mt5_asset(metadata: MT5SymbolMetadata) -> AssetClass:
         return AssetClass.STOCK_CFD
     if any(token in path for token in ("etf", "fund")):
         return AssetClass.OTHER_CFD
-    text = f"{metadata.path} {metadata.description}".lower()
-    if any(token in text for token in ("forex", "currency", "currencies")):
-        return AssetClass.FOREX
+    text = f"{metadata.name} {metadata.path} {metadata.description}".lower()
+    # Contract identity is more specific than a broker's broad folder name.
+    # Some brokers place metals, energy and crypto CFDs below a Forex tree.
     if any(token in text for token in ("metal", "gold", "silver", "xau", "xag")):
         return AssetClass.METAL
     if any(token in text for token in ("energy", "oil", "gas")):
         return AssetClass.ENERGY
-    if any(token in text for token in ("crypto", "bitcoin", "ethereum")):
+    if any(token in text for token in ("crypto", "bitcoin", "ethereum", "btc", "eth")):
         return AssetClass.CRYPTO_CFD
     if any(token in text for token in ("index", "indices")):
         return AssetClass.INDEX_CFD
+    if any(token in text for token in ("forex", "currency", "currencies")):
+        return AssetClass.FOREX
     if any(token in text for token in ("stock", "stocks", "equity", "shares")):
         return AssetClass.STOCK_CFD
 
