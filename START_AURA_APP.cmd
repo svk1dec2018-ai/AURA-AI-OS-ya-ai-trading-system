@@ -1,35 +1,21 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title AURA AI OS
+title AURA AI OS - Compatibility Launcher
 
-set "PYTHON_EXE=python"
-if exist ".venv\Scripts\python.exe" set "PYTHON_EXE=.venv\Scripts\python.exe"
+rem Compatibility entry point.
+rem The canonical one-click launcher owns environment setup, MT5 bridge checks,
+rem port cleanup, latest-main sync and the protected server_v3 PWA on 8766.
 
-where "%PYTHON_EXE%" >nul 2>nul
-if errorlevel 1 (
+if not exist "START_AURA_AI_OS.cmd" (
   echo.
-  echo Python was not found. Install Python 3.11+ or create .venv first.
+  echo ERROR: START_AURA_AI_OS.cmd was not found in this folder.
+  echo Restore the repository and try again.
   echo.
   pause
   exit /b 1
 )
 
-echo.
-echo ==============================================
-echo   AURA AI OS - LOCAL WEB APP / PWA
-echo ==============================================
-echo DEMO ONLY. Keep MetaTrader 5 open and logged
- echo into the DEMO account before pressing Start AURA.
-echo.
-echo Opening http://127.0.0.1:8765 ...
-echo Close this window to stop the web app.
-echo.
-
-"%PYTHON_EXE%" -m aura.webapp.server --open
-if errorlevel 1 (
-  echo.
-  echo AURA app stopped with an error.
-  pause
-)
-endlocal
+call "START_AURA_AI_OS.cmd"
+set "AURA_EXIT=%errorlevel%"
+endlocal & exit /b %AURA_EXIT%
