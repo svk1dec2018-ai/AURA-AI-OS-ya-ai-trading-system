@@ -108,6 +108,8 @@ def test_capability_catalog_is_truthful_and_has_blocked_money_actions() -> None:
     by_id = {item["id"]: item for item in catalog["items"]}
     assert catalog["release_boundary"].startswith("PAPER_DEMO_RESEARCH")
     assert by_id["algo_studio"]["status"] == "ui_connected"
+    assert by_id["aura_chat"]["status"] == "ui_connected"
+    assert by_id["owner_authority"]["status"] == "ui_connected"
     assert by_id["live_money"]["status"] == "external_gate"
     assert by_id["fund_transfer"]["status"] == "blocked"
     assert by_id["withdrawal"]["status"] == "blocked"

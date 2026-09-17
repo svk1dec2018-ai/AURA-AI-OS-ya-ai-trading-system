@@ -150,9 +150,9 @@ CAPABILITIES: tuple[dict[str, Any], ...] = (
         "id": "aura_chat",
         "group": "AI & Reasoning",
         "name": "AURA Owner Chat",
-        "status": "partial",
-        "description": "Authenticated command routing exists; full local PWA integration is being unified here.",
-        "evidence": ["aura/interface/command_center.py", "aura/interface/web_command_center_v2.py"],
+        "status": "ui_connected",
+        "description": "Authenticated PWA assistant routes status, risk, explanation, scan and research commands to governed local read models.",
+        "evidence": ["aura/webapp/static/app.js", "aura/webapp/server.py", "aura/webapp/operator_assistant.py"],
     },
     {
         "id": "browser_voice",
@@ -477,10 +477,10 @@ CAPABILITIES: tuple[dict[str, Any], ...] = (
     {
         "id": "owner_authority",
         "group": "Owner & Developer",
-        "name": "Full Owner Governance",
-        "status": "partial",
-        "description": "Owner authorization/change-control contracts exist; a unified PWA owner console is being connected.",
-        "evidence": ["aura/maintenance/authority.py", "aura/interface/command_center.py"],
+        "name": "Owner Governance Console",
+        "status": "ui_connected",
+        "description": "Session-authenticated owner console exposes capability evidence and governed research/runtime controls while preserving permanent money-action denials.",
+        "evidence": ["aura/webapp/static/index.html", "aura/webapp/security.py", "aura/maintenance/authority.py"],
     },
 )
 

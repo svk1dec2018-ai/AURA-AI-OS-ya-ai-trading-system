@@ -6750,9 +6750,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 21408,
+      "bytes": 21541,
       "path": "aura/webapp/catalog.py",
-      "sha256": "fcc09a45ad31f11c5093276990ec9dc10b37bcdd5d01c35eb71c3ba7c5da3000"
+      "sha256": "c60e29ee907b7256e7a4bdf8b8c26df58bb0fe7b14d1fc0cfeec0b36e8baf467"
     },
     {
       "asset_class": "python",
@@ -6918,9 +6918,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 44284,
+      "bytes": 45233,
       "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
-      "sha256": "4b6385782fb7d422bac50ad59509a191df204b58284d27e631b36900418c9504"
+      "sha256": "53d6f40c83d6ca938afea407502130c3216eb230009c315728d3ec4087a6f4e4"
     },
     {
       "asset_class": "documentation",
@@ -7374,9 +7374,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 10132,
+      "bytes": 10254,
       "path": "tests/test_aura_webapp.py",
-      "sha256": "7de229cdf6526d2000261f06960c07d496aa824140777087ebb7bac9b61b319c"
+      "sha256": "8a5bb14f76d65fd24e63cf8417bf5eaa60c105454aad6995d10fc27b93fdd8a4"
     },
     {
       "asset_class": "python",
@@ -14910,7 +14910,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "fcc09a45ad31f11c5093276990ec9dc10b37bcdd5d01c35eb71c3ba7c5da3000",
+      "sha256": "c60e29ee907b7256e7a4bdf8b8c26df58bb0fe7b14d1fc0cfeec0b36e8baf467",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -15997,7 +15997,7 @@
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "lines": 247,
+      "lines": 249,
       "module": "tests.test_aura_webapp",
       "parsed": true,
       "path": "tests/test_aura_webapp.py",
@@ -16006,7 +16006,7 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "7de229cdf6526d2000261f06960c07d496aa824140777087ebb7bac9b61b319c",
+      "sha256": "8a5bb14f76d65fd24e63cf8417bf5eaa60c105454aad6995d10fc27b93fdd8a4",
       "standard_library_dependencies": [
         "pathlib",
         "tomllib",
@@ -19920,7 +19920,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "bae5e393c74cc504214b637de9e327418506793f6cbb60dbda9103a9700f19f5",
+  "repository_tree_sha256": "6871554159fed1378bfdf2b4d65e87b47e27a408aaf85577130b8cb6447c8ebf",
   "schema_version": 1,
   "scope": {
     "excluded": [

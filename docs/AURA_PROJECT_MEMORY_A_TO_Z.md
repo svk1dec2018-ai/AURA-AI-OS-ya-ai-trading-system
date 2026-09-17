@@ -1174,6 +1174,21 @@ tree termination success/failure. No new broker execution or live-money proof.
 **Follow-up:** Verify restart ownership, broker timestamps/session provenance,
 complete owner workflow audit and exact-commit GitHub Actions before release.
 
+### 2026-09-17 — OWNER-CONSOLE-TRUTH
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Owner-facing PWA capability catalogue.
+**What changed:** Marked AURA Owner Chat and the Owner Governance Console as
+UI-connected, with evidence pointing to the authenticated PWA command route,
+security boundary and owner capability console already present in the product.
+**Why:** The catalogue still described these working owner workflows as partial,
+which understated the access actually available in the PWA.
+**Evidence:** Web-app regression tests assert both connected states and preserve
+the external live-money gate plus permanent transfer/withdrawal denials.
+**Status:** COMPLETE for catalogue truth; broader release remains PARTIAL.
+**Risk impact:** Presentation/evidence correction only; no new trade or money
+authority and no safety boundary changed.
+**Follow-up:** Regenerate governance evidence and validate the exact commit in CI.
+
 When a future AI receives a vague instruction like “continue AURA,” its first question internally should be:
 
 > **What is the current repository truth, what changed since the last known state, what evidence exists, what remains unproven, and which single highest-value next change moves AURA toward the north star without weakening the constitution?**
