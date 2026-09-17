@@ -1087,6 +1087,23 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — OWNER-COMPLETION-SAFETY-AUDIT
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Owner acceptance, data quality and Windows runtime lifecycle.
+**What changed:** Added OWNER_COMPLETION_BRIEF.md mapping the owner's full scope
+to evidence-based acceptance. Restored full-history quality validation: a gap is
+not a verified session boundary. Windows stop now targets the owned process tree,
+including the venv child interpreter, and fails visibly on termination failure.
+**Why:** The prior suffix-only validation could hide invalid history still consumed
+by agents. A running orphan demo interpreter was observed while the UI reported
+runtime_running=false; the exact observed worker pair was stopped during audit.
+**Evidence:** Regression tests cover retained gap/duplicate/order errors and Windows
+tree termination success/failure. No new broker execution or live-money proof.
+**Status:** PARTIAL
+**Risk impact:** Restores fail-closed behavior; live authority unchanged.
+**Follow-up:** Verify restart ownership, broker timestamps/session provenance,
+complete owner workflow audit and exact-commit GitHub Actions before release.
+
 When a future AI receives a vague instruction like “continue AURA,” its first question internally should be:
 
 > **What is the current repository truth, what changed since the last known state, what evidence exists, what remains unproven, and which single highest-value next change moves AURA toward the north star without weakening the constitution?**

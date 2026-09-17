@@ -5112,6 +5112,7 @@
       "tomllib",
       "types",
       "typing",
+      "unittest",
       "urllib",
       "uuid",
       "webbrowser",
@@ -5875,9 +5876,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 8270,
+      "bytes": 8106,
       "path": "aura/data/quality.py",
-      "sha256": "ad2c11955b45ca0ccaecb11b683aecf4ffc7c010a20c17c998a6bad288894dbc"
+      "sha256": "27651643dc3aafe4ad326e6808216a0a0f94fb78c67f59ee5221b21fa725672f"
     },
     {
       "asset_class": "python",
@@ -6769,9 +6770,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 27350,
+      "bytes": 27882,
       "path": "aura/webapp/server.py",
-      "sha256": "290cd1d509c24cc6b4b133583fc132ca3d9d1f75b2e1c9269570ec1c8bc7ba3f"
+      "sha256": "5c62bdf78c34a0322c99f2b832f780ad5eb1bf7de46138ed004fc24d4b7ff82d"
     },
     {
       "asset_class": "python",
@@ -6889,9 +6890,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 38632,
+      "bytes": 39791,
       "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
-      "sha256": "26fb8cc4ad1a52ec3793819fbf1446977bb2cc64bc00cdb7617ac7393f09ffb6"
+      "sha256": "6d59aa731c0d03817451bcfef8cc5aef9dbe38b7166ea4d21b9fe371c3fd00e5"
     },
     {
       "asset_class": "documentation",
@@ -7006,6 +7007,12 @@
       "bytes": 2229,
       "path": "docs/OPTIONS_CHAIN_REPLAY.md",
       "sha256": "4320c76635138fb4780ee82fb52f116ed518281c06a323794342af5a8bab2d1f"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 5331,
+      "path": "docs/OWNER_COMPLETION_BRIEF.md",
+      "sha256": "89cad07f4442214bfbc4cccc0c08961f9f50d5aa09758dac83fa5d52b37575be"
     },
     {
       "asset_class": "documentation",
@@ -7339,9 +7346,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 8671,
+      "bytes": 9918,
       "path": "tests/test_aura_webapp.py",
-      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9"
+      "sha256": "320f4ff6e248c7c2dac7697eb474b2698eb76bc7541b1ab3e0df5ece72b511e5"
     },
     {
       "asset_class": "python",
@@ -7537,9 +7544,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 2792,
+      "bytes": 3361,
       "path": "tests/test_data_quality.py",
-      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3"
+      "sha256": "187dbf53254ec6656c89757bc70524b7f3e9eff8157e542df00c3ec50a92b6aa"
     },
     {
       "asset_class": "python",
@@ -8250,13 +8257,13 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 258,
+        "line": 269,
         "path": "aura/webapp/server.py"
       },
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 709,
+        "line": 720,
         "path": "aura/webapp/server.py"
       },
       {
@@ -10296,7 +10303,7 @@
         "aura/data/candle_aggregation.py",
         "aura/domain/models.py"
       ],
-      "lines": 224,
+      "lines": 219,
       "module": "aura.data.quality",
       "parsed": true,
       "path": "aura/data/quality.py",
@@ -10305,7 +10312,7 @@
       ],
       "primary_phase": 5,
       "role": "source",
-      "sha256": "ad2c11955b45ca0ccaecb11b683aecf4ffc7c010a20c17c998a6bad288894dbc",
+      "sha256": "27651643dc3aafe4ad326e6808216a0a0f94fb78c67f59ee5221b21fa725672f",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -15063,7 +15070,7 @@
         "aura/webapp/research_runner.py",
         "aura/webapp/security.py"
       ],
-      "lines": 717,
+      "lines": 728,
       "module": "aura.webapp.server",
       "parsed": true,
       "path": "aura/webapp/server.py",
@@ -15072,7 +15079,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "290cd1d509c24cc6b4b133583fc132ca3d9d1f75b2e1c9269570ec1c8bc7ba3f",
+      "sha256": "5c62bdf78c34a0322c99f2b832f780ad5eb1bf7de46138ed004fc24d4b7ff82d",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -15941,7 +15948,7 @@
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "lines": 213,
+      "lines": 242,
       "module": "tests.test_aura_webapp",
       "parsed": true,
       "path": "tests/test_aura_webapp.py",
@@ -15950,10 +15957,11 @@
       ],
       "primary_phase": 13,
       "role": "test",
-      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9",
+      "sha256": "320f4ff6e248c7c2dac7697eb474b2698eb76bc7541b1ab3e0df5ece72b511e5",
       "standard_library_dependencies": [
         "pathlib",
-        "tomllib"
+        "tomllib",
+        "unittest"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -16809,7 +16817,7 @@
         "aura/data/quality.py",
         "aura/domain/models.py"
       ],
-      "lines": 91,
+      "lines": 104,
       "module": "tests.test_data_quality",
       "parsed": true,
       "path": "tests/test_data_quality.py",
@@ -16819,7 +16827,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3",
+      "sha256": "187dbf53254ec6656c89757bc70524b7f3e9eff8157e542df00c3ec50a92b6aa",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -19812,7 +19820,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "50030582b047d80b83be95bb4808b66f884ac752520e01946bbebd8f52224682",
+  "repository_tree_sha256": "f5df3ab588117fa755bab8a11096a4342b89fdbdd13a7a979c5b863f68e7b59b",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20362,13 +20370,13 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 258,
+      "line": 269,
       "path": "aura/webapp/server.py"
     },
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 709,
+      "line": 720,
       "path": "aura/webapp/server.py"
     },
     {
@@ -20407,9 +20415,9 @@
     "entrypoints": 60,
     "parse_errors": 0,
     "python_modules": 391,
-    "repository_files": 474,
+    "repository_files": 475,
     "source_modules": 208,
-    "static_test_functions": 633,
+    "static_test_functions": 636,
     "stub_candidates": 96,
     "test_modules": 157,
     "unclassified_modules": 0,

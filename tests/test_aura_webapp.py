@@ -1,9 +1,38 @@
 import tomllib
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
 from aura.webapp import server
+
+
+def test_windows_stop_terminates_worker_tree(tmp_path: Path, monkeypatch) -> None:
+    controller = server.AuraWebController(state_dir=tmp_path / "state")
+    process = Mock(pid=123, returncode=0)
+    process.poll.return_value = None
+    controller._process = process
+    run = Mock()
+    monkeypatch.setattr(server.sys, "platform", "win32")
+    monkeypatch.setattr(server.subprocess, "run", run)
+    assert controller.stop()["stopped"] is True
+    assert run.call_args.args[0] == ["taskkill", "/PID", "123", "/T", "/F"]
+    assert run.call_args.kwargs["check"] is True
+    process.terminate.assert_not_called()
+    process.wait.assert_called_once_with(timeout=10)
+
+
+def test_windows_stop_does_not_claim_success_when_tree_stop_fails(tmp_path: Path, monkeypatch):
+    controller = server.AuraWebController(state_dir=tmp_path / "state")
+    process = Mock(pid=123)
+    process.poll.return_value = None
+    controller._process = process
+    monkeypatch.setattr(server.sys, "platform", "win32")
+    monkeypatch.setattr(server.subprocess, "run", Mock(
+        side_effect=server.subprocess.CalledProcessError(1, "taskkill")
+    ))
+    with pytest.raises(server.subprocess.CalledProcessError):
+        controller.stop()
 
 
 def test_pwa_static_assets_exist() -> None:

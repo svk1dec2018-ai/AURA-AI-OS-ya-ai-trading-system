@@ -81,11 +81,24 @@ def test_future_bar_is_blocked() -> None:
     assert not report.safe_for_decision
 
 
-def test_multi_timeframe_gate_validates_latest_contiguous_session() -> None:
+def test_multi_timeframe_gate_does_not_discard_unverified_session_gaps() -> None:
     report = MultiTimeframeCandleQualityGate().assess(
         [_bar(0), _bar(1), _bar(180), _bar(181), _bar(182)],
         decision_time=datetime(2026, 1, 1, 3, 3, 30, tzinfo=UTC),
     )
-    assert report.safe_for_decision
-    assert report.bars_checked == 3
-    assert report.issues == ()
+    assert not report.safe_for_decision
+    assert report.bars_checked == 5
+    assert DataQualityIssueType.GAP in {issue.issue_type for issue in report.issues}
+
+
+def test_multi_timeframe_gate_preserves_errors_before_gap() -> None:
+    bars = [_bar(0), _bar(0), _bar(180)]
+    report = MultiTimeframeCandleQualityGate().assess(
+        bars, decision_time=bars[-1].close_time,
+    )
+    assert not report.safe_for_decision
+    assert report.bars_checked == len(bars)
+    assert {DataQualityIssueType.GAP, DataQualityIssueType.DUPLICATE_BAR,
+            DataQualityIssueType.OUT_OF_ORDER} <= {
+                issue.issue_type for issue in report.issues
+            }

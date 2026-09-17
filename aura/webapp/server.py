@@ -225,7 +225,18 @@ class AuraWebController:
                 self._close_log()
                 return {"ok": True, "already_stopped": True}
             assert self._process is not None
-            self._process.terminate()
+            if sys.platform == "win32":
+                # Windows venv launchers create a child interpreter. Terminating
+                # only the launcher can leave a broker worker running unseen.
+                subprocess.run(
+                    ["taskkill", "/PID", str(self._process.pid), "/T", "/F"],
+                    check=True,
+                    capture_output=True,
+                    timeout=15,
+                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                )
+            else:
+                self._process.terminate()
             try:
                 self._process.wait(timeout=10)
             except subprocess.TimeoutExpired:

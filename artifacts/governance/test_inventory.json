@@ -284,12 +284,12 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "cefad711fc34b3f9ce92d75bbd168bcada63212c31041920f8991f8f78f77ff9",
+      "sha256": "320f4ff6e248c7c2dac7697eb474b2698eb76bc7541b1ab3e0df5ece72b511e5",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 12,
+      "static_test_functions": 14,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -303,6 +303,8 @@
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
         "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
+        "test_windows_stop_does_not_claim_success_when_tree_stop_fails",
+        "test_windows_stop_terminates_worker_tree",
         "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
       ]
     },
@@ -1018,19 +1020,20 @@
         1,
         5
       ],
-      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3",
+      "sha256": "187dbf53254ec6656c89757bc70524b7f3e9eff8157e542df00c3ec50a92b6aa",
       "source_dependencies": [
         "aura/data/quality.py",
         "aura/domain/models.py"
       ],
-      "static_test_functions": 5,
+      "static_test_functions": 6,
       "test_classes": [],
       "test_functions": [
         "test_clean_series_is_safe",
         "test_duplicate_and_out_of_order_bars_are_blocked",
         "test_future_bar_is_blocked",
         "test_gap_and_staleness_are_blocked",
-        "test_multi_timeframe_gate_validates_latest_contiguous_session"
+        "test_multi_timeframe_gate_does_not_discard_unverified_session_gaps",
+        "test_multi_timeframe_gate_preserves_errors_before_gap"
       ]
     },
     {
@@ -3514,7 +3517,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 633,
+    "static_test_functions": 636,
     "test_modules": 157
   }
 }

@@ -5,11 +5,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 474
+- Repository files: 475
 - Python modules: 391
 - Source modules: 208
 - Test modules: 157
-- Static test functions: 633
+- Static test functions: 636
 - Entrypoints: 60
 - Known stub/incomplete candidates: 96
 
@@ -21,7 +21,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 3 |
 | `container_configuration` | 2 |
-| `documentation` | 32 |
+| `documentation` | 33 |
 | `documentation_or_validation_evidence` | 18 |
 | `knowledge_corpus_asset` | 2 |
 | `python` | 391 |
