@@ -11,6 +11,8 @@ echo.
 echo Protected MT5 DEMO / research mode.
 echo Keep MetaTrader 5 open and logged into your DEMO account.
 echo AURA never asks for your MT5 password in the browser.
+echo Protected DEMO auto-start is enabled after broker checks pass.
+echo Real-money, transfer and withdrawal authority stays locked.
 echo.
 
 where git >nul 2>&1
@@ -48,10 +50,11 @@ echo [6/6] Starting fresh MT5-preflight Command Center...
 echo.
 echo AURA URL:       http://127.0.0.1:8766
 echo MT5 API check:  http://127.0.0.1:8766/api/mt5/preflight
+echo Auto DEMO:      ON - 25 broker symbols, long-running closed-candle session
 echo Keep this window open while using AURA.
 echo Browser will open only after the fresh server starts.
 echo.
-"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766 --open
+"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766 --open --auto-start-demo --auto-start-symbols 25 --auto-start-batches 1000000
 set "AURA_EXIT=%errorlevel%"
 
 echo.
