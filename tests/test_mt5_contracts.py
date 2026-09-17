@@ -92,3 +92,19 @@ def test_mt5_contract_metadata_preserves_broker_quantity_rules() -> None:
     assert xau.min_quantity == Decimal("0.01")
     assert xau.quantity_step == Decimal("0.01")
     assert xau.max_quantity == Decimal(200)
+
+
+def test_issuer_description_does_not_override_stock_or_fund_group() -> None:
+    from aura.data.mt5_contracts import MT5SymbolMetadata, classify_mt5_asset
+
+    for path, description, expected in (
+        ("Stocks\\US", "Barrick Gold", AssetClass.STOCK_CFD),
+        ("Stocks\\US", "W&T Offshore Oil", AssetClass.STOCK_CFD),
+        ("ETF\\US", "Bitcoin Mini Trust", AssetClass.OTHER_CFD),
+        ("Funds", "Gold and Silver", AssetClass.OTHER_CFD),
+    ):
+        metadata = MT5SymbolMetadata(
+            name="TEST", path=path, description=description,
+            point=Decimal("0.01"), volume_min=Decimal(1), volume_step=Decimal(1),
+        )
+        assert classify_mt5_asset(metadata) == expected

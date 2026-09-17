@@ -5,11 +5,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 475
-- Python modules: 391
+- Repository files: 476
+- Python modules: 392
 - Source modules: 208
-- Test modules: 157
-- Static test functions: 636
+- Test modules: 158
+- Static test functions: 639
 - Entrypoints: 60
 - Known stub/incomplete candidates: 96
 
@@ -24,7 +24,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `documentation` | 33 |
 | `documentation_or_validation_evidence` | 18 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 391 |
+| `python` | 392 |
 | `repository_asset` | 11 |
 | `repository_configuration` | 2 |
 
@@ -61,7 +61,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `risk` | 4 |
 | `runtime` | 19 |
 | `strategy` | 3 |
-| `validation` | 157 |
+| `validation` | 158 |
 | `webapp` | 11 |
 
 ## Entrypoints
@@ -338,10 +338,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/strategy/base.py` | source | strategy | 7 | 3 | 1 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 7 | 2 |
 | `aura/strategy/features.py` | source | strategy | 7 | 1 | 1 |
-| `aura/webapp/__init__.py` | package_marker | webapp | 13 | 3 | 0 |
+| `aura/webapp/__init__.py` | package_marker | webapp | 13 | 4 | 0 |
 | `aura/webapp/catalog.py` | source | webapp | 13 | 0 | 0 |
 | `aura/webapp/charting.py` | source | webapp | 13 | 0 | 2 |
-| `aura/webapp/mt5_preflight.py` | source | webapp | 13 | 1 | 3 |
+| `aura/webapp/mt5_preflight.py` | source | webapp | 13 | 2 | 3 |
 | `aura/webapp/operator_assistant.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/readiness.py` | source | webapp | 13 | 1 | 1 |
@@ -464,6 +464,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 13 | 0 | 2 |
+| `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_multi_market_paper.py` | test | validation | 1 | 0 | 16 |

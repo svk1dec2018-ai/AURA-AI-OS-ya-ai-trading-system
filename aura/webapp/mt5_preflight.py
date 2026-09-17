@@ -12,7 +12,7 @@ from aura.execution.mt5_protected_demo import (
 )
 
 
-def mt5_demo_preflight(*, max_symbols: int = 200) -> dict[str, Any]:
+def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, Any]:
     """Read-only validation of the currently logged-in local MT5 DEMO session.
 
     The check intentionally accepts no login/password. It verifies that the
@@ -23,13 +23,32 @@ def mt5_demo_preflight(*, max_symbols: int = 200) -> dict[str, Any]:
 
     if not 1 <= max_symbols <= 5000:
         raise ValueError("max_symbols must be between 1 and 5000")
+    if len(query) > 120:
+        raise ValueError("symbol search must contain at most 120 characters")
     gateway = OfficialMT5Gateway()
     try:
         account = gateway.connect_current_demo_session()
         instruments = tuple(item for item in gateway.discover_universe() if item.tradable)
+        raw_symbols = gateway.symbols_get()
+        if raw_symbols is None:
+            raise RuntimeError("MT5 symbol metadata unavailable")
+        metadata = {str(_asdict(row).get("name")): _asdict(row) for row in raw_symbols}
+        preferred = {symbol: index for index, symbol in enumerate(
+            ("XAUUSD", "BTCUSD", "USOIL", "EURUSD", "GBPUSD", "XAGUSD")
+        )}
+        matching = sorted(
+            (item for item in instruments if query.strip().casefold() in (
+                f"{item.venue_symbol} {metadata.get(item.venue_symbol, {}).get('description', '')} "
+                f"{metadata.get(item.venue_symbol, {}).get('path', '')}"
+            ).casefold()),
+            key=lambda item: (preferred.get(item.venue_symbol, len(preferred)), item.venue_symbol),
+        )
         symbols = [
             {
                 "symbol": item.venue_symbol,
+                "description": str(metadata.get(item.venue_symbol, {}).get("description", "")),
+                "broker_path": str(metadata.get(item.venue_symbol, {}).get("path", "")),
+                "trade_mode": metadata.get(item.venue_symbol, {}).get("trade_mode"),
                 "asset_class": item.asset_class.value,
                 "currency": item.currency,
                 "tick_size": str(item.tick_size),
@@ -37,7 +56,7 @@ def mt5_demo_preflight(*, max_symbols: int = 200) -> dict[str, Any]:
                 "quantity_step": str(item.quantity_step),
                 "max_quantity": str(item.max_quantity) if item.max_quantity is not None else None,
             }
-            for item in instruments[:max_symbols]
+            for item in matching[:max_symbols]
         ]
         return {
             "ok": True,
@@ -45,6 +64,9 @@ def mt5_demo_preflight(*, max_symbols: int = 200) -> dict[str, Any]:
             "connected": True,
             "account": _account_payload(account),
             "tradable_symbol_count": len(instruments),
+            "matched_symbol_count": len(matching),
+            "symbols_truncated": len(matching) > max_symbols,
+            "query": query,
             "symbols": symbols,
             "order_check_attempted": False,
             "order_submission_attempted": False,

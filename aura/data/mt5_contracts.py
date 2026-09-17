@@ -144,6 +144,13 @@ def classify_mt5_asset(metadata: MT5SymbolMetadata) -> AssetClass:
     Unknown groups remain OTHER_CFD rather than being silently misclassified.
     """
 
+    path = metadata.path.lower()
+    # Broker product grouping outranks words in an issuer/fund description.
+    # Bitcoin ETFs and gold/oil producers are not crypto/commodity contracts.
+    if any(token in path for token in ("stock", "equity", "shares")):
+        return AssetClass.STOCK_CFD
+    if any(token in path for token in ("etf", "fund")):
+        return AssetClass.OTHER_CFD
     text = f"{metadata.path} {metadata.description}".lower()
     if any(token in text for token in ("forex", "currency", "currencies")):
         return AssetClass.FOREX

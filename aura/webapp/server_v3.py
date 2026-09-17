@@ -16,7 +16,9 @@ from aura.webapp.security import owner_auth_required
 class AuraWebControllerV3(base.AuraWebController):
     """Canonical owner controller with explicit MT5 connectivity and release readiness."""
 
-    def mt5_preflight(self, *, max_symbols: int = 200) -> dict:
+    def mt5_preflight(self, *, max_symbols: int = 200, query: str = "") -> dict:
+        if query:
+            return mt5_demo_preflight(max_symbols=max_symbols, query=query)
         return mt5_demo_preflight(max_symbols=max_symbols)
 
     def mt5_execution_check(self, *, symbol: str) -> dict:
@@ -60,7 +62,8 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             query = parse_qs(parsed.query)
             try:
                 max_symbols = int((query.get("max_symbols") or ["200"])[0])
-                self._json(CONTROLLER.mt5_preflight(max_symbols=max_symbols))
+                search = str((query.get("q") or [""])[0])
+                self._json(CONTROLLER.mt5_preflight(max_symbols=max_symbols, query=search))
             except (TypeError, ValueError, RuntimeError, OSError) as exc:
                 self._json({"ok": False, "error": str(exc)}, 400)
             return

@@ -2016,14 +2016,15 @@
         1,
         5
       ],
-      "sha256": "f1cdea6b49294dab0406391da748d41483814e6e63ae104033703669d417aa77",
+      "sha256": "b4b3182f103d1f4e90ef033bd2db9dc73bc63e75d754136d5ad01ad873e5b43a",
       "source_dependencies": [
         "aura/data/mt5_contracts.py",
         "aura/markets/universe.py"
       ],
-      "static_test_functions": 2,
+      "static_test_functions": 3,
       "test_classes": [],
       "test_functions": [
+        "test_issuer_description_does_not_override_stock_or_fund_group",
         "test_mt5_contract_metadata_preserves_broker_quantity_rules",
         "test_mt5_discovery_enumerates_full_connected_symbol_set"
       ]
@@ -2143,6 +2144,24 @@
       "test_classes": [],
       "test_functions": [
         "test_execution_readiness_order_checks_but_never_sends"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_mt5_symbol_search.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "77c5800ee3b0a85df22b84a6f6093f16b180c381ebd52209515a0e28ac7a3124",
+      "source_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/mt5_preflight.py"
+      ],
+      "static_test_functions": 2,
+      "test_classes": [],
+      "test_functions": [
+        "test_search_filters_full_universe_before_limit_and_preserves_metadata",
+        "test_symbol_search_rejects_excessive_query"
       ]
     },
     {
@@ -3517,7 +3536,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 636,
-    "test_modules": 157
+    "static_test_functions": 639,
+    "test_modules": 158
   }
 }

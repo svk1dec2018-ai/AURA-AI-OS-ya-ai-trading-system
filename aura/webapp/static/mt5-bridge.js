@@ -52,6 +52,29 @@
 
   let symbolData = [];
   let selectedSymbol = "XAUUSD";
+  let matchingCount = 0;
+  let searchVersion = 0;
+  let searchTimer;
+
+  async function searchSymbols() {
+    const version = ++searchVersion;
+    const query = document.getElementById("mt5SymbolSearch").value.trim();
+    document.getElementById("mt5ShownCount").textContent = "Searching full broker catalogue…";
+    try {
+      const response = await fetch(`/api/mt5/preflight?max_symbols=200&q=${encodeURIComponent(query)}`, {cache:"no-store"});
+      const data = await response.json();
+      if (version !== searchVersion) return;
+      if (!response.ok || !data.ok) throw new Error(data.error || "Symbol search failed");
+      symbolData = data.symbols || [];
+      matchingCount = data.matched_symbol_count ?? symbolData.length;
+      renderSymbols();
+    } catch (error) {
+      if (version !== searchVersion) return;
+      symbolData = [];
+      renderSymbols();
+      document.getElementById("mt5ShownCount").textContent = `Search unavailable: ${error.message}`;
+    }
+  }
 
   function renderSymbols() {
     const list = document.getElementById("mt5Symbols");
@@ -59,19 +82,23 @@
     if (!list) return;
     const query = (document.getElementById("mt5SymbolSearch")?.value || "").trim().toLowerCase();
     const filtered = symbolData.filter((item) => {
-      const haystack = `${item.symbol || ""} ${item.asset_class || ""} ${item.currency || ""}`.toLowerCase();
+      const haystack = `${item.symbol || ""} ${item.description || ""} ${item.broker_path || ""} ${item.asset_class || ""} ${item.currency || ""}`.toLowerCase();
       return !query || haystack.includes(query);
     });
     list.innerHTML = filtered.length
-      ? filtered.slice(0, 200).map((item) => `<button type="button" class="mt5-symbol" data-symbol="${esc(item.symbol)}">${esc(item.symbol)}<em>${esc(item.asset_class || "")}</em></button>`).join("")
-      : '<span class="mt5-symbol">No matching symbols</span>';
+      ? filtered.slice(0, 200).map((item) => `<button type="button" class="mt5-symbol" title="${esc(item.description)} · ${esc(item.broker_path)} · broker trade mode ${esc(item.trade_mode)}" data-symbol="${esc(item.symbol)}">${esc(item.symbol)}<em>${esc(item.description || item.asset_class || "")}</em></button>`).join("")
+      : '<span class="mt5-symbol">No matching tradable contract on this broker. Check the broker account/product catalogue; similarly named shares or ETFs are not substitutes.</span>';
     list.querySelectorAll("[data-symbol]").forEach((button) => button.addEventListener("click", () => {
       selectedSymbol = button.dataset.symbol || selectedSymbol;
       const input = document.getElementById("mt5SymbolSearch");
       if (input) input.value = selectedSymbol;
+      const chartSymbol = document.getElementById("chartSymbol");
+      if (chartSymbol) chartSymbol.value = selectedSymbol;
+      document.querySelector('.nav-item[data-view="charts"]')?.click();
+      document.getElementById("chartForm")?.requestSubmit();
       document.getElementById("mt5ExecutionState").textContent = `Selected ${selectedSymbol}. Click Check Execution to validate minimum-volume margin, filling mode and native SL/TP without sending an order.`;
     }));
-    if (count) count.textContent = `${filtered.length} shown / ${symbolData.length} loaded`;
+    if (count) count.textContent = `${Math.min(filtered.length, 200)} shown / ${matchingCount} broker matches`;
   }
 
   function setHealth(mode, message) {
@@ -91,7 +118,7 @@
   }
 
   function chooseDefaultSymbol() {
-    const preferred = ["XAUUSD", "XAUUSDm", "GOLD"];
+    const preferred = ["XAUUSD", "XAUUSDm"];
     for (const name of preferred) {
       const exact = symbolData.find((item) => String(item.symbol).toUpperCase() === name.toUpperCase());
       if (exact) return exact.symbol;
@@ -105,19 +132,6 @@
     const execButton = document.getElementById("mt5ExecCheckBtn");
     if (execButton) execButton.disabled = true;
     try {
-      const runtime = await fetch("/api/status", { cache: "no-store" }).then((r) => r.json());
-      if (runtime.runtime_running) {
-        const bootstrap = runtime.status?.bootstrap || {};
-        const baseline = runtime.baseline || {};
-        document.getElementById("mt5Account").textContent = baseline.login ? `••••${String(baseline.login).slice(-4)}` : "linked";
-        document.getElementById("mt5Server").textContent = baseline.server || bootstrap.account_server || "MT5 DEMO";
-        document.getElementById("mt5Balance").textContent = baseline.starting_balance ?? "—";
-        document.getElementById("mt5Equity").textContent = runtime.status?.latest?.portfolio_equity ?? "—";
-        document.getElementById("mt5SymbolCount").textContent = bootstrap.discovered_symbols ?? bootstrap.active_symbols ?? "—";
-        setHealth("good", "AURA runtime is active on a verified MT5 DEMO session. Symbol scanning is running from closed broker candles.");
-        if (execButton) execButton.disabled = false;
-        return;
-      }
       const response = await fetch("/api/mt5/preflight?max_symbols=500", { cache: "no-store" });
       const data = await response.json();
       if (!data.ok) throw new Error(data.error || "MT5 preflight failed");
@@ -128,9 +142,10 @@
       document.getElementById("mt5Equity").textContent = account.equity ?? "—";
       document.getElementById("mt5SymbolCount").textContent = data.tradable_symbol_count ?? 0;
       symbolData = Array.isArray(data.symbols) ? data.symbols : [];
+      matchingCount = data.matched_symbol_count ?? symbolData.length;
       selectedSymbol = chooseDefaultSymbol();
       renderSymbols();
-      setHealth("good", `MT5 DEMO verified. ${data.tradable_symbol_count || 0} tradable broker symbols discovered. AURA can now start protected DEMO scanning/trading.`);
+      setHealth("good", `MT5 DEMO connected. ${data.tradable_symbol_count || 0} broker symbols discovered; this is not active scan coverage or execution readiness. Data and risk checks still apply.`);
       const execState = document.getElementById("mt5ExecutionState");
       if (execState) execState.textContent = `Connection ready. Selected ${selectedSymbol}; run Check Execution for a no-send broker acceptance test.`;
       if (execButton) execButton.disabled = false;
@@ -170,7 +185,11 @@
     panel();
     document.getElementById("mt5CheckBtn")?.addEventListener("click", checkMT5);
     document.getElementById("mt5ExecCheckBtn")?.addEventListener("click", checkExecution);
-    document.getElementById("mt5SymbolSearch")?.addEventListener("input", renderSymbols);
+    document.getElementById("mt5SymbolSearch")?.addEventListener("input", () => {
+      ++searchVersion;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(searchSymbols, 350);
+    });
     document.getElementById("mt5TradingBtn")?.addEventListener("click", () => {
       const button = document.querySelector('.nav-item[data-view="trading"]');
       if (button) button.click();

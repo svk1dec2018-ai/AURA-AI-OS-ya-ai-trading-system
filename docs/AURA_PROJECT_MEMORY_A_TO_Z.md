@@ -1087,6 +1087,26 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — OWNER-SYMBOL-ACCESS
+**Commit:** See Git history for this entry.
+**Area:** Broker instrument search and chart discovery.
+**What changed:** Preflight searches the full tradable catalogue before truncation,
+returns descriptions, broker paths, trade-mode codes and match counts. UI uses
+debounced server search with stale-response suppression and opens the selected
+symbol chart. Stock/ETF broker groups outrank commodity words in descriptions.
+Removed the runtime-running shortcut that skipped symbol loading and implied
+readiness without a current connection check.
+**Why:** Alphabetical truncation hid gold, while Bitcoin ETFs and gold producers
+could be misclassified as crypto/metals.
+**Evidence:** Focused tests passed; read-only MetaQuotes-Demo query returned 11,461
+tradable symbols, XAUUSD present, BTCUSD/USOIL absent, Bitcoin-related stocks/ETFs
+with original descriptions. No orders sent. Browser verification remains pending.
+**Status:** PARTIAL
+**Risk impact:** No new execution authority. Broker trade_mode is exposed raw;
+nonzero does not imply unrestricted opening in every direction.
+**Follow-up:** Browser validation, timestamp provenance repair, full feature audit;
+owner must supply a suitable demo broker account for unavailable contracts.
+
 ### 2026-09-17 — OWNER-COMPLETION-SAFETY-AUDIT
 **Commit:** Working tree; see subsequent Git history.
 **Area:** Owner acceptance, data quality and Windows runtime lifecycle.
