@@ -143,6 +143,21 @@ def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
             "account": {"server": "Demo-Server"},
             "tradable_symbol_count": 123,
             "market_clock_ok": True,
+            "market_clock": {"symbol": "XAUUSDm"},
+            "symbols": [{"symbol": "XAUUSDm"}],
+        },
+    )
+    monkeypatch.setattr(
+        server_v3,
+        "mt5_demo_execution_check",
+        lambda symbol, side: {
+            "ok": True,
+            "execution_ready": True,
+            "requested_symbol": symbol,
+            "symbol": symbol,
+            "order_check_attempted": True,
+            "order_submission_attempted": False,
+            "real_money_enabled": False,
         },
     )
     monkeypatch.setattr(
@@ -160,6 +175,38 @@ def test_v3_start_preserves_base_runtime_and_returns_preflight_summary(
     assert payload["mt5_preflight"]["demo_verified"] is True
     assert payload["mt5_preflight"]["server"] == "Demo-Server"
     assert payload["mt5_preflight"]["tradable_symbol_count"] == 123
+    assert payload["mt5_execution_check"]["execution_ready"] is True
+    assert payload["mt5_execution_check"]["symbol"] == "XAUUSDm"
+    assert payload["mt5_execution_check"]["order_submission_attempted"] is False
+
+
+def test_v3_start_requires_no_send_execution_readiness(tmp_path: Path, monkeypatch) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(controller, "mt5_preflight", lambda max_symbols: {
+        "ok": True,
+        "demo_verified": True,
+        "account": {"server": "Demo"},
+        "tradable_symbol_count": 1,
+        "market_clock_ok": True,
+        "market_clock": {"symbol": "XAUUSDm"},
+        "symbols": [{"symbol": "XAUUSDm"}],
+    })
+    monkeypatch.setattr(server_v3, "mt5_demo_execution_check", lambda symbol, side: {
+        "ok": False,
+        "execution_ready": False,
+        "symbol": symbol,
+        "error": "broker order_check rejected protected probe",
+        "order_check_attempted": True,
+        "order_submission_attempted": False,
+        "real_money_enabled": False,
+    })
+    monkeypatch.setattr(
+        base.AuraWebController,
+        "start",
+        lambda *args, **kwargs: pytest.fail("runtime must not start when order_check fails"),
+    )
+    with pytest.raises(RuntimeError, match="execution readiness failed"):
+        controller.start(max_symbols=1, max_batches=1)
 
 
 def test_v3_start_blocks_future_broker_clock(tmp_path: Path, monkeypatch) -> None:
