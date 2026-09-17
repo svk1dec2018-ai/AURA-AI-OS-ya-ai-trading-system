@@ -112,7 +112,7 @@ atexit.register(CONTROLLER.shutdown)
 
 
 class AuraRequestHandlerV3(base.AuraRequestHandler):
-    server_version = "AuraLocalPWA/3.3"
+    server_version = "AuraLocalPWA/3.4"
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -175,6 +175,13 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--open", action="store_true", dest="open_browser")
+    parser.add_argument(
+        "--auto-start-demo",
+        action="store_true",
+        help="Automatically start protected MT5 DEMO runtime after PWA startup.",
+    )
+    parser.add_argument("--auto-start-symbols", type=int, default=25)
+    parser.add_argument("--auto-start-batches", type=int, default=1_000_000)
     return parser
 
 
@@ -191,8 +198,29 @@ def main() -> int:
         print("Owner-token protection: enabled (AURA_OWNER_TOKEN)")
     else:
         print("Owner-token protection: optional/off; server remains loopback-only")
+
+    def auto_start_demo() -> None:
+        try:
+            payload = CONTROLLER.start(
+                max_symbols=args.auto_start_symbols,
+                max_batches=args.auto_start_batches,
+            )
+            state = "already active" if payload.get("already_running") else "started"
+            probe = payload.get("mt5_execution_check") or {}
+            print(
+                "AURA protected DEMO auto-start "
+                f"{state}; broker probe={probe.get('symbol', 'verified')} "
+                "(NO-SEND readiness check passed)."
+            )
+        except (RuntimeError, ValueError, TypeError, OSError) as exc:
+            # Fail closed. The web app remains available so the owner can inspect
+            # MT5/readiness and retry after fixing the external condition.
+            print(f"AURA protected DEMO auto-start blocked: {exc}")
+
     if args.open_browser:
         threading.Timer(0.7, lambda: webbrowser.open(url)).start()
+    if args.auto_start_demo:
+        threading.Timer(1.2, auto_start_demo).start()
     try:
         server.serve_forever(poll_interval=0.5)
     except KeyboardInterrupt:
