@@ -64,6 +64,30 @@ def test_preflight_surfaces_future_broker_clock_and_never_sends(monkeypatch):
     gateway.order_send.assert_not_called()
 
 
+def test_preflight_uses_active_broker_suffixed_symbol_for_clock(monkeypatch):
+    instruments = [SimpleNamespace(
+        venue_symbol=name, tradable=True, asset_class=SimpleNamespace(value=asset_class),
+        currency="USD", tick_size=1, min_quantity=1, quantity_step=1, max_quantity=10,
+    ) for name, asset_class in (("AAPLm", "stock_cfd"), ("XAUUSDm", "metal"))]
+    gateway = Mock()
+    gateway.discover_universe.return_value = instruments
+    gateway.symbols_get.return_value = [
+        {"name": "AAPLm", "description": "Apple", "path": "Stocks", "trade_mode": 4},
+        {"name": "XAUUSDm", "description": "Gold", "path": "Metals", "trade_mode": 4},
+    ]
+    now = int(datetime.now(UTC).timestamp())
+    gateway.symbol_info_tick.side_effect = lambda symbol: (
+        {"time": now} if symbol == "XAUUSDm" else None
+    )
+    monkeypatch.setattr(mt5_preflight, "OfficialMT5Gateway", lambda: gateway)
+
+    result = mt5_preflight.mt5_demo_preflight()
+
+    assert result["market_clock_ok"] is True
+    assert result["market_clock"]["symbol"] == "XAUUSDm"
+    gateway.symbol_info_tick.assert_called_once_with("XAUUSDm")
+
+
 def test_web_preflights_are_serialized(monkeypatch):
     active = 0
     peak = 0

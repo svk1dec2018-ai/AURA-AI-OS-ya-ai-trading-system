@@ -57,11 +57,10 @@ def _mt5_demo_preflight_unlocked(
             ).casefold()),
             key=lambda item: (preferred.get(item.venue_symbol, len(preferred)), item.venue_symbol),
         )
-        clock_symbol = next(
-            (name for name in ("XAUUSD", "EURUSD", "GBPUSD") if name in metadata),
-            instruments[0].venue_symbol if instruments else "",
+        market_clock = _first_available_market_clock(
+            gateway,
+            tuple(item.venue_symbol for item in instruments),
         )
-        market_clock = _market_clock_payload(gateway, clock_symbol)
         symbols = [
             {
                 "symbol": item.venue_symbol,
@@ -293,6 +292,42 @@ def _market_clock_payload(gateway: OfficialMT5Gateway, symbol: str) -> dict[str,
         "future_skew_seconds": future_skew_seconds,
         "error": None if ok else "broker market timestamp is more than 5 minutes in the future",
     }
+
+
+def _first_available_market_clock(
+    gateway: OfficialMT5Gateway,
+    symbols: tuple[str, ...],
+) -> dict[str, Any]:
+    """Use an active liquid contract, including broker-suffixed symbols.
+
+    Brokers such as Exness expose ``XAUUSDm``/``EURUSDm`` rather than the bare
+    canonical name.  An alphabetically first stock can legitimately have no
+    tick outside its session, so an unavailable tick is not sufficient clock
+    evidence and must fall through to the next preferred contract.
+    """
+
+    priorities = ("XAUUSD", "BTCUSD", "EURUSD", "GBPUSD", "USOIL", "XAGUSD")
+    ranked = sorted(
+        symbols,
+        key=lambda symbol: (
+            next(
+                (
+                    index
+                    for index, prefix in enumerate(priorities)
+                    if symbol.upper() == prefix or symbol.upper().startswith(prefix)
+                ),
+                len(priorities),
+            ),
+            symbol,
+        ),
+    )
+    last = {"ok": False, "error": "no tradable symbol available for clock check"}
+    for symbol in ranked:
+        result = _market_clock_payload(gateway, symbol)
+        last = result
+        if result.get("broker_time") is not None:
+            return result
+    return last
 
 
 def _asdict(value: Any) -> dict[str, Any]:
