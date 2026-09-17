@@ -182,7 +182,7 @@ class AuraWebController:
             capabilities=capability_catalog(),
         )
 
-    def start(self, *, max_symbols: int = 10, max_batches: int = 100) -> dict[str, Any]:
+    def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict[str, Any]:
         if not 1 <= max_symbols <= 1000:
             raise ValueError("max_symbols must be between 1 and 1000")
         if not 1 <= max_batches <= 1_000_000:
@@ -619,7 +619,7 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
             body = self._body_json()
             if path == "/api/start":
                 payload = CONTROLLER.start(
-                    max_symbols=int(body.get("max_symbols", 10)),
+                    max_symbols=int(body.get("max_symbols", 25)),
                     max_batches=int(body.get("max_batches", 100)),
                 )
             elif path == "/api/stop":

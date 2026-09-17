@@ -26,7 +26,7 @@ class AuraWebControllerV3(base.AuraWebController):
         preflight = self.mt5_preflight(max_symbols=100)
         return build_readiness(self.status(), preflight)
 
-    def start(self, *, max_symbols: int = 10, max_batches: int = 100) -> dict:
+    def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict:
         preflight = self.mt5_preflight(max_symbols=max(50, max_symbols))
         if not preflight.get("ok"):
             raise RuntimeError(

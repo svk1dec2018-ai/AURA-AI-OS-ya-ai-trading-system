@@ -9,7 +9,7 @@ It inventories the repository; it does not certify later implementation phases.
 - Python modules: 391
 - Source modules: 208
 - Test modules: 157
-- Static test functions: 631
+- Static test functions: 633
 - Entrypoints: 60
 - Known stub/incomplete candidates: 96
 
@@ -328,7 +328,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 5 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 0 | 5 |
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 0 | 15 |
-| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 0 | 19 |
+| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 19 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 3 | 9 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 1 | 3 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 2 | 3 |
@@ -461,7 +461,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_contracts.py` | test | validation | 1 | 0 | 2 |
 | `tests/test_mt5_current_session.py` | test | validation | 5 | 0 | 1 |
 | `tests/test_mt5_demo_readiness.py` | test | validation | 5 | 0 | 2 |
-| `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 15 |
+| `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
@@ -549,7 +549,6 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/runtime/mt5_autonomous_demo.py`
 - `aura/runtime/mt5_demo_execution_daemon.py`
 - `aura/runtime/mt5_learning_daemon.py`
-- `aura/runtime/mt5_paper_daemon.py`
 - `aura/webapp/catalog.py`
 - `aura/webapp/charting.py`
 - `aura/webapp/operator_assistant.py`

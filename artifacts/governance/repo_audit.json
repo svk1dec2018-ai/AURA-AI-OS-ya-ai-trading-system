@@ -4264,6 +4264,10 @@
       },
       {
         "from": "tests/test_mt5_demo_runtime.py",
+        "to": "aura/runtime/mt5_paper_daemon.py"
+      },
+      {
+        "from": "tests/test_mt5_demo_runtime.py",
         "to": "aura/runtime/multi_market_paper.py"
       },
       {
@@ -5871,9 +5875,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 7946,
+      "bytes": 8270,
       "path": "aura/data/quality.py",
-      "sha256": "45a94e1bf0f776735c31cf678a2f22c5d4d8ae932ae00d8192be7e9eaeb5bfd1"
+      "sha256": "ad2c11955b45ca0ccaecb11b683aecf4ffc7c010a20c17c998a6bad288894dbc"
     },
     {
       "asset_class": "python",
@@ -6651,9 +6655,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 15161,
+      "bytes": 15864,
       "path": "aura/runtime/mt5_paper_daemon.py",
-      "sha256": "e93f0b407ced10c66df52652a8ad84b0db4bd101f35a707e5b665381c747ccf8"
+      "sha256": "8c2330fcc88d5c3cf9708e0fe5b38121409425d938b328030fee1871e13743cb"
     },
     {
       "asset_class": "python",
@@ -6767,19 +6771,19 @@
       "asset_class": "python",
       "bytes": 27350,
       "path": "aura/webapp/server.py",
-      "sha256": "899abbf6c3def6bf9a567f763fd9893991a59f88c625376e5461f3de70aa8c33"
+      "sha256": "290cd1d509c24cc6b4b133583fc132ca3d9d1f75b2e1c9269570ec1c8bc7ba3f"
     },
     {
       "asset_class": "python",
       "bytes": 5944,
       "path": "aura/webapp/server_v3.py",
-      "sha256": "28375c29fd7de424eaff80586595c859e3a847074330383e79eb0c4519ec693f"
+      "sha256": "b67af42a36c3476d78586af7525eafb9d802930b82c9691e76231b114c2a4ebd"
     },
     {
       "asset_class": "repository_asset",
       "bytes": 30975,
       "path": "aura/webapp/static/app.js",
-      "sha256": "d226fee5b3ffd9884c75aa0d1cea6e2b26bd7634d6608b25e40dba17c9924281"
+      "sha256": "795948ad6114a476c494da41fc5b5fdf20f233952f9d4b83a0e8c11d203a2fd1"
     },
     {
       "asset_class": "repository_asset",
@@ -7533,9 +7537,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 2368,
+      "bytes": 2792,
       "path": "tests/test_data_quality.py",
-      "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e"
+      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3"
     },
     {
       "asset_class": "python",
@@ -7833,9 +7837,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 10559,
+      "bytes": 11093,
       "path": "tests/test_mt5_demo_runtime.py",
-      "sha256": "aad42b3c437ac9c184b638b41515304e37dbeb6612124b7ccb13b9a95b6f60a1"
+      "sha256": "3e1305aab691223dbeebe32c9232f18a2e384178e2a5b8141fe11c596bbbaca8"
     },
     {
       "asset_class": "python",
@@ -8308,7 +8312,6 @@
       "aura/runtime/mt5_autonomous_demo.py",
       "aura/runtime/mt5_demo_execution_daemon.py",
       "aura/runtime/mt5_learning_daemon.py",
-      "aura/runtime/mt5_paper_daemon.py",
       "aura/webapp/catalog.py",
       "aura/webapp/charting.py",
       "aura/webapp/operator_assistant.py",
@@ -10293,7 +10296,7 @@
         "aura/data/candle_aggregation.py",
         "aura/domain/models.py"
       ],
-      "lines": 217,
+      "lines": 224,
       "module": "aura.data.quality",
       "parsed": true,
       "path": "aura/data/quality.py",
@@ -10302,7 +10305,7 @@
       ],
       "primary_phase": 5,
       "role": "source",
-      "sha256": "45a94e1bf0f776735c31cf678a2f22c5d4d8ae932ae00d8192be7e9eaeb5bfd1",
+      "sha256": "ad2c11955b45ca0ccaecb11b683aecf4ffc7c010a20c17c998a6bad288894dbc",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -14492,7 +14495,9 @@
     },
     {
       "component": "runtime",
-      "direct_test_files": [],
+      "direct_test_files": [
+        "tests/test_mt5_demo_runtime.py"
+      ],
       "internal_dependencies": [
         "aura/agents/advisory_specialists.py",
         "aura/agents/audit.py",
@@ -14514,7 +14519,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 376,
+      "lines": 407,
       "module": "aura.runtime.mt5_paper_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_paper_daemon.py",
@@ -14523,7 +14528,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "e93f0b407ced10c66df52652a8ad84b0db4bd101f35a707e5b665381c747ccf8",
+      "sha256": "8c2330fcc88d5c3cf9708e0fe5b38121409425d938b328030fee1871e13743cb",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -15067,7 +15072,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "899abbf6c3def6bf9a567f763fd9893991a59f88c625376e5461f3de70aa8c33",
+      "sha256": "290cd1d509c24cc6b4b133583fc132ca3d9d1f75b2e1c9269570ec1c8bc7ba3f",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -15109,7 +15114,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "28375c29fd7de424eaff80586595c859e3a847074330383e79eb0c4519ec693f",
+      "sha256": "b67af42a36c3476d78586af7525eafb9d802930b82c9691e76231b114c2a4ebd",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -16804,7 +16809,7 @@
         "aura/data/quality.py",
         "aura/domain/models.py"
       ],
-      "lines": 76,
+      "lines": 91,
       "module": "tests.test_data_quality",
       "parsed": true,
       "path": "tests/test_data_quality.py",
@@ -16814,7 +16819,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e",
+      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -18105,11 +18110,12 @@
         "aura/portfolio/ledger.py",
         "aura/risk/engine.py",
         "aura/runtime/allocation.py",
+        "aura/runtime/mt5_paper_daemon.py",
         "aura/runtime/multi_market_paper.py",
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 342,
+      "lines": 358,
       "module": "tests.test_mt5_demo_runtime",
       "parsed": true,
       "path": "tests/test_mt5_demo_runtime.py",
@@ -18126,12 +18132,13 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "aad42b3c437ac9c184b638b41515304e37dbeb6612124b7ccb13b9a95b6f60a1",
+      "sha256": "3e1305aab691223dbeebe32c9232f18a2e384178e2a5b8141fe11c596bbbaca8",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
         "decimal",
-        "pathlib"
+        "pathlib",
+        "types"
       ],
       "third_party_dependencies": [
         "pytest"
@@ -19805,7 +19812,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "e4e310940d906ae30d9a817d07084cf38e990f40092b34adcc00ce0aa8167672",
+  "repository_tree_sha256": "50030582b047d80b83be95bb4808b66f884ac752520e01946bbebd8f52224682",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20396,13 +20403,13 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 180,
+    "directly_tested_source_modules": 181,
     "entrypoints": 60,
     "parse_errors": 0,
     "python_modules": 391,
     "repository_files": 474,
     "source_modules": 208,
-    "static_test_functions": 631,
+    "static_test_functions": 633,
     "stub_candidates": 96,
     "test_modules": 157,
     "unclassified_modules": 0,

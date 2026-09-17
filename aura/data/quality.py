@@ -208,10 +208,17 @@ class MultiTimeframeCandleQualityGate:
     ) -> DataQualityReport:
         timeframe = candles[0].timeframe if candles else "1m"
         interval = fixed_timeframe_duration(timeframe)
+        recent = list(candles)
+        max_gap = interval * self.max_gap_multiple
+        last_session_start = 0
+        for index in range(1, len(recent)):
+            if recent[index].open_time - recent[index - 1].open_time > max_gap:
+                last_session_start = index
+        recent = recent[last_session_start:]
         return CandleQualityGate(
             DataQualityPolicy(
                 expected_interval=interval,
                 max_staleness=interval * self.max_staleness_multiple,
                 max_gap_multiple=self.max_gap_multiple,
             )
-        ).assess(candles, decision_time=decision_time)
+        ).assess(recent, decision_time=decision_time)

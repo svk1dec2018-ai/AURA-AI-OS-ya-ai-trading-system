@@ -31,6 +31,36 @@ from aura.runtime.multi_market_paper import MultiMarketPaperCoordinator
 from aura.runtime.scanner import MultiMarketIntelligenceScanner
 from aura.strategy.ema import EmaCrossStrategy
 
+PRIORITY_MT5_SYMBOLS = (
+    "XAUUSD",
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "AUDUSD",
+    "USDCAD",
+    "USDCHF",
+    "NZDUSD",
+    "XAGUSD",
+    "US30",
+    "BTCUSD",
+    "ETHUSD",
+    "USOIL",
+)
+
+
+def prioritize_mt5_universe(instruments):
+    """Keep all discovered symbols while placing liquid owner markets first."""
+    priority = {symbol: index for index, symbol in enumerate(PRIORITY_MT5_SYMBOLS)}
+    return tuple(
+        sorted(
+            instruments,
+            key=lambda item: (
+                priority.get(item.venue_symbol.upper(), len(priority)),
+                item.venue_symbol,
+            ),
+        )
+    )
+
 
 @dataclass(slots=True, frozen=True)
 class MT5AllMarketPaperConfig:
@@ -255,7 +285,8 @@ async def build_mt5_all_market_paper_daemon(
         discovered = tuple(item for item in gateway.discover_universe() if item.tradable)
         if not discovered:
             raise RuntimeError("MT5 demo account exposed no tradable instruments")
-        selected = discovered[: config.max_symbols] if config.max_symbols else discovered
+        prioritized = prioritize_mt5_universe(discovered)
+        selected = prioritized[: config.max_symbols] if config.max_symbols else prioritized
         instrument_by_symbol = {item.venue_symbol: item for item in selected}
         symbols = tuple(sorted(instrument_by_symbol))
 

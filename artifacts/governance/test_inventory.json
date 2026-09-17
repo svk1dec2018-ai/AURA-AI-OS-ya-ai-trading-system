@@ -1018,18 +1018,19 @@
         1,
         5
       ],
-      "sha256": "0ecfba20466585fe4cb812c64de69e7f67b5ed563173aabb9e0e924f3437d19e",
+      "sha256": "203c931794be6dd6eb0b986aa54df516022d16e6830ab4e683062ca90189b2e3",
       "source_dependencies": [
         "aura/data/quality.py",
         "aura/domain/models.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_clean_series_is_safe",
         "test_duplicate_and_out_of_order_bars_are_blocked",
         "test_future_bar_is_blocked",
-        "test_gap_and_staleness_are_blocked"
+        "test_gap_and_staleness_are_blocked",
+        "test_multi_timeframe_gate_validates_latest_contiguous_session"
       ]
     },
     {
@@ -2077,7 +2078,7 @@
         10,
         12
       ],
-      "sha256": "aad42b3c437ac9c184b638b41515304e37dbeb6612124b7ccb13b9a95b6f60a1",
+      "sha256": "3e1305aab691223dbeebe32c9232f18a2e384178e2a5b8141fe11c596bbbaca8",
       "source_dependencies": [
         "aura/agents/audit.py",
         "aura/core/pipeline.py",
@@ -2091,16 +2092,18 @@
         "aura/portfolio/ledger.py",
         "aura/risk/engine.py",
         "aura/runtime/allocation.py",
+        "aura/runtime/mt5_paper_daemon.py",
         "aura/runtime/multi_market_paper.py",
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
         "test_mt5_demo_broker_checks_sends_and_rebuilds_fill",
         "test_mt5_demo_broker_rejects_misaligned_volume",
         "test_mt5_polling_seed_uses_closed_bars_and_tick_volume_fallback",
+        "test_mt5_universe_prioritizes_owner_markets_before_alphabetical_symbols",
         "test_seeded_coordinator_exposes_same_timestamp_htf_without_replay_trades"
       ]
     },
@@ -3511,7 +3514,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 631,
+    "static_test_functions": 633,
     "test_modules": 157
   }
 }

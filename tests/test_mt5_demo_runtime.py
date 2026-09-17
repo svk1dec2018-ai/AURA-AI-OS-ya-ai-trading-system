@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -18,9 +19,26 @@ from aura.persistence.wal import JsonlWriteAheadLog
 from aura.portfolio.ledger import PortfolioLedger
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.runtime.allocation import PortfolioRiskCoordinator
+from aura.runtime.mt5_paper_daemon import prioritize_mt5_universe
 from aura.runtime.multi_market_paper import MultiMarketPaperCoordinator
 from aura.runtime.scanner import MarketScanResult
 from aura.strategy.ema import EmaCrossStrategy
+
+
+def test_mt5_universe_prioritizes_owner_markets_before_alphabetical_symbols() -> None:
+    instruments = tuple(
+        SimpleNamespace(venue_symbol=symbol)
+        for symbol in ("A", "WTI", "EURUSD", "XAUUSD", "BTC", "US30")
+    )
+    ordered = prioritize_mt5_universe(instruments)
+    assert tuple(item.venue_symbol for item in ordered) == (
+        "XAUUSD",
+        "EURUSD",
+        "US30",
+        "A",
+        "BTC",
+        "WTI",
+    )
 
 
 class FakeMT5:
@@ -297,9 +315,7 @@ async def test_seeded_coordinator_exposes_same_timestamp_htf_without_replay_trad
             max_symbol_exposure_pct=Decimal(100),
         )
     )
-    allocator = PortfolioRiskCoordinator(
-        DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk)
-    )
+    allocator = PortfolioRiskCoordinator(DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk))
     broker = PaperBroker()
     coordinator = MultiMarketPaperCoordinator(
         scanner=scanner,

@@ -3,7 +3,12 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 
-from aura.data.quality import CandleQualityGate, DataQualityIssueType, DataQualityPolicy
+from aura.data.quality import (
+    CandleQualityGate,
+    DataQualityIssueType,
+    DataQualityPolicy,
+    MultiTimeframeCandleQualityGate,
+)
 from aura.domain.models import NormalizedCandle
 
 
@@ -74,3 +79,13 @@ def test_future_bar_is_blocked() -> None:
     )
     assert any(issue.issue_type == DataQualityIssueType.FUTURE_DATA for issue in report.issues)
     assert not report.safe_for_decision
+
+
+def test_multi_timeframe_gate_validates_latest_contiguous_session() -> None:
+    report = MultiTimeframeCandleQualityGate().assess(
+        [_bar(0), _bar(1), _bar(180), _bar(181), _bar(182)],
+        decision_time=datetime(2026, 1, 1, 3, 3, 30, tzinfo=UTC),
+    )
+    assert report.safe_for_decision
+    assert report.bars_checked == 3
+    assert report.issues == ()
