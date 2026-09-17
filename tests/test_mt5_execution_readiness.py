@@ -9,6 +9,7 @@ class FakeGateway:
         self.order_check_calls = 0
         self.order_send_calls = 0
         self.shutdown_calls = 0
+        self.last_checked_request = None
 
     def connect_current_demo_session(self):
         return SimpleNamespace(
@@ -45,6 +46,7 @@ class FakeGateway:
 
     def order_check(self, request):
         self.order_check_calls += 1
+        self.last_checked_request = request
         return {"retcode": 0, "comment": "Done"}
 
     def order_send(self, request):
@@ -75,6 +77,19 @@ class FakeGateway:
         return values[name]
 
 
+class BrokerSuffixGateway(FakeGateway):
+    def symbol_info(self, symbol):
+        if symbol != "XAUUSDm":
+            return None
+        return super().symbol_info(symbol)
+
+    def symbols_get(self):
+        return [
+            {"name": "AAPLm", "trade_mode": 1},
+            {"name": "XAUUSDm", "trade_mode": 1},
+        ]
+
+
 def test_execution_readiness_order_checks_but_never_sends(monkeypatch) -> None:
     gateway = FakeGateway()
     monkeypatch.setattr(mt5_preflight, "OfficialMT5Gateway", lambda: gateway)
@@ -89,6 +104,22 @@ def test_execution_readiness_order_checks_but_never_sends(monkeypatch) -> None:
     assert result["order_check_attempted"] is True
     assert result["order_submission_attempted"] is False
     assert result["real_money_enabled"] is False
+    assert gateway.order_check_calls == 1
+    assert gateway.order_send_calls == 0
+    assert gateway.shutdown_calls == 1
+
+
+def test_execution_readiness_resolves_broker_suffix_and_never_sends(monkeypatch) -> None:
+    gateway = BrokerSuffixGateway()
+    monkeypatch.setattr(mt5_preflight, "OfficialMT5Gateway", lambda: gateway)
+
+    result = mt5_preflight.mt5_demo_execution_check("XAUUSD")
+
+    assert result["ok"] is True
+    assert result["requested_symbol"] == "XAUUSD"
+    assert result["symbol"] == "XAUUSDm"
+    assert result["symbol_resolved"] is True
+    assert gateway.last_checked_request["symbol"] == "XAUUSDm"
     assert gateway.order_check_calls == 1
     assert gateway.order_send_calls == 0
     assert gateway.shutdown_calls == 1
