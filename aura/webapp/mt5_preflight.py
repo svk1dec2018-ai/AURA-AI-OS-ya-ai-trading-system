@@ -47,15 +47,13 @@ def _mt5_demo_preflight_unlocked(
         if raw_symbols is None:
             raise RuntimeError("MT5 symbol metadata unavailable")
         metadata = {str(_asdict(row).get("name")): _asdict(row) for row in raw_symbols}
-        preferred = {symbol: index for index, symbol in enumerate(
-            ("XAUUSD", "BTCUSD", "USOIL", "EURUSD", "GBPUSD", "XAGUSD")
-        )}
+        priorities = ("XAUUSD", "BTCUSD", "USOIL", "EURUSD", "GBPUSD", "XAGUSD")
         matching = sorted(
             (item for item in instruments if query.strip().casefold() in (
                 f"{item.venue_symbol} {metadata.get(item.venue_symbol, {}).get('description', '')} "
                 f"{metadata.get(item.venue_symbol, {}).get('path', '')}"
             ).casefold()),
-            key=lambda item: (preferred.get(item.venue_symbol, len(preferred)), item.venue_symbol),
+            key=lambda item: (_symbol_priority(item.venue_symbol, priorities), item.venue_symbol),
         )
         market_clock = _first_available_market_clock(
             gateway,
@@ -130,39 +128,41 @@ def _mt5_demo_execution_check_unlocked(
     start. It uses the same filling-mode and native SL/TP rules as the protected
     broker adapter, calls ``order_calc_margin`` and ``order_check``, and never
     calls ``order_send``. The active account must already pass AURA's DEMO guard.
+
+    Owner-facing canonical symbols such as ``XAUUSD`` are resolved to the exact
+    broker symbol (for example ``XAUUSDm``) before the no-send broker check.
     """
 
-    normalized_symbol = symbol.strip()
-    if not normalized_symbol or len(normalized_symbol) > 120:
+    requested_symbol = symbol.strip()
+    if not requested_symbol or len(requested_symbol) > 120:
         raise ValueError("symbol must contain 1-120 characters")
+    resolved_symbol = requested_symbol
     effective_protection = protection or ProtectedMT5DemoConfig()
     gateway = OfficialMT5Gateway()
     try:
         account = gateway.connect_current_demo_session()
-        raw_symbol = gateway.symbol_info(normalized_symbol)
-        if raw_symbol is None:
-            raise RuntimeError(f"MT5 symbol_info failed for {normalized_symbol}")
+        resolved_symbol, raw_symbol = _resolve_broker_symbol(gateway, requested_symbol)
         symbol_data = _asdict(raw_symbol)
         if int(symbol_data.get("trade_mode", 0)) == 0:
-            raise RuntimeError(f"MT5 symbol is disabled/non-tradable: {normalized_symbol}")
+            raise RuntimeError(f"MT5 symbol is disabled/non-tradable: {resolved_symbol}")
         if not bool(symbol_data.get("visible", True)):
-            if not gateway.symbol_select(normalized_symbol, True):
-                raise RuntimeError(f"MT5 could not select {normalized_symbol} in MarketWatch")
-            raw_symbol = gateway.symbol_info(normalized_symbol)
+            if not gateway.symbol_select(resolved_symbol, True):
+                raise RuntimeError(f"MT5 could not select {resolved_symbol} in MarketWatch")
+            raw_symbol = gateway.symbol_info(resolved_symbol)
             if raw_symbol is None:
-                raise RuntimeError(f"MT5 symbol_info failed after selecting {normalized_symbol}")
+                raise RuntimeError(f"MT5 symbol_info failed after selecting {resolved_symbol}")
             symbol_data = _asdict(raw_symbol)
 
         volume = Decimal(str(symbol_data.get("volume_min", 0)))
         if volume <= 0:
-            raise RuntimeError(f"MT5 returned invalid minimum volume for {normalized_symbol}")
-        tick = gateway.symbol_info_tick(normalized_symbol)
+            raise RuntimeError(f"MT5 returned invalid minimum volume for {resolved_symbol}")
+        tick = gateway.symbol_info_tick(resolved_symbol)
         if tick is None:
-            raise RuntimeError(f"MT5 symbol_info_tick failed for {normalized_symbol}")
+            raise RuntimeError(f"MT5 symbol_info_tick failed for {resolved_symbol}")
         tick_data = _asdict(tick)
         price = Decimal(str(tick_data["ask"] if side == Side.BUY else tick_data["bid"]))
         if price <= 0:
-            raise RuntimeError(f"MT5 returned non-positive price for {normalized_symbol}")
+            raise RuntimeError(f"MT5 returned non-positive price for {resolved_symbol}")
 
         broker = ProtectedMT5DemoBroker(gateway, config=effective_protection)
         stop, target = _protected_prices(
@@ -175,7 +175,7 @@ def _mt5_demo_execution_check_unlocked(
         order_type = broker._mt5_market_type(side)
         margin = gateway.order_calc_margin(
             order_type,
-            normalized_symbol,
+            resolved_symbol,
             float(volume),
             float(price),
         )
@@ -184,7 +184,7 @@ def _mt5_demo_execution_check_unlocked(
 
         request: dict[str, Any] = {
             "action": gateway.constant("TRADE_ACTION_DEAL"),
-            "symbol": normalized_symbol,
+            "symbol": resolved_symbol,
             "volume": float(volume),
             "type": order_type,
             "sl": float(stop),
@@ -207,11 +207,11 @@ def _mt5_demo_execution_check_unlocked(
         retcode = int(check_data.get("retcode", -1))
         if retcode != 0:
             raise RuntimeError(
-                f"MT5 order_check rejected {normalized_symbol}: "
+                f"MT5 order_check rejected {resolved_symbol}: "
                 f"retcode={retcode} comment={check_data.get('comment', '')}"
             )
 
-        existing = gateway.positions_get(symbol=normalized_symbol)
+        existing = gateway.positions_get(symbol=resolved_symbol)
         if existing is None:
             raise RuntimeError(f"MT5 positions_get failed: {gateway.last_error()}")
         aura_positions = [
@@ -224,7 +224,9 @@ def _mt5_demo_execution_check_unlocked(
             "execution_ready": True,
             "demo_verified": True,
             "account": _account_payload(account),
-            "symbol": normalized_symbol,
+            "requested_symbol": requested_symbol,
+            "symbol": resolved_symbol,
+            "symbol_resolved": resolved_symbol.casefold() != requested_symbol.casefold(),
             "side": side.value,
             "minimum_volume": str(volume),
             "entry_price": str(price),
@@ -246,7 +248,8 @@ def _mt5_demo_execution_check_unlocked(
             "ok": False,
             "execution_ready": False,
             "demo_verified": False,
-            "symbol": normalized_symbol,
+            "requested_symbol": requested_symbol,
+            "symbol": resolved_symbol,
             "error": str(exc),
             "order_check_attempted": True,
             "order_submission_attempted": False,
@@ -254,6 +257,54 @@ def _mt5_demo_execution_check_unlocked(
         }
     finally:
         gateway.shutdown()
+
+
+def _resolve_broker_symbol(
+    gateway: OfficialMT5Gateway,
+    requested_symbol: str,
+) -> tuple[str, Any]:
+    """Resolve a canonical owner symbol to an exact tradable MT5 broker symbol."""
+
+    direct = gateway.symbol_info(requested_symbol)
+    if direct is not None and int(_asdict(direct).get("trade_mode", 0)) != 0:
+        return requested_symbol, direct
+
+    raw_symbols = gateway.symbols_get()
+    if raw_symbols is None:
+        if direct is not None:
+            return requested_symbol, direct
+        raise RuntimeError(f"MT5 symbol_info failed for {requested_symbol}")
+
+    requested_key = requested_symbol.casefold()
+    candidates: list[tuple[int, int, int, str, str]] = []
+    for row in raw_symbols:
+        data = _asdict(row)
+        name = str(data.get("name") or "").strip()
+        if not name:
+            continue
+        key = name.casefold()
+        if key == requested_key:
+            match_rank = 0
+        elif key.startswith(requested_key):
+            match_rank = 1
+        else:
+            continue
+        trade_mode = int(data.get("trade_mode", 0) or 0)
+        candidates.append((0 if trade_mode != 0 else 1, match_rank, len(name), key, name))
+
+    for _disabled, _match_rank, _length, _key, name in sorted(candidates):
+        info = gateway.symbol_info(name)
+        if info is None:
+            continue
+        if int(_asdict(info).get("trade_mode", 0)) == 0:
+            continue
+        return name, info
+
+    if direct is not None:
+        return requested_symbol, direct
+    raise RuntimeError(
+        f"MT5 symbol_info failed for {requested_symbol}; no tradable broker alias found"
+    )
 
 
 def _account_payload(account: Any) -> dict[str, str]:
@@ -309,17 +360,7 @@ def _first_available_market_clock(
     priorities = ("XAUUSD", "BTCUSD", "EURUSD", "GBPUSD", "USOIL", "XAGUSD")
     ranked = sorted(
         symbols,
-        key=lambda symbol: (
-            next(
-                (
-                    index
-                    for index, prefix in enumerate(priorities)
-                    if symbol.upper() == prefix or symbol.upper().startswith(prefix)
-                ),
-                len(priorities),
-            ),
-            symbol,
-        ),
+        key=lambda symbol: (_symbol_priority(symbol, priorities), symbol),
     )
     last = {"ok": False, "error": "no tradable symbol available for clock check"}
     for symbol in ranked:
@@ -328,6 +369,18 @@ def _first_available_market_clock(
         if result.get("broker_time") is not None:
             return result
     return last
+
+
+def _symbol_priority(symbol: str, priorities: tuple[str, ...]) -> int:
+    upper = symbol.upper()
+    return next(
+        (
+            index
+            for index, prefix in enumerate(priorities)
+            if upper == prefix or upper.startswith(prefix)
+        ),
+        len(priorities),
+    )
 
 
 def _asdict(value: Any) -> dict[str, Any]:
