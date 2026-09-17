@@ -29,10 +29,7 @@ class AuraBrainPolicy(BaseModel):
     def to_genome(self, *, generation: int = 0) -> StrategyGenome:
         return StrategyGenome(
             family="aura_brain_policy",
-            parameters={
-                key: float(value)
-                for key, value in self.model_dump(mode="python").items()
-            },
+            parameters={key: float(value) for key, value in self.model_dump(mode="python").items()},
             generation=generation,
         )
 
@@ -120,8 +117,7 @@ class BrainPolicyGate:
                 )
         if (
             deliberation is not None
-            and deliberation.disagreement_ratio
-            > self.policy.max_deliberation_disagreement
+            and deliberation.disagreement_ratio > self.policy.max_deliberation_disagreement
         ):
             return BrainPolicyDecision(
                 allowed=False,
@@ -149,7 +145,7 @@ def build_brain_policy_team(
         firewall,
         execution_quality_specialist=ExecutionQualitySpecialist(
             max_spread_bps=policy.max_execution_spread_bps,
-            max_estimated_slippage_bps=policy.max_execution_slippage_bps,
+            max_slippage_bps=policy.max_execution_slippage_bps,
             min_top_of_book_notional=min_top_of_book_notional,
         ),
         timeout_seconds=timeout_seconds,

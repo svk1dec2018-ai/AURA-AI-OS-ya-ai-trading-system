@@ -261,6 +261,25 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_aura_readiness.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "e896e1285b40702a6acd1193234694e455a68fdb68194876abef2e4ec69924fd",
+      "source_dependencies": [
+        "aura/webapp/readiness.py"
+      ],
+      "static_test_functions": 4,
+      "test_classes": [],
+      "test_functions": [
+        "test_readiness_fail_closes_on_kill_switch",
+        "test_readiness_marks_active_self_learning_demo_runtime",
+        "test_readiness_marks_verified_demo_as_ready_to_start",
+        "test_readiness_requires_live_mt5_demo_runtime_evidence"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_aura_webapp.py",
       "phase_coverage": [
         13
@@ -285,6 +304,31 @@
         "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
         "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
+      ]
+    },
+    {
+      "async_test_functions": 0,
+      "path": "tests/test_aura_webapp_v3.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "3a36714e3102876561adc51dfc297590332bd03eccb80b5d407ef8c5a9eb44b8",
+      "source_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/server.py",
+        "aura/webapp/server_v3.py"
+      ],
+      "static_test_functions": 8,
+      "test_classes": [],
+      "test_functions": [
+        "test_distribution_exposes_owner_and_mt5_demo_entrypoints",
+        "test_mt5_bridge_surfaces_no_send_execution_check",
+        "test_one_click_launcher_uses_fresh_v3_server_after_setup",
+        "test_v3_execution_check_delegates_without_granting_submission",
+        "test_v3_mt5_preflight_delegates_to_read_only_validator",
+        "test_v3_start_fails_closed_when_mt5_preflight_is_not_ready",
+        "test_v3_start_preserves_base_runtime_and_returns_preflight_summary",
+        "test_v3_start_requires_tradable_symbols"
       ]
     },
     {
@@ -455,21 +499,24 @@
       "phase_coverage": [
         1,
         7,
+        8,
         9
       ],
-      "sha256": "d397ed1a891d8b1a247a681450ac241a1f02add56f73b86ebf83153762e9c6d7",
+      "sha256": "8854781e9567f34acf421d3ff374a0b74d99b9c55812e299221168d0dcdd7cfc",
       "source_dependencies": [
         "aura/agents/deliberation.py",
         "aura/agents/models.py",
         "aura/domain/models.py",
-        "aura/evolution/brain_policy.py"
+        "aura/evolution/brain_policy.py",
+        "aura/knowledge/firewall.py"
       ],
-      "static_test_functions": 3,
+      "static_test_functions": 4,
       "test_classes": [],
       "test_functions": [
         "test_brain_policy_blocks_low_confidence_or_excess_disagreement",
         "test_brain_policy_gene_space_contains_no_financial_risk_authority",
-        "test_brain_policy_roundtrips_through_immutable_genome"
+        "test_brain_policy_roundtrips_through_immutable_genome",
+        "test_brain_policy_team_uses_configured_execution_thresholds"
       ]
     },
     {
@@ -2077,6 +2124,23 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_mt5_execution_readiness.py",
+      "phase_coverage": [
+        13
+      ],
+      "sha256": "b47deadd6f3514690c85eb32ba5ea564a1a94ff6b160eb3627631a1ea02a6412",
+      "source_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/mt5_preflight.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_execution_readiness_order_checks_but_never_sends"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_multi_agent_gate.py",
       "phase_coverage": [
         0,
@@ -3447,7 +3511,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 617,
-    "test_modules": 154
+    "static_test_functions": 631,
+    "test_modules": 157
   }
 }

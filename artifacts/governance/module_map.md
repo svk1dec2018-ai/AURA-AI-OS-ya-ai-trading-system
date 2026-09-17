@@ -5,27 +5,27 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 464
-- Python modules: 385
-- Source modules: 205
-- Test modules: 154
-- Static test functions: 617
-- Entrypoints: 55
-- Known stub/incomplete candidates: 95
+- Repository files: 474
+- Python modules: 391
+- Source modules: 208
+- Test modules: 157
+- Static test functions: 631
+- Entrypoints: 60
+- Known stub/incomplete candidates: 96
 
 ## Repository structure
 
 | Asset class | Count |
 |---|---:|
-| `automation_entrypoint` | 9 |
+| `automation_entrypoint` | 11 |
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 3 |
 | `container_configuration` | 2 |
 | `documentation` | 32 |
 | `documentation_or_validation_evidence` | 18 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 385 |
-| `repository_asset` | 9 |
+| `python` | 391 |
+| `repository_asset` | 11 |
 | `repository_configuration` | 2 |
 
 ## Python components
@@ -61,8 +61,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `risk` | 4 |
 | `runtime` | 19 |
 | `strategy` | 3 |
-| `validation` | 154 |
-| `webapp` | 8 |
+| `validation` | 157 |
+| `webapp` | 11 |
 
 ## Entrypoints
 
@@ -72,7 +72,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `Dockerfile` | container-entrypoint |
 | `RUN_MT5_AURA_ALL_MARKETS.ps1` | shell-launcher |
 | `RUN_MT5_AURA_DEMO_AUTO.ps1` | shell-launcher |
+| `START_AURA_AI_OS.cmd` | shell-launcher |
 | `START_AURA_APP.cmd` | shell-launcher |
+| `START_AURA_FRESH_MT5.cmd` | shell-launcher |
 | `START_AURA_OLLAMA.cmd` | shell-launcher |
 | `TRADE_MT5_DEMO.ps1` | shell-launcher |
 | `aura/ai/free_ai_cli.py` | python-main |
@@ -100,6 +102,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/state_engine_gate.py` | python-main |
 | `aura/ops/strategy_research_gate.py` | python-main |
 | `aura/webapp/server.py` | python-main |
+| `aura/webapp/server_v3.py` | python-main |
 | `examples/check_angel_one_account.py` | python-main |
 | `examples/check_dhan_universe.py` | python-main |
 | `examples/evaluate_production_release.py` | python-main |
@@ -119,6 +122,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/send_telegram_test_alert.py` | python-main |
 | `pyproject.toml` | console-script:aura-free-ai |
 | `pyproject.toml` | console-script:aura-maintenance |
+| `pyproject.toml` | console-script:aura-mt5-demo |
+| `pyproject.toml` | console-script:aura-owner-app |
 | `scripts/generate_setup_pdf.py` | python-main |
 | `scripts/install_aura_user_service.sh` | shell-launcher |
 | `scripts/install_aura_windows_task.ps1` | shell-launcher |
@@ -193,7 +198,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/pipeline.py` | source | data | 5 | 1 | 3 |
 | `aura/data/public_crypto_feeds.py` | source | data | 5 | 1 | 2 |
 | `aura/data/public_history.py` | source | data | 5 | 1 | 1 |
-| `aura/data/quality.py` | source | data | 5 | 7 | 1 |
+| `aura/data/quality.py` | source | data | 5 | 7 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 1 | 2 |
 | `aura/domain/instruments.py` | source | domain | 1 | 1 | 0 |
 | `aura/domain/models.py` | source | domain | 1 | 63 | 0 |
@@ -233,7 +238,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/interface/voice_alerts.py` | source | interface | 13 | 1 | 0 |
 | `aura/interface/web_command_center.py` | source | interface | 13 | 2 | 1 |
 | `aura/interface/web_command_center_v2.py` | source | interface | 13 | 1 | 3 |
-| `aura/knowledge/firewall.py` | source | knowledge | 8 | 7 | 1 |
+| `aura/knowledge/firewall.py` | source | knowledge | 8 | 8 | 1 |
 | `aura/knowledge/local_corpus.py` | source | knowledge | 8 | 1 | 2 |
 | `aura/knowledge/retrieval.py` | source | knowledge | 8 | 1 | 1 |
 | `aura/lineage/__init__.py` | package_marker | lineage | 10 | 0 | 1 |
@@ -322,8 +327,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/learning_scanner.py` | source | runtime | 12 | 0 | 4 |
 | `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 5 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 0 | 5 |
-| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 0 | 14 |
-| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 0 | 18 |
+| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 0 | 15 |
+| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 0 | 19 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 3 | 9 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 1 | 3 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 2 | 3 |
@@ -333,14 +338,17 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/strategy/base.py` | source | strategy | 7 | 3 | 1 |
 | `aura/strategy/ema.py` | source | strategy | 7 | 7 | 2 |
 | `aura/strategy/features.py` | source | strategy | 7 | 1 | 1 |
-| `aura/webapp/__init__.py` | package_marker | webapp | 13 | 1 | 0 |
+| `aura/webapp/__init__.py` | package_marker | webapp | 13 | 3 | 0 |
 | `aura/webapp/catalog.py` | source | webapp | 13 | 0 | 0 |
 | `aura/webapp/charting.py` | source | webapp | 13 | 0 | 2 |
+| `aura/webapp/mt5_preflight.py` | source | webapp | 13 | 1 | 3 |
 | `aura/webapp/operator_assistant.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
+| `aura/webapp/readiness.py` | source | webapp | 13 | 1 | 1 |
 | `aura/webapp/research_runner.py` | source | webapp | 13 | 0 | 8 |
 | `aura/webapp/security.py` | source | webapp | 13 | 0 | 0 |
-| `aura/webapp/server.py` | source | webapp | 13 | 1 | 9 |
+| `aura/webapp/server.py` | source | webapp | 13 | 2 | 9 |
+| `aura/webapp/server_v3.py` | source | webapp | 13 | 1 | 5 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 0 | 1 |
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 0 | 2 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 0 | 2 |
@@ -369,7 +377,9 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_agents.py` | test | validation | 1 | 0 | 4 |
 | `tests/test_ai_strategy_architect.py` | test | validation | 7 | 0 | 4 |
 | `tests/test_angel_one_adapter.py` | test | validation | 1 | 0 | 3 |
+| `tests/test_aura_readiness.py` | test | validation | 13 | 0 | 1 |
 | `tests/test_aura_webapp.py` | test | validation | 13 | 0 | 2 |
+| `tests/test_aura_webapp_v3.py` | test | validation | 13 | 0 | 3 |
 | `tests/test_autonomous_paper.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_autonomous_research.py` | test | validation | 7 | 0 | 2 |
 | `tests/test_autonomous_strategy_lab.py` | test | validation | 1 | 0 | 3 |
@@ -378,7 +388,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_binance_spot.py` | test | validation | 5 | 0 | 2 |
 | `tests/test_binance_transport.py` | test | validation | 5 | 0 | 1 |
 | `tests/test_brain_online_evolution.py` | test | validation | 7 | 0 | 4 |
-| `tests/test_brain_policy.py` | test | validation | 1 | 0 | 4 |
+| `tests/test_brain_policy.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_broker_conformance_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_broker_contract.py` | test | validation | 4 | 0 | 5 |
 | `tests/test_broker_evidence.py` | test | validation | 1 | 0 | 3 |
@@ -453,6 +463,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_readiness.py` | test | validation | 5 | 0 | 2 |
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 15 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
+| `tests/test_mt5_execution_readiness.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_multi_market_paper.py` | test | validation | 1 | 0 | 16 |

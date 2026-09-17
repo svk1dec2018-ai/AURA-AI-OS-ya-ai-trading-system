@@ -14,7 +14,9 @@ from aura.evolution.brain_policy import (
     BRAIN_POLICY_GENE_SPACE,
     AuraBrainPolicy,
     BrainPolicyGate,
+    build_brain_policy_team,
 )
+from aura.knowledge.firewall import KnowledgeFirewall
 
 
 def _round() -> AgentRound:
@@ -112,6 +114,19 @@ def test_brain_policy_roundtrips_through_immutable_genome() -> None:
     genome = policy.to_genome()
     restored = AuraBrainPolicy.from_genome(genome)
     assert restored == policy
+
+
+def test_brain_policy_team_uses_configured_execution_thresholds() -> None:
+    policy = AuraBrainPolicy(
+        max_execution_spread_bps=12.0,
+        max_execution_slippage_bps=8.0,
+    )
+    team = build_brain_policy_team(KnowledgeFirewall(), policy)
+    execution_agent = next(
+        agent for agent in team.agents if agent.role == AgentRole.EXECUTION_QUALITY
+    )
+    assert execution_agent.max_spread_bps == 12.0
+    assert execution_agent.max_slippage_bps == 8.0
 
 
 def test_brain_policy_blocks_low_confidence_or_excess_disagreement() -> None:

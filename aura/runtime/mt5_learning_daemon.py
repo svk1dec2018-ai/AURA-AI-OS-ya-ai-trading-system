@@ -6,6 +6,7 @@ from pathlib import Path
 
 from aura.agents.reliability import AgentReliabilityTracker
 from aura.data.intelligence_service import LiveIntelligenceService
+from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
     BrainPaperPromotionPolicy,
@@ -100,7 +101,7 @@ class MT5SelfEvolvingPaperDaemon:
                 step = await self.base.coordinator.on_batch(batch)
                 scanner = self.base.coordinator.scanner
                 if not isinstance(scanner, LearningBrainPolicyScanner):
-                    raise RuntimeError("learning daemon scanner was replaced unexpectedly")
+                    raise TypeError("learning daemon scanner was replaced unexpectedly")
                 self.recorder.register_scan(scanner.last_raw_scan)
                 self.opportunity_auditor.register_scan(scanner.last_raw_scan)
 
@@ -109,11 +110,7 @@ class MT5SelfEvolvingPaperDaemon:
                 self.base.counters.opportunities += len(step.scan.opportunities)
                 self.base.counters.submitted_orders += len(step.submitted_orders)
                 self.base.counters.fills += len(step.fills)
-                if (
-                    self.base.counters.batches
-                    % self.base.config.reconcile_every_batches
-                    == 0
-                ):
+                if self.base.counters.batches % self.base.config.reconcile_every_batches == 0:
                     self.base.coordinator.reconcile()
                     self.base.counters.reconciliations += 1
 
@@ -145,10 +142,7 @@ class MT5SelfEvolvingPaperDaemon:
     def _maybe_research(self) -> None:
         samples = self._live_samples()
         new_samples = len(samples) - self._samples_at_last_research
-        if (
-            new_samples < self.research_every_new_samples
-            and not self._online_research_due
-        ):
+        if new_samples < self.research_every_new_samples and not self._online_research_due:
             return
         if len(samples) < self.optimizer.config.minimum_samples:
             return
@@ -174,6 +168,7 @@ class MT5SelfEvolvingPaperDaemon:
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
+            data_quality_gate=MultiTimeframeCandleQualityGate(),
             agent_risk_policy=team.risk_policy,
             max_concurrent_contexts=self.base.config.max_concurrent_contexts,
         )
@@ -273,9 +268,7 @@ async def build_mt5_self_evolving_paper_daemon(
     base = await build_mt5_all_market_paper_daemon(config)
     brain_dir = base.config.state_dir / "brain"
     replay_store = BrainReplayStore(brain_dir / "replay_samples.jsonl")
-    reliability_tracker = AgentReliabilityTracker(
-        brain_dir / "agent_reliability.jsonl"
-    )
+    reliability_tracker = AgentReliabilityTracker(brain_dir / "agent_reliability.jsonl")
     recorder = ShadowDecisionOutcomeRecorder(
         replay_store,
         policy=shadow_policy,
@@ -299,8 +292,8 @@ async def build_mt5_self_evolving_paper_daemon(
         gdelt_queries=("forex", "gold", "oil", "central bank"),
     )
     prior_metadata_provider = base.coordinator.metadata_provider
-    base.coordinator.metadata_provider = (
-        lambda candle, history, decision_time: _mt5_decision_metadata(
+    base.coordinator.metadata_provider = lambda candle, history, decision_time: (
+        _mt5_decision_metadata(
             prior_metadata_provider,
             intelligence_service,
             candle,
@@ -336,11 +329,7 @@ def _mt5_decision_metadata(
     history,
     decision_time: datetime,
 ) -> dict:
-    metadata = (
-        prior_provider(candle, history, decision_time)
-        if prior_provider is not None
-        else {}
-    )
+    metadata = prior_provider(candle, history, decision_time) if prior_provider is not None else {}
     metadata.update(
         intelligence_service.metadata_for(
             candle.symbol,

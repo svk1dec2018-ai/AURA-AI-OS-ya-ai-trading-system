@@ -17,6 +17,7 @@ from aura.data.mt5_demo import (
     load_mt5_demo_credentials_from_env,
 )
 from aura.data.mt5_polling import MT5DemoPollingSource, MT5PollingPolicy
+from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.knowledge.firewall import KnowledgeFirewall
 from aura.persistence.recovery import FinancialEventJournal
@@ -45,9 +46,7 @@ class MT5AllMarketPaperConfig:
         "1d",
         "1w",
     )
-    decision_timeframes: frozenset[str] = frozenset(
-        {"1m", "5m", "15m", "30m", "1h", "4h", "1d"}
-    )
+    decision_timeframes: frozenset[str] = frozenset({"1m", "5m", "15m", "30m", "1h", "4h", "1d"})
     seed_bars: int = 250
     catchup_bars: int = 3
     max_symbols: int | None = None
@@ -267,9 +266,7 @@ async def build_mt5_all_market_paper_daemon(
             )
             for symbol, item in instrument_by_symbol.items()
         }
-        multipliers = {
-            symbol: item.contract_size for symbol, item in instrument_by_symbol.items()
-        }
+        multipliers = {symbol: item.contract_size for symbol, item in instrument_by_symbol.items()}
         quantity_rules = {
             symbol: QuantityRule(
                 minimum=item.min_quantity,
@@ -309,13 +306,14 @@ async def build_mt5_all_market_paper_daemon(
             firewall,
             execution_quality_specialist=ExecutionQualitySpecialist(
                 max_spread_bps=config.max_spread_bps,
-                max_estimated_slippage_bps=config.max_estimated_slippage_bps,
+                max_slippage_bps=config.max_estimated_slippage_bps,
                 min_top_of_book_notional=0.0,
             ),
         )
         scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
+            data_quality_gate=MultiTimeframeCandleQualityGate(),
             agent_risk_policy=team.risk_policy,
             max_concurrent_contexts=config.max_concurrent_contexts,
         )
@@ -349,9 +347,7 @@ async def build_mt5_all_market_paper_daemon(
             default_requested_quantity=min(
                 item.min_quantity for item in instrument_by_symbol.values()
             ),
-            requested_quantity_provider=lambda symbol: instrument_by_symbol[
-                symbol
-            ].min_quantity,
+            requested_quantity_provider=lambda symbol: instrument_by_symbol[symbol].min_quantity,
             metadata_provider=lambda candle, _history, _decision_time: source.metadata_for(
                 candle.symbol
             ),

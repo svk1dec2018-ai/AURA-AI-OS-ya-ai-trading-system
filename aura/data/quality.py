@@ -6,6 +6,7 @@ from enum import Enum
 
 from pydantic import BaseModel, ConfigDict
 
+from aura.data.candle_aggregation import fixed_timeframe_duration
 from aura.domain.models import NormalizedCandle
 
 
@@ -160,10 +161,7 @@ class CandleQualityGate:
                         DataQualityIssue(
                             issue_type=DataQualityIssueType.GAP,
                             severity=DataQualitySeverity.CRITICAL,
-                            detail=(
-                                f"observed bar gap {gap} exceeds allowed "
-                                f"{max_allowed_gap}"
-                            ),
+                            detail=(f"observed bar gap {gap} exceeds allowed {max_allowed_gap}"),
                         )
                     )
             previous = candle
@@ -191,3 +189,29 @@ class CandleQualityGate:
             bars_checked=len(candles),
             latest_data_lag_ms=latest_data_lag_ms,
         )
+
+
+class MultiTimeframeCandleQualityGate:
+    """Apply the same strict quality policy at each candle series' own interval."""
+
+    def __init__(self, *, max_staleness_multiple: int = 3, max_gap_multiple: int = 2) -> None:
+        if max_staleness_multiple < 1 or max_gap_multiple < 1:
+            raise ValueError("quality multiples must be positive")
+        self.max_staleness_multiple = max_staleness_multiple
+        self.max_gap_multiple = max_gap_multiple
+
+    def assess(
+        self,
+        candles: tuple[NormalizedCandle, ...] | list[NormalizedCandle],
+        *,
+        decision_time: datetime,
+    ) -> DataQualityReport:
+        timeframe = candles[0].timeframe if candles else "1m"
+        interval = fixed_timeframe_duration(timeframe)
+        return CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=interval,
+                max_staleness=interval * self.max_staleness_multiple,
+                max_gap_multiple=self.max_gap_multiple,
+            )
+        ).assess(candles, decision_time=decision_time)
