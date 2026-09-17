@@ -1170,6 +1170,24 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_dhan_learning_quality.py",
+      "phase_coverage": [
+        5,
+        12
+      ],
+      "sha256": "f024c2e7067a7373794bf7e1b829326e0945e2d2dd0d54a77ab062066b6353d0",
+      "source_dependencies": [
+        "aura/data/quality.py",
+        "aura/runtime/dhan_learning_daemon.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_dhan_self_learning_uses_mandatory_multi_timeframe_quality_gate"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_dhan_live_full.py",
       "phase_coverage": [
         5
@@ -3542,7 +3560,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 645,
-    "test_modules": 158
+    "static_test_functions": 646,
+    "test_modules": 159
   }
 }

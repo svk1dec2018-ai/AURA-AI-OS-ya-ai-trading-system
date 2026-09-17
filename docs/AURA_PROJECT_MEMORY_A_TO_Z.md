@@ -1087,6 +1087,19 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — DHAN-LEARNING-QUALITY-WIRING
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Dhan self-learning paper runtime.
+**What changed:** Both initial construction and learned-policy reinstall now supply
+the scanner's mandatory multi-timeframe candle quality gate.
+**Why:** Scanner construction otherwise raises a TypeError before Dhan paper
+learning can start; every decision boundary must also fail closed on bad candles.
+**Evidence:** Focused regression test plus repository validation.
+**Status:** REAL (software wiring); credential-backed Dhan runtime remains unverified.
+**Risk impact:** Fail-closed; no broker order authority added.
+**Follow-up:** Run credential-backed Dhan paper smoke when owner provides a valid
+account/token and record feed/session evidence.
+
 ### 2026-09-17 — OWNER-RUNTIME-TRUTHFULNESS
 **Commit:** Working tree; see subsequent Git history.
 **Area:** PWA caching, MT5 concurrency and timestamp readiness.

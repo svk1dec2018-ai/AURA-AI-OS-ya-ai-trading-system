@@ -28,6 +28,7 @@ from aura.data.dhan_live_ticker import (
 )
 from aura.data.dhan_universe_planner import DhanUniversePlanner, DhanUniversePolicy
 from aura.data.intelligence_service import LiveIntelligenceService
+from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
@@ -381,6 +382,7 @@ class DhanSelfEvolvingPaperDaemon:
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
             ceo=team.ceo,
+            data_quality_gate=_dhan_data_quality_gate(),
             agent_risk_policy=team.risk_policy,
             max_concurrent_contexts=self.config.max_concurrent_contexts,
         )
@@ -551,6 +553,7 @@ async def build_dhan_self_evolving_paper_daemon(
         MultiMarketIntelligenceScanner(
             orchestrator=initial_team.orchestrator,
             ceo=initial_team.ceo,
+            data_quality_gate=_dhan_data_quality_gate(),
             agent_risk_policy=initial_team.risk_policy,
             max_concurrent_contexts=config.max_concurrent_contexts,
         ),
@@ -658,6 +661,12 @@ def _dhan_decision_metadata(
         )
     )
     return metadata
+
+
+def _dhan_data_quality_gate() -> MultiTimeframeCandleQualityGate:
+    """Strictly validate every Dhan decision series at its own timeframe."""
+
+    return MultiTimeframeCandleQualityGate()
 
 
 def _dhan_agent_risk_policy() -> AgentRiskPolicy:

@@ -2216,6 +2216,10 @@
       },
       {
         "from": "aura/runtime/dhan_learning_daemon.py",
+        "to": "aura/data/quality.py"
+      },
+      {
+        "from": "aura/runtime/dhan_learning_daemon.py",
         "to": "aura/evolution/brain_online.py"
       },
       {
@@ -3769,6 +3773,14 @@
       {
         "from": "tests/test_dhan_instruments.py",
         "to": "aura/markets/universe.py"
+      },
+      {
+        "from": "tests/test_dhan_learning_quality.py",
+        "to": "aura/data/quality.py"
+      },
+      {
+        "from": "tests/test_dhan_learning_quality.py",
+        "to": "aura/runtime/dhan_learning_daemon.py"
       },
       {
         "from": "tests/test_dhan_live_full.py",
@@ -6610,9 +6622,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 29610,
+      "bytes": 29977,
       "path": "aura/runtime/dhan_learning_daemon.py",
-      "sha256": "280a05133e073c87b761269e442f65019a05f09e51ce80b76f8419b26c8de1eb"
+      "sha256": "8415fdeea7514a46870c76d18f1ac90b2fdb56f0362b512369f71af7e7757a04"
     },
     {
       "asset_class": "python",
@@ -6898,9 +6910,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 42504,
+      "bytes": 43301,
       "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
-      "sha256": "fb95ac5407de2f4f064d1c71cc0758c29bc67c677945784c8c240fa4a6ad03d2"
+      "sha256": "ab5f06b90751dc0fb133af0f6c78897dd007d7deaf396b2f3719f7d85caa6c35"
     },
     {
       "asset_class": "documentation",
@@ -7591,6 +7603,12 @@
       "bytes": 3225,
       "path": "tests/test_dhan_instruments.py",
       "sha256": "1ed352d42305f8af5f36c06c4ebef97935b4bb68011bced36c1cebba622687b5"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 397,
+      "path": "tests/test_dhan_learning_quality.py",
+      "sha256": "f024c2e7067a7373794bf7e1b829326e0945e2d2dd0d54a77ab062066b6353d0"
     },
     {
       "asset_class": "python",
@@ -8328,7 +8346,6 @@
       "aura/ops/paper_trading_gate.py",
       "aura/research/blueprint_compiler.py",
       "aura/runtime/brain_scanner.py",
-      "aura/runtime/dhan_learning_daemon.py",
       "aura/runtime/learning_scanner.py",
       "aura/runtime/mt5_autonomous_demo.py",
       "aura/runtime/mt5_demo_execution_daemon.py",
@@ -10308,6 +10325,7 @@
         "tests/test_agent_risk_policy.py",
         "tests/test_agent_service.py",
         "tests/test_data_quality.py",
+        "tests/test_dhan_learning_quality.py",
         "tests/test_market_data_pipeline.py",
         "tests/test_multi_market_paper.py",
         "tests/test_multi_market_scanner.py",
@@ -14196,7 +14214,9 @@
     },
     {
       "component": "runtime",
-      "direct_test_files": [],
+      "direct_test_files": [
+        "tests/test_dhan_learning_quality.py"
+      ],
       "internal_dependencies": [
         "aura/agents/audit.py",
         "aura/agents/models.py",
@@ -14210,6 +14230,7 @@
         "aura/data/dhan_option_context.py",
         "aura/data/dhan_universe_planner.py",
         "aura/data/intelligence_service.py",
+        "aura/data/quality.py",
         "aura/evolution/brain_online.py",
         "aura/evolution/brain_optimizer.py",
         "aura/evolution/brain_policy.py",
@@ -14234,7 +14255,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 712,
+      "lines": 721,
       "module": "aura.runtime.dhan_learning_daemon",
       "parsed": true,
       "path": "aura/runtime/dhan_learning_daemon.py",
@@ -14243,7 +14264,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "280a05133e073c87b761269e442f65019a05f09e51ce80b76f8419b26c8de1eb",
+      "sha256": "8415fdeea7514a46870c76d18f1ac90b2fdb56f0362b512369f71af7e7757a04",
       "standard_library_dependencies": [
         "__future__",
         "asyncio",
@@ -17007,6 +17028,27 @@
       "standard_library_dependencies": [
         "decimal"
       ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/data/quality.py",
+        "aura/runtime/dhan_learning_daemon.py"
+      ],
+      "lines": 9,
+      "module": "tests.test_dhan_learning_quality",
+      "parsed": true,
+      "path": "tests/test_dhan_learning_quality.py",
+      "phase_coverage": [
+        5,
+        12
+      ],
+      "primary_phase": 5,
+      "role": "test",
+      "sha256": "f024c2e7067a7373794bf7e1b829326e0945e2d2dd0d54a77ab062066b6353d0",
+      "standard_library_dependencies": [],
       "third_party_dependencies": []
     },
     {
@@ -19866,7 +19908,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "6feca94b47ecfc93b761ff1ac69465e6565709a780b927df3c8ed3e9aeaca06b",
+  "repository_tree_sha256": "5ce8ed232ecfa3494a6ffc0cd27058fbdcbd495f8f21eab4600554c0995a9d69",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20457,15 +20499,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 181,
+    "directly_tested_source_modules": 182,
     "entrypoints": 60,
     "parse_errors": 0,
-    "python_modules": 392,
-    "repository_files": 476,
+    "python_modules": 393,
+    "repository_files": 477,
     "source_modules": 208,
-    "static_test_functions": 645,
+    "static_test_functions": 646,
     "stub_candidates": 96,
-    "test_modules": 158,
+    "test_modules": 159,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0

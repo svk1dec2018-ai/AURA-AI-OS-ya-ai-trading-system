@@ -5,11 +5,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 476
-- Python modules: 392
+- Repository files: 477
+- Python modules: 393
 - Source modules: 208
-- Test modules: 158
-- Static test functions: 645
+- Test modules: 159
+- Static test functions: 646
 - Entrypoints: 60
 - Known stub/incomplete candidates: 96
 
@@ -24,7 +24,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `documentation` | 33 |
 | `documentation_or_validation_evidence` | 18 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 392 |
+| `python` | 393 |
 | `repository_asset` | 11 |
 | `repository_configuration` | 2 |
 
@@ -61,7 +61,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `risk` | 4 |
 | `runtime` | 19 |
 | `strategy` | 3 |
-| `validation` | 158 |
+| `validation` | 159 |
 | `webapp` | 11 |
 
 ## Entrypoints
@@ -198,7 +198,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/pipeline.py` | source | data | 5 | 1 | 3 |
 | `aura/data/public_crypto_feeds.py` | source | data | 5 | 1 | 2 |
 | `aura/data/public_history.py` | source | data | 5 | 1 | 1 |
-| `aura/data/quality.py` | source | data | 5 | 7 | 2 |
+| `aura/data/quality.py` | source | data | 5 | 8 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 1 | 2 |
 | `aura/domain/instruments.py` | source | domain | 1 | 1 | 0 |
 | `aura/domain/models.py` | source | domain | 1 | 63 | 0 |
@@ -319,7 +319,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/allocation.py` | source | runtime | 12 | 4 | 3 |
 | `aura/runtime/autonomous_paper.py` | source | runtime | 12 | 1 | 3 |
 | `aura/runtime/brain_scanner.py` | source | runtime | 12 | 0 | 3 |
-| `aura/runtime/dhan_learning_daemon.py` | source | runtime | 12 | 0 | 35 |
+| `aura/runtime/dhan_learning_daemon.py` | source | runtime | 12 | 1 | 36 |
 | `aura/runtime/dhan_radar.py` | source | runtime | 12 | 1 | 2 |
 | `aura/runtime/evolution_supervisor.py` | source | runtime | 12 | 1 | 1 |
 | `aura/runtime/free_public_ai_council.py` | source | runtime | 12 | 2 | 20 |
@@ -418,6 +418,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_dhan_deep_service.py` | test | validation | 1 | 0 | 4 |
 | `tests/test_dhan_history.py` | test | validation | 1 | 0 | 3 |
 | `tests/test_dhan_instruments.py` | test | validation | 1 | 0 | 3 |
+| `tests/test_dhan_learning_quality.py` | test | validation | 5 | 0 | 2 |
 | `tests/test_dhan_live_full.py` | test | validation | 5 | 0 | 1 |
 | `tests/test_dhan_option_context.py` | test | validation | 1 | 0 | 2 |
 | `tests/test_dhan_options.py` | test | validation | 5 | 0 | 2 |
@@ -545,7 +546,6 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/ops/paper_trading_gate.py`
 - `aura/research/blueprint_compiler.py`
 - `aura/runtime/brain_scanner.py`
-- `aura/runtime/dhan_learning_daemon.py`
 - `aura/runtime/learning_scanner.py`
 - `aura/runtime/mt5_autonomous_demo.py`
 - `aura/runtime/mt5_demo_execution_daemon.py`
