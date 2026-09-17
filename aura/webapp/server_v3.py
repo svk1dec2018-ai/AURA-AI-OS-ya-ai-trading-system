@@ -7,6 +7,7 @@ import webbrowser
 from http.server import ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
+from aura.domain.models import Side
 from aura.webapp import server as base
 from aura.webapp.mt5_preflight import mt5_demo_execution_check, mt5_demo_preflight
 from aura.webapp.readiness import build_readiness
@@ -21,8 +22,26 @@ class AuraWebControllerV3(base.AuraWebController):
             return mt5_demo_preflight(max_symbols=max_symbols, query=query)
         return mt5_demo_preflight(max_symbols=max_symbols)
 
-    def mt5_execution_check(self, *, symbol: str) -> dict:
-        return mt5_demo_execution_check(symbol)
+    def mt5_execution_check(self, *, symbol: str, side: Side = Side.BUY) -> dict:
+        preflight = self.mt5_preflight(max_symbols=1, query=symbol)
+        if preflight.get("market_clock_ok") is not True:
+            clock = preflight.get("market_clock") or {}
+            return {
+                "ok": False,
+                "execution_ready": False,
+                "demo_verified": bool(preflight.get("demo_verified")),
+                "symbol": symbol,
+                "side": side.value,
+                "error": (
+                    "protected preview blocked by market clock: "
+                    + str(clock.get("error") or "clock evidence unavailable")
+                ),
+                "market_clock": clock,
+                "order_check_attempted": False,
+                "order_submission_attempted": False,
+                "real_money_enabled": False,
+            }
+        return mt5_demo_execution_check(symbol, side=side)
 
     def readiness(self) -> dict:
         preflight = self.mt5_preflight(max_symbols=100)
@@ -78,7 +97,8 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             query = parse_qs(parsed.query)
             try:
                 symbol = str((query.get("symbol") or ["XAUUSD"])[0])
-                payload = CONTROLLER.mt5_execution_check(symbol=symbol)
+                side = Side(str((query.get("side") or [Side.BUY.value])[0]).upper())
+                payload = CONTROLLER.mt5_execution_check(symbol=symbol, side=side)
                 self._json(payload, 200 if payload.get("ok") else 400)
             except (TypeError, ValueError, RuntimeError, OSError) as exc:
                 self._json({"ok": False, "error": str(exc)}, 400)

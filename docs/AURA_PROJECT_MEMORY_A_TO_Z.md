@@ -1087,6 +1087,21 @@ The long-term moat is not a particular LLM. It is the quality of:
 
 # FINAL CONTINUITY RULE
 
+### 2026-09-17 — PROTECTED-MANUAL-PREVIEW
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Owner Trading Desk.
+**What changed:** Added an exact-symbol BUY/SELL protected DEMO preview that uses
+the broker's order_check path, minimum volume, margin and native SL/TP calculation.
+The controller first requires safe broker-clock evidence and returns explicit
+ORDER NOT SENT state. Default autonomous scan count is aligned to 25 in the UI.
+**Why:** The Trading Desk exposed a disabled placeholder despite an existing
+no-send broker validation path.
+**Evidence:** Focused tests and actual local endpoint returned a clock-blocked SELL
+XAUUSD preview with order_check_attempted=false and order_submission_attempted=false.
+**Status:** PARTIAL — preview is real; manual submission remains intentionally gated.
+**Risk impact:** No order authority added; fail-closed timestamp gate strengthened.
+**Follow-up:** Re-run preview after a conforming UTC broker feed is connected.
+
 ### 2026-09-17 — DHAN-LEARNING-QUALITY-WIRING
 **Commit:** Working tree; see subsequent Git history.
 **Area:** Dhan self-learning paper runtime.

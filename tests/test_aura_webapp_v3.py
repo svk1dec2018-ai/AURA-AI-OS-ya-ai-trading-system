@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from aura.domain.models import Side
 from aura.webapp import server as base
 from aura.webapp import server_v3
 
@@ -48,22 +49,50 @@ def test_v3_execution_check_delegates_without_granting_submission(
     monkeypatch.setattr(
         server_v3,
         "mt5_demo_execution_check",
-        lambda symbol: {
+        lambda symbol, side: {
             "ok": True,
             "execution_ready": True,
             "symbol": symbol,
+            "side": side.value,
             "order_check_attempted": True,
             "order_submission_attempted": False,
             "real_money_enabled": False,
         },
     )
     controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
-    payload = controller.mt5_execution_check(symbol="XAUUSD")
+    monkeypatch.setattr(controller, "mt5_preflight", lambda max_symbols, query: {
+        "ok": True, "demo_verified": True, "market_clock_ok": True,
+    })
+    payload = controller.mt5_execution_check(symbol="XAUUSD", side=Side.SELL)
     assert payload["execution_ready"] is True
     assert payload["symbol"] == "XAUUSD"
+    assert payload["side"] == "SELL"
     assert payload["order_check_attempted"] is True
     assert payload["order_submission_attempted"] is False
     assert payload["real_money_enabled"] is False
+
+
+def test_v3_execution_preview_blocks_before_order_check_on_bad_clock(
+    tmp_path: Path, monkeypatch
+) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(controller, "mt5_preflight", lambda max_symbols, query: {
+        "ok": True, "demo_verified": True, "market_clock_ok": False,
+        "market_clock": {"error": "future timestamp", "future_skew_seconds": 10800},
+    })
+    called = False
+
+    def should_not_run(symbol, side):
+        nonlocal called
+        called = True
+
+    monkeypatch.setattr(server_v3, "mt5_demo_execution_check", should_not_run)
+    payload = controller.mt5_execution_check(symbol="XAUUSD", side=Side.BUY)
+    assert payload["ok"] is False
+    assert payload["order_check_attempted"] is False
+    assert payload["order_submission_attempted"] is False
+    assert payload["market_clock"]["future_skew_seconds"] == 10800
+    assert called is False
 
 
 def test_v3_start_fails_closed_when_mt5_preflight_is_not_ready(

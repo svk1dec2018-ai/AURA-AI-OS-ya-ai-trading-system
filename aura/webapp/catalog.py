@@ -215,8 +215,8 @@ CAPABILITIES: tuple[dict[str, Any], ...] = (
         "group": "Trading & Risk",
         "name": "Manual DEMO Trading Desk",
         "status": "partial",
-        "description": "Broker DEMO execution exists; a complete manual order ticket is not yet exposed in this PWA.",
-        "evidence": ["aura/execution/mt5_demo_broker.py", "aura/execution/mt5_protected_demo.py"],
+        "description": "A no-send protected BUY/SELL broker preview is connected; manual order submission remains gated.",
+        "evidence": ["aura/webapp/static/mt5-bridge.js", "aura/webapp/server_v3.py", "aura/execution/mt5_protected_demo.py"],
     },
     {
         "id": "autonomous_demo",

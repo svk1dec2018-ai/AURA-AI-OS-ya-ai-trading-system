@@ -50,6 +50,34 @@
     return node;
   }
 
+  function installTradingPreview() {
+    const trading = document.getElementById("view-trading");
+    if (!trading || document.getElementById("mt5ProtectedPreview")) return;
+    const preview = document.createElement("div");
+    preview.id = "mt5ProtectedPreview";
+    preview.className = "panel";
+    preview.innerHTML = `<div class="panel-head"><div><h2>Protected DEMO Order Preview</h2><p>Broker order_check only · minimum volume · native SL/TP · never sends an order</p></div><span class="badge ui_connected">NO SEND</span></div>
+      <div class="panel-body form-grid"><div class="field"><label>Exact broker symbol</label><input id="previewSymbol" value="XAUUSD" maxlength="120" /></div><div class="field"><label>Side</label><select id="previewSide"><option>BUY</option><option>SELL</option></select></div><div class="span-2"><button class="btn primary" id="previewOrderBtn">Preview protected DEMO order</button></div><div class="span-2 notice info" id="previewOrderResult">No order preview has been run. A preview cannot submit a trade.</div></div>`;
+    trading.querySelector(".grid-2")?.insertAdjacentElement("afterend", preview);
+    document.getElementById("previewOrderBtn")?.addEventListener("click", async () => {
+      const result = document.getElementById("previewOrderResult");
+      const symbol = document.getElementById("previewSymbol").value.trim();
+      const side = document.getElementById("previewSide").value;
+      result.className = "span-2 notice info";
+      result.textContent = `Checking ${side} ${symbol} without sending…`;
+      try {
+        const response = await fetch(`/api/mt5/execution-check?symbol=${encodeURIComponent(symbol)}&side=${encodeURIComponent(side)}`, {cache:"no-store"});
+        const data = await response.json();
+        if (!response.ok || !data.ok) throw new Error(data.error || "preview blocked");
+        result.className = "span-2 notice good";
+        result.textContent = `${data.side} ${data.symbol} · min ${data.minimum_volume} · margin ${data.margin_required} · entry ${data.entry_price} · SL ${data.native_stop} · TP ${data.native_target} · broker order_check accepted · ORDER NOT SENT`;
+      } catch (error) {
+        result.className = "span-2 notice bad";
+        result.textContent = `Preview blocked: ${error.message} · ORDER NOT SENT`;
+      }
+    });
+  }
+
   let symbolData = [];
   let selectedSymbol = "XAUUSD";
   let matchingCount = 0;
@@ -187,6 +215,9 @@
   document.addEventListener("DOMContentLoaded", () => {
     installStyles();
     panel();
+    installTradingPreview();
+    const maxSymbols = document.getElementById("maxSymbols");
+    if (maxSymbols && maxSymbols.value === "10") maxSymbols.value = "25";
     document.getElementById("mt5CheckBtn")?.addEventListener("click", checkMT5);
     document.getElementById("mt5ExecCheckBtn")?.addEventListener("click", checkExecution);
     document.getElementById("mt5SymbolSearch")?.addEventListener("input", () => {

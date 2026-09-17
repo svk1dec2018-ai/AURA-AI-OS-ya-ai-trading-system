@@ -2868,6 +2868,10 @@
       },
       {
         "from": "aura/webapp/server_v3.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/webapp/server_v3.py",
         "to": "aura/webapp/__init__.py"
       },
       {
@@ -3305,6 +3309,10 @@
       {
         "from": "tests/test_aura_webapp.py",
         "to": "aura/webapp/server.py"
+      },
+      {
+        "from": "tests/test_aura_webapp_v3.py",
+        "to": "aura/domain/models.py"
       },
       {
         "from": "tests/test_aura_webapp_v3.py",
@@ -6742,9 +6750,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 21377,
+      "bytes": 21408,
       "path": "aura/webapp/catalog.py",
-      "sha256": "54bda2b32624fed04690ba90375a17592f7f3b1da0bbd08f0317a5dabf6a6ba7"
+      "sha256": "fcc09a45ad31f11c5093276990ec9dc10b37bcdd5d01c35eb71c3ba7c5da3000"
     },
     {
       "asset_class": "python",
@@ -6796,9 +6804,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6557,
+      "bytes": 7526,
       "path": "aura/webapp/server_v3.py",
-      "sha256": "0ad9c68ab701cbbda8669d5a2cdfbed50a6d474f917184a554a77bea2e68b19c"
+      "sha256": "3faddb1840e13ed785a4cabe4fc73ec36dc0b37b0202f6a5c2354430f0423ca7"
     },
     {
       "asset_class": "repository_asset",
@@ -6826,9 +6834,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 13788,
+      "bytes": 16297,
       "path": "aura/webapp/static/mt5-bridge.js",
-      "sha256": "b13351e9033c106d72c8a35d644e8a5593f3d79047b0492f94bbb543263528aa"
+      "sha256": "6d25b57a54a8f66dab3d79d64f1f5ce687e61341d7f44d056c9c1c091f1becea"
     },
     {
       "asset_class": "repository_asset",
@@ -6910,9 +6918,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 43301,
+      "bytes": 44284,
       "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
-      "sha256": "ab5f06b90751dc0fb133af0f6c78897dd007d7deaf396b2f3719f7d85caa6c35"
+      "sha256": "4b6385782fb7d422bac50ad59509a191df204b58284d27e631b36900418c9504"
     },
     {
       "asset_class": "documentation",
@@ -7372,9 +7380,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6387,
+      "bytes": 7606,
       "path": "tests/test_aura_webapp_v3.py",
-      "sha256": "a2b14639822e9e19a53c48aeaa03a7b47efd8e2c17c086d21618a28acb4f048e"
+      "sha256": "85190b0be8056835ceb12678d7097e7d1c94198deddeed96cf9d813023959212"
     },
     {
       "asset_class": "python",
@@ -8301,7 +8309,7 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 147,
+        "line": 167,
         "path": "aura/webapp/server_v3.py"
       },
       {
@@ -10429,6 +10437,7 @@
         "tests/test_agent_team.py",
         "tests/test_agents.py",
         "tests/test_angel_one_adapter.py",
+        "tests/test_aura_webapp_v3.py",
         "tests/test_autonomous_strategy_lab.py",
         "tests/test_backtest.py",
         "tests/test_brain_policy.py",
@@ -14901,7 +14910,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "54bda2b32624fed04690ba90375a17592f7f3b1da0bbd08f0317a5dabf6a6ba7",
+      "sha256": "fcc09a45ad31f11c5093276990ec9dc10b37bcdd5d01c35eb71c3ba7c5da3000",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -15145,13 +15154,14 @@
         "tests/test_aura_webapp_v3.py"
       ],
       "internal_dependencies": [
+        "aura/domain/models.py",
         "aura/webapp/__init__.py",
         "aura/webapp/mt5_preflight.py",
         "aura/webapp/readiness.py",
         "aura/webapp/security.py",
         "aura/webapp/server.py"
       ],
-      "lines": 155,
+      "lines": 175,
       "module": "aura.webapp.server_v3",
       "parsed": true,
       "path": "aura/webapp/server_v3.py",
@@ -15160,7 +15170,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "0ad9c68ab701cbbda8669d5a2cdfbed50a6d474f917184a554a77bea2e68b19c",
+      "sha256": "3faddb1840e13ed785a4cabe4fc73ec36dc0b37b0202f6a5c2354430f0423ca7",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -16010,20 +16020,22 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/domain/models.py",
         "aura/webapp/__init__.py",
         "aura/webapp/server.py",
         "aura/webapp/server_v3.py"
       ],
-      "lines": 172,
+      "lines": 201,
       "module": "tests.test_aura_webapp_v3",
       "parsed": true,
       "path": "tests/test_aura_webapp_v3.py",
       "phase_coverage": [
+        1,
         13
       ],
-      "primary_phase": 13,
+      "primary_phase": 1,
       "role": "test",
-      "sha256": "a2b14639822e9e19a53c48aeaa03a7b47efd8e2c17c086d21618a28acb4f048e",
+      "sha256": "85190b0be8056835ceb12678d7097e7d1c94198deddeed96cf9d813023959212",
       "standard_library_dependencies": [
         "pathlib"
       ],
@@ -19908,7 +19920,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "5ce8ed232ecfa3494a6ffc0cd27058fbdcbd495f8f21eab4600554c0995a9d69",
+  "repository_tree_sha256": "bae5e393c74cc504214b637de9e327418506793f6cbb60dbda9103a9700f19f5",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20470,7 +20482,7 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 147,
+      "line": 167,
       "path": "aura/webapp/server_v3.py"
     },
     {
@@ -20505,7 +20517,7 @@
     "python_modules": 393,
     "repository_files": 477,
     "source_modules": 208,
-    "static_test_functions": 646,
+    "static_test_functions": 647,
     "stub_candidates": 96,
     "test_modules": 159,
     "unclassified_modules": 0,

@@ -314,15 +314,17 @@
       "async_test_functions": 0,
       "path": "tests/test_aura_webapp_v3.py",
       "phase_coverage": [
+        1,
         13
       ],
-      "sha256": "a2b14639822e9e19a53c48aeaa03a7b47efd8e2c17c086d21618a28acb4f048e",
+      "sha256": "85190b0be8056835ceb12678d7097e7d1c94198deddeed96cf9d813023959212",
       "source_dependencies": [
+        "aura/domain/models.py",
         "aura/webapp/__init__.py",
         "aura/webapp/server.py",
         "aura/webapp/server_v3.py"
       ],
-      "static_test_functions": 10,
+      "static_test_functions": 11,
       "test_classes": [],
       "test_functions": [
         "test_distribution_exposes_owner_and_mt5_demo_entrypoints",
@@ -330,6 +332,7 @@
         "test_one_click_launcher_uses_fresh_v3_server_after_setup",
         "test_readiness_does_not_report_stale_learning_as_active",
         "test_v3_execution_check_delegates_without_granting_submission",
+        "test_v3_execution_preview_blocks_before_order_check_on_bad_clock",
         "test_v3_mt5_preflight_delegates_to_read_only_validator",
         "test_v3_start_blocks_future_broker_clock",
         "test_v3_start_fails_closed_when_mt5_preflight_is_not_ready",
@@ -3560,7 +3563,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 646,
+    "static_test_functions": 647,
     "test_modules": 159
   }
 }

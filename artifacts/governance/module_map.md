@@ -9,7 +9,7 @@ It inventories the repository; it does not certify later implementation phases.
 - Python modules: 393
 - Source modules: 208
 - Test modules: 159
-- Static test functions: 646
+- Static test functions: 647
 - Entrypoints: 60
 - Known stub/incomplete candidates: 96
 
@@ -201,7 +201,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 8 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 1 | 2 |
 | `aura/domain/instruments.py` | source | domain | 1 | 1 | 0 |
-| `aura/domain/models.py` | source | domain | 1 | 63 | 0 |
+| `aura/domain/models.py` | source | domain | 1 | 64 | 0 |
 | `aura/domain/serialization.py` | source | domain | 1 | 1 | 2 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 1 | 3 |
@@ -348,7 +348,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/webapp/research_runner.py` | source | webapp | 13 | 0 | 8 |
 | `aura/webapp/security.py` | source | webapp | 13 | 0 | 0 |
 | `aura/webapp/server.py` | source | webapp | 13 | 2 | 9 |
-| `aura/webapp/server_v3.py` | source | webapp | 13 | 1 | 5 |
+| `aura/webapp/server_v3.py` | source | webapp | 13 | 1 | 6 |
 | `examples/check_angel_one_account.py` | entrypoint | examples | 4 | 0 | 1 |
 | `examples/check_dhan_universe.py` | entrypoint | examples | 5 | 0 | 2 |
 | `examples/evaluate_production_release.py` | entrypoint | examples | 7 | 0 | 2 |
@@ -379,7 +379,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_angel_one_adapter.py` | test | validation | 1 | 0 | 3 |
 | `tests/test_aura_readiness.py` | test | validation | 13 | 0 | 1 |
 | `tests/test_aura_webapp.py` | test | validation | 13 | 0 | 2 |
-| `tests/test_aura_webapp_v3.py` | test | validation | 13 | 0 | 3 |
+| `tests/test_aura_webapp_v3.py` | test | validation | 1 | 0 | 4 |
 | `tests/test_autonomous_paper.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_autonomous_research.py` | test | validation | 7 | 0 | 2 |
 | `tests/test_autonomous_strategy_lab.py` | test | validation | 1 | 0 | 3 |
