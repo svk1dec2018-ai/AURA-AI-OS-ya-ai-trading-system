@@ -25,6 +25,7 @@ PHASE_ZERO_EVIDENCE = {
 
 _PHASE_BY_PACKAGE = {
     "agents": 9,
+    "aura2": 9,
     "ai": 9,
     "backtest": 6,
     "connectors": 4,

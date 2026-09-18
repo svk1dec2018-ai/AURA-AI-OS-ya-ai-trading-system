@@ -165,6 +165,7 @@ class MT5SelfEvolvingPaperDaemon:
             firewall,
             policy,
             reliability_tracker=self.reliability_tracker,
+            extra_agents=(AURA2MTFSpecialist(),),
         )
         raw_scanner = MultiMarketIntelligenceScanner(
             orchestrator=team.orchestrator,
@@ -173,8 +174,14 @@ class MT5SelfEvolvingPaperDaemon:
             agent_risk_policy=team.risk_policy,
             max_concurrent_contexts=self.base.config.max_concurrent_contexts,
         )
+        aura2_scanner = getattr(self, "_aura2_mtf_scanner", None)
+        if aura2_scanner is None:
+            aura2_scanner = AURA2MTFScanner(raw_scanner)
+            self._aura2_mtf_scanner = aura2_scanner
+        else:
+            aura2_scanner.replace_scanner(raw_scanner)
         self.base.coordinator.scanner = LearningBrainPolicyScanner(
-            raw_scanner,
+            aura2_scanner,
             BrainPolicyGate(policy),
         )
 
@@ -227,6 +234,11 @@ class MT5SelfEvolvingPaperDaemon:
             "live_replay_samples": len(live_samples),
             "pending_shadow_outcomes": self.recorder.pending_count,
             "agent_reliability_observations": self.reliability_tracker.observation_count,
+            "aura2_mtf": (
+                self._aura2_mtf_scanner.status()
+                if hasattr(self, "_aura2_mtf_scanner")
+                else {}
+            ),
             "online_learning": self.online_bridge.status(),
             "live_intelligence": self.intelligence_service.status(),
             "recent_intelligence": recent_intelligence,

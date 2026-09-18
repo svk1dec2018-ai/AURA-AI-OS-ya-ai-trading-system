@@ -5,6 +5,7 @@ from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
 
 from aura.agents.advisory_specialists import ExecutionQualitySpecialist
+from aura.agents.base import SpecialistAgent
 from aura.agents.deliberation import DeliberationMemo
 from aura.agents.models import AgentRound, CEODecisionMemo
 from aura.agents.reliability import AgentReliabilityTracker
@@ -134,6 +135,7 @@ def build_brain_policy_team(
     risk_policy: AgentRiskPolicy | None = None,
     min_top_of_book_notional: float = 0.0,
     reliability_tracker: AgentReliabilityTracker | None = None,
+    extra_agents: tuple[SpecialistAgent, ...] = (),
 ) -> AuraAgentTeam:
     """Build an evolvable brain without changing downstream financial authority.
 
@@ -143,6 +145,7 @@ def build_brain_policy_team(
     """
     return build_default_agent_team(
         firewall,
+        extra_agents=extra_agents,
         execution_quality_specialist=ExecutionQualitySpecialist(
             max_spread_bps=policy.max_execution_spread_bps,
             max_slippage_bps=policy.max_execution_slippage_bps,
