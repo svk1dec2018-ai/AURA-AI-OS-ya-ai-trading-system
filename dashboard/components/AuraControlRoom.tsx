@@ -2,13 +2,14 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import MarketChart from "./MarketChart";
+import { CapabilityExplorer, ExecutionPreview, ResearchStudio, TradeJournal } from "./AdvancedTools";
 import { getJson, postJson } from "../lib/api";
 import type { Decision, JsonMap, Workspace } from "../lib/types";
 
 type View =
   | "overview" | "markets" | "charts" | "opportunities" | "trading" | "portfolio"
   | "brain" | "debate" | "risk" | "performance" | "research" | "learning"
-  | "news" | "system" | "owner";
+  | "news" | "journal" | "studio" | "capabilities" | "system" | "owner";
 
 const NAV: Array<[View, string, string]> = [
   ["overview", "Overview", "OV"],
@@ -24,6 +25,9 @@ const NAV: Array<[View, string, string]> = [
   ["research", "Research Lab", "RL"],
   ["learning", "Learning", "EV"],
   ["news", "News / Macro", "NW"],
+  ["journal", "Trade Journal", "TJ"],
+  ["studio", "Strategy Studio", "ST"],
+  ["capabilities", "All Features", "AZ"],
   ["system", "System Health", "HL"],
   ["owner", "Owner / JARVIS", "JR"],
 ];
@@ -313,6 +317,9 @@ export default function AuraControlRoom() {
                 <KeyValue label="Reconciliations" value={String(status.reconciliations ?? status.counters?.reconciliations ?? 0)} />
                 <KeyValue label="Kill switch" value={runtime.app_kill_locked || status.risk_kill_switch ? "LOCKED" : "CLEAR"} />
               </Panel>
+              <Panel title="Broker-safe order preview" badge="NO SEND">
+                <ExecutionPreview />
+              </Panel>
             </section>
           )}
 
@@ -382,6 +389,24 @@ export default function AuraControlRoom() {
                   </article>
                 )) : <div className="empty">No persisted live intelligence yet.</div>}
               </div>
+            </Panel>
+          )}
+
+          {view === "journal" && (
+            <Panel title="Append-only Trade Journal" badge="WAL">
+              <TradeJournal />
+            </Panel>
+          )}
+
+          {view === "studio" && (
+            <Panel title="Strategy Studio" badge="Research only">
+              <ResearchStudio />
+            </Panel>
+          )}
+
+          {view === "capabilities" && (
+            <Panel title="A → Z Capability Explorer" badge={String(capabilityItems.length) + " modules"}>
+              <CapabilityExplorer items={capabilityItems} />
             </Panel>
           )}
 
