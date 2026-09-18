@@ -4,6 +4,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from aura.agents.reliability import AgentReliabilityTracker
+from aura.aura2.scanner_bridge import AURA2MTFScanner
+from aura.aura2.specialist import AURA2MTFSpecialist
 from aura.data.intelligence_service import LiveIntelligenceService
 from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.evolution.brain_online import (
