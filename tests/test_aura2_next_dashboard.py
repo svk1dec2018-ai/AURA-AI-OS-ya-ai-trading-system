@@ -106,4 +106,7 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert "/api/backtest/run" in advanced
     assert "/api/mt5/execution-check" in advanced
     assert "AURA_BACKEND_URL=http://127.0.0.1:8766" in launcher
+    assert "npm.cmd run build" in launcher
+    assert "npm.cmd run start" in launcher
+    assert "npm.cmd run dev" not in launcher
     assert "This launcher does not auto-start trading" in launcher
