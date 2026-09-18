@@ -101,7 +101,7 @@ class PerformanceMemory:
         destination.write_text(json.dumps(payload, sort_keys=True, indent=2), encoding="utf-8")
 
     @classmethod
-    def load(cls, path: str | Path) -> "PerformanceMemory":
+    def load(cls, path: str | Path) -> PerformanceMemory:
         memory = cls()
         source = Path(path)
         if not source.exists():
