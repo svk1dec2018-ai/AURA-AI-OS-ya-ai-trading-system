@@ -130,7 +130,7 @@ def mt5_live_quote(
         bid = float(tick_data.get("bid") or 0.0)
         ask = float(tick_data.get("ask") or 0.0)
         point = float(info_data.get("point") or 0.0)
-        spread_points = (ask - bid) / point if point > 0 and ask >= bid else None
+        spread_points = round((ask - bid) / point, 6) if point > 0 and ask >= bid else None
         timestamp_msc = int(tick_data.get("time_msc") or 0)
         timestamp = int(tick_data.get("time") or 0)
         return {
