@@ -83,6 +83,7 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
         root / "dashboard" / "package.json",
         root / "dashboard" / "components" / "AuraControlRoom.tsx",
         root / "dashboard" / "components" / "MarketChart.tsx",
+        root / "dashboard" / "components" / "AdvancedTools.tsx",
         root / "START_AURA2.cmd",
         root / "STOP_AURA2.cmd",
         root / "scripts" / "start_aura2_dashboard.ps1",
@@ -91,11 +92,18 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     package = (root / "dashboard" / "package.json").read_text(encoding="utf-8")
     chart = (root / "dashboard" / "components" / "MarketChart.tsx").read_text(encoding="utf-8")
     shell = (root / "dashboard" / "components" / "AuraControlRoom.tsx").read_text(encoding="utf-8")
+    advanced = (root / "dashboard" / "components" / "AdvancedTools.tsx").read_text(encoding="utf-8")
     launcher = (root / "scripts" / "start_aura2_dashboard.ps1").read_text(encoding="utf-8")
     assert '"next": "16.3.3"' in package
     assert '"lightweight-charts": "5.2.1"' in package
     assert "/api/mt5/quote" in chart
     assert "Bull / Bear / Counterfactual debate" in shell
     assert "Open-source research fusion" in shell
+    assert "Trade Journal" in shell
+    assert "Strategy Studio" in shell
+    assert "All Features" in shell
+    assert "/api/journal" in advanced
+    assert "/api/backtest/run" in advanced
+    assert "/api/mt5/execution-check" in advanced
     assert "AURA_BACKEND_URL=http://127.0.0.1:8766" in launcher
     assert "This launcher does not auto-start trading" in launcher
