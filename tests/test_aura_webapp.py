@@ -1,3 +1,4 @@
+import json
 import tomllib
 from pathlib import Path
 from unittest.mock import Mock
@@ -5,6 +6,68 @@ from unittest.mock import Mock
 import pytest
 
 from aura.webapp import server
+
+
+def test_continuous_recovery_respects_stop_and_financial_lock(tmp_path, monkeypatch):
+    monkeypatch.setattr(server, "KILL_LOCK_PATH", tmp_path / "kill.json")
+    controller = server.AuraWebController(state_dir=tmp_path)
+    start = Mock()
+    monkeypatch.setattr(controller, "start", start)
+    controller._desired_running = True
+    controller.recover_continuous_runtime()
+    start.assert_called_once_with(max_symbols=25, max_batches=0)
+    start.reset_mock()
+    (tmp_path / "status.json").write_text(json.dumps({"risk_kill_switch": True}))
+    controller.recover_continuous_runtime()
+    start.assert_not_called()
+    assert "risk lock" in controller._recovery_error
+    (tmp_path / "status.json").write_text("{}")
+    controller.stop()
+    controller.recover_continuous_runtime()
+    start.assert_not_called()
+
+
+def test_strategy_templates_compile_as_research(tmp_path, monkeypatch):
+    from datetime import UTC, datetime, timedelta
+    from types import SimpleNamespace
+
+    from aura.domain.models import NormalizedCandle
+    from aura.webapp.research_runner import run_candidate_backtest
+
+    monkeypatch.setattr(server, "ALGO_DIR", tmp_path / "candidates")
+    controller = server.AuraWebController(state_dir=tmp_path / "state")
+    templates = controller.algo_options()["templates"]
+    assert len(templates) == 5
+    for template in templates:
+        result = controller.build_algo_candidate(template)
+        assert result["algorithm"]["compilable"]
+        assert result["research_only"]
+        assert not result["live_approved"]
+        start = datetime(2026, 1, 1, tzinfo=UTC)
+        candles = [NormalizedCandle(
+            symbol="XAUUSD", venue="TEST", timeframe="5m",
+            open_time=start + timedelta(minutes=5*i),
+            close_time=start + timedelta(minutes=5*(i+1)),
+            open=100+i, high=102+i, low=99+i, close=101+i,
+            volume=100, closed=True,
+        ) for i in range(150)]
+        gateway = Mock()
+        gateway.connect_current_demo_session.return_value = SimpleNamespace(
+            server="test-demo", login=1234
+        )
+        gateway.symbol_info.return_value = {
+            "trade_contract_size": 1, "volume_min": 1, "volume_step": 1,
+        }
+        monkeypatch.setattr(
+            "aura.webapp.research_runner.MT5DemoClosedCandleSource.fetch",
+            lambda *args, data=candles, **kwargs: data,
+        )
+        backtest = run_candidate_backtest(
+            result, symbol="XAUUSD", timeframe="5m", bars=150, gateway=gateway
+        )
+        assert backtest["ok"] and backtest["research_only"]
+        assert backtest["data"]["bars_used"] == 150
+        gateway.order_send.assert_not_called()
 
 
 def test_windows_stop_terminates_worker_tree(tmp_path: Path, monkeypatch) -> None:

@@ -218,6 +218,12 @@
     installTradingPreview();
     const maxSymbols = document.getElementById("maxSymbols");
     if (maxSymbols && maxSymbols.value === "10") maxSymbols.value = "25";
+    const maxBatches = document.getElementById("maxBatches");
+    if (maxBatches) {
+      maxBatches.min = "0";
+      maxBatches.value = "0";
+      maxBatches.previousElementSibling.textContent = "Batch limit (0 = continuous)";
+    }
     document.getElementById("mt5CheckBtn")?.addEventListener("click", checkMT5);
     document.getElementById("mt5ExecCheckBtn")?.addEventListener("click", checkExecution);
     document.getElementById("mt5SymbolSearch")?.addEventListener("input", () => {

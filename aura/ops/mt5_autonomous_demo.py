@@ -3,12 +3,45 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
+from contextlib import contextmanager
 from decimal import Decimal
 from pathlib import Path
 
 from aura.execution.mt5_protected_demo import ProtectedMT5DemoConfig
 from aura.runtime.mt5_autonomous_demo import build_mt5_autonomous_demo_daemon
 from aura.runtime.mt5_paper_daemon import MT5AllMarketPaperConfig
+
+
+@contextmanager
+def runtime_lock(state_dir: Path):
+    """OS-owned lock prevents duplicate workers, including after server crashes."""
+    state_dir.mkdir(parents=True, exist_ok=True)
+    with (state_dir / "worker.lock").open("a+b") as handle:
+        handle.seek(0, 2)
+        if handle.tell() == 0:
+            handle.write(b"0")
+            handle.flush()
+        handle.seek(0)
+        try:
+            if os.name == "nt":
+                import msvcrt
+
+                msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+
+                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            raise RuntimeError("AURA worker already owns this state directory") from exc
+        try:
+            yield
+        finally:
+            handle.seek(0)
+            if os.name == "nt":
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -19,7 +52,7 @@ def _parser() -> argparse.ArgumentParser:
         )
     )
     parser.add_argument("--max-symbols", type=int, default=10)
-    parser.add_argument("--max-batches", type=int, default=100)
+    parser.add_argument("--max-batches", type=int, default=100, help="0 runs continuously")
     parser.add_argument("--state-dir", default="runtime/mt5_autonomous_demo")
     parser.add_argument("--max-order-notional-pct", type=Decimal, default=Decimal("0.50"))
     parser.add_argument("--max-gross-exposure-pct", type=Decimal, default=Decimal(10))
@@ -51,7 +84,7 @@ async def _run(args: argparse.Namespace) -> dict[str, object]:
         protection=protection,
         research_every_new_samples=args.research_every_new_samples,
     )
-    counters = await daemon.run(max_batches=args.max_batches)
+    counters = await daemon.run(max_batches=args.max_batches or None)
     return {
         "demo_only": True,
         "real_money_enabled": False,
@@ -75,7 +108,8 @@ async def _run(args: argparse.Namespace) -> dict[str, object]:
 def main() -> int:
     args = _parser().parse_args()
     try:
-        payload = asyncio.run(_run(args))
+        with runtime_lock(Path(args.state_dir)):
+            payload = asyncio.run(_run(args))
     except (RuntimeError, ValueError, TypeError, KeyError, AttributeError) as exc:
         print(
             json.dumps(

@@ -59,6 +59,14 @@ VALIDATION_PIPELINE = (
     "human_approval",
 )
 
+STRATEGY_TEMPLATES = (
+    ("EMA momentum", "Trend continuation; vulnerable to sideways whipsaws.", "ema_trend", "rsi_state"),
+    ("MACD momentum", "Momentum continuation; late entries are possible after sharp moves.", "macd_momentum", "regime"),
+    ("Bollinger reversion", "Range reversion; sustained trends can invalidate the setup.", "bollinger_reversion", "rsi_state"),
+    ("Keltner breakout", "Volatility breakout; false breakouts require cost-aware validation.", "keltner_breakout", "relative_volume"),
+    ("Liquidity sweep", "Reversal after a candle-derived sweep; not an order-book liquidity model.", "liquidity_sweep", "premium_discount"),
+)
+
 
 class AuraWebController:
     """Local owner surface around AURA's governed DEMO/research capabilities.
@@ -77,6 +85,9 @@ class AuraWebController:
         self._process: subprocess.Popen[str] | None = None
         self._lock = threading.RLock()
         self._log_handle = None
+        self._desired_running = False
+        self._restart_options = {"max_symbols": 25, "max_batches": 0}
+        self._recovery_error: str | None = None
         RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
         ALGO_DIR.mkdir(parents=True, exist_ok=True)
         BACKTEST_DIR.mkdir(parents=True, exist_ok=True)
@@ -114,6 +125,8 @@ class AuraWebController:
             "release_boundary": "PAPER_DEMO_RESEARCH; UNRESTRICTED_LIVE_MONEY_LOCKED",
             "runtime_running": running,
             "runtime_exit_code": exit_code,
+            "continuous_recovery_requested": self._desired_running,
+            "recovery_error": self._recovery_error,
             "app_kill_locked": kill is not None,
             "app_kill_reason": (kill or {}).get("reason"),
             "owner_auth_required": owner_auth_required(),
@@ -185,8 +198,8 @@ class AuraWebController:
     def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict[str, Any]:
         if not 1 <= max_symbols <= 1000:
             raise ValueError("max_symbols must be between 1 and 1000")
-        if not 1 <= max_batches <= 1_000_000:
-            raise ValueError("max_batches must be between 1 and 1000000")
+        if not 0 <= max_batches <= 1_000_000:
+            raise ValueError("max_batches must be between 0 (continuous) and 1000000")
         with self._lock:
             if KILL_LOCK_PATH.exists():
                 raise RuntimeError("AURA app kill lock is engaged; reset it before starting")
@@ -221,10 +234,28 @@ class AuraWebController:
                 text=True,
                 creationflags=creationflags,
             )
+            self._desired_running = max_batches == 0
+            self._restart_options = {"max_symbols": max_symbols, "max_batches": max_batches}
+            self._recovery_error = None
             return {"ok": True, "started": True, "pid": self._process.pid}
+
+    def recover_continuous_runtime(self) -> None:
+        """Retry a requested continuous session; explicit Stop always wins."""
+        with self._lock:
+            if not self._desired_running or self._process_running() or KILL_LOCK_PATH.exists():
+                return
+            status = self._read_json(self.state_dir / "status.json") or {}
+            if status.get("risk_kill_switch"):
+                self._recovery_error = "Recovery paused: financial risk lock requires review"
+                return
+            try:
+                self.start(**self._restart_options)
+            except (RuntimeError, ValueError, TypeError, OSError) as exc:
+                self._recovery_error = str(exc)
 
     def stop(self) -> dict[str, Any]:
         with self._lock:
+            self._desired_running = False
             if not self._process_running():
                 self._close_log()
                 return {"ok": True, "already_stopped": True}
@@ -280,6 +311,20 @@ class AuraWebController:
             "entries": [item.value for item in EXECUTABLE_ENTRY_PRIMITIVES],
             "confirmations": [item.value for item in EXECUTABLE_CONFIRMATION_PRIMITIVES],
             "exits": [item.value for item in EXECUTABLE_EXIT_PRIMITIVES],
+            "templates": [
+                {
+                    "name": name,
+                    "thesis": thesis,
+                    "markets": ["XAUUSD", "BTCUSD", "USOIL", "EURUSD"],
+                    "timeframes": ["5m", "15m", "1h"],
+                    "entries": [entry],
+                    "confirmations": [confirmation],
+                    "exits": ["atr_stop", "risk_reward_target", "time_stop"],
+                    "stage": "RESEARCH",
+                    "performance_verified": False,
+                }
+                for name, thesis, entry, confirmation in STRATEGY_TEMPLATES
+            ],
             "validation_pipeline": list(VALIDATION_PIPELINE),
             "constraints": {
                 "portfolio_risk_parameters_allowed": False,

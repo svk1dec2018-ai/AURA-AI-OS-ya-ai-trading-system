@@ -121,7 +121,7 @@ def run_candidate_backtest(
             quantity_rules={normalized_symbol: quantity_rule},
         )
         engine = BacktestEngine(
-            DecisionPipeline(compiled.strategy, risk),
+            DecisionPipeline(compiled, risk),
             starting_cash=starting_cash,
             requested_quantity=quantity,
             fee_bps=fee_bps,

@@ -54,7 +54,7 @@ echo Auto DEMO:      ON - 25 broker symbols, long-running closed-candle session
 echo Keep this window open while using AURA.
 echo Browser will open only after the fresh server starts.
 echo.
-"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766 --open --auto-start-demo --auto-start-symbols 25 --auto-start-batches 1000000
+"%AURA_PYTHON%" -m aura.webapp.server_v3 --port 8766 --open --auto-start-demo --auto-start-symbols 25 --auto-start-batches 0
 set "AURA_EXIT=%errorlevel%"
 
 echo.

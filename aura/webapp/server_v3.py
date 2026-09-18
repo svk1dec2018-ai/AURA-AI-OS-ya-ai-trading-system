@@ -181,7 +181,7 @@ def _parser() -> argparse.ArgumentParser:
         help="Automatically start protected MT5 DEMO runtime after PWA startup.",
     )
     parser.add_argument("--auto-start-symbols", type=int, default=25)
-    parser.add_argument("--auto-start-batches", type=int, default=1_000_000)
+    parser.add_argument("--auto-start-batches", type=int, default=0)
     return parser
 
 
@@ -220,12 +220,25 @@ def main() -> int:
     if args.open_browser:
         threading.Timer(0.7, lambda: webbrowser.open(url)).start()
     if args.auto_start_demo:
+        CONTROLLER._desired_running = args.auto_start_batches == 0
+        CONTROLLER._restart_options = {
+            "max_symbols": args.auto_start_symbols,
+            "max_batches": args.auto_start_batches,
+        }
         threading.Timer(1.2, auto_start_demo).start()
+    recovery_stop = threading.Event()
+
+    def recover_worker() -> None:
+        while not recovery_stop.wait(60):
+            CONTROLLER.recover_continuous_runtime()
+
+    threading.Thread(target=recover_worker, name="aura-recovery", daemon=True).start()
     try:
         server.serve_forever(poll_interval=0.5)
     except KeyboardInterrupt:
         pass
     finally:
+        recovery_stop.set()
         server.server_close()
         CONTROLLER.shutdown()
     return 0

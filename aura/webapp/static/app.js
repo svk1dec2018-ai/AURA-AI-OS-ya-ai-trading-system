@@ -205,7 +205,18 @@ function renderPipeline(containerId, completed=[]) {
 function prettyLabel(value){return String(value).replaceAll("_"," ").replace(/\b\w/g,(c)=>c.toUpperCase());}
 function renderChoices(containerId,name,values,defaults){const node=$(containerId);if(!node)return;node.innerHTML=values.map((value)=>`<label class="choice"><input type="checkbox" name="${esc(name)}" value="${esc(value)}" ${defaults.includes(value)?"checked":""}>${esc(prettyLabel(value))}</label>`).join("");}
 function selected(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((node)=>node.value);}
-function renderAlgoOptions(){if(!state.algoOptions)return;renderChoices("algoEntries","algo_entries",state.algoOptions.entries||[],["liquidity_sweep","bos_choch"]);renderChoices("algoConfirmations","algo_confirmations",state.algoOptions.confirmations||[],["relative_volume","regime"]);renderChoices("algoExits","algo_exits",state.algoOptions.exits||[],["atr_stop","risk_reward_target"]);renderPipeline("algoPipeline");renderPipeline("homePipeline");renderPipeline("backtestPipeline");}
+function renderAlgoOptions(){if(!state.algoOptions)return;renderChoices("algoEntries","algo_entries",state.algoOptions.entries||[],["liquidity_sweep","bos_choch"]);renderChoices("algoConfirmations","algo_confirmations",state.algoOptions.confirmations||[],["relative_volume","regime"]);renderChoices("algoExits","algo_exits",state.algoOptions.exits||[],["atr_stop","risk_reward_target"]);renderPipeline("algoPipeline");renderPipeline("homePipeline");renderPipeline("backtestPipeline");renderStrategyTemplates();}
+function renderStrategyTemplates(){
+  const form=$("algoName")?.closest("form");if(!form||$("strategyTemplate"))return;
+  const field=document.createElement("div");field.className="field span-2";
+  field.innerHTML='<label for="strategyTemplate">Research template · performance unverified</label><select id="strategyTemplate"><option value="">Choose a starting strategy</option>'+ (state.algoOptions.templates||[]).map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join("")+'</select>';
+  form.prepend(field);
+  $("strategyTemplate").addEventListener("change",(event)=>{
+    if(event.target.value==="")return;const t=state.algoOptions.templates[Number(event.target.value)];
+    $("algoName").value=t.name;$("algoThesis").value=t.thesis;$("algoMarkets").value=t.markets.join(", ");$("algoTimeframes").value=t.timeframes.join(", ");
+    for(const [name,key] of [["algo_entries","entries"],["algo_confirmations","confirmations"],["algo_exits","exits"]])document.querySelectorAll(`input[name="${name}"]`).forEach((input)=>{input.checked=t[key].includes(input.value);});
+  });
+}
 
 function renderCandidates(){
   const node=$("strategyCandidates"); if(!node)return;

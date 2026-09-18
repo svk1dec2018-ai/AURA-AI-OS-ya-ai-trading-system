@@ -64,3 +64,19 @@ def test_bridge_replays_records_in_time_order_and_deduplicates() -> None:
     assert snapshot.last_observed_at == later.resolved_time
     assert bridge.status()["observed_records"] == 2
     assert bridge.status()["replayed_records"] == 2
+
+
+def test_delayed_timeframe_outcome_is_deferred_then_replayed() -> None:
+    earlier = _record(OpportunityOutcome.CAPTURED, 0)
+    later = _record(OpportunityOutcome.WRONG_DIRECTION, 1)
+    bridge = OpportunityOnlineLearningBridge(SafeOnlineLearner(), market="FX")
+    bridge.observe_records([later])
+    assert bridge.observe_records([earlier]) == ()
+    bridge.observe_records([earlier])
+    assert bridge.status()["late_records_deferred_until_replay"] == 1
+    assert bridge.learner.snapshot(market="FX", symbol="XAUUSD").events_seen == 1
+    restored = OpportunityOnlineLearningBridge(SafeOnlineLearner(), market="FX")
+    restored.replay_records([later, earlier])
+    snapshot = restored.learner.snapshot(market="FX", symbol="XAUUSD")
+    assert snapshot.events_seen == 2
+    assert snapshot.last_observed_at == later.resolved_time

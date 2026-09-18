@@ -5,23 +5,23 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 482
+- Repository files: 484
 - Python modules: 395
 - Source modules: 209
 - Test modules: 160
-- Static test functions: 659
-- Entrypoints: 62
-- Known stub/incomplete candidates: 97
+- Static test functions: 663
+- Entrypoints: 63
+- Known stub/incomplete candidates: 98
 
 ## Repository structure
 
 | Asset class | Count |
 |---|---:|
-| `automation_entrypoint` | 13 |
+| `automation_entrypoint` | 14 |
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 3 |
 | `container_configuration` | 2 |
-| `documentation` | 33 |
+| `documentation` | 34 |
 | `documentation_or_validation_evidence` | 19 |
 | `knowledge_corpus_asset` | 2 |
 | `python` | 395 |
@@ -127,6 +127,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `pyproject.toml` | console-script:aura-mt5-demo |
 | `pyproject.toml` | console-script:aura-owner-app |
 | `scripts/generate_setup_pdf.py` | python-main |
+| `scripts/install_aura_pwa_task.ps1` | shell-launcher |
 | `scripts/install_aura_user_service.sh` | shell-launcher |
 | `scripts/install_aura_windows_task.ps1` | shell-launcher |
 | `scripts/start_aura_ollama.ps1` | shell-launcher |
@@ -203,7 +204,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/quality.py` | source | data | 5 | 8 | 2 |
 | `aura/data/shoonya.py` | source | data | 5 | 1 | 2 |
 | `aura/domain/instruments.py` | source | domain | 1 | 1 | 0 |
-| `aura/domain/models.py` | source | domain | 1 | 64 | 0 |
+| `aura/domain/models.py` | source | domain | 1 | 65 | 0 |
 | `aura/domain/serialization.py` | source | domain | 1 | 1 | 2 |
 | `aura/evolution/brain_online.py` | source | evolution | 7 | 2 | 2 |
 | `aura/evolution/brain_optimizer.py` | source | evolution | 7 | 1 | 3 |
@@ -276,7 +277,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/knowledge_rag_gate.py` | source | ops | 8 | 1 | 11 |
 | `aura/ops/market_data_gate.py` | source | ops | 5 | 1 | 10 |
 | `aura/ops/mt5_all_market_runner.py` | source | ops | 15 | 0 | 2 |
-| `aura/ops/mt5_autonomous_demo.py` | source | ops | 15 | 0 | 3 |
+| `aura/ops/mt5_autonomous_demo.py` | source | ops | 15 | 1 | 3 |
 | `aura/ops/mt5_demo_readiness.py` | source | ops | 15 | 1 | 2 |
 | `aura/ops/mt5_demo_trade.py` | source | ops | 15 | 1 | 1 |
 | `aura/ops/multi_agent_gate.py` | source | ops | 9 | 1 | 16 |
@@ -348,7 +349,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/webapp/operator_assistant.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/read_models.py` | source | webapp | 13 | 0 | 1 |
 | `aura/webapp/readiness.py` | source | webapp | 13 | 1 | 1 |
-| `aura/webapp/research_runner.py` | source | webapp | 13 | 0 | 8 |
+| `aura/webapp/research_runner.py` | source | webapp | 13 | 1 | 8 |
 | `aura/webapp/security.py` | source | webapp | 13 | 0 | 0 |
 | `aura/webapp/server.py` | source | webapp | 13 | 2 | 9 |
 | `aura/webapp/server_v3.py` | source | webapp | 13 | 1 | 6 |
@@ -381,7 +382,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_ai_strategy_architect.py` | test | validation | 7 | 0 | 4 |
 | `tests/test_angel_one_adapter.py` | test | validation | 1 | 0 | 3 |
 | `tests/test_aura_readiness.py` | test | validation | 13 | 0 | 1 |
-| `tests/test_aura_webapp.py` | test | validation | 13 | 0 | 3 |
+| `tests/test_aura_webapp.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_aura_webapp_v3.py` | test | validation | 1 | 0 | 4 |
 | `tests/test_autonomous_paper.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_autonomous_research.py` | test | validation | 7 | 0 | 2 |
@@ -468,7 +469,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 5 | 0 | 3 |
-| `tests/test_mt5_runtime_state.py` | test | validation | 2 | 0 | 1 |
+| `tests/test_mt5_runtime_state.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
@@ -545,7 +546,6 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/observability/logging.py`
 - `aura/ops/end_to_end_gate.py`
 - `aura/ops/mt5_all_market_runner.py`
-- `aura/ops/mt5_autonomous_demo.py`
 - `aura/ops/operator_interface_gate.py`
 - `aura/ops/paper_trading_gate.py`
 - `aura/research/blueprint_compiler.py`
@@ -557,5 +557,4 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/webapp/catalog.py`
 - `aura/webapp/operator_assistant.py`
 - `aura/webapp/read_models.py`
-- `aura/webapp/research_runner.py`
 - `aura/webapp/security.py`

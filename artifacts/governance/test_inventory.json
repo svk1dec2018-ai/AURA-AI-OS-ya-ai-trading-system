@@ -283,15 +283,18 @@
       "async_test_functions": 0,
       "path": "tests/test_aura_webapp.py",
       "phase_coverage": [
+        1,
         13
       ],
-      "sha256": "8220ddf21566473ff9aa93e65a7a43e7a4b06c7f59a5724c15db7ddde1fcb2d3",
+      "sha256": "30491868b9fdb9797c7afbb51f8d84c12d3c0711748dd8999f37303dee3eec8f",
       "source_dependencies": [
+        "aura/domain/models.py",
         "aura/webapp/__init__.py",
         "aura/webapp/charting.py",
+        "aura/webapp/research_runner.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 17,
+      "static_test_functions": 19,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -301,6 +304,7 @@
         "test_capability_catalog_is_truthful_and_has_blocked_money_actions",
         "test_chart_surface_delegates_to_demo_read_model",
         "test_chart_symbol_resolves_shortest_tradable_broker_suffix",
+        "test_continuous_recovery_respects_stop_and_financial_lock",
         "test_controller_status_is_safe_without_runtime_files",
         "test_dashboard_does_not_render_fabricated_agent_percentages",
         "test_dashboard_keeps_safety_copy_and_owner_surfaces",
@@ -308,6 +312,7 @@
         "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
         "test_runtime_start_archives_stale_log_before_new_process",
+        "test_strategy_templates_compile_as_research",
         "test_windows_stop_does_not_claim_success_when_tree_stop_fails",
         "test_windows_stop_terminates_worker_tree",
         "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
@@ -2187,16 +2192,19 @@
       "async_test_functions": 0,
       "path": "tests/test_mt5_runtime_state.py",
       "phase_coverage": [
-        2
+        2,
+        15
       ],
-      "sha256": "2cc41ff0159d969f7ab0f62fc19717bd5cc67f9983d8603acea9455d00e4c08e",
+      "sha256": "aa6c471666f16d66d00fdf6ff2d848af23c011c411cf1e255aa8cd5399b2a967",
       "source_dependencies": [
+        "aura/ops/mt5_autonomous_demo.py",
         "aura/persistence/atomic.py"
       ],
-      "static_test_functions": 1,
+      "static_test_functions": 2,
       "test_classes": [],
       "test_functions": [
-        "test_atomic_brain_status_retries_transient_windows_file_lock"
+        "test_atomic_brain_status_retries_transient_windows_file_lock",
+        "test_worker_lock_blocks_duplicate_and_releases_after_failure"
       ]
     },
     {
@@ -2432,17 +2440,18 @@
         1,
         7
       ],
-      "sha256": "d77f8c7fdf92b09f8714bb81115795934a98787be1578aed03f5f0a5708b3f24",
+      "sha256": "cad07ed77c1f74b266fc37ff233aac841feeda80aa8ca4b969e600e9c3ff97e5",
       "source_dependencies": [
         "aura/domain/models.py",
         "aura/evolution/online_bridge.py",
         "aura/evolution/online_learning.py",
         "aura/evolution/opportunity_audit.py"
       ],
-      "static_test_functions": 2,
+      "static_test_functions": 3,
       "test_classes": [],
       "test_functions": [
         "test_bridge_replays_records_in_time_order_and_deduplicates",
+        "test_delayed_timeframe_outcome_is_deferred_then_replayed",
         "test_opportunity_bridge_updates_online_outcome_state"
       ]
     },
@@ -3593,7 +3602,7 @@
   "summary": {
     "async_test_functions": 97,
     "modules_without_static_tests": [],
-    "static_test_functions": 659,
+    "static_test_functions": 663,
     "test_modules": 160
   }
 }

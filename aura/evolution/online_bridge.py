@@ -36,6 +36,7 @@ class OpportunityOnlineLearningBridge:
         self.triggers: list[ResearchTrigger] = []
         self._observed_record_ids: set[str] = set()
         self.replayed_records = 0
+        self.late_records = 0
 
     def observe_records(
         self,
@@ -45,6 +46,16 @@ class OpportunityOnlineLearningBridge:
         ordered = sorted(records, key=lambda item: (item.resolved_time, item.record_id))
         for record in ordered:
             if record.record_id in self._observed_record_ids:
+                continue
+            last = self.learner.snapshot(
+                market=self.market, symbol=record.symbol, regime=self.regime
+            ).last_observed_at
+            if last is not None and record.resolved_time < last:
+                # Different timeframe streams can resolve older outcomes after a
+                # newer stream. Keep the original durable audit timestamp; defer
+                # this label until chronological replay, never backdate feedback.
+                self._observed_record_ids.add(record.record_id)
+                self.late_records += 1
                 continue
             realized_correct: bool | None = None
             if record.outcome == OpportunityOutcome.CAPTURED:
@@ -90,6 +101,7 @@ class OpportunityOnlineLearningBridge:
             "tracked_states": len(snapshots),
             "observed_records": len(self._observed_record_ids),
             "replayed_records": self.replayed_records,
+            "late_records_deferred_until_replay": self.late_records,
             "research_triggers": len(self.triggers),
             "latest_trigger": (
                 self.triggers[-1].model_dump(mode="json") if self.triggers else None
