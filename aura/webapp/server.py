@@ -193,7 +193,11 @@ class AuraWebController:
             if self._process_running():
                 return {"ok": True, "already_running": True}
             RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
-            self._log_handle = LOG_PATH.open("a", encoding="utf-8", buffering=1)
+            self._close_log()
+            if LOG_PATH.exists() and LOG_PATH.stat().st_size:
+                stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S%fZ")
+                LOG_PATH.replace(RUNTIME_DIR / f"daemon-{stamp}.log")
+            self._log_handle = LOG_PATH.open("w", encoding="utf-8", buffering=1)
             command = [
                 sys.executable,
                 "-m",

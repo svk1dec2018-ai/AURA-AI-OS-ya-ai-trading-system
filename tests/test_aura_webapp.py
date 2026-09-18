@@ -244,6 +244,34 @@ def test_chart_symbol_resolves_shortest_tradable_broker_suffix() -> None:
     assert resolve_chart_symbol(Gateway(), "XAUUSD") == "XAUUSDm"
 
 
+def test_runtime_start_archives_stale_log_before_new_process(tmp_path: Path, monkeypatch) -> None:
+    runtime_dir = tmp_path / "aura_web"
+    log_path = runtime_dir / "daemon.log"
+    runtime_dir.mkdir()
+    log_path.write_text("old failure\n", encoding="utf-8")
+    monkeypatch.setattr(server, "RUNTIME_DIR", runtime_dir)
+    monkeypatch.setattr(server, "LOG_PATH", log_path)
+    monkeypatch.setattr(server, "KILL_LOCK_PATH", runtime_dir / "kill_switch.json")
+
+    class Process:
+        pid = 123
+        returncode = None
+
+        def poll(self):
+            return None
+
+    monkeypatch.setattr(server.subprocess, "Popen", lambda *args, **kwargs: Process())
+    controller = server.AuraWebController(state_dir=tmp_path / "state")
+    result = controller.start(max_symbols=1, max_batches=1)
+    controller._close_log()
+
+    assert result["started"] is True
+    assert log_path.read_text(encoding="utf-8") == ""
+    archived = tuple(runtime_dir.glob("daemon-*.log"))
+    assert len(archived) == 1
+    assert archived[0].read_text(encoding="utf-8") == "old failure\n"
+
+
 def test_backtest_surface_persists_research_only_result(tmp_path: Path, monkeypatch) -> None:
     candidate = {"candidate_id": "candidate-1", "research_only": True}
     monkeypatch.setattr(server, "BACKTEST_DIR", tmp_path / "backtests")

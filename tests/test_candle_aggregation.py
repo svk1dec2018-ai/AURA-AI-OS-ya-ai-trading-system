@@ -1,10 +1,11 @@
-from datetime import UTC, datetime, time
+from datetime import UTC, datetime, time, timedelta
 from decimal import Decimal
 
 from aura.data.candle_aggregation import (
     CandleSession,
     CanonicalTradeTick,
     SessionCandleAggregator,
+    fixed_timeframe_duration,
 )
 
 
@@ -79,3 +80,8 @@ def test_three_minute_timeframe_is_supported() -> None:
     assert len(completed) == 1
     assert completed[0].timeframe == "3m"
     assert completed[0].close_time == datetime(2026, 8, 17, 10, 3, tzinfo=UTC)
+
+
+def test_daily_and_weekly_quality_intervals_are_supported() -> None:
+    assert fixed_timeframe_duration("1d") == timedelta(days=1)
+    assert fixed_timeframe_duration("1w") == timedelta(weeks=1)

@@ -285,13 +285,13 @@
       "phase_coverage": [
         13
       ],
-      "sha256": "223da25f0578e13760289c46aa123349532691897139a2f674759c60a1dfe576",
+      "sha256": "8220ddf21566473ff9aa93e65a7a43e7a4b06c7f59a5724c15db7ddde1fcb2d3",
       "source_dependencies": [
         "aura/webapp/__init__.py",
         "aura/webapp/charting.py",
         "aura/webapp/server.py"
       ],
-      "static_test_functions": 16,
+      "static_test_functions": 17,
       "test_classes": [],
       "test_functions": [
         "test_algo_builder_creates_research_only_compiled_candidate",
@@ -307,6 +307,7 @@
         "test_javascript_and_css_require_revalidation",
         "test_pwa_static_assets_are_included_in_distribution",
         "test_pwa_static_assets_exist",
+        "test_runtime_start_archives_stale_log_before_new_process",
         "test_windows_stop_does_not_claim_success_when_tree_stop_fails",
         "test_windows_stop_terminates_worker_tree",
         "test_workspace_exposes_runtime_capabilities_and_algo_metadata"
@@ -758,13 +759,14 @@
       "phase_coverage": [
         5
       ],
-      "sha256": "7c894d764ceb634632b6b222a274f4922555e35b0928f12c17ec7d17915e8fc4",
+      "sha256": "6ceb63db65ee43fa16350ce331cca4dfd17242b336fa14a45c1af5ef68814db1",
       "source_dependencies": [
         "aura/data/candle_aggregation.py"
       ],
-      "static_test_functions": 4,
+      "static_test_functions": 5,
       "test_classes": [],
       "test_functions": [
+        "test_daily_and_weekly_quality_intervals_are_supported",
         "test_flush_closes_existing_bucket_without_fabricating_gap_bars",
         "test_india_session_5m_buckets_anchor_from_0915_ist",
         "test_second_level_research_buckets_are_causal",
@@ -2182,6 +2184,22 @@
     },
     {
       "async_test_functions": 0,
+      "path": "tests/test_mt5_runtime_state.py",
+      "phase_coverage": [
+        12
+      ],
+      "sha256": "ba87ad9f71afe7e88b1586343423e24d2d20f058f338770854601628e4c7a0ba",
+      "source_dependencies": [
+        "aura/runtime/mt5_learning_daemon.py"
+      ],
+      "static_test_functions": 1,
+      "test_classes": [],
+      "test_functions": [
+        "test_atomic_brain_status_retries_transient_windows_file_lock"
+      ]
+    },
+    {
+      "async_test_functions": 0,
       "path": "tests/test_mt5_symbol_search.py",
       "phase_coverage": [
         13
@@ -3573,7 +3591,7 @@
   "summary": {
     "async_test_functions": 96,
     "modules_without_static_tests": [],
-    "static_test_functions": 654,
-    "test_modules": 159
+    "static_test_functions": 657,
+    "test_modules": 160
   }
 }

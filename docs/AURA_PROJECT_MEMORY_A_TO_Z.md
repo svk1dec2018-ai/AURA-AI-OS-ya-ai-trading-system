@@ -1095,7 +1095,12 @@ SYMBOL_FILLING_FOK/IOC/BOC when an official MetaTrader5 Python wheel omits those
 names. Unknown missing constants still fail closed. Broker-suffixed owner markets
 are now prioritized in runtime selection, instrument identity overrides overly
 broad broker folders during classification, and chart requests resolve canonical
-owner names such as XAUUSD/BTCUSD/USOIL to their tradable broker contracts.
+owner names such as XAUUSD/BTCUSD/USOIL to their tradable broker contracts. The
+multi-timeframe quality gate now supports the configured daily/weekly intervals,
+and brain-status persistence tolerates bounded transient Windows file locks while
+retaining atomic replacement and fail-closed behavior after retry exhaustion.
+Each new child runtime also archives the prior daemon log before opening a clean
+current-run log, so stale failures are not presented as live health errors.
 **Why:** MetaTrader5 5.0.6180 exposed ORDER_FILLING constants but not the symbol
 capability flags, blocking the no-send execution check before DEMO startup.
 **Evidence:** Regression tests, broker order_check on Exness DEMO with order_send

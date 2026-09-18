@@ -5,13 +5,13 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 480
-- Python modules: 393
+- Repository files: 481
+- Python modules: 394
 - Source modules: 208
-- Test modules: 159
-- Static test functions: 654
+- Test modules: 160
+- Static test functions: 657
 - Entrypoints: 62
-- Known stub/incomplete candidates: 96
+- Known stub/incomplete candidates: 97
 
 ## Repository structure
 
@@ -24,7 +24,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `documentation` | 33 |
 | `documentation_or_validation_evidence` | 19 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 393 |
+| `python` | 394 |
 | `repository_asset` | 11 |
 | `repository_configuration` | 2 |
 
@@ -61,7 +61,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `risk` | 4 |
 | `runtime` | 19 |
 | `strategy` | 3 |
-| `validation` | 159 |
+| `validation` | 160 |
 | `webapp` | 11 |
 
 ## Entrypoints
@@ -329,7 +329,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/learning_scanner.py` | source | runtime | 12 | 0 | 4 |
 | `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 5 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 0 | 5 |
-| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 0 | 15 |
+| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 1 | 15 |
 | `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 19 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 3 | 9 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 1 | 3 |
@@ -467,6 +467,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 5 | 0 | 3 |
+| `tests/test_mt5_runtime_state.py` | test | validation | 12 | 0 | 1 |
 | `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
@@ -551,7 +552,6 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/runtime/learning_scanner.py`
 - `aura/runtime/mt5_autonomous_demo.py`
 - `aura/runtime/mt5_demo_execution_daemon.py`
-- `aura/runtime/mt5_learning_daemon.py`
 - `aura/webapp/catalog.py`
 - `aura/webapp/operator_assistant.py`
 - `aura/webapp/read_models.py`

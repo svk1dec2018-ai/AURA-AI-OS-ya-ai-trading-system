@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+import threading
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -363,6 +366,25 @@ def _forward_metric_payload(metric) -> dict:
 
 
 def _atomic_json(path: Path, payload: dict) -> None:
-    temp = path.with_suffix(".tmp")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_name(
+        f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp"
+    )
     temp.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-    temp.replace(path)
+    try:
+        # Windows readers, virus scanners and indexers can briefly hold the
+        # destination during os.replace. A bounded retry preserves atomicity
+        # without turning a transient file lock into a stopped trading daemon.
+        for attempt in range(6):
+            try:
+                temp.replace(path)
+                return
+            except PermissionError:
+                if attempt == 5:
+                    raise
+                time.sleep(0.05 * (attempt + 1))
+    finally:
+        try:
+            temp.unlink()
+        except FileNotFoundError:
+            pass
