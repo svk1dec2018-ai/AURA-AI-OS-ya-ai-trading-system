@@ -10,12 +10,12 @@ from .opensource_registry import PROJECTS, SourceProject
 from .research_gateway import EvidenceGate, ResearchCandidate, ResearchGateway
 
 __all__ = [
+    "PROJECTS",
     "Direction",
     "EvidenceGate",
     "FrameSignal",
     "MultiTimeframeConsensus",
     "PerformanceMemory",
-    "PROJECTS",
     "ResearchCandidate",
     "ResearchGateway",
     "SourceProject",
