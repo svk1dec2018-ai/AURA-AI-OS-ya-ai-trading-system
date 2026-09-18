@@ -92,6 +92,14 @@ if (-not (Test-Path (Join-Path $Dashboard "node_modules\next"))) {
     if ($NpmExit -ne 0) { throw "Dashboard npm install failed." }
 }
 
+$env:AURA_BACKEND_URL = "http://127.0.0.1:8766"
+Write-Host "Building current AURA 2 dashboard for production..."
+Push-Location $Dashboard
+& npm.cmd run build
+$BuildExit = $LASTEXITCODE
+Pop-Location
+if ($BuildExit -ne 0) { throw "AURA 2 dashboard production build failed." }
+
 if (-not (Test-Url "http://127.0.0.1:8766/api/health")) {
     Write-Host "Starting AURA backend on http://127.0.0.1:8766 ..."
     $backend = Start-Process -FilePath $VenvPython -ArgumentList @("-m","aura.webapp.server_v3","--port","8766") -WorkingDirectory $Root -RedirectStandardOutput (Join-Path $Runtime "backend.out.log") -RedirectStandardError (Join-Path $Runtime "backend.err.log") -PassThru
@@ -109,8 +117,8 @@ if (-not (Test-Url "http://127.0.0.1:8766/api/health")) {
 }
 
 if (-not (Test-Url "http://127.0.0.1:3100")) {
-    Write-Host "Starting premium dashboard on http://127.0.0.1:3100 ..."
-    $dash = Start-Process -FilePath "cmd.exe" -ArgumentList @("/c","set AURA_BACKEND_URL=http://127.0.0.1:8766&& npm.cmd run dev") -WorkingDirectory $Dashboard -RedirectStandardOutput (Join-Path $Runtime "dashboard.out.log") -RedirectStandardError (Join-Path $Runtime "dashboard.err.log") -PassThru
+    Write-Host "Starting premium production dashboard on http://127.0.0.1:3100 ..."
+    $dash = Start-Process -FilePath "cmd.exe" -ArgumentList @("/c","set AURA_BACKEND_URL=http://127.0.0.1:8766&& npm.cmd run start") -WorkingDirectory $Dashboard -RedirectStandardOutput (Join-Path $Runtime "dashboard.out.log") -RedirectStandardError (Join-Path $Runtime "dashboard.err.log") -PassThru
     Set-Content -Path (Join-Path $Runtime "dashboard.pid") -Value $dash.Id
 
     for ($i = 0; $i -lt 80; $i++) {
