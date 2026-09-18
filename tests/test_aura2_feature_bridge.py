@@ -10,18 +10,18 @@ from aura.strategy.features import FeatureSnapshot
 
 
 def _snapshot(timeframe: str, bullish: bool) -> FeatureSnapshot:
-    close = Decimal("2000")
+    close = Decimal(2000)
     if bullish:
-        ema21, ema50, ema200 = Decimal("1998"), Decimal("1990"), Decimal("1970")
+        ema21, ema50, ema200 = Decimal(1998), Decimal(1990), Decimal(1970)
         macd = Decimal("2.0")
-        rsi = Decimal("61")
-        vwap = Decimal("1994")
+        rsi = Decimal(61)
+        vwap = Decimal(1994)
         supertrend_direction = 1
     else:
-        ema21, ema50, ema200 = Decimal("2002"), Decimal("2010"), Decimal("2030")
+        ema21, ema50, ema200 = Decimal(2002), Decimal(2010), Decimal(2030)
         macd = Decimal("-2.0")
-        rsi = Decimal("39")
-        vwap = Decimal("2006")
+        rsi = Decimal(39)
+        vwap = Decimal(2006)
         supertrend_direction = -1
     return FeatureSnapshot(
         symbol="XAUUSD",
@@ -41,12 +41,12 @@ def _snapshot(timeframe: str, bullish: bool) -> FeatureSnapshot:
         bollinger_mid=None,
         bollinger_upper=None,
         bollinger_lower=None,
-        atr_14=Decimal("8"),
-        supertrend=Decimal("1988") if bullish else Decimal("2012"),
+        atr_14=Decimal(8),
+        supertrend=Decimal(1988) if bullish else Decimal(2012),
         supertrend_direction=supertrend_direction,
         vwap=vwap,
-        obv=Decimal("0"),
-        vpt=Decimal("0"),
+        obv=Decimal(0),
+        vpt=Decimal(0),
         support=None,
         resistance=None,
     )
