@@ -11,6 +11,7 @@ from aura.execution.mt5_protected_demo import (
     ProtectedMT5DemoBroker,
     ProtectedMT5DemoConfig,
 )
+from aura.persistence.atomic import atomic_write_json
 from aura.persistence.recovery import recover_financial_state
 from aura.runtime.mt5_learning_daemon import (
     MT5SelfEvolvingPaperDaemon,
@@ -40,9 +41,7 @@ class MT5AutonomousDemoBase(MT5AllMarketPaperDaemon):
                 "fund_transfers_enabled": False,
             }
         )
-        temp = self.status_path.with_suffix(".tmp")
-        temp.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-        temp.replace(self.status_path)
+        atomic_write_json(self.status_path, payload)
 
 
 async def build_mt5_autonomous_demo_daemon(
@@ -147,9 +146,7 @@ def _load_or_create_account_baseline(state_dir: Path, account: dict[str, Any]) -
         "environment": "DEMO_ONLY",
         "real_money_enabled": False,
     }
-    temp = path.with_suffix(".tmp")
-    temp.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-    temp.replace(path)
+    atomic_write_json(path, payload)
     return balance
 
 

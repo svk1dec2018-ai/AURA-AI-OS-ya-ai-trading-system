@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import json
-import os
-import threading
-import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -34,6 +30,7 @@ from aura.evolution.shadow_outcomes import (
     ShadowOutcomePolicy,
 )
 from aura.knowledge.firewall import KnowledgeFirewall
+from aura.persistence.atomic import atomic_write_json
 from aura.runtime.learning_scanner import LearningBrainPolicyScanner
 from aura.runtime.mt5_paper_daemon import (
     MT5AllMarketPaperConfig,
@@ -112,6 +109,7 @@ class MT5SelfEvolvingPaperDaemon:
                 self.base.counters.contexts += len(step.scan.candidates)
                 self.base.counters.opportunities += len(step.scan.opportunities)
                 self.base.counters.submitted_orders += len(step.submitted_orders)
+                self.base.counters.rejected_orders += len(step.rejected_orders)
                 self.base.counters.fills += len(step.fills)
                 if self.base.counters.batches % self.base.config.reconcile_every_batches == 0:
                     self.base.coordinator.reconcile()
@@ -366,25 +364,4 @@ def _forward_metric_payload(metric) -> dict:
 
 
 def _atomic_json(path: Path, payload: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temp = path.with_name(
-        f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp"
-    )
-    temp.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-    try:
-        # Windows readers, virus scanners and indexers can briefly hold the
-        # destination during os.replace. A bounded retry preserves atomicity
-        # without turning a transient file lock into a stopped trading daemon.
-        for attempt in range(6):
-            try:
-                temp.replace(path)
-                return
-            except PermissionError:
-                if attempt == 5:
-                    raise
-                time.sleep(0.05 * (attempt + 1))
-    finally:
-        try:
-            temp.unlink()
-        except FileNotFoundError:
-            pass
+    atomic_write_json(path, payload)

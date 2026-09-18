@@ -142,3 +142,71 @@ async def test_multi_market_paper_loop_shares_capital_and_reconciles(tmp_path: P
     assert not risk.kill_switch
 
     await runtime.stop()
+
+
+@pytest.mark.asyncio
+async def test_broker_rejection_is_journaled_without_stopping_runtime(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    risk = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_gross_exposure_pct=Decimal(10),
+        )
+    )
+    agents = [
+        AlwaysLongAgent("htf", AgentRole.HTF_BIAS),
+        AlwaysLongAgent("technical", AgentRole.TECHNICAL),
+        AlwaysLongAgent("volume", AgentRole.VOLUME_VWAP),
+    ]
+    scanner = MultiMarketIntelligenceScanner(
+        orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
+        ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=1),
+                max_staleness=timedelta(days=36500),
+            )
+        ),
+        max_concurrent_contexts=1,
+    )
+    allocator = PortfolioRiskCoordinator(
+        DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk)
+    )
+    broker = PaperBroker()
+
+    async def reject_order(_order) -> str:
+        raise RuntimeError("AutoTrading disabled by client")
+
+    monkeypatch.setattr(broker, "submit_order", reject_order)
+    financial_wal = JsonlWriteAheadLog(tmp_path / "financial.wal", fsync=False)
+    runtime = MultiMarketPaperCoordinator(
+        scanner=scanner,
+        allocator=allocator,
+        broker=broker,
+        ledger=PortfolioLedger(Decimal(10000)),
+        financial_journal=FinancialEventJournal(financial_wal),
+        agent_audit_journal=AgentAuditJournal(
+            JsonlWriteAheadLog(tmp_path / "agent-audit.wal", fsync=False)
+        ),
+        risk_engine=risk,
+        starting_cash=Decimal(10000),
+        default_requested_quantity=Decimal(1),
+    )
+    await runtime.start()
+
+    step = await runtime.on_batch([_candle("X", 0, "100", "100")])
+
+    assert step.submitted_orders == ()
+    assert len(step.rejected_orders) == 1
+    assert "AutoTrading disabled by client" in step.rejected_orders[0].reason
+    events = financial_wal.read_all()
+    assert [event.event_type for event in events] == [
+        "order.created",
+        "order.rejected",
+    ]
+
+    # A broker-side rejection is observable but does not kill the coordinator.
+    follow_up = await runtime.on_batch([_candle("X", 1, "101", "102")])
+    assert follow_up.close_time_iso.endswith("+00:00")
+    await runtime.stop()

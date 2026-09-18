@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from aura.runtime.mt5_learning_daemon import _atomic_json
+from aura.persistence.atomic import atomic_write_json
 
 
 def test_atomic_brain_status_retries_transient_windows_file_lock(
@@ -22,7 +22,7 @@ def test_atomic_brain_status_retries_transient_windows_file_lock(
         return original_replace(source, target)
 
     monkeypatch.setattr(Path, "replace", flaky_replace)
-    _atomic_json(destination, {"state": "running"})
+    atomic_write_json(destination, {"state": "running"})
 
     assert attempts == 3
     assert json.loads(destination.read_text(encoding="utf-8")) == {"state": "running"}

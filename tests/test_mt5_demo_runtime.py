@@ -19,7 +19,10 @@ from aura.persistence.wal import JsonlWriteAheadLog
 from aura.portfolio.ledger import PortfolioLedger
 from aura.risk.engine import RiskEngine, RiskLimits
 from aura.runtime.allocation import PortfolioRiskCoordinator
-from aura.runtime.mt5_paper_daemon import prioritize_mt5_universe
+from aura.runtime.mt5_paper_daemon import (
+    margin_adjusted_risk_multipliers,
+    prioritize_mt5_universe,
+)
 from aura.runtime.multi_market_paper import MultiMarketPaperCoordinator
 from aura.runtime.scanner import MarketScanResult
 from aura.strategy.ema import EmaCrossStrategy
@@ -54,6 +57,16 @@ def test_mt5_universe_prioritizes_broker_suffixed_owner_markets() -> None:
         "BTCUSDm",
         "USOILm",
     )
+
+
+def test_mt5_risk_uses_margin_equivalent_without_changing_contract_size() -> None:
+    contracts = {"XAUUSDm": Decimal(100), "BTCUSDm": Decimal(1)}
+    adjusted = margin_adjusted_risk_multipliers(contracts, Decimal(2000))
+    assert adjusted == {
+        "XAUUSDm": Decimal("0.05"),
+        "BTCUSDm": Decimal("0.0005"),
+    }
+    assert contracts["XAUUSDm"] == Decimal(100)
 
 
 class FakeMT5:

@@ -75,6 +75,13 @@ class SubmittedPaperOrder:
 
 
 @dataclass(slots=True, frozen=True)
+class RejectedBrokerOrder:
+    correlation_id: str
+    order: OrderRequest
+    reason: str
+
+
+@dataclass(slots=True, frozen=True)
 class MultiMarketPaperStep:
     close_time_iso: str
     fills: tuple[Fill, ...]
@@ -82,6 +89,7 @@ class MultiMarketPaperStep:
     allocation: PortfolioAllocationResult
     submitted_orders: tuple[SubmittedPaperOrder, ...]
     portfolio: PortfolioSnapshot
+    rejected_orders: tuple[RejectedBrokerOrder, ...] = ()
 
 
 class MultiMarketPaperCoordinator:
@@ -287,12 +295,27 @@ class MultiMarketPaperCoordinator:
         )
 
         submitted: list[SubmittedPaperOrder] = []
+        rejected: list[RejectedBrokerOrder] = []
         for item in allocation.approved:
             assert item.decision is not None and item.decision.order is not None
             order = item.decision.order
             correlation_id = item.candidate.context.correlation_id
             self.financial_journal.record_order_created(order, correlation_id=correlation_id)
-            broker_order_id = await self.broker.submit_order(order)
+            try:
+                broker_order_id = await self.broker.submit_order(order)
+            except Exception as exc:
+                self.financial_journal.record_order_rejected(
+                    order.order_id,
+                    correlation_id=correlation_id,
+                )
+                rejected.append(
+                    RejectedBrokerOrder(
+                        correlation_id=correlation_id,
+                        order=order,
+                        reason=f"{type(exc).__name__}: {exc}",
+                    )
+                )
+                continue
             self.financial_journal.record_order_submitted(
                 order.order_id,
                 correlation_id=correlation_id,
@@ -312,6 +335,7 @@ class MultiMarketPaperCoordinator:
             allocation=allocation,
             submitted_orders=tuple(submitted),
             portfolio=portfolio,
+            rejected_orders=tuple(rejected),
         )
 
     def reconcile(self) -> ReconciliationReport:

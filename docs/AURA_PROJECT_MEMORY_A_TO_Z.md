@@ -1214,6 +1214,29 @@ the external live-money gate plus permanent transfer/withdrawal denials.
 authority and no safety boundary changed.
 **Follow-up:** Regenerate governance evidence and validate the exact commit in CI.
 
+### 2026-09-18 — EXNESS-DEMO-ORDER-PATH-REPAIR
+**Commit:** Working tree; see subsequent Git history.
+**Area:** Leveraged CFD risk sizing, protected DEMO execution and Windows runtime durability.
+**What changed:** MT5 contract sizes remain authoritative for ledger/P&L accounting,
+while independent pre-trade capacity now uses leverage-adjusted exposure. Broker-side
+submission failures are written as terminal rejected-order events and surfaced in
+runtime status without stopping the autonomous loop. Status and learning-state JSON
+writes share one atomic, bounded-retry implementation for transient Windows locks.
+**Why:** Comparing full CFD contract notional with the account risk budget made every
+valid Exness minimum lot appear unaffordable. Once corrected, the first valid signal
+reached MT5 and proved the remaining failure was terminal permission code 10027,
+`AutoTrading disabled by client`; that rejection previously stopped the daemon.
+**Evidence:** Direct Exness DEMO risk evaluation approved XAUUSDm 0.01 at 1:2000
+leverage. A valid ETHUSDm signal reached `order_send` and MT5 rejected it with 10027.
+Regression tests cover leverage adjustment, journalled broker rejection with runtime
+continuation, and atomic-write retry behavior.
+**Status:** SOFTWARE COMPLETE; DEMO FILL EXTERNALLY BLOCKED until the owner enables
+the MT5 terminal's Algo Trading/AutoTrading control.
+**Risk impact:** No real-money authority added. The protected DEMO-only broker,
+RiskEngine, native SL/TP and existing governance boundaries remain authoritative.
+**Follow-up:** Enable Algo Trading in the logged-in DEMO terminal, restart from the
+PWA, and preserve the first broker-acknowledged order/fill as forward evidence.
+
 When a future AI receives a vague instruction like “continue AURA,” its first question internally should be:
 
 > **What is the current repository truth, what changed since the last known state, what evidence exists, what remains unproven, and which single highest-value next change moves AURA toward the north star without weakening the constitution?**

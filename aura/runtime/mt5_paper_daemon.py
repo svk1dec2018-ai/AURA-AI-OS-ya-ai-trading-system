@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -20,6 +19,7 @@ from aura.data.mt5_polling import MT5DemoPollingSource, MT5PollingPolicy
 from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.knowledge.firewall import KnowledgeFirewall
+from aura.persistence.atomic import atomic_write_json
 from aura.persistence.recovery import FinancialEventJournal
 from aura.persistence.wal import JsonlWriteAheadLog
 from aura.portfolio.instruments import AccountingMode, InstrumentLedgerSpec
@@ -70,6 +70,28 @@ def _owner_market_priority(symbol: str) -> tuple[int, int]:
         if upper.startswith(canonical):
             return index, len(upper) - len(canonical)
     return len(PRIORITY_MT5_SYMBOLS), len(upper)
+
+
+def margin_adjusted_risk_multipliers(
+    contract_multipliers: dict[str, Decimal],
+    account_leverage: Decimal,
+) -> dict[str, Decimal]:
+    """Convert CFD contract exposure to conservative margin-equivalent exposure."""
+
+    if account_leverage <= 0:
+        raise ValueError("MT5 account leverage must be positive")
+    return {
+        symbol: multiplier / account_leverage
+        for symbol, multiplier in contract_multipliers.items()
+    }
+
+
+def _record(value) -> dict:
+    if isinstance(value, dict):
+        return value
+    if hasattr(value, "_asdict"):
+        return dict(value._asdict())
+    return dict(vars(value))
 
 
 @dataclass(slots=True, frozen=True)
@@ -134,6 +156,7 @@ class MT5PaperCounters:
     contexts: int = 0
     opportunities: int = 0
     submitted_orders: int = 0
+    rejected_orders: int = 0
     fills: int = 0
     reconciliations: int = 0
 
@@ -181,6 +204,7 @@ class MT5AllMarketPaperDaemon:
                 self.counters.contexts += len(step.scan.candidates)
                 self.counters.opportunities += len(step.scan.opportunities)
                 self.counters.submitted_orders += len(step.submitted_orders)
+                self.counters.rejected_orders += len(step.rejected_orders)
                 self.counters.fills += len(step.fills)
 
                 if self.counters.batches % self.config.reconcile_every_batches == 0:
@@ -222,6 +246,7 @@ class MT5AllMarketPaperDaemon:
                 "contexts": self.counters.contexts,
                 "opportunities": self.counters.opportunities,
                 "submitted_orders": self.counters.submitted_orders,
+                "rejected_orders": self.counters.rejected_orders,
                 "fills": self.counters.fills,
                 "reconciliations": self.counters.reconciliations,
             },
@@ -265,10 +290,17 @@ class MT5AllMarketPaperDaemon:
                     }
                     for item in step.submitted_orders
                 ],
+                "rejected_orders": [
+                    {
+                        "symbol": item.order.symbol,
+                        "side": item.order.side.value,
+                        "quantity": str(item.order.quantity),
+                        "reason": item.reason,
+                    }
+                    for item in step.rejected_orders
+                ],
             }
-        temp = self.status_path.with_suffix(".tmp")
-        temp.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
-        temp.replace(self.status_path)
+        atomic_write_json(self.status_path, payload)
 
 
 async def build_mt5_all_market_paper_daemon(
@@ -307,7 +339,21 @@ async def build_mt5_all_market_paper_daemon(
             )
             for symbol, item in instrument_by_symbol.items()
         }
-        multipliers = {symbol: item.contract_size for symbol, item in instrument_by_symbol.items()}
+        contract_multipliers = {
+            symbol: item.contract_size for symbol, item in instrument_by_symbol.items()
+        }
+        raw_account = gateway.account_info()
+        raw_account_data = _record(raw_account) if raw_account is not None else {}
+        account_leverage = Decimal(str(raw_account_data.get("leverage", 1) or 1))
+        if account_leverage <= 0:
+            account_leverage = Decimal(1)
+        # MT5 CFDs reserve broker margin rather than full contract notional.
+        # Use margin-equivalent exposure for pre-trade capacity while retaining
+        # full contract multipliers in the ledger for correct P&L accounting.
+        risk_exposure_multipliers = margin_adjusted_risk_multipliers(
+            contract_multipliers,
+            account_leverage,
+        )
         quantity_rules = {
             symbol: QuantityRule(
                 minimum=item.min_quantity,
@@ -325,7 +371,7 @@ async def build_mt5_all_market_paper_daemon(
                 max_drawdown_pct=config.max_drawdown_pct,
                 max_daily_loss_pct=config.max_daily_loss_pct,
             ),
-            notional_multipliers=multipliers,
+            notional_multipliers=risk_exposure_multipliers,
             quantity_rules=quantity_rules,
         )
 
@@ -366,7 +412,7 @@ async def build_mt5_all_market_paper_daemon(
                 fee_bps=config.paper_fee_bps,
                 slippage_bps=config.paper_slippage_bps,
             ),
-            contract_multipliers=multipliers,
+            contract_multipliers=contract_multipliers,
         )
         ledger = PortfolioLedger(
             config.starting_cash,

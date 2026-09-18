@@ -2452,6 +2452,10 @@
       },
       {
         "from": "aura/runtime/mt5_autonomous_demo.py",
+        "to": "aura/persistence/atomic.py"
+      },
+      {
+        "from": "aura/runtime/mt5_autonomous_demo.py",
         "to": "aura/persistence/recovery.py"
       },
       {
@@ -2532,6 +2536,10 @@
       },
       {
         "from": "aura/runtime/mt5_learning_daemon.py",
+        "to": "aura/persistence/atomic.py"
+      },
+      {
+        "from": "aura/runtime/mt5_learning_daemon.py",
         "to": "aura/runtime/learning_scanner.py"
       },
       {
@@ -2577,6 +2585,10 @@
       {
         "from": "aura/runtime/mt5_paper_daemon.py",
         "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "aura/runtime/mt5_paper_daemon.py",
+        "to": "aura/persistence/atomic.py"
       },
       {
         "from": "aura/runtime/mt5_paper_daemon.py",
@@ -4320,7 +4332,7 @@
       },
       {
         "from": "tests/test_mt5_runtime_state.py",
-        "to": "aura/runtime/mt5_learning_daemon.py"
+        "to": "aura/persistence/atomic.py"
       },
       {
         "from": "tests/test_mt5_symbol_search.py",
@@ -6482,6 +6494,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 875,
+      "path": "aura/persistence/atomic.py",
+      "sha256": "20a50a51c0009b36a8eeacd272cba6203f58768b8bb6d0d4ddd9676f3d929805"
+    },
+    {
+      "asset_class": "python",
       "bytes": 10820,
       "path": "aura/persistence/broker_evidence_archive.py",
       "sha256": "ee23a6be6ecf51d88cd000eb9026a5b1fee49585f8af7ddf82664ffc9250678b"
@@ -6704,9 +6722,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6285,
+      "bytes": 6105,
       "path": "aura/runtime/mt5_autonomous_demo.py",
-      "sha256": "cd48ed1ba7d71c4efcbc1478732530d8ecf9d2c5aa42db0ffed137d7a1bcfdd0"
+      "sha256": "87f16b38b908abc541f41feff93f2914ecb10c78e58912ad7c72f7deda48f309"
     },
     {
       "asset_class": "python",
@@ -6716,21 +6734,21 @@
     },
     {
       "asset_class": "python",
-      "bytes": 15903,
+      "bytes": 15192,
       "path": "aura/runtime/mt5_learning_daemon.py",
-      "sha256": "19f44c672c1492742fdfdf758cc16a7a3da7eb04622c9cbcef3c0775a5307569"
+      "sha256": "ac0d36ae600c9799a79c95612e9476cade8b81427c6ee07838308ba4745062b7"
     },
     {
       "asset_class": "python",
-      "bytes": 16200,
+      "bytes": 18008,
       "path": "aura/runtime/mt5_paper_daemon.py",
-      "sha256": "c4e4e1c08c4b3cf431a4cfec533008e86efc4cf4458a3f4b745e2d5965728780"
+      "sha256": "ea0893374ae1e693023720f98430a42b450006c5ff4c5387760956f4fea33de6"
     },
     {
       "asset_class": "python",
-      "bytes": 14178,
+      "bytes": 14978,
       "path": "aura/runtime/multi_market_paper.py",
-      "sha256": "6f8f338db7da2d849f6733910ee8cf08617f17323e5769c5984f2dac516c1a65"
+      "sha256": "76b59d941da8405f498d8f194c0ed657c8e3389a324f0d0bf32364a2788513d6"
     },
     {
       "asset_class": "python",
@@ -6956,9 +6974,9 @@
     },
     {
       "asset_class": "documentation",
-      "bytes": 46932,
+      "bytes": 48644,
       "path": "docs/AURA_PROJECT_MEMORY_A_TO_Z.md",
-      "sha256": "778f25f9e9eb0a040cf6edb2e44c73f13a2231a84ee91340ebd29a4bcdb969a4"
+      "sha256": "fd50a9875538226e1ec1f9e16dbe4a6f596f6359824cb8748e30964c8ada48e0"
     },
     {
       "asset_class": "documentation",
@@ -7916,9 +7934,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 11554,
+      "bytes": 11978,
       "path": "tests/test_mt5_demo_runtime.py",
-      "sha256": "0a5ce735bd4042a7287b4f98e7f266ab9b08ea28416f0aa2eee5590d6d0cea82"
+      "sha256": "8fe80cb4e8c5901e6ad97d4c01720dc08f4d37c50c580a2fbbeed124f23cd69e"
     },
     {
       "asset_class": "python",
@@ -7934,9 +7952,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 864,
+      "bytes": 865,
       "path": "tests/test_mt5_runtime_state.py",
-      "sha256": "ba87ad9f71afe7e88b1586343423e24d2d20f058f338770854601628e4c7a0ba"
+      "sha256": "2cc41ff0159d969f7ab0f62fc19717bd5cc67f9983d8603acea9455d00e4c08e"
     },
     {
       "asset_class": "python",
@@ -7958,9 +7976,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 5161,
+      "bytes": 7601,
       "path": "tests/test_multi_market_paper.py",
-      "sha256": "d6fc50a8500fdb1003be339b633fb67c669f931a69393fcf22ad383fb8558fa1"
+      "sha256": "5d2cda0e974348b42f8b2363b4e25d46bf6a7114d24e1a9c393c833f605c6c36"
     },
     {
       "asset_class": "python",
@@ -8341,8 +8359,8 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 390,
-        "path": "aura/runtime/mt5_learning_daemon.py"
+        "line": 30,
+        "path": "aura/persistence/atomic.py"
       },
       {
         "classification": "review-required",
@@ -8407,6 +8425,7 @@
       "aura/runtime/learning_scanner.py",
       "aura/runtime/mt5_autonomous_demo.py",
       "aura/runtime/mt5_demo_execution_daemon.py",
+      "aura/runtime/mt5_learning_daemon.py",
       "aura/webapp/catalog.py",
       "aura/webapp/operator_assistant.py",
       "aura/webapp/read_models.py",
@@ -13322,6 +13341,33 @@
     {
       "component": "persistence",
       "direct_test_files": [
+        "tests/test_mt5_runtime_state.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 30,
+      "module": "aura.persistence.atomic",
+      "parsed": true,
+      "path": "aura/persistence/atomic.py",
+      "phase_coverage": [
+        2
+      ],
+      "primary_phase": 2,
+      "role": "source",
+      "sha256": "20a50a51c0009b36a8eeacd272cba6203f58768b8bb6d0d4ddd9676f3d929805",
+      "standard_library_dependencies": [
+        "__future__",
+        "json",
+        "os",
+        "pathlib",
+        "threading",
+        "time",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "persistence",
+      "direct_test_files": [
         "tests/test_broker_evidence_archive.py",
         "tests/test_broker_evidence_checkpoint.py",
         "tests/test_broker_evidence_custody.py"
@@ -14500,11 +14546,12 @@
       "internal_dependencies": [
         "aura/execution/demo_guard.py",
         "aura/execution/mt5_protected_demo.py",
+        "aura/persistence/atomic.py",
         "aura/persistence/recovery.py",
         "aura/runtime/mt5_learning_daemon.py",
         "aura/runtime/mt5_paper_daemon.py"
       ],
-      "lines": 161,
+      "lines": 158,
       "module": "aura.runtime.mt5_autonomous_demo",
       "parsed": true,
       "path": "aura/runtime/mt5_autonomous_demo.py",
@@ -14513,7 +14560,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "cd48ed1ba7d71c4efcbc1478732530d8ecf9d2c5aa42db0ffed137d7a1bcfdd0",
+      "sha256": "87f16b38b908abc541f41feff93f2914ecb10c78e58912ad7c72f7deda48f309",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -14557,9 +14604,7 @@
     },
     {
       "component": "runtime",
-      "direct_test_files": [
-        "tests/test_mt5_runtime_state.py"
-      ],
+      "direct_test_files": [],
       "internal_dependencies": [
         "aura/agents/reliability.py",
         "aura/data/intelligence_service.py",
@@ -14573,11 +14618,12 @@
         "aura/evolution/opportunity_audit.py",
         "aura/evolution/shadow_outcomes.py",
         "aura/knowledge/firewall.py",
+        "aura/persistence/atomic.py",
         "aura/runtime/learning_scanner.py",
         "aura/runtime/mt5_paper_daemon.py",
         "aura/runtime/scanner.py"
       ],
-      "lines": 390,
+      "lines": 367,
       "module": "aura.runtime.mt5_learning_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_learning_daemon.py",
@@ -14586,15 +14632,11 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "19f44c672c1492742fdfdf758cc16a7a3da7eb04622c9cbcef3c0775a5307569",
+      "sha256": "ac0d36ae600c9799a79c95612e9476cade8b81427c6ee07838308ba4745062b7",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
-        "json",
-        "os",
-        "pathlib",
-        "threading",
-        "time"
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -14613,6 +14655,7 @@
         "aura/data/quality.py",
         "aura/execution/paper.py",
         "aura/knowledge/firewall.py",
+        "aura/persistence/atomic.py",
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py",
         "aura/portfolio/instruments.py",
@@ -14624,7 +14667,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 417,
+      "lines": 463,
       "module": "aura.runtime.mt5_paper_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_paper_daemon.py",
@@ -14633,13 +14676,12 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "c4e4e1c08c4b3cf431a4cfec533008e86efc4cf4458a3f4b745e2d5965728780",
+      "sha256": "ea0893374ae1e693023720f98430a42b450006c5ff4c5387760956f4fea33de6",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
         "datetime",
         "decimal",
-        "json",
         "os",
         "pathlib"
       ],
@@ -14663,7 +14705,7 @@
         "aura/runtime/allocation.py",
         "aura/runtime/scanner.py"
       ],
-      "lines": 350,
+      "lines": 374,
       "module": "aura.runtime.multi_market_paper",
       "parsed": true,
       "path": "aura/runtime/multi_market_paper.py",
@@ -14672,7 +14714,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "6f8f338db7da2d849f6733910ee8cf08617f17323e5769c5984f2dac516c1a65",
+      "sha256": "76b59d941da8405f498d8f194c0ed657c8e3389a324f0d0bf32364a2788513d6",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -18253,7 +18295,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 373,
+      "lines": 386,
       "module": "tests.test_mt5_demo_runtime",
       "parsed": true,
       "path": "tests/test_mt5_demo_runtime.py",
@@ -18270,7 +18312,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "0a5ce735bd4042a7287b4f98e7f266ab9b08ea28416f0aa2eee5590d6d0cea82",
+      "sha256": "8fe80cb4e8c5901e6ad97d4c01720dc08f4d37c50c580a2fbbeed124f23cd69e",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -18337,18 +18379,18 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
-        "aura/runtime/mt5_learning_daemon.py"
+        "aura/persistence/atomic.py"
       ],
       "lines": 29,
       "module": "tests.test_mt5_runtime_state",
       "parsed": true,
       "path": "tests/test_mt5_runtime_state.py",
       "phase_coverage": [
-        12
+        2
       ],
-      "primary_phase": 12,
+      "primary_phase": 2,
       "role": "test",
-      "sha256": "ba87ad9f71afe7e88b1586343423e24d2d20f058f338770854601628e4c7a0ba",
+      "sha256": "2cc41ff0159d969f7ab0f62fc19717bd5cc67f9983d8603acea9455d00e4c08e",
       "standard_library_dependencies": [
         "__future__",
         "json",
@@ -18461,7 +18503,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 144,
+      "lines": 212,
       "module": "tests.test_multi_market_paper",
       "parsed": true,
       "path": "tests/test_multi_market_paper.py",
@@ -18477,7 +18519,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "d6fc50a8500fdb1003be339b633fb67c669f931a69393fcf22ad383fb8558fa1",
+      "sha256": "5d2cda0e974348b42f8b2363b4e25d46bf6a7114d24e1a9c393c833f605c6c36",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -20005,7 +20047,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "7bbe3ed798c777cbc8ccfec27d3ec14494bf1a0a340ea8f459a981bc52a17ca4",
+  "repository_tree_sha256": "8616fe5c19d26eab619013f443c50276e70f8ce5598b76e59dc4d912cbd638ad",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20403,6 +20445,12 @@
       "path": "aura/ops/broker_evidence_custody.py"
     },
     {
+      "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 30,
+      "path": "aura/persistence/atomic.py"
+    },
+    {
       "classification": "intentional",
       "kind": "marker-exception",
       "line": 21,
@@ -20511,12 +20559,6 @@
       "path": "aura/runtime/evolution_supervisor.py"
     },
     {
-      "classification": "review-required",
-      "kind": "suppressed-exception",
-      "line": 390,
-      "path": "aura/runtime/mt5_learning_daemon.py"
-    },
-    {
       "classification": "intentional",
       "kind": "protocol-contract",
       "line": 36,
@@ -20605,10 +20647,10 @@
     "directly_tested_source_modules": 184,
     "entrypoints": 62,
     "parse_errors": 0,
-    "python_modules": 394,
-    "repository_files": 481,
-    "source_modules": 208,
-    "static_test_functions": 657,
+    "python_modules": 395,
+    "repository_files": 482,
+    "source_modules": 209,
+    "static_test_functions": 659,
     "stub_candidates": 97,
     "test_modules": 160,
     "unclassified_modules": 0,

@@ -5,11 +5,11 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 481
-- Python modules: 394
-- Source modules: 208
+- Repository files: 482
+- Python modules: 395
+- Source modules: 209
 - Test modules: 160
-- Static test functions: 657
+- Static test functions: 659
 - Entrypoints: 62
 - Known stub/incomplete candidates: 97
 
@@ -24,7 +24,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `documentation` | 33 |
 | `documentation_or_validation_evidence` | 19 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 394 |
+| `python` | 395 |
 | `repository_asset` | 11 |
 | `repository_configuration` | 2 |
 
@@ -54,7 +54,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `ops` | 27 |
 | `options` | 1 |
 | `package` | 1 |
-| `persistence` | 4 |
+| `persistence` | 5 |
 | `portfolio` | 3 |
 | `repository_tooling` | 1 |
 | `research` | 17 |
@@ -290,6 +290,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/state_engine_gate.py` | source | ops | 2 | 1 | 9 |
 | `aura/ops/strategy_research_gate.py` | source | ops | 7 | 1 | 12 |
 | `aura/options/intelligence.py` | source | options | 5 | 2 | 1 |
+| `aura/persistence/atomic.py` | source | persistence | 2 | 1 | 0 |
 | `aura/persistence/broker_evidence_archive.py` | source | persistence | 11 | 3 | 2 |
 | `aura/persistence/checkpoint.py` | source | persistence | 2 | 1 | 5 |
 | `aura/persistence/recovery.py` | source | persistence | 2 | 6 | 5 |
@@ -327,10 +328,10 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/free_public_ai_council.py` | source | runtime | 12 | 2 | 20 |
 | `aura/runtime/free_public_strategy_lab.py` | source | runtime | 12 | 1 | 6 |
 | `aura/runtime/learning_scanner.py` | source | runtime | 12 | 0 | 4 |
-| `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 5 |
+| `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 6 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 0 | 5 |
-| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 1 | 15 |
-| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 19 |
+| `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 0 | 16 |
+| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 20 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 3 | 9 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 1 | 3 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 2 | 3 |
@@ -467,7 +468,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 5 | 0 | 3 |
-| `tests/test_mt5_runtime_state.py` | test | validation | 12 | 0 | 1 |
+| `tests/test_mt5_runtime_state.py` | test | validation | 2 | 0 | 1 |
 | `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
 | `tests/test_multi_backtest.py` | test | validation | 1 | 0 | 5 |
@@ -552,6 +553,7 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/runtime/learning_scanner.py`
 - `aura/runtime/mt5_autonomous_demo.py`
 - `aura/runtime/mt5_demo_execution_daemon.py`
+- `aura/runtime/mt5_learning_daemon.py`
 - `aura/webapp/catalog.py`
 - `aura/webapp/operator_assistant.py`
 - `aura/webapp/read_models.py`
