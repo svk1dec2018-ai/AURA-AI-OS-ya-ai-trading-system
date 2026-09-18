@@ -27,18 +27,18 @@ class CapturingScanner:
 
 def _snapshot(timeframe: str, *, bullish: bool) -> FeatureSnapshot:
     if bullish:
-        ema21, ema50, ema200 = Decimal("101"), Decimal("100"), Decimal("99")
-        rsi, macd, vwap, supertrend = Decimal("60"), Decimal("1"), Decimal("100"), 1
+        ema21, ema50, ema200 = Decimal(101), Decimal(100), Decimal(99)
+        rsi, macd, vwap, supertrend = Decimal(60), Decimal(1), Decimal(100), 1
     else:
-        ema21, ema50, ema200 = Decimal("99"), Decimal("100"), Decimal("101")
-        rsi, macd, vwap, supertrend = Decimal("40"), Decimal("-1"), Decimal("102"), -1
+        ema21, ema50, ema200 = Decimal(99), Decimal(100), Decimal(101)
+        rsi, macd, vwap, supertrend = Decimal(40), Decimal(-1), Decimal(102), -1
     return FeatureSnapshot(
         symbol="XAUUSD",
         venue="MT5",
         timeframe=timeframe,
         as_of=datetime(2026, 9, 18, 12, 0, tzinfo=UTC),
         bars_used=250,
-        close=Decimal("101"),
+        close=Decimal(101),
         ema_8=None,
         ema_21=ema21,
         ema_50=ema50,
@@ -51,11 +51,11 @@ def _snapshot(timeframe: str, *, bullish: bool) -> FeatureSnapshot:
         bollinger_upper=None,
         bollinger_lower=None,
         atr_14=Decimal("0.5"),
-        supertrend=Decimal("100"),
+        supertrend=Decimal(100),
         supertrend_direction=supertrend,
         vwap=vwap,
-        obv=Decimal("0"),
-        vpt=Decimal("0"),
+        obv=Decimal(0),
+        vpt=Decimal(0),
         support=None,
         resistance=None,
     )
@@ -69,11 +69,11 @@ def _context(timeframe: str, minute: int) -> AgentContext:
         timeframe=timeframe,
         open_time=close_time - timedelta(minutes=1),
         close_time=close_time,
-        open=Decimal("100"),
-        high=Decimal("102"),
-        low=Decimal("99"),
-        close=Decimal("101"),
-        volume=Decimal("10"),
+        open=Decimal(100),
+        high=Decimal(102),
+        low=Decimal(99),
+        close=Decimal(101),
+        volume=Decimal(10),
         closed=True,
     )
     return AgentContext(
