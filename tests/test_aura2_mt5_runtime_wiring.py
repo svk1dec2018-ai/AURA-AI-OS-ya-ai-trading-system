@@ -1,4 +1,4 @@
-import aura.runtime.mt5_learning_daemon as mt5_learning_daemon
+from aura.runtime import mt5_learning_daemon
 from aura.aura2.scanner_bridge import AURA2MTFScanner
 from aura.aura2.specialist import AURA2MTFSpecialist
 
