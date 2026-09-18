@@ -95,6 +95,71 @@ def mt5_chart_snapshot(
             effective_gateway.shutdown()
 
 
+
+def mt5_live_quote(
+    symbol: str,
+    *,
+    gateway: OfficialMT5Gateway | None = None,
+) -> dict[str, Any]:
+    """Return a read-only live DEMO quote for dashboard visualization.
+
+    Trading decisions remain closed-candle based. This endpoint exists only so the
+    owner chart can display the current broker bid/ask/last price between closes.
+    It never calls order_check or order_send.
+    """
+
+    normalized_symbol = symbol.strip()
+    if not normalized_symbol or len(normalized_symbol) > 120:
+        raise ValueError("symbol must be between 1 and 120 characters")
+
+    owned_gateway = gateway is None
+    effective_gateway = gateway or OfficialMT5Gateway()
+    try:
+        account = effective_gateway.connect_current_demo_session()
+        resolved_symbol = resolve_chart_symbol(effective_gateway, normalized_symbol)
+        effective_gateway.symbol_select(resolved_symbol, True)
+        tick = effective_gateway.symbol_info_tick(resolved_symbol)
+        if tick is None:
+            raise RuntimeError(
+                f"MT5 symbol_info_tick failed for {resolved_symbol}: "
+                f"{effective_gateway.last_error()}"
+            )
+        info = effective_gateway.symbol_info(resolved_symbol)
+        tick_data = _record(tick)
+        info_data = _record(info) if info is not None else {}
+        bid = float(tick_data.get("bid") or 0.0)
+        ask = float(tick_data.get("ask") or 0.0)
+        point = float(info_data.get("point") or 0.0)
+        spread_points = round((ask - bid) / point, 6) if point > 0 and ask >= bid else None
+        timestamp_msc = int(tick_data.get("time_msc") or 0)
+        timestamp = int(tick_data.get("time") or 0)
+        return {
+            "ok": True,
+            "mode": "MT5_DEMO_READ_ONLY",
+            "requested_symbol": normalized_symbol,
+            "symbol": resolved_symbol,
+            "bid": bid,
+            "ask": ask,
+            "last": float(tick_data.get("last") or 0.0),
+            "volume": float(tick_data.get("volume_real") or tick_data.get("volume") or 0.0),
+            "spread_points": spread_points,
+            "digits": int(info_data.get("digits") or 0),
+            "point": point,
+            "time": timestamp,
+            "time_msc": timestamp_msc,
+            "account": {
+                "login_last4": str(account.login)[-4:],
+                "server": account.server,
+                "currency": account.currency,
+            },
+            "execution_authority": False,
+            "risk_authority": False,
+            "order_submission_attempted": False,
+        }
+    finally:
+        if owned_gateway:
+            effective_gateway.shutdown()
+
 def resolve_chart_symbol(gateway: OfficialMT5Gateway, requested: str) -> str:
     """Resolve owner-friendly canonical names to tradable broker aliases."""
 

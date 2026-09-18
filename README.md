@@ -6,6 +6,23 @@ AURA AI OS is a broker-agnostic, multi-market AI trading operating system. It co
 
 See `docs/PRODUCTION_READINESS.md` for deployment and release procedures and `docs/IMPLEMENTATION_STATUS.md` for the current code-level status.
 
+## AURA 2 premium dashboard — easiest Windows start
+
+For the beginner-friendly MT5 DEMO workflow:
+
+1. Open MetaTrader 5 and log in to a **DEMO** account.
+2. Keep MT5 open and connected.
+3. In this repository folder, double-click `START_AURA2.cmd`.
+4. On the first run, the launcher can install/setup the required Python/Node dependencies.
+5. AURA opens the premium dashboard at `http://127.0.0.1:3100`.
+6. Verify **System Health**, **Live Charts** and **Risk Center**.
+7. Click **Start AURA DEMO** only after MT5 readiness is green.
+8. Stop the trading runtime from the dashboard, then double-click `STOP_AURA2.cmd`.
+
+The Python/MT5 backend stays local on `127.0.0.1:8766`. The dashboard uses real MT5 DEMO closed candles for decisions plus a read-only live bid/ask quote for visual updates. Real-money, fund transfer and withdrawal remain locked.
+
+See [docs/AURA2_BEGINNER_SETUP.md](docs/AURA2_BEGINNER_SETUP.md) for the complete no-coding setup and troubleshooting guide.
+
 ## Non-negotiable authority chain
 
 ```text

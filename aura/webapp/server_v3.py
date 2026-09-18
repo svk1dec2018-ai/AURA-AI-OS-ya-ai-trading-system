@@ -9,6 +9,7 @@ from urllib.parse import parse_qs, urlparse
 
 from aura.domain.models import Side
 from aura.webapp import server as base
+from aura.webapp.charting import mt5_live_quote
 from aura.webapp.mt5_preflight import mt5_demo_execution_check, mt5_demo_preflight
 from aura.webapp.readiness import build_readiness
 from aura.webapp.security import owner_auth_required
@@ -46,6 +47,9 @@ class AuraWebControllerV3(base.AuraWebController):
     def readiness(self) -> dict:
         preflight = self.mt5_preflight(max_symbols=100)
         return build_readiness(self.status(), preflight)
+
+    def live_quote(self, *, symbol: str) -> dict:
+        return mt5_live_quote(symbol)
 
     def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict:
         preflight = self.mt5_preflight(max_symbols=max(50, max_symbols))
@@ -138,6 +142,14 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
         if parsed.path == "/api/readiness":
             try:
                 self._json(CONTROLLER.readiness())
+            except (TypeError, ValueError, RuntimeError, OSError) as exc:
+                self._json({"ok": False, "error": str(exc)}, 400)
+            return
+        if parsed.path == "/api/mt5/quote":
+            query = parse_qs(parsed.query)
+            try:
+                symbol = str((query.get("symbol") or ["XAUUSD"])[0])
+                self._json(CONTROLLER.live_quote(symbol=symbol))
             except (TypeError, ValueError, RuntimeError, OSError) as exc:
                 self._json({"ok": False, "error": str(exc)}, 400)
             return
