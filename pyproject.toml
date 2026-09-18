@@ -20,6 +20,7 @@ aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"
 aura-free-ai = "aura.ai.free_ai_cli:main"
 aura-maintenance = "aura.maintenance.cli:main"
 aura2-doctor = "aura.aura2.cli:main"
+aura2-intake = "aura.aura2.intake_cli:main"
 
 [project.optional-dependencies]
 dev = [
