@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import argparse
-import json
 import atexit
+import json
 import threading
 import webbrowser
 from http.server import ThreadingHTTPServer
