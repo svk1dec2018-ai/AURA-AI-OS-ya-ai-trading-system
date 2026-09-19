@@ -101,3 +101,24 @@ Provider credentials are connected only when their actual adapter is being valid
 10. Broker-origin forward-validation campaign before any controlled live-money eligibility.
 
 Passing software tests does not establish profitability. All strategy and model candidates still require AURA's causal backtest, out-of-sample, walk-forward, paper/DEMO and risk-evidence gates.
+
+## One-click Windows fleet runtime
+
+After running `START_AURA2.cmd` once, install/start Docker Desktop and then double-click:
+
+`START_AURA_FLEET.cmd`
+
+The starter:
+- installs AURA's optional Redis dependency
+- starts/reuses the `aura-redis` Redis 7 container
+- verifies Redis connectivity
+- starts the nine-service AURA supervisor
+- writes fleet logs under `runtime/fleet/`
+
+Open **AURA 2 -> Distributed Fleet** to see live SSE service heartbeats.
+
+To stop the distributed services and Redis without closing MT5 or the dashboard, double-click:
+
+`STOP_AURA_FLEET.cmd`
+
+Each fleet worker also exposes a local read-only health endpoint on its reserved port (9100-9108). The generic workers publish only health telemetry until a role-specific business handler is attached; they do not fabricate ML votes, agent verdicts, risk decisions or orders.
