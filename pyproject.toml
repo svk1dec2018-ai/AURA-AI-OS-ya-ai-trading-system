@@ -39,6 +39,21 @@ mt5 = [
 distributed = [
   "redis>=5,<7",
 ]
+analytics = [
+  "duckdb>=1.1,<2",
+  "polars>=1,<2",
+]
+ml = [
+  "numpy>=1.26,<3",
+  "scikit-learn>=1.5,<2",
+  "xgboost>=2,<4",
+  "lightgbm>=4,<5",
+  "hmmlearn>=0.3,<1",
+  "onnxruntime>=1.19,<2",
+]
+observability = [
+  "prometheus-client>=0.21,<1",
+]
 
 [tool.setuptools.packages.find]
 include = ["aura*"]
