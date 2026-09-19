@@ -200,6 +200,7 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert all(path.exists() for path in expected)
     package = (root / "dashboard" / "package.json").read_text(encoding="utf-8")
     chart = (root / "dashboard" / "components" / "MarketChart.tsx").read_text(encoding="utf-8")
+    backend_charting = (root / "aura" / "webapp" / "charting.py").read_text(encoding="utf-8")
     shell = (root / "dashboard" / "components" / "AuraControlRoom.tsx").read_text(encoding="utf-8")
     advanced = (root / "dashboard" / "components" / "AdvancedTools.tsx").read_text(encoding="utf-8")
     live_terminal = (root / "dashboard" / "components" / "LiveTradingTerminal.tsx").read_text(encoding="utf-8")
@@ -207,7 +208,7 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert '"next": "16.3.3"' in package
     assert '"lightweight-charts": "5.2.1"' in package
     assert "/api/mt5/quote" in chart
-    assert "MT5_SESSION_LOCK" in chart
+    assert "MT5_SESSION_LOCK" in backend_charting
     assert "Retry MT5 connection" in chart
     assert "MT5 OFFLINE" in chart
     assert "Bull / Bear / Counterfactual debate" in shell
