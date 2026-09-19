@@ -112,6 +112,16 @@ class FleetWorker:
             ),
             "last_error": self._last_error,
             "financial_authority": self.service.financial_authority,
+            "business_ready": bool(
+                getattr(self.handler, "ready", self.handler is not None)
+            ),
+            "business_detail": str(
+                getattr(
+                    self.handler,
+                    "detail",
+                    "handler attached" if self.handler is not None else "no business handler",
+                )
+            ),
         }
         event = FleetEvent(
             kind=FleetEventKind.SYSTEM_HEALTH,
