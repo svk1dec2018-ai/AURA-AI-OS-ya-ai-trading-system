@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 import importlib
 import json
 import time
-from collections.abc import Iterator
 from typing import Any
 
 
@@ -115,4 +115,4 @@ class RedisFleetSSE:
 
     def _logical_name(self, stream_name: str) -> str:
         prefix = self.namespace + ":"
-        return stream_name[len(prefix):] if stream_name.startswith(prefix) else stream_name
+        return stream_name.removeprefix(prefix)
