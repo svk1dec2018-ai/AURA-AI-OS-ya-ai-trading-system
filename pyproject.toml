@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aura-ai-os"
+version = "0.2.0"
+description = "Governed broker-agnostic multi-market AI trading operating system"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.8,<3",
+  "tzdata>=2025.2; platform_system == 'Windows'",
+  "websockets>=12,<16",
+]
+
+[project.scripts]
+aura-owner-app = "aura.webapp.server_v3:main"
+aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"
+aura-free-ai = "aura.ai.free_ai_cli:main"
+aura-maintenance = "aura.maintenance.cli:main"
+aura2-doctor = "aura.aura2.cli:main"
+aura2-intake = "aura.aura2.intake_cli:main"
+aura-fleet = "aura.fleet.cli:main"
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2,<2",
+  "pytest>=8,<9",
+  "pytest-asyncio>=0.23,<1",
+  "ruff>=0.6,<1",
+]
+mt5 = [
+  "MetaTrader5>=5.0.45; platform_system == 'Windows'",
+]
+distributed = [
+  "redis>=5,<7",
+]
+
+[tool.setuptools.packages.find]
+include = ["aura*"]
+
+[tool.setuptools.package-data]
+"aura.webapp" = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

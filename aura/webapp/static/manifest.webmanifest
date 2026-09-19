@@ -1,0 +1,17 @@
+{
+  "name": "AURA AI OS Owner Command Center",
+  "short_name": "AURA",
+  "description": "Owner command center for governed market intelligence, research, paper/demo execution, risk and strategy development.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050912",
+  "theme_color": "#050912",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
