@@ -54,3 +54,15 @@ def prime_status(repository_root: Path | None = None) -> dict[str, Any]:
             "live_money_default": False,
         },
     }
+
+
+def main() -> int:
+    import json
+
+    payload = prime_status()
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0 if payload["software_production_ready"] else 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
