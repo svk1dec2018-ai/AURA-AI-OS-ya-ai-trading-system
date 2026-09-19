@@ -10,6 +10,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from .bus import RedisStreamsEventBus
 from .manifest import AURA_FLEET, FleetService
+from aura.prime.service_handlers import build_prime_role_handler
+
 from .worker import FleetWorker
 
 
@@ -20,7 +22,7 @@ def _service_by_id(service_id: str) -> FleetService:
     raise ValueError(f"unknown fleet service: {service_id}")
 
 
-def _health_handler(service: FleetService):
+def _health_handler(service: FleetService, handler):
     class HealthHandler(BaseHTTPRequestHandler):
         server_version = "AuraFleetHealth/1.0"
 
@@ -36,6 +38,10 @@ def _health_handler(service: FleetService):
                     "role": service.role.value,
                     "financial_authority": service.financial_authority,
                     "real_money_enabled": False,
+                    "business_ready": bool(getattr(handler, "ready", False)),
+                    "business_detail": str(
+                        getattr(handler, "detail", "business handler unavailable")
+                    ),
                 }
             ).encode("utf-8")
             self.send_response(200)
@@ -56,10 +62,16 @@ async def _run(service: FleetService, redis_url: str, heartbeat: float) -> int:
     if not await bus.ping():
         raise RuntimeError("Redis ping failed")
 
-    worker = FleetWorker(service, bus, heartbeat_seconds=heartbeat)
+    handler = build_prime_role_handler(service, bus)
+    worker = FleetWorker(
+        service,
+        bus,
+        heartbeat_seconds=heartbeat,
+        handler=handler,
+    )
     server = ThreadingHTTPServer(
         ("127.0.0.1", service.port),
-        _health_handler(service),
+        _health_handler(service, handler),
     )
     thread = threading.Thread(
         target=server.serve_forever,
