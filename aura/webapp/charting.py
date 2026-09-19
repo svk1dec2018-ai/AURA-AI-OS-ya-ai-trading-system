@@ -95,8 +95,10 @@ def mt5_chart_snapshot(
         }
     finally:
         if owned_gateway:
-            effective_gateway.shutdown()
-
+            try:
+                effective_gateway.shutdown()
+            finally:
+                MT5_SESSION_LOCK.release()
 
 
 def mt5_live_quote(
@@ -117,6 +119,8 @@ def mt5_live_quote(
 
     owned_gateway = gateway is None
     effective_gateway = gateway or OfficialMT5Gateway()
+    if owned_gateway:
+        MT5_SESSION_LOCK.acquire()
     try:
         account = effective_gateway.connect_current_demo_session()
         resolved_symbol = resolve_chart_symbol(effective_gateway, normalized_symbol)
