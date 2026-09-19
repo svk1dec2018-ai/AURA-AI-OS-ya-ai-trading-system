@@ -231,3 +231,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .provider-flags span{font-size:6.3px;color:#8396aa;border:1px solid rgba(148,163,184,.09);padding:4px 6px}
 .provider-matrix code{display:block;margin-top:8px;font-size:6.2px;color:#657d95;overflow-wrap:anywhere}
 @media(max-width:780px){.fleet-service-grid,.provider-matrix{grid-template-columns:1fr}}
+
+.fleet-event-feed{display:grid;gap:6px;max-height:520px;overflow:auto}
+.fleet-event-feed article{border:1px solid rgba(148,163,184,.09);background:#06101a;padding:8px}
+.fleet-event-feed article header{display:flex;justify-content:space-between;gap:8px}
+.fleet-event-feed b{font-size:7.5px;color:#7bd8ee}.fleet-event-feed header span{font-size:6.5px;color:#6f8297}
+.fleet-event-feed p{margin:4px 0;color:#72859a;font-size:6.6px}
+.fleet-event-feed code{display:block;color:#5f758c;font-size:6.2px;overflow-wrap:anywhere;white-space:pre-wrap}

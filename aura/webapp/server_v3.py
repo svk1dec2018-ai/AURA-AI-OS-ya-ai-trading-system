@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import atexit
+import json
 import threading
 import webbrowser
 from http.server import ThreadingHTTPServer
@@ -9,6 +10,7 @@ from urllib.parse import parse_qs, urlparse
 
 from aura.domain.models import Side
 from aura.fleet.status import distributed_fleet_status
+from aura.fleet.streaming import DEFAULT_SSE_STREAMS, RedisFleetSSE
 from aura.webapp import server as base
 from aura.webapp.charting import mt5_live_quote
 from aura.webapp.mt5_preflight import (
@@ -159,6 +161,16 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
         if parsed.path == "/api/fleet/status":
             self._json(distributed_fleet_status())
             return
+        if parsed.path == "/api/fleet/events":
+            query = parse_qs(parsed.query)
+            raw_streams = str((query.get("streams") or [""])[0])
+            streams = tuple(
+                item.strip()
+                for item in raw_streams.split(",")
+                if item.strip()
+            ) or DEFAULT_SSE_STREAMS
+            self._stream_fleet_events(streams)
+            return
         if parsed.path == "/api/mt5/live":
             query = parse_qs(parsed.query)
             raw_symbols = str((query.get("symbols") or [""])[0])
@@ -222,6 +234,43 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
                 self._json({"ok": False, "error": str(exc)}, 400)
             return
         super().do_GET()
+
+    def _stream_fleet_events(self, streams: tuple[str, ...]) -> None:
+        import os
+
+        reader = RedisFleetSSE(
+            os.environ.get("AURA_REDIS_URL", "redis://127.0.0.1:6379/0")
+        )
+        try:
+            try:
+                redis_ready = reader.ping()
+            except (OSError, RuntimeError, ValueError, TypeError) as exc:
+                self._json({"ok": False, "error": "Fleet Redis unavailable: " + str(exc)}, 503)
+                return
+            if not redis_ready:
+                self._json({"ok": False, "error": "Redis ping failed"}, 503)
+                return
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache, no-store")
+            self.send_header("Connection", "keep-alive")
+            self._security_headers()
+            self.end_headers()
+            for chunk in reader.iter_sse(streams):
+                self.wfile.write(chunk)
+                self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            return
+        except (OSError, RuntimeError, ValueError, TypeError) as exc:
+            try:
+                self.wfile.write(
+                    ("data: " + json.dumps({"error": str(exc)}) + "\n\n").encode("utf-8")
+                )
+                self.wfile.flush()
+            except (BrokenPipeError, ConnectionResetError, OSError):
+                pass
+        finally:
+            reader.close()
 
     def _serve_static(self, request_path: str) -> None:
         # Inject product bridges without duplicating the large client shell.
