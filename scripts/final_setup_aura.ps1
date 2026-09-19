@@ -37,6 +37,19 @@ if (-not (Test-Path $VenvPython)) {
     & py -3.12 -m venv $VenvDir
 }
 
+# Clean interrupted pip upgrade leftovers (for example "~ip" / "~ip-*.dist-info")
+# before invoking pip again. These are the yellow warnings visible after an interrupted
+# Windows pip upgrade and are safe to remove only inside this project venv.
+$SitePackages = & $VenvPython -c "import site; print(site.getsitepackages()[0])"
+if ($SitePackages -and (Test-Path $SitePackages)) {
+    Get-ChildItem -LiteralPath $SitePackages -Force -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like "~ip*" } |
+        ForEach-Object {
+            Write-Host ("Removing broken pip leftover: " + $_.Name) -ForegroundColor Yellow
+            Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+        }
+}
+
 Write-Host "Installing AURA backend, dev checks, distributed fleet and MT5 bridge..."
 & $VenvPython -m pip install --disable-pip-version-check --upgrade pip
 & $VenvPython -m pip install --disable-pip-version-check -e ".[dev,distributed,mt5]"
