@@ -87,7 +87,7 @@ def _phase_checks(root: Path) -> tuple[DoctorCheck, bool]:
             ),
         ), False
 
-    required_software_phases = tuple(range(0, 11)) + (12, 13, 14)
+    required_software_phases = tuple(range(11)) + (12, 13, 14)
     failed = tuple(
         phase for phase in required_software_phases if not phase_is_pass(ledger, root, phase)
     )
