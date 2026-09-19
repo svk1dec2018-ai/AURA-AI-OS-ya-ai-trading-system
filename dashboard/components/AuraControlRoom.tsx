@@ -84,10 +84,10 @@ export default function AuraControlRoom() {
     const nextState: Record<string, { ok: boolean; detail: string }> = {
       backend: healthResult.ok
         ? { ok: true, detail: "Backend connected" }
-        : { ok: false, detail: healthResult.error },
+        : { ok: false, detail: "error" in healthResult ? healthResult.error : "Backend unavailable" },
       workspace: workspaceResult.ok
         ? { ok: true, detail: "Workspace loaded" }
-        : { ok: false, detail: workspaceResult.error },
+        : { ok: false, detail: "error" in workspaceResult ? workspaceResult.error : "Workspace unavailable" },
       mt5: readinessResult.ok
         ? {
             ok: Boolean(readinessResult.data.mt5_runtime_ready),
@@ -95,10 +95,10 @@ export default function AuraControlRoom() {
               ? "MT5 DEMO ready"
               : readinessResult.data.demo_state || "MT5 runtime not ready",
           }
-        : { ok: false, detail: readinessResult.error },
+        : { ok: false, detail: "error" in readinessResult ? readinessResult.error : "MT5 readiness unavailable" },
       research: algoResult.ok
         ? { ok: true, detail: "Research catalog loaded" }
-        : { ok: false, detail: algoResult.error },
+        : { ok: false, detail: "error" in algoResult ? algoResult.error : "Research catalog unavailable" },
     };
     setServiceState(nextState);
 
