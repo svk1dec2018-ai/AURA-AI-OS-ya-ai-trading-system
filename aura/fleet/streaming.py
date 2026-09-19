@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import importlib
 import json
 import time
 from collections.abc import Iterator
@@ -34,7 +33,7 @@ class RedisFleetSSE:
     def client(self) -> Any:
         if self._client is None:
             try:
-                redis = importlib.import_module("redis")
+                redis = __import__("redis")
             except ModuleNotFoundError as exc:
                 raise RuntimeError(
                     "Fleet streaming requires AURA distributed dependencies"
