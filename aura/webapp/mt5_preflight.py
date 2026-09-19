@@ -13,6 +13,7 @@ from aura.execution.mt5_protected_demo import (
     _protected_prices,
 )
 
+
 def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, Any]:
     # The MetaTrader5 Python bridge is process-global. Serialize complete
     # connect/use/shutdown sessions so concurrent web requests cannot shut down
@@ -176,7 +177,7 @@ def mt5_live_terminal_snapshot(
                     point = float(symbol_data.get("point") or 0.0)
                     spread_points = (
                         round((ask - bid) / point, 3)
-                        if point > 0 and ask >= bid and bid > 0
+                        if 0 < bid <= ask and point > 0
                         else None
                     )
                     session_open = float(symbol_data.get("session_price_open") or 0.0)
@@ -299,7 +300,7 @@ def mt5_demo_execution_check(
     side: Side = Side.BUY,
     protection: ProtectedMT5DemoConfig | None = None,
 ) -> dict[str, Any]:
-    with _MT5_WEB_LOCK:
+    with MT5_SESSION_LOCK:
         return _mt5_demo_execution_check_unlocked(symbol, side=side, protection=protection)
 
 
