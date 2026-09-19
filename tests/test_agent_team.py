@@ -138,7 +138,7 @@ async def test_default_team_runs_all_ten_roles_in_one_concurrent_round() -> None
         },
     )
 
-    team = build_default_agent_team(_firewall(), timeout_seconds=1)
+    team = build_default_agent_team(_firewall(), timeout_seconds=1, include_env_ai=False)
     round_result = await team.orchestrator.run_round(context)
 
     assert round_result.failures == ()
