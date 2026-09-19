@@ -38,10 +38,12 @@ def test_final_production_launchers_and_env_loader_exist() -> None:
         "START_AURA_PRODUCTION.cmd",
         "AURA_PRODUCTION_DOCTOR.cmd",
         "STOP_AURA_PRODUCTION.cmd",
+        "INSTALL_FREE_UNLIMITED_AI.cmd",
         "scripts/aura_env.ps1",
         "scripts/final_setup_aura.ps1",
         "scripts/start_aura_production.ps1",
         "scripts/stop_aura_production.ps1",
+        "scripts/install_free_unlimited_ai.ps1",
     )
     for relative in expected:
         assert (root / relative).exists(), relative
@@ -58,8 +60,29 @@ def test_final_production_launchers_and_env_loader_exist() -> None:
     assert "--profile all-market" in start
     assert "I_UNDERSTAND_AND_APPROVE_LIVE_RISK" in start
 
+    setup = (root / "scripts" / "final_setup_aura.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert "AURA_FREE_AI_PRESET" in setup
+    assert "Running hermetic AURA test suite" in setup
+    assert "aura.ops.repository_audit --check" in setup
+
+    local_ai = (root / "scripts" / "install_free_unlimited_ai.ps1").read_text(
+        encoding="utf-8"
+    )
+    assert "Ollama.Ollama" in local_ai
+    assert "qwen3.5:4b" in local_ai
+    assert "deepseek-r1:8b" in local_ai
+    assert "AURA_FREE_AI_PRESET=balanced5" in local_ai
+
 
 def test_private_env_file_is_gitignored() -> None:
     root = Path(__file__).resolve().parents[1]
     ignore = (root / ".gitignore").read_text(encoding="utf-8")
     assert ".env.local" in ignore
+
+
+def test_fresh_template_keeps_local_ai_off_until_installed() -> None:
+    root = Path(__file__).resolve().parents[1]
+    env = (root / ".env.example").read_text(encoding="utf-8")
+    assert "AURA_FREE_AI_PRESET=off" in env
