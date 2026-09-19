@@ -51,6 +51,31 @@ class AuraWebControllerV3(base.AuraWebController):
     def live_quote(self, *, symbol: str) -> dict:
         return mt5_live_quote(symbol)
 
+    def diagnostics(self) -> dict:
+        runtime = self.status()
+        try:
+            preflight = self.mt5_preflight(max_symbols=25)
+        except (TypeError, ValueError, RuntimeError, OSError) as exc:
+            preflight = {
+                "ok": False,
+                "demo_verified": False,
+                "connected": False,
+                "error": str(exc),
+                "tradable_symbol_count": 0,
+            }
+        return {
+            "ok": True,
+            "backend": {
+                "ok": True,
+                "service": "aura-web-v3",
+                "runtime_running": bool(runtime.get("runtime_running")),
+                "runtime_exit_code": runtime.get("runtime_exit_code"),
+                "recovery_error": runtime.get("recovery_error"),
+            },
+            "mt5": preflight,
+            "real_money_enabled": False,
+        }
+
     def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict:
         preflight = self.mt5_preflight(max_symbols=max(50, max_symbols))
         if not preflight.get("ok"):
@@ -120,6 +145,25 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/api/diagnostics":
+            self._json(CONTROLLER.diagnostics())
+            return
+        if parsed.path == "/api/workspace":
+            try:
+                self._json(CONTROLLER.workspace())
+            except (TypeError, ValueError, RuntimeError, OSError, KeyError, AttributeError) as exc:
+                self._json({
+                    "ok": False,
+                    "error": "workspace read failed: " + str(exc),
+                    "runtime": CONTROLLER.status(),
+                }, 503)
+            return
+        if parsed.path == "/api/algo/candidates":
+            try:
+                self._json({"ok": True, "items": CONTROLLER.algo_candidates()})
+            except (TypeError, ValueError, RuntimeError, OSError) as exc:
+                self._json({"ok": False, "error": "candidate catalog failed: " + str(exc)}, 503)
+            return
         if parsed.path == "/api/mt5/preflight":
             query = parse_qs(parsed.query)
             try:
