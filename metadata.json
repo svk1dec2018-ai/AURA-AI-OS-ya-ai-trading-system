@@ -1,0 +1,6 @@
+{
+  "name": "AURA AI OS",
+  "description": "AURA AI OS owner command center for governed multi-market intelligence, research, learning and protected DEMO execution.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
