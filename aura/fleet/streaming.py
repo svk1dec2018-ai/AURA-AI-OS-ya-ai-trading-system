@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import json
 import time
-from collections.abc import Iterator
-from typing import Any
+import typing
 
 
 DEFAULT_SSE_STREAMS = (
@@ -23,14 +22,14 @@ class RedisFleetSSE:
         url: str,
         *,
         namespace: str = "aura",
-        client: Any | None = None,
+        client: typing.Any | None = None,
     ) -> None:
         self.url = url
         self.namespace = namespace
         self._client = client
 
     @property
-    def client(self) -> Any:
+    def client(self) -> typing.Any:
         if self._client is None:
             try:
                 redis = __import__("redis")
@@ -54,7 +53,7 @@ class RedisFleetSSE:
         *,
         duration_seconds: float = 30.0,
         block_ms: int = 5000,
-    ) -> Iterator[bytes]:
+    ) -> typing.Iterator[bytes]:
         if duration_seconds <= 0:
             raise ValueError("duration_seconds must be positive")
         if block_ms <= 0:
