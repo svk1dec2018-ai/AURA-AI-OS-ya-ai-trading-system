@@ -33,19 +33,30 @@ export default function MarketChart() {
   const [snapshot, setSnapshot] = useState<ChartSnapshot | null>(null);
   const [quote, setQuote] = useState<LiveQuote | null>(null);
   const [error, setError] = useState("");
+  const [quoteError, setQuoteError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      setLoading(true);
       try {
-        const url = "/api/chart?symbol=" + encodeURIComponent(symbol) + "&timeframe=" + timeframe + "&bars=500";
+        const url =
+          "/api/chart?symbol=" + encodeURIComponent(symbol) +
+          "&timeframe=" + timeframe + "&bars=500";
         const data = await getJson<ChartSnapshot>(url);
         if (!cancelled) {
           setSnapshot(data);
           setError("");
         }
       } catch (exc) {
-        if (!cancelled) setError(exc instanceof Error ? exc.message : String(exc));
+        if (!cancelled) {
+          setSnapshot(null);
+          setError(exc instanceof Error ? exc.message : String(exc));
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
     load();
@@ -54,16 +65,24 @@ export default function MarketChart() {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [symbol, timeframe]);
+  }, [symbol, timeframe, reloadKey]);
 
   useEffect(() => {
     let cancelled = false;
     async function loadQuote() {
       try {
-        const data = await getJson<LiveQuote>("/api/mt5/quote?symbol=" + encodeURIComponent(symbol));
-        if (!cancelled) setQuote(data);
-      } catch {
-        if (!cancelled) setQuote(null);
+        const data = await getJson<LiveQuote>(
+          "/api/mt5/quote?symbol=" + encodeURIComponent(symbol)
+        );
+        if (!cancelled) {
+          setQuote(data);
+          setQuoteError("");
+        }
+      } catch (exc) {
+        if (!cancelled) {
+          setQuote(null);
+          setQuoteError(exc instanceof Error ? exc.message : String(exc));
+        }
       }
     }
     loadQuote();
@@ -72,7 +91,7 @@ export default function MarketChart() {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [symbol]);
+  }, [symbol, reloadKey]);
 
   useEffect(() => {
     if (!containerRef.current || !snapshot?.candles?.length) return;
@@ -153,7 +172,9 @@ export default function MarketChart() {
     volume.setData(snapshot.candles.map((item) => ({
       time: unix(item.open_time),
       value: item.volume,
-      color: item.close >= item.open ? "rgba(39,214,155,.45)" : "rgba(255,95,120,.40)",
+      color: item.close >= item.open
+        ? "rgba(39,214,155,.45)"
+        : "rgba(255,95,120,.40)",
     })));
 
     chart.timeScale().fitContent();
@@ -172,8 +193,14 @@ export default function MarketChart() {
     <div className="chart-shell">
       <div className="chart-toolbar">
         <div className="symbol-control">
-          <input value={symbol} onChange={(event) => setSymbol(event.target.value.toUpperCase())} />
+          <input
+            value={symbol}
+            onChange={(event) => setSymbol(event.target.value.toUpperCase())}
+          />
           <strong>{quoteValue ? quoteValue.toFixed(digits) : "—"}</strong>
+          <span className={quote ? "feed-state good" : "feed-state bad"}>
+            {quote ? "MT5 LIVE" : "MT5 OFFLINE"}
+          </span>
           {quote ? (
             <span className="spread-pill">
               BID {quote.bid} · ASK {quote.ask} · spread {quote.spread_points?.toFixed(1) ?? "—"}pt
@@ -197,14 +224,39 @@ export default function MarketChart() {
         <span>VWAP</span><span>Bollinger</span><span>Volume</span>
         <b>Closed-candle decisions · live quote display</b>
       </div>
-      {error ? <div className="chart-error">Chart unavailable: {error}</div> : null}
-      <div ref={containerRef} className="live-chart" />
-      {last ? (
-        <div className="chart-footer">
-          <span>O {last.open}</span><span>H {last.high}</span><span>L {last.low}</span><span>C {last.close}</span>
-          <span>RSI {last.rsi14?.toFixed(1) ?? "—"}</span><span>ATR {last.atr14?.toFixed(2) ?? "—"}</span>
+
+      {!snapshot ? (
+        <div className="chart-recovery">
+          <div className="recovery-orb">!</div>
+          <div>
+            <b>{loading ? "Connecting to MT5 market data..." : "MT5 chart data is not available"}</b>
+            <p>
+              {error || quoteError ||
+                "Open MetaTrader 5, log in to a DEMO account, confirm prices are moving, then retry."}
+            </p>
+            <div className="recovery-steps">
+              <span>1. MT5 open</span>
+              <span>2. DEMO logged in</span>
+              <span>3. Market Watch has symbol</span>
+              <span>4. Retry connection</span>
+            </div>
+            <button onClick={() => setReloadKey((value) => value + 1)}>Retry MT5 connection</button>
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <>
+          {quoteError ? <div className="chart-warning">Live quote unavailable: {quoteError}</div> : null}
+          <div ref={containerRef} className="live-chart" />
+          {last ? (
+            <div className="chart-footer">
+              <span>O {last.open}</span><span>H {last.high}</span>
+              <span>L {last.low}</span><span>C {last.close}</span>
+              <span>RSI {last.rsi14?.toFixed(1) ?? "—"}</span>
+              <span>ATR {last.atr14?.toFixed(2) ?? "—"}</span>
+            </div>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }
