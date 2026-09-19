@@ -116,3 +116,192 @@ jobs:
       - uses: actions/checkout@v6
       - name: Build non-root production image
         run: docker build --tag aura-ai-os:ci .
+
+
+  runtime-smoke:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      AURA_REDIS_URL: redis://127.0.0.1:6379/0
+      AURA_BACKEND_URL: http://127.0.0.1:8766
+      NEXT_TELEMETRY_DISABLED: "1"
+      AURA_FREE_AI_PRESET: "off"
+      AURA_LIVE_TRADING_ENABLED: ""
+      AURA_HUMAN_LIVE_APPROVAL_ID: ""
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - name: Install runtime dependencies
+        run: python -m pip install -e ".[dev,distributed]"
+      - name: Install dashboard dependencies
+        working-directory: dashboard
+        run: npm ci --no-audit --no-fund
+      - name: Build dashboard
+        working-directory: dashboard
+        run: npm run build
+      - name: Start Redis-backed fleet
+        run: |
+          mkdir -p /tmp/aura-fleet
+          python -m aura.fleet.process_supervisor --redis-url "$AURA_REDIS_URL" --runtime-dir /tmp/aura-fleet > /tmp/aura-fleet.out 2> /tmp/aura-fleet.err &
+          echo $! > /tmp/aura-fleet.pid
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:9108/health >/dev/null 2>&1; then break; fi
+            sleep 0.5
+          done
+          python -m aura.fleet.cli --check-redis
+          for port in $(seq 9100 9108); do
+            curl -fsS "http://127.0.0.1:${port}/health"
+          done
+      - name: Start AURA backend
+        run: |
+          python -m aura.webapp.server_v3 --port 8766 > /tmp/aura-backend.out 2> /tmp/aura-backend.err &
+          echo $! > /tmp/aura-backend.pid
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8766/api/health >/dev/null 2>&1; then break; fi
+            sleep 0.4
+          done
+          curl -fsS http://127.0.0.1:8766/api/health
+          curl -fsS http://127.0.0.1:8766/api/workspace
+          curl -fsS http://127.0.0.1:8766/api/fleet/status
+          curl -fsS http://127.0.0.1:8766/api/diagnostics
+          curl -fsS http://127.0.0.1:8766/api/readiness
+          curl -fsS http://127.0.0.1:8766/api/algo/candidates
+      - name: Verify MT5 routes fail closed without a Windows terminal
+        run: |
+          status=$(curl -sS -o /tmp/mt5.json -w "%{http_code}" "http://127.0.0.1:8766/api/mt5/live?symbols=XAUUSD")
+          test "$status" = "503"
+          python - <<'PY'
+          import json
+          payload=json.load(open('/tmp/mt5.json', encoding='utf-8'))
+          assert payload.get('ok') is False, payload
+          assert payload.get('error'), payload
+          PY
+      - name: Start Next production dashboard and verify proxy
+        working-directory: dashboard
+        run: |
+          npm run start > /tmp/aura-dashboard.out 2> /tmp/aura-dashboard.err &
+          echo $! > /tmp/aura-dashboard.pid
+          for i in $(seq 1 80); do
+            if curl -fsS http://127.0.0.1:3100/api/health >/dev/null 2>&1; then break; fi
+            sleep 0.5
+          done
+          curl -fsS http://127.0.0.1:3100/api/health
+          curl -fsS http://127.0.0.1:3100/api/workspace
+          curl -fsS http://127.0.0.1:3100/api/fleet/status
+          curl -fsS http://127.0.0.1:3100/ | grep -q "AURA"
+      - name: Runtime smoke diagnostics
+        if: always()
+        run: |
+          echo "=== backend stdout ==="
+          tail -n 120 /tmp/aura-backend.out 2>/dev/null || true
+          echo "=== backend stderr ==="
+          tail -n 120 /tmp/aura-backend.err 2>/dev/null || true
+          echo "=== dashboard stdout ==="
+          tail -n 120 /tmp/aura-dashboard.out 2>/dev/null || true
+          echo "=== dashboard stderr ==="
+          tail -n 120 /tmp/aura-dashboard.err 2>/dev/null || true
+          echo "=== fleet stderr ==="
+          tail -n 120 /tmp/aura-fleet.err 2>/dev/null || true
+      - name: Stop runtime smoke processes
+        if: always()
+        run: |
+          test ! -f /tmp/aura-dashboard.pid || kill $(cat /tmp/aura-dashboard.pid) 2>/dev/null || true
+          test ! -f /tmp/aura-backend.pid || kill $(cat /tmp/aura-backend.pid) 2>/dev/null || true
+          test ! -f /tmp/aura-fleet.pid || kill $(cat /tmp/aura-fleet.pid) 2>/dev/null || true
+
+  windows-smoke:
+    permissions:
+      contents: read
+    runs-on: windows-latest
+    env:
+      AURA_FREE_AI_PRESET: "off"
+      AURA_LIVE_TRADING_ENABLED: ""
+      AURA_HUMAN_LIVE_APPROVAL_ID: ""
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Windows + MT5 dependencies
+        run: python -m pip install -e ".[dev,distributed,mt5]"
+      - name: Import official MT5 Python bridge
+        run: python -c "import MetaTrader5; print('MetaTrader5 import PASS')"
+      - name: PowerShell syntax validation
+        shell: pwsh
+        run: |
+          $files = @(
+            "scripts/aura_env.ps1",
+            "scripts/final_setup_aura.ps1",
+            "scripts/start_aura2_dashboard.ps1",
+            "scripts/start_aura_fleet.ps1",
+            "scripts/start_aura_production.ps1",
+            "scripts/stop_aura2_dashboard.ps1",
+            "scripts/stop_aura_fleet.ps1",
+            "scripts/stop_aura_production.ps1",
+            "scripts/install_free_unlimited_ai.ps1"
+          )
+          foreach ($file in $files) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $file),
+              [ref]$tokens,
+              [ref]$errors
+            ) | Out-Null
+            if ($errors.Count -gt 0) {
+              $errors | Format-List
+              throw "PowerShell syntax failed: $file"
+            }
+          }
+      - name: Environment loader smoke
+        shell: pwsh
+        run: |
+          @"
+          AURA_TEST_VALUE=hello
+          AURA_TEST_QUOTED="world"
+          "@ | Set-Content -Encoding UTF8 .env.ci-smoke
+          . ./scripts/aura_env.ps1
+          Import-AuraEnv -Path ./.env.ci-smoke
+          if ($env:AURA_TEST_VALUE -ne "hello") { throw "env loader failed" }
+          if ($env:AURA_TEST_QUOTED -ne "world") { throw "quoted env loader failed" }
+      - name: Repository production doctor
+        run: python -m aura.ops.final_doctor --profile repository --root .
+      - name: Backend boot smoke on Windows
+        shell: pwsh
+        run: |
+          $proc = Start-Process python -ArgumentList @("-m","aura.webapp.server_v3","--port","8766") -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\backend.out" -RedirectStandardError "$env:RUNNER_TEMP\backend.err"
+          try {
+            $ready = $false
+            for ($i = 0; $i -lt 50; $i++) {
+              try {
+                $health = Invoke-RestMethod -Uri "http://127.0.0.1:8766/api/health" -TimeoutSec 2
+                if ($health.ok -eq $true) { $ready = $true; break }
+              } catch {}
+              Start-Sleep -Milliseconds 400
+            }
+            if (-not $ready) {
+              Get-Content "$env:RUNNER_TEMP\backend.err" -ErrorAction SilentlyContinue
+              throw "Windows backend boot failed"
+            }
+            Invoke-RestMethod -Uri "http://127.0.0.1:8766/api/diagnostics" -TimeoutSec 5 | ConvertTo-Json -Depth 6
+          } finally {
+            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+          }
