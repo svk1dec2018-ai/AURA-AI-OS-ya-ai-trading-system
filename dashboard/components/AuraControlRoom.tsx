@@ -10,7 +10,7 @@ import type { Decision, JsonMap, MT5LiveSnapshot, Workspace } from "../lib/types
 type View =
   | "overview" | "markets" | "charts" | "opportunities" | "trading" | "portfolio"
   | "brain" | "debate" | "risk" | "performance" | "research" | "learning"
-  | "news" | "journal" | "studio" | "capabilities" | "system" | "owner";
+  | "news" | "journal" | "studio" | "capabilities" | "fleet" | "system" | "owner";
 
 const NAV: Array<[View, string, string]> = [
   ["overview", "Overview", "OV"],
@@ -29,6 +29,7 @@ const NAV: Array<[View, string, string]> = [
   ["journal", "Trade Journal", "TJ"],
   ["studio", "Strategy Studio", "ST"],
   ["capabilities", "All Features", "AZ"],
+  ["fleet", "Distributed Fleet", "FL"],
   ["system", "System Health", "HL"],
   ["owner", "Owner / JARVIS", "JR"],
 ];
@@ -63,6 +64,7 @@ export default function AuraControlRoom() {
   const [liveMt5, setLiveMt5] = useState<MT5LiveSnapshot | null>(null);
   const [liveMt5Error, setLiveMt5Error] = useState("");
   const [candidates, setCandidates] = useState<any[]>([]);
+  const [fleet, setFleet] = useState<JsonMap | null>(null);
   const [error, setError] = useState("");
   const [serviceState, setServiceState] = useState<Record<string, { ok: boolean; detail: string }>>({});
   const [jarvisOpen, setJarvisOpen] = useState(false);
@@ -77,11 +79,12 @@ export default function AuraControlRoom() {
   const [actionBusy, setActionBusy] = useState(false);
 
   async function refresh() {
-    const [healthResult, workspaceResult, readinessResult, algoResult] = await Promise.all([
+    const [healthResult, workspaceResult, readinessResult, algoResult, fleetResult] = await Promise.all([
       tryGetJson<JsonMap>("/api/health"),
       tryGetJson<Workspace>("/api/workspace"),
       tryGetJson<JsonMap>("/api/readiness"),
       tryGetJson<JsonMap>("/api/algo/candidates"),
+      tryGetJson<JsonMap>("/api/fleet/status"),
     ]);
 
     const nextState: Record<string, { ok: boolean; detail: string }> = {
@@ -108,6 +111,7 @@ export default function AuraControlRoom() {
     if (workspaceResult.ok) setWorkspace(workspaceResult.data);
     if (readinessResult.ok) setReadiness(readinessResult.data);
     if (algoResult.ok) setCandidates(algoResult.data.items || []);
+    if (fleetResult.ok) setFleet(fleetResult.data);
 
     const hardErrors = Object.entries(nextState)
       .filter(([key, value]) => key !== "mt5" && !value.ok)
@@ -427,6 +431,53 @@ export default function AuraControlRoom() {
             <Panel title="A → Z Capability Explorer" badge={String(capabilityItems.length) + " modules"}>
               <CapabilityExplorer items={capabilityItems} />
             </Panel>
+          )}
+
+          {view === "fleet" && (
+            <section className="grid two">
+              <Panel title="AURA Distributed Fleet" badge={fleet?.event_transport || "Redis Streams"}>
+                <div className="fleet-service-grid">
+                  {(fleet?.services || []).map((item: any) => (
+                    <article key={item.service_id} className="fleet-service-card">
+                      <header>
+                        <div><small>{item.role}</small><b>{item.service_id}</b></div>
+                        <span>:{item.port}</span>
+                      </header>
+                      <p>SUB {item.subscribes?.join(", ") || "—"}</p>
+                      <p>PUB {item.publishes?.join(", ") || "—"}</p>
+                      <footer className={item.financial_authority ? "authority financial" : "authority"}>
+                        {item.financial_authority ? "FINANCIAL AUTHORITY" : "NO FINANCIAL AUTHORITY"}
+                      </footer>
+                    </article>
+                  ))}
+                </div>
+              </Panel>
+              <Panel title="All-market provider matrix" badge="Credential-safe">
+                <div className="provider-matrix">
+                  {(fleet?.providers || []).map((item: any) => (
+                    <article key={item.key}>
+                      <header>
+                        <div><b>{item.name}</b><small>{item.key}</small></div>
+                        <span className={item.configured ? "configured" : "gated"}>
+                          {item.configured ? "CONFIGURED" : "CREDENTIAL GATE"}
+                        </span>
+                      </header>
+                      <p>{(item.families || []).join(" · ")}</p>
+                      <div className="provider-flags">
+                        <span>Data {item.read_only_without_credentials || item.configured ? "✓" : "GATED"}</span>
+                        <span>Execution {item.execution_supported ? "✓" : "NOT YET"}</span>
+                      </div>
+                      {!item.configured && item.missing_credentials?.length ? (
+                        <code>{item.missing_credentials.join(" · ")}</code>
+                      ) : null}
+                    </article>
+                  ))}
+                </div>
+                <div className="safety-note">
+                  Provider cards show environment-variable names only. Secret/API-key values are never returned to the dashboard.
+                </div>
+              </Panel>
+            </section>
           )}
 
           {view === "system" && (
