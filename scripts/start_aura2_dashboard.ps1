@@ -7,6 +7,8 @@ $VenvPython = Join-Path $VenvDir "Scripts\python.exe"
 $Dashboard = Join-Path $Root "dashboard"
 
 Set-Location $Root
+. (Join-Path $PSScriptRoot "aura_env.ps1")
+Import-AuraEnv -Path (Join-Path $Root ".env.local")
 New-Item -ItemType Directory -Force -Path $Runtime | Out-Null
 
 function Test-Url([string]$Url) {

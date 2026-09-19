@@ -5,9 +5,11 @@ $VenvPython = Join-Path $Root ".venv\Scripts\python.exe"
 $Runtime = Join-Path $Root "runtime\fleet"
 $SupervisorPid = Join-Path $Runtime "supervisor.pid"
 $RedisName = "aura-redis"
-$RedisUrl = "redis://127.0.0.1:6379/0"
+$RedisUrl = if ($env:AURA_REDIS_URL) { $env:AURA_REDIS_URL } else { "redis://127.0.0.1:6379/0" }
 
 Set-Location $Root
+. (Join-Path $PSScriptRoot "aura_env.ps1")
+Import-AuraEnv -Path (Join-Path $Root ".env.local")
 New-Item -ItemType Directory -Force -Path $Runtime | Out-Null
 
 Write-Host ""

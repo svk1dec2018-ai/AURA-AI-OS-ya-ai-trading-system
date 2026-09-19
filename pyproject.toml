@@ -24,6 +24,7 @@ aura2-intake = "aura.aura2.intake_cli:main"
 aura-fleet = "aura.fleet.cli:main"
 aura-fleet-service = "aura.fleet.service_runner:main"
 aura-fleet-supervisor = "aura.fleet.process_supervisor:main"
+aura-final-doctor = "aura.ops.final_doctor:main"
 
 [project.optional-dependencies]
 dev = [

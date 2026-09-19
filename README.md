@@ -6,6 +6,31 @@ AURA AI OS is a broker-agnostic, multi-market AI trading operating system. It co
 
 See `docs/PRODUCTION_READINESS.md` for deployment and release procedures and `docs/IMPLEMENTATION_STATUS.md` for the current code-level status.
 
+## Final Windows production setup — recommended
+
+For the complete distributed paper/demo stack, use the canonical five-file workflow:
+
+1. `FINAL_SETUP_AURA.cmd`
+2. `CONFIGURE_AURA.cmd`
+3. Open Docker Desktop + MetaTrader 5 DEMO
+4. `START_AURA_PRODUCTION.cmd`
+5. `AURA_PRODUCTION_DOCTOR.cmd`
+
+Stop everything with `STOP_AURA_PRODUCTION.cmd`.
+
+This flow installs/verifies Python, MT5 bridge, Redis/distributed dependencies, dashboard packages and production builds; loads only the gitignored `.env.local`; starts Redis + the nine-service fleet + backend/dashboard; and runs a strict all-market doctor including a real read-only MT5 DEMO broker preflight.
+
+Expected final state before external broker evidence:
+
+```text
+Software production ready: YES
+Live-money eligible: NO
+```
+
+That is intentional. Live-money authority remains gated by broker-origin Phase 11/15 evidence and explicit human authorization.
+
+See `docs/FINAL_WINDOWS_PRODUCTION_SETUP.md` and `docs/FINAL_PRODUCTION_REVIEW_2026-09-19.md`.
+
 ## AURA 2 premium dashboard — easiest Windows start
 
 For the beginner-friendly MT5 DEMO workflow:
