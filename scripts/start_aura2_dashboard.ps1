@@ -12,9 +12,37 @@ New-Item -ItemType Directory -Force -Path $Runtime | Out-Null
 function Test-Url([string]$Url) {
     try {
         $response = Invoke-WebRequest -UseBasicParsing -Uri $Url -TimeoutSec 2
-        return $response.StatusCode -ge 200 -and $response.StatusCode -lt 500
+        return $response.StatusCode -ge 200 -and $response.StatusCode -lt 400
     } catch {
         return $false
+    }
+}
+
+function Test-AuraHealth([string]$Url) {
+    try {
+        $response = Invoke-RestMethod -Uri $Url -TimeoutSec 3
+        return $response.ok -eq $true
+    } catch {
+        return $false
+    }
+}
+
+function Stop-StaleDashboardListener {
+    try {
+        $listeners = Get-NetTCPConnection -LocalPort 3100 -State Listen -ErrorAction Stop
+    } catch {
+        return
+    }
+    foreach ($listener in $listeners) {
+        $ownerPid = [int]$listener.OwningProcess
+        try {
+            $process = Get-CimInstance Win32_Process -Filter ("ProcessId=" + $ownerPid)
+            $command = [string]$process.CommandLine
+            if ($command -match "next|node|npm") {
+                Write-Host ("Stopping stale AURA dashboard listener PID " + $ownerPid + " on port 3100...") -ForegroundColor Yellow
+                taskkill /PID $ownerPid /T /F | Out-Null
+            }
+        } catch {}
     }
 }
 
@@ -62,6 +90,17 @@ Write-Host ""
 
 New-AuraVenv
 if (-not (Test-Path $VenvPython)) { throw "AURA Python environment could not be created." }
+
+# Repair interrupted pip upgrades such as "~ip" / "~ip-*.dist-info" leftovers.
+$SitePackages = & $VenvPython -c "import site; print(site.getsitepackages()[0])"
+if ($SitePackages -and (Test-Path $SitePackages)) {
+    Get-ChildItem -LiteralPath $SitePackages -Force -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like "~ip*" } |
+        ForEach-Object {
+            Write-Host ("Removing broken pip leftover: " + $_.Name) -ForegroundColor Yellow
+            Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+        }
+}
 
 Write-Host "Installing/updating AURA backend and official MT5 bridge..."
 & $VenvPython -m pip install --disable-pip-version-check --upgrade pip
@@ -116,26 +155,41 @@ if (-not (Test-Url "http://127.0.0.1:8766/api/health")) {
     Write-Host "AURA backend is already running."
 }
 
-if (-not (Test-Url "http://127.0.0.1:3100")) {
+$DashboardRootOk = Test-Url "http://127.0.0.1:3100"
+$DashboardProxyOk = Test-AuraHealth "http://127.0.0.1:3100/api/health"
+
+if ($DashboardRootOk -and -not $DashboardProxyOk) {
+    Write-Host "A dashboard is listening on port 3100 but its AURA API proxy is broken/stale." -ForegroundColor Yellow
+    Stop-StaleDashboardListener
+    Start-Sleep -Milliseconds 700
+    $DashboardRootOk = $false
+    $DashboardProxyOk = $false
+}
+
+if (-not $DashboardRootOk) {
     Write-Host "Starting premium production dashboard on http://127.0.0.1:3100 ..."
     $dash = Start-Process -FilePath "cmd.exe" -ArgumentList @("/c","set AURA_BACKEND_URL=http://127.0.0.1:8766&& npm.cmd run start") -WorkingDirectory $Dashboard -RedirectStandardOutput (Join-Path $Runtime "dashboard.out.log") -RedirectStandardError (Join-Path $Runtime "dashboard.err.log") -PassThru
     Set-Content -Path (Join-Path $Runtime "dashboard.pid") -Value $dash.Id
 
     for ($i = 0; $i -lt 80; $i++) {
-        if (Test-Url "http://127.0.0.1:3100") { break }
+        if ((Test-Url "http://127.0.0.1:3100") -and (Test-AuraHealth "http://127.0.0.1:3100/api/health")) { break }
         Start-Sleep -Milliseconds 500
     }
     if (-not (Test-Url "http://127.0.0.1:3100")) {
         throw "Dashboard did not start. Open runtime\aura2_dashboard\dashboard.err.log."
     }
+    if (-not (Test-AuraHealth "http://127.0.0.1:3100/api/health")) {
+        throw "Dashboard opened but its backend proxy is unhealthy. Check dashboard.err.log and backend.err.log."
+    }
 } else {
-    Write-Host "AURA 2 dashboard is already running."
+    Write-Host "AURA 2 dashboard is already running and its backend proxy is healthy."
 }
 
 Write-Host ""
 Write-Host "AURA 2 READY" -ForegroundColor Green
 Write-Host "Dashboard: http://127.0.0.1:3100" -ForegroundColor Green
 Write-Host "Backend:   http://127.0.0.1:8766" -ForegroundColor Green
+Write-Host "Proxy:     VERIFIED" -ForegroundColor Green
 Write-Host ""
 Write-Host "Keep MetaTrader 5 open and logged in to a DEMO account."
 Write-Host "This launcher does not auto-start trading. Use Start AURA DEMO inside the dashboard."
