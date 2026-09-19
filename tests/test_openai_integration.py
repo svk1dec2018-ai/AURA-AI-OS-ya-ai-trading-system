@@ -136,6 +136,7 @@ async def test_openai_market_provider_is_advisory_and_filters_context_metadata()
 
 def test_openai_models_join_default_council_only_when_explicitly_configured(monkeypatch) -> None:
     monkeypatch.delenv("AURA_OLLAMA_MODELS", raising=False)
+    monkeypatch.setenv("AURA_FREE_AI_PRESET", "off")
     monkeypatch.setenv("OPENAI_API_KEY", "test-key")
     monkeypatch.setenv("AURA_OPENAI_MODELS", "gpt-5.4-mini")
     monkeypatch.setenv("AURA_AI_ROLES", "technical,regime")
