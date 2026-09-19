@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible AURA software/runtime problem without secrets.
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste API keys, passwords, account numbers or private broker payloads.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Windows setup/start
+        - Dashboard/UI
+        - Backend/API
+        - MT5 DEMO
+        - Redis/Fleet
+        - Risk/Execution
+        - Research/AI
+        - Data connector
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened?
+      description: Include the exact error text after removing secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: commit
+    attributes:
+      label: Git commit / branch
+      placeholder: e.g. main @ abc123
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs
+      description: Attach only logs/screenshots that contain no credentials or private account identifiers.
