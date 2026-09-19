@@ -67,7 +67,7 @@ class InMemoryEventBus:
             raise ValueError("block_ms cannot be negative")
 
         def available() -> tuple[tuple[str, FleetEvent], ...]:
-            after = _memory_id(after_id)
+            after = (self._sequence, 0) if after_id == "$" else _memory_id(after_id)
             rows = [
                 (item.record_id, item.event)
                 for item in self._records.get(stream, ())
