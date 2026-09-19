@@ -10,7 +10,11 @@ from urllib.parse import parse_qs, urlparse
 from aura.domain.models import Side
 from aura.webapp import server as base
 from aura.webapp.charting import mt5_live_quote
-from aura.webapp.mt5_preflight import mt5_demo_execution_check, mt5_demo_preflight
+from aura.webapp.mt5_preflight import (
+    mt5_demo_execution_check,
+    mt5_demo_preflight,
+    mt5_live_terminal_snapshot,
+)
 from aura.webapp.readiness import build_readiness
 from aura.webapp.security import owner_auth_required
 
@@ -50,6 +54,9 @@ class AuraWebControllerV3(base.AuraWebController):
 
     def live_quote(self, *, symbol: str) -> dict:
         return mt5_live_quote(symbol)
+
+    def live_terminal(self, *, symbols: tuple[str, ...] | None = None) -> dict:
+        return mt5_live_terminal_snapshot(symbols)
 
     def diagnostics(self) -> dict:
         runtime = self.status()
@@ -147,6 +154,19 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/api/diagnostics":
             self._json(CONTROLLER.diagnostics())
+            return
+        if parsed.path == "/api/mt5/live":
+            query = parse_qs(parsed.query)
+            raw_symbols = str((query.get("symbols") or [""])[0])
+            symbols = tuple(
+                item.strip()
+                for item in raw_symbols.split(",")
+                if item.strip()
+            ) or None
+            try:
+                self._json(CONTROLLER.live_terminal(symbols=symbols))
+            except (TypeError, ValueError, RuntimeError, OSError, KeyError, AttributeError) as exc:
+                self._json({"ok": False, "error": str(exc)}, 503)
             return
         if parsed.path == "/api/workspace":
             try:
