@@ -246,3 +246,19 @@ def test_distribution_exposes_owner_and_mt5_demo_entrypoints() -> None:
     text = (root / "pyproject.toml").read_text(encoding="utf-8")
     assert 'aura-owner-app = "aura.webapp.server_v3:main"' in text
     assert 'aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"' in text
+
+
+def test_v3_diagnostics_survives_mt5_failure(tmp_path: Path, monkeypatch) -> None:
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    monkeypatch.setattr(
+        controller,
+        "mt5_preflight",
+        lambda max_symbols: (_ for _ in ()).throw(RuntimeError("terminal disconnected")),
+    )
+    payload = controller.diagnostics()
+    assert payload["ok"] is True
+    assert payload["backend"]["ok"] is True
+    assert payload["mt5"]["ok"] is False
+    assert payload["mt5"]["connected"] is False
+    assert "terminal disconnected" in payload["mt5"]["error"]
+    assert payload["real_money_enabled"] is False

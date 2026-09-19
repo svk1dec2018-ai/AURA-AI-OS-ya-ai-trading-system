@@ -97,8 +97,12 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert '"next": "16.3.3"' in package
     assert '"lightweight-charts": "5.2.1"' in package
     assert "/api/mt5/quote" in chart
+    assert "Retry MT5 connection" in chart
+    assert "MT5 OFFLINE" in chart
     assert "Bull / Bear / Counterfactual debate" in shell
     assert "Open-source research fusion" in shell
+    assert "tryGetJson" in shell
+    assert "ServiceStrip" in shell
     assert "Trade Journal" in shell
     assert "Strategy Studio" in shell
     assert "All Features" in shell
@@ -109,4 +113,7 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert "npm.cmd run build" in launcher
     assert "npm.cmd run start" in launcher
     assert "npm.cmd run dev" not in launcher
+    assert "Test-AuraHealth" in launcher
+    assert "Stop-StaleDashboardListener" in launcher
+    assert 'Where-Object { $_.Name -like "~ip*" }' in launcher
     assert "This launcher does not auto-start trading" in launcher
