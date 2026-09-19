@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import MarketChart from "./MarketChart";
 import { CapabilityExplorer, ExecutionPreview, ResearchStudio, TradeJournal } from "./AdvancedTools";
-import { getJson, postJson } from "../lib/api";
+import { getJson, postJson, tryGetJson } from "../lib/api";
 import type { Decision, JsonMap, Workspace } from "../lib/types";
 
 type View =
@@ -61,6 +61,7 @@ export default function AuraControlRoom() {
   const [readiness, setReadiness] = useState<JsonMap | null>(null);
   const [candidates, setCandidates] = useState<any[]>([]);
   const [error, setError] = useState("");
+  const [serviceState, setServiceState] = useState<Record<string, { ok: boolean; detail: string }>>({});
   const [jarvisOpen, setJarvisOpen] = useState(false);
   const [jarvisInput, setJarvisInput] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "aura"; text: string }>>([
@@ -73,19 +74,42 @@ export default function AuraControlRoom() {
   const [actionBusy, setActionBusy] = useState(false);
 
   async function refresh() {
-    try {
-      const [ws, ready, algo] = await Promise.all([
-        getJson<Workspace>("/api/workspace"),
-        getJson<JsonMap>("/api/readiness"),
-        getJson<JsonMap>("/api/algo/candidates"),
-      ]);
-      setWorkspace(ws);
-      setReadiness(ready);
-      setCandidates(algo.items || []);
-      setError("");
-    } catch (exc) {
-      setError(exc instanceof Error ? exc.message : String(exc));
-    }
+    const [healthResult, workspaceResult, readinessResult, algoResult] = await Promise.all([
+      tryGetJson<JsonMap>("/api/health"),
+      tryGetJson<Workspace>("/api/workspace"),
+      tryGetJson<JsonMap>("/api/readiness"),
+      tryGetJson<JsonMap>("/api/algo/candidates"),
+    ]);
+
+    const nextState: Record<string, { ok: boolean; detail: string }> = {
+      backend: healthResult.ok
+        ? { ok: true, detail: "Backend connected" }
+        : { ok: false, detail: healthResult.error },
+      workspace: workspaceResult.ok
+        ? { ok: true, detail: "Workspace loaded" }
+        : { ok: false, detail: workspaceResult.error },
+      mt5: readinessResult.ok
+        ? {
+            ok: Boolean(readinessResult.data.mt5_runtime_ready),
+            detail: readinessResult.data.mt5_runtime_ready
+              ? "MT5 DEMO ready"
+              : readinessResult.data.demo_state || "MT5 runtime not ready",
+          }
+        : { ok: false, detail: readinessResult.error },
+      research: algoResult.ok
+        ? { ok: true, detail: "Research catalog loaded" }
+        : { ok: false, detail: algoResult.error },
+    };
+    setServiceState(nextState);
+
+    if (workspaceResult.ok) setWorkspace(workspaceResult.data);
+    if (readinessResult.ok) setReadiness(readinessResult.data);
+    if (algoResult.ok) setCandidates(algoResult.data.items || []);
+
+    const hardErrors = Object.entries(nextState)
+      .filter(([key, value]) => key !== "mt5" && !value.ok)
+      .map(([key, value]) => key.toUpperCase() + ": " + value.detail);
+    setError(hardErrors.join(" | "));
   }
 
   useEffect(() => {
@@ -200,7 +224,13 @@ export default function AuraControlRoom() {
         </header>
 
         <div className="content">
-          {error ? <div className="alert error">{error}</div> : null}
+          <ServiceStrip state={serviceState} />
+          {error ? (
+            <div className="alert error">
+              <b>AURA service problem:</b> {error}
+              <div className="alert-help">Backend/MT5 failure no longer blanks the whole dashboard. Open System Health for the exact failing service.</div>
+            </div>
+          ) : null}
 
           {view === "overview" && (
             <>
@@ -468,6 +498,25 @@ export default function AuraControlRoom() {
           </form>
         </aside>
       )}
+    </div>
+  );
+}
+
+function ServiceStrip({ state }: { state: Record<string, { ok: boolean; detail: string }> }) {
+  const items = [
+    ["Backend", state.backend],
+    ["Workspace", state.workspace],
+    ["MT5", state.mt5],
+    ["Research", state.research],
+  ] as const;
+  return (
+    <div className="service-strip">
+      {items.map(([label, item]) => (
+        <div key={label} className={item?.ok ? "service-pill good" : "service-pill bad"}>
+          <i />
+          <div><b>{label}</b><span>{item?.detail || "Checking..."}</span></div>
+        </div>
+      ))}
     </div>
   );
 }
