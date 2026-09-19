@@ -40,6 +40,16 @@ The setup will:
 
 Docker Desktop may require one Windows logout/restart after first installation.
 
+## Install unlimited local AI (optional but recommended)
+
+After `FINAL_SETUP_AURA.cmd` passes, double-click:
+
+`INSTALL_FREE_UNLIMITED_AI.cmd`
+
+This installs/uses Ollama and downloads the local `balanced5` council. Local inference needs no API key and has no provider per-token charge; your PC hardware is the practical limit.
+
+Cloud free tiers are intentionally not called unlimited. They remain optional fallbacks only.
+
 ## Configure credentials safely
 
 Double-click:

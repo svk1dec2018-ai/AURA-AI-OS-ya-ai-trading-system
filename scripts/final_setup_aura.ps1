@@ -37,6 +37,19 @@ if (-not (Test-Path $VenvPython)) {
     & py -3.12 -m venv $VenvDir
 }
 
+# Clean interrupted pip upgrade leftovers (for example "~ip" / "~ip-*.dist-info")
+# before invoking pip again. These are the yellow warnings visible after an interrupted
+# Windows pip upgrade and are safe to remove only inside this project venv.
+$SitePackages = & $VenvPython -c "import site; print(site.getsitepackages()[0])"
+if ($SitePackages -and (Test-Path $SitePackages)) {
+    Get-ChildItem -LiteralPath $SitePackages -Force -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -like "~ip*" } |
+        ForEach-Object {
+            Write-Host ("Removing broken pip leftover: " + $_.Name) -ForegroundColor Yellow
+            Remove-Item -LiteralPath $_.FullName -Recurse -Force -ErrorAction SilentlyContinue
+        }
+}
+
 Write-Host "Installing AURA backend, dev checks, distributed fleet and MT5 bridge..."
 & $VenvPython -m pip install --disable-pip-version-check --upgrade pip
 & $VenvPython -m pip install --disable-pip-version-check -e ".[dev,distributed,mt5]"
@@ -86,8 +99,48 @@ Write-Host "Running AURA repository verification..."
 if ($LASTEXITCODE -ne 0) { throw "pip check failed." }
 & $VenvPython -m ruff check aura tests examples
 if ($LASTEXITCODE -ne 0) { throw "Ruff failed." }
-& $VenvPython -m pytest -q
-if ($LASTEXITCODE -ne 0) { throw "AURA tests failed." }
+
+# Unit tests must not inherit real/local AI provider configuration from .env.local.
+# Otherwise pytest can accidentally call Ollama/OpenAI and time out or become
+# non-deterministic. Save the values, clear them for verification, then restore.
+$TestEnvNames = @(
+    "AURA_FREE_AI_PRESET",
+    "AURA_OLLAMA_MODELS",
+    "AURA_OLLAMA_URL",
+    "AURA_AI_ROLES",
+    "AURA_AI_OPINIONS_PER_ROLE",
+    "AURA_AI_AGENT_TIMEOUT_SECONDS",
+    "AURA_MAINTENANCE_AI_PROVIDER",
+    "AURA_MAINTENANCE_OLLAMA_MODEL",
+    "OPENAI_API_KEY",
+    "AURA_OPENAI_MODELS",
+    "AURA_MAINTENANCE_OPENAI_MODEL"
+)
+$SavedTestEnv = @{}
+foreach ($Name in $TestEnvNames) {
+    $SavedTestEnv[$Name] = [Environment]::GetEnvironmentVariable($Name, "Process")
+    [Environment]::SetEnvironmentVariable($Name, $null, "Process")
+}
+
+$PytestExit = 0
+try {
+    Write-Host "Refreshing generated repository-audit evidence..."
+    & $VenvPython -m aura.ops.repository_audit
+    if ($LASTEXITCODE -ne 0) { throw "Repository audit regeneration failed." }
+
+    & $VenvPython -m aura.ops.repository_audit --check
+    if ($LASTEXITCODE -ne 0) { throw "Repository audit verification failed." }
+
+    Write-Host "Running hermetic AURA test suite..."
+    & $VenvPython -m pytest -q
+    $PytestExit = $LASTEXITCODE
+} finally {
+    foreach ($Name in $TestEnvNames) {
+        [Environment]::SetEnvironmentVariable($Name, $SavedTestEnv[$Name], "Process")
+    }
+}
+if ($PytestExit -ne 0) { throw "AURA tests failed." }
+
 & $VenvPython -m build
 if ($LASTEXITCODE -ne 0) { throw "Python distribution build failed." }
 

@@ -8,13 +8,16 @@ See `docs/PRODUCTION_READINESS.md` for deployment and release procedures and `do
 
 ## Final Windows production setup — recommended
 
-For the complete distributed paper/demo stack, use the canonical five-file workflow:
+For the complete distributed paper/demo stack, use the canonical workflow:
 
 1. `FINAL_SETUP_AURA.cmd`
-2. `CONFIGURE_AURA.cmd`
-3. Open Docker Desktop + MetaTrader 5 DEMO
-4. `START_AURA_PRODUCTION.cmd`
-5. `AURA_PRODUCTION_DOCTOR.cmd`
+2. Optional unlimited local AI: `INSTALL_FREE_UNLIMITED_AI.cmd`
+3. `CONFIGURE_AURA.cmd`
+4. Open Docker Desktop + MetaTrader 5 DEMO
+5. `START_AURA_PRODUCTION.cmd`
+6. `AURA_PRODUCTION_DOCTOR.cmd`
+
+Local Ollama is the default unmetered AI path. Cloud free tiers remain optional because they publish quotas/rate limits.
 
 Stop everything with `STOP_AURA_PRODUCTION.cmd`.
 

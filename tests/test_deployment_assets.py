@@ -12,7 +12,7 @@ def test_local_openai_secret_files_are_ignored() -> None:
     assert ".env.local" in gitignore
     assert ".env*" in dockerignore
     assert "OPENAI_API_KEY=" in example
-    assert "AURA_FREE_AI_PRESET=balanced5" in example
+    assert "AURA_FREE_AI_PRESET=off" in example
     assert "AURA_OLLAMA_MODELS=" in example
     assert "AURA_OLLAMA_KEEP_ALIVE=0" in example
     assert "AURA_MAINTENANCE_AI_PROVIDER=ollama" in example
