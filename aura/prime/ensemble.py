@@ -103,6 +103,10 @@ class PrimeModelEnsemble:
         flat_score = scores[SignalIntent.FLAT] / total_weight
         directional_margin = abs(long_score - short_score)
         if directional_margin < self.min_directional_margin:
+            conflict_reason = (
+                f"directional margin {directional_margin:.4f} < "
+                f"{self.min_directional_margin:.4f}"
+            )
             return EnsembleDecision(
                 intent=SignalIntent.FLAT,
                 confidence=max(long_score, short_score, flat_score),
@@ -111,10 +115,7 @@ class PrimeModelEnsemble:
                 long_score=long_score,
                 short_score=short_score,
                 flat_score=flat_score,
-                reasons=(
-                    f"directional margin {directional_margin:.4f} "
-                    f"< {self.min_directional_margin:.4f}",
-                ),
+                reasons=(conflict_reason,),
             )
 
         intent = SignalIntent.LONG if long_score > short_score else SignalIntent.SHORT
