@@ -26,7 +26,7 @@ Write-Host "Starting AURA 2 dashboard/backend..."
 if ($LASTEXITCODE -ne 0) { throw "AURA dashboard/backend failed to start." }
 
 Import-AuraEnv -Path $EnvFile
-& $VenvPython -m aura.ops.final_doctor --profile running --root $Root
+& $VenvPython -m aura.ops.final_doctor --profile all-market --root $Root
 if ($LASTEXITCODE -ne 0) { throw "AURA started but final production doctor found a blocking issue." }
 
 Write-Host ""
