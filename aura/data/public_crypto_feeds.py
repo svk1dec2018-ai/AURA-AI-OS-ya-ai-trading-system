@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from abc import ABC, abstractmethod
 import json
 from collections.abc import AsyncIterator
 from datetime import UTC, datetime
@@ -244,7 +245,7 @@ def parse_okx_ticker(
     return tuple(quotes)
 
 
-class _ReconnectingPublicTickerFeed:
+class _ReconnectingPublicTickerFeed(ABC):
     endpoint: ClassVar[str]
 
     def __init__(self, symbols: list[str] | tuple[str, ...]) -> None:
@@ -278,8 +279,10 @@ class _ReconnectingPublicTickerFeed:
                 await asyncio.sleep(backoff)
                 backoff = min(backoff * 2, 30.0)
 
+    @abstractmethod
     async def _stream_connection(self) -> AsyncIterator[QuoteObservation]:
-        raise NotImplementedError
+        """Yield normalized quotes for one provider connection."""
+        ...
 
 
 class CoinbasePublicTickerFeed(_ReconnectingPublicTickerFeed):
