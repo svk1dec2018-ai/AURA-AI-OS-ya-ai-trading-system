@@ -103,6 +103,196 @@ def _mt5_demo_preflight_unlocked(
         gateway.shutdown()
 
 
+DEFAULT_LIVE_SYMBOLS = (
+    "XAUUSD",
+    "EURUSD",
+    "GBPUSD",
+    "USDJPY",
+    "BTCUSD",
+    "USOIL",
+)
+
+
+def mt5_live_terminal_snapshot(
+    symbols: tuple[str, ...] | None = None,
+) -> dict[str, Any]:
+    """Return one batched read-only MT5 DEMO terminal snapshot for the UI.
+
+    The dashboard can render account metrics, positions, pending orders and a
+    market-watch strip before the AURA trading runtime is started.  No order
+    check or order send call is made here.
+    """
+
+    requested = tuple(
+        item.strip()
+        for item in (symbols or DEFAULT_LIVE_SYMBOLS)
+        if isinstance(item, str) and item.strip()
+    )
+    if not requested:
+        requested = DEFAULT_LIVE_SYMBOLS
+    if len(requested) > 20:
+        raise ValueError("live terminal snapshot supports at most 20 symbols")
+    if any(len(item) > 120 for item in requested):
+        raise ValueError("live terminal symbol must contain at most 120 characters")
+
+    with MT5_SESSION_LOCK:
+        gateway = OfficialMT5Gateway()
+        try:
+            account = gateway.connect_current_demo_session()
+            raw_account_info = gateway.account_info()
+            raw_terminal_info = gateway.terminal_info()
+            account_info = _asdict(raw_account_info) if raw_account_info is not None else {}
+            terminal_info = _asdict(raw_terminal_info) if raw_terminal_info is not None else {}
+
+            watchlist: list[dict[str, Any]] = []
+            seen: set[str] = set()
+            for requested_symbol in requested:
+                try:
+                    resolved_symbol, raw_symbol = _resolve_broker_symbol(
+                        gateway,
+                        requested_symbol,
+                    )
+                    if resolved_symbol.casefold() in seen:
+                        continue
+                    seen.add(resolved_symbol.casefold())
+                    gateway.symbol_select(resolved_symbol, True)
+                    tick = gateway.symbol_info_tick(resolved_symbol)
+                    if tick is None:
+                        watchlist.append(
+                            {
+                                "requested_symbol": requested_symbol,
+                                "symbol": resolved_symbol,
+                                "ok": False,
+                                "error": "tick unavailable",
+                            }
+                        )
+                        continue
+                    tick_data = _asdict(tick)
+                    symbol_data = _asdict(raw_symbol)
+                    bid = float(tick_data.get("bid") or 0.0)
+                    ask = float(tick_data.get("ask") or 0.0)
+                    last = float(tick_data.get("last") or 0.0)
+                    mid = last if last > 0 else ((bid + ask) / 2.0 if bid and ask else bid or ask)
+                    point = float(symbol_data.get("point") or 0.0)
+                    spread_points = (
+                        round((ask - bid) / point, 3)
+                        if point > 0 and ask >= bid and bid > 0
+                        else None
+                    )
+                    session_open = float(symbol_data.get("session_price_open") or 0.0)
+                    change_pct = (
+                        round(((mid - session_open) / session_open) * 100.0, 4)
+                        if session_open > 0 and mid > 0
+                        else None
+                    )
+                    watchlist.append(
+                        {
+                            "ok": True,
+                            "requested_symbol": requested_symbol,
+                            "symbol": resolved_symbol,
+                            "description": str(symbol_data.get("description") or ""),
+                            "bid": bid,
+                            "ask": ask,
+                            "last": last,
+                            "mid": mid,
+                            "spread_points": spread_points,
+                            "digits": int(symbol_data.get("digits") or 0),
+                            "point": point,
+                            "change_pct": change_pct,
+                            "time": int(tick_data.get("time") or 0),
+                            "time_msc": int(tick_data.get("time_msc") or 0),
+                        }
+                    )
+                except (RuntimeError, ValueError, TypeError, KeyError, AttributeError) as exc:
+                    watchlist.append(
+                        {
+                            "ok": False,
+                            "requested_symbol": requested_symbol,
+                            "symbol": requested_symbol,
+                            "error": str(exc),
+                        }
+                    )
+
+            raw_positions = gateway.positions_get()
+            raw_orders = gateway.orders_get()
+            positions = []
+            for row in raw_positions or ():
+                data = _asdict(row)
+                position_type = int(data.get("type", -1))
+                side = "BUY" if position_type == 0 else "SELL" if position_type == 1 else "UNKNOWN"
+                positions.append(
+                    {
+                        "ticket": int(data.get("ticket") or 0),
+                        "symbol": str(data.get("symbol") or ""),
+                        "side": side,
+                        "volume": float(data.get("volume") or 0.0),
+                        "price_open": float(data.get("price_open") or 0.0),
+                        "price_current": float(data.get("price_current") or 0.0),
+                        "sl": float(data.get("sl") or 0.0),
+                        "tp": float(data.get("tp") or 0.0),
+                        "profit": float(data.get("profit") or 0.0),
+                        "swap": float(data.get("swap") or 0.0),
+                        "magic": int(data.get("magic") or 0),
+                        "comment": str(data.get("comment") or ""),
+                        "time": int(data.get("time") or 0),
+                    }
+                )
+
+            orders = []
+            for row in raw_orders or ():
+                data = _asdict(row)
+                orders.append(
+                    {
+                        "ticket": int(data.get("ticket") or 0),
+                        "symbol": str(data.get("symbol") or ""),
+                        "type": int(data.get("type", -1)),
+                        "volume_initial": float(data.get("volume_initial") or 0.0),
+                        "volume_current": float(data.get("volume_current") or 0.0),
+                        "price_open": float(data.get("price_open") or 0.0),
+                        "sl": float(data.get("sl") or 0.0),
+                        "tp": float(data.get("tp") or 0.0),
+                        "magic": int(data.get("magic") or 0),
+                        "comment": str(data.get("comment") or ""),
+                        "time_setup": int(data.get("time_setup") or 0),
+                    }
+                )
+
+            return {
+                "ok": True,
+                "mode": "MT5_DEMO_READ_ONLY",
+                "generated_at": datetime.now(UTC).isoformat(),
+                "account": {
+                    **_account_payload(account),
+                    "profit": str(account_info.get("profit", 0)),
+                    "margin_level": (
+                        str(account_info.get("margin_level"))
+                        if account_info.get("margin_level") is not None
+                        else None
+                    ),
+                    "leverage": int(account_info.get("leverage") or 0),
+                    "name": str(account_info.get("name") or ""),
+                },
+                "terminal": {
+                    "connected": bool(terminal_info.get("connected", False)),
+                    "trade_allowed": bool(terminal_info.get("trade_allowed", False)),
+                    "tradeapi_disabled": bool(terminal_info.get("tradeapi_disabled", False)),
+                    "company": str(terminal_info.get("company") or ""),
+                    "name": str(terminal_info.get("name") or ""),
+                },
+                "watchlist": watchlist,
+                "positions": positions,
+                "orders": orders,
+                "position_count": len(positions),
+                "order_count": len(orders),
+                "execution_authority": False,
+                "risk_authority": False,
+                "order_submission_attempted": False,
+                "real_money_enabled": False,
+            }
+        finally:
+            gateway.shutdown()
+
+
 def mt5_demo_execution_check(
     symbol: str,
     *,
