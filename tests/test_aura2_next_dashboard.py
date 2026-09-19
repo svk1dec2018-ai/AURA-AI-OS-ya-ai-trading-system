@@ -223,6 +223,9 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert "Trade Journal" in shell
     assert "Strategy Studio" in shell
     assert "All Features" in shell
+    assert "Distributed Fleet" in shell
+    assert "/api/fleet/status" in shell
+    assert "All-market provider matrix" in shell
     assert "/api/journal" in advanced
     assert "/api/backtest/run" in advanced
     assert "/api/mt5/execution-check" in advanced
