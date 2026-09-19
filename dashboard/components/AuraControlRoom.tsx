@@ -2,9 +2,10 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import MarketChart from "./MarketChart";
+import LiveTradingTerminal from "./LiveTradingTerminal";
 import { CapabilityExplorer, ExecutionPreview, ResearchStudio, TradeJournal } from "./AdvancedTools";
 import { getJson, postJson, tryGetJson } from "../lib/api";
-import type { Decision, JsonMap, Workspace } from "../lib/types";
+import type { Decision, JsonMap, MT5LiveSnapshot, Workspace } from "../lib/types";
 
 type View =
   | "overview" | "markets" | "charts" | "opportunities" | "trading" | "portfolio"
@@ -59,6 +60,8 @@ export default function AuraControlRoom() {
   const [view, setView] = useState<View>("overview");
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [readiness, setReadiness] = useState<JsonMap | null>(null);
+  const [liveMt5, setLiveMt5] = useState<MT5LiveSnapshot | null>(null);
+  const [liveMt5Error, setLiveMt5Error] = useState("");
   const [candidates, setCandidates] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [serviceState, setServiceState] = useState<Record<string, { ok: boolean; detail: string }>>({});
@@ -115,8 +118,40 @@ export default function AuraControlRoom() {
   useEffect(() => {
     setOwnerToken(sessionStorage.getItem("aura-owner-token") || "");
     refresh();
-    const timer = window.setInterval(refresh, 3000);
+    const timer = window.setInterval(refresh, 8000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function refreshLiveMt5() {
+      const result = await tryGetJson<MT5LiveSnapshot>(
+        "/api/mt5/live?symbols=XAUUSD,EURUSD,GBPUSD,USDJPY,BTCUSD,USOIL"
+      );
+      if (!active) return;
+      if (result.ok) {
+        setLiveMt5(result.data);
+        setLiveMt5Error("");
+        setServiceState((current) => ({
+          ...current,
+          mt5: { ok: true, detail: "MT5 DEMO live account + market data" },
+        }));
+      } else {
+        const detail = "error" in result ? result.error : "MT5 live snapshot unavailable";
+        setLiveMt5(null);
+        setLiveMt5Error(detail);
+        setServiceState((current) => ({
+          ...current,
+          mt5: { ok: false, detail },
+        }));
+      }
+    }
+    refreshLiveMt5();
+    const timer = window.setInterval(refreshLiveMt5, 1500);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, []);
 
   const runtime = workspace?.runtime || {};
@@ -128,7 +163,7 @@ export default function AuraControlRoom() {
   const intelligence = workspace?.intelligence?.items || [];
   const learning = workspace?.learning || {};
   const capabilityItems = workspace?.capabilities?.items || [];
-  const currency = baseline.currency || "";
+  const currency = liveMt5?.account?.currency || baseline.currency || "";
   const mtf = brain.aura2_mtf?.latest || {};
   const firstMtf = Object.values(mtf)[0] as JsonMap | undefined;
 
@@ -213,8 +248,8 @@ export default function AuraControlRoom() {
             <h1>{pageName}</h1>
           </div>
           <div className="top-actions">
-            <span className={readiness?.mt5_runtime_ready ? "chip good" : "chip"}>
-              MT5 {readiness?.mt5_runtime_ready ? "READY" : "WAITING"}
+            <span className={liveMt5?.terminal?.connected ? "chip good" : "chip"}>
+              MT5 {liveMt5?.terminal?.connected ? "LIVE" : "WAITING"}
             </span>
             <span className={runtime.runtime_running ? "chip good" : "chip"}>
               ENGINE {runtime.runtime_running ? "RUNNING" : "STOPPED"}
@@ -233,64 +268,17 @@ export default function AuraControlRoom() {
           ) : null}
 
           {view === "overview" && (
-            <>
-              <section className="hero-panel">
-                <div>
-                  <span className="eyebrow">COGNITIVE MARKET OPERATING SYSTEM</span>
-                  <h2>{decision?.symbol || "Market"} · {decision?.intent || "WAIT"}</h2>
-                  <p>{decision?.thesis || "Start protected MT5 DEMO runtime to populate live CEO decisions and evidence."}</p>
-                  <div className="hero-actions">
-                    <button disabled={actionBusy} className="primary" onClick={() => runtimeAction("/api/start", { max_symbols: 25, max_batches: 0 })}>Start AURA DEMO</button>
-                    <button disabled={actionBusy} onClick={() => runtimeAction("/api/stop")}>Stop</button>
-                    <button disabled={actionBusy} className="danger" onClick={() => runtimeAction("/api/kill", { reason: "Emergency lock from AURA 2 dashboard" })}>Emergency Lock</button>
-                  </div>
-                </div>
-                <div className="verdict">
-                  <small>CEO CONFIDENCE</small>
-                  <strong>{pct(decision?.confidence)}</strong>
-                  <span>{decision?.intent || "NO DECISION"}</span>
-                  <div className="meter"><i style={{ width: Math.min(100, num(decision?.confidence) * 100) + "%" }} /></div>
-                </div>
-              </section>
-
-              <section className="metrics">
-                <Metric label="Equity" value={money(stats.equity, currency)} sub="Broker / portfolio state" />
-                <Metric label="P&L" value={money(stats.pnl, currency)} sub="Current governed runtime" />
-                <Metric label="Drawdown" value={pct(stats.drawdown)} sub="RiskEngine monitored" />
-                <Metric label="Opportunities" value={String(stats.opportunities)} sub="Latest scanner evidence" />
-                <Metric label="Orders / Fills" value={String(stats.orders) + " / " + String(stats.fills)} sub="Protected DEMO" />
-                <Metric label="Regime" value={firstMtf?.regime || brain.regime || "—"} sub="AURA2 multi-timeframe" />
-              </section>
-
-              <section className="grid two">
-                <Panel title="Live market workspace" badge="MT5">
-                  <MarketChart />
-                </Panel>
-                <Panel title="AURA2 MTF consensus" badge="M1 → D1">
-                  <div className="mtf-stack">
-                    <KeyValue label="Direction" value={firstMtf?.direction || "—"} />
-                    <KeyValue label="Agreement" value={pct(firstMtf?.agreement)} />
-                    <KeyValue label="Confidence" value={pct(firstMtf?.confidence)} />
-                    <KeyValue label="Execution alignment" value={pct(firstMtf?.execution_alignment)} />
-                    <KeyValue label="HTF alignment" value={pct(firstMtf?.higher_timeframe_alignment)} />
-                    <KeyValue label="Frames" value={(firstMtf?.timeframes || []).join(" · ") || "warming up"} />
-                  </div>
-                  <div className="safety-note">MTF is advisory evidence. RiskEngine remains final financial authority.</div>
-                </Panel>
-              </section>
-
-              <section className="grid three">
-                <Panel title="AI Council" badge="Agents">
-                  <AgentEvidence decision={decision} />
-                </Panel>
-                <Panel title="Risk authority" badge="Hard gate">
-                  <ReadinessList readiness={readiness} limit={6} />
-                </Panel>
-                <Panel title="Learning engine" badge="Champion / Challenger">
-                  <LearningCard learning={learning} />
-                </Panel>
-              </section>
-            </>
+            <LiveTradingTerminal
+              live={liveMt5}
+              liveError={liveMt5Error}
+              decision={decision}
+              runtime={runtime}
+              readiness={readiness}
+              busy={actionBusy}
+              onStart={() => runtimeAction("/api/start", { max_symbols: 25, max_batches: 0 })}
+              onStop={() => runtimeAction("/api/stop")}
+              onKill={() => runtimeAction("/api/kill", { reason: "Emergency lock from AURA 2 live terminal" })}
+            />
           )}
 
           {view === "charts" && <Panel title="Professional MT5 chart" badge="Live quote + closed candles"><MarketChart /></Panel>}
@@ -355,11 +343,12 @@ export default function AuraControlRoom() {
 
           {view === "portfolio" && (
             <section className="metrics">
-              <Metric label="Equity" value={money(stats.equity, currency)} sub="Source of truth" />
-              <Metric label="Realized P&L" value={money(status.realized_pnl, currency)} sub="Ledger" />
-              <Metric label="Unrealized P&L" value={money(status.unrealized_pnl, currency)} sub="Marked positions" />
+              <Metric label="Balance" value={money(liveMt5?.account?.balance ?? baseline.starting_balance, currency)} sub="Direct MT5 account" />
+              <Metric label="Equity" value={money(liveMt5?.account?.equity ?? stats.equity, currency)} sub="Direct MT5 account" />
+              <Metric label="Floating P&L" value={money(liveMt5?.account?.profit, currency)} sub="Direct MT5 positions" />
               <Metric label="Gross exposure" value={money(status.gross_exposure, currency)} sub="Risk-aware" />
-              <Metric label="Fills" value={String(stats.fills)} sub="Broker journal" />
+              <Metric label="Open Positions" value={String(liveMt5?.position_count ?? 0)} sub="Direct MT5 account" />
+              <Metric label="Pending Orders" value={String(liveMt5?.order_count ?? 0)} sub="Direct MT5 account" />
               <Metric label="Currency" value={currency || "—"} sub="Account" />
             </section>
           )}
