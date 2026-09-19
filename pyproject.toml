@@ -21,6 +21,7 @@ aura-free-ai = "aura.ai.free_ai_cli:main"
 aura-maintenance = "aura.maintenance.cli:main"
 aura2-doctor = "aura.aura2.cli:main"
 aura2-intake = "aura.aura2.intake_cli:main"
+aura-fleet = "aura.fleet.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -31,6 +32,9 @@ dev = [
 ]
 mt5 = [
   "MetaTrader5>=5.0.45; platform_system == 'Windows'",
+]
+distributed = [
+  "redis>=5,<7",
 ]
 
 [tool.setuptools.packages.find]
