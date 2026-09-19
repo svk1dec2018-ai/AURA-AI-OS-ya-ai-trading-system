@@ -143,7 +143,7 @@ export default function PrimeControlRoom() {
         setLiveError("");
       } else {
         setLive(null);
-        setLiveError(result.error);
+        setLiveError("error" in result ? result.error : "MT5 live snapshot unavailable");
       }
     }
     refreshLive();
