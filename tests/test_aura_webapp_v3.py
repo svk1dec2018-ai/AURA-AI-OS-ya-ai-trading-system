@@ -246,6 +246,7 @@ def test_distribution_exposes_owner_and_mt5_demo_entrypoints() -> None:
     text = (root / "pyproject.toml").read_text(encoding="utf-8")
     assert 'aura-owner-app = "aura.webapp.server_v3:main"' in text
     assert 'aura-mt5-demo = "aura.ops.mt5_autonomous_demo:main"' in text
+    assert 'aura-fleet = "aura.fleet.cli:main"' in text
 
 
 def test_v3_diagnostics_survives_mt5_failure(tmp_path: Path, monkeypatch) -> None:
