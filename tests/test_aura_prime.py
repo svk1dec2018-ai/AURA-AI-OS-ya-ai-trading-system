@@ -146,3 +146,27 @@ def test_trade_memory_fails_with_clear_message_without_optional_dependency(
         assert "analytics optional dependency" in str(exc)
     else:
         memory.close()
+
+
+def test_trade_memory_roundtrip_when_duckdb_is_installed(tmp_path: Path) -> None:
+    pytest.importorskip("duckdb")
+    memory = PrimeTradeMemory(tmp_path / "events.duckdb")
+    now = datetime(2026, 9, 19, 12, 0, tzinfo=UTC)
+    event = PrimeEvent(
+        event_id="prime-event-1",
+        correlation_id="corr-1",
+        kind=PrimeEventKind.MARKET,
+        source="test",
+        market="FOREX",
+        symbol="XAUUSD",
+        observed_at=now,
+        received_at=now,
+        payload={"price": 2600.0},
+    )
+    memory.append(event)
+    memory.append(event)
+    assert memory.count() == 1
+    recent = memory.recent(limit=10)
+    assert recent[0]["event_id"] == "prime-event-1"
+    assert recent[0]["payload"]["price"] == 2600.0
+    memory.close()
