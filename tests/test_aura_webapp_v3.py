@@ -262,3 +262,25 @@ def test_v3_diagnostics_survives_mt5_failure(tmp_path: Path, monkeypatch) -> Non
     assert payload["mt5"]["connected"] is False
     assert "terminal disconnected" in payload["mt5"]["error"]
     assert payload["real_money_enabled"] is False
+
+
+def test_v3_live_terminal_delegates_to_batched_read_only_snapshot(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        server_v3,
+        "mt5_live_terminal_snapshot",
+        lambda symbols: {
+            "ok": True,
+            "watchlist": [{"symbol": "XAUUSD"}],
+            "positions": [],
+            "orders": [],
+            "execution_authority": False,
+        },
+    )
+    controller = server_v3.AuraWebControllerV3(state_dir=tmp_path / "state")
+    payload = controller.live_terminal(symbols=("XAUUSD",))
+    assert payload["ok"] is True
+    assert payload["watchlist"][0]["symbol"] == "XAUUSD"
+    assert payload["execution_authority"] is False
