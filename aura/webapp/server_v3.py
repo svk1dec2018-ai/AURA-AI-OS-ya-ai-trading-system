@@ -242,7 +242,12 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             os.environ.get("AURA_REDIS_URL", "redis://127.0.0.1:6379/0")
         )
         try:
-            if not reader.ping():
+            try:
+                redis_ready = reader.ping()
+            except (OSError, RuntimeError, ValueError, TypeError) as exc:
+                self._json({"ok": False, "error": "Fleet Redis unavailable: " + str(exc)}, 503)
+                return
+            if not redis_ready:
                 self._json({"ok": False, "error": "Redis ping failed"}, 503)
                 return
             self.send_response(200)
