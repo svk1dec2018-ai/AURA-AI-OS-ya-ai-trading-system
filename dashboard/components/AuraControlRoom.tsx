@@ -65,6 +65,8 @@ export default function AuraControlRoom() {
   const [liveMt5Error, setLiveMt5Error] = useState("");
   const [candidates, setCandidates] = useState<any[]>([]);
   const [fleet, setFleet] = useState<JsonMap | null>(null);
+  const [fleetEvents, setFleetEvents] = useState<JsonMap[]>([]);
+  const [fleetStreamState, setFleetStreamState] = useState("OFFLINE");
   const [error, setError] = useState("");
   const [serviceState, setServiceState] = useState<Record<string, { ok: boolean; detail: string }>>({});
   const [jarvisOpen, setJarvisOpen] = useState(false);
@@ -157,6 +159,27 @@ export default function AuraControlRoom() {
       window.clearInterval(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (view !== "fleet") return;
+    const source = new EventSource("/api/fleet/events");
+    setFleetStreamState("CONNECTING");
+    source.onopen = () => setFleetStreamState("LIVE");
+    source.onmessage = (message) => {
+      try {
+        const payload = JSON.parse(message.data);
+        if (payload?.error) {
+          setFleetStreamState("ERROR");
+          return;
+        }
+        setFleetEvents((items) => [payload, ...items].slice(0, 80));
+      } catch {
+        setFleetStreamState("ERROR");
+      }
+    };
+    source.onerror = () => setFleetStreamState("OFFLINE");
+    return () => source.close();
+  }, [view]);
 
   const runtime = workspace?.runtime || {};
   const status = runtime.status || {};
@@ -450,6 +473,26 @@ export default function AuraControlRoom() {
                       </footer>
                     </article>
                   ))}
+                </div>
+              </Panel>
+              <Panel title="Live fleet event stream" badge={fleetStreamState}>
+                <div className="fleet-event-feed">
+                  {fleetEvents.length ? fleetEvents.map((item: any, index) => (
+                    <article key={(item.record_id || "event") + index}>
+                      <header>
+                        <b>{item.stream || "fleet"}</b>
+                        <span>{item.event?.source || "unknown"}</span>
+                      </header>
+                      <p>{item.event?.kind || "event"} · {item.event?.occurred_at || ""}</p>
+                      <code>{JSON.stringify(item.event?.payload || {})}</code>
+                    </article>
+                  )) : (
+                    <div className="empty">
+                      {fleetStreamState === "LIVE"
+                        ? "Waiting for Redis fleet events..."
+                        : "Start Redis + AURA Fleet to receive live service events."}
+                    </div>
+                  )}
                 </div>
               </Panel>
               <Panel title="All-market provider matrix" badge="Credential-safe">
