@@ -1,5 +1,7 @@
 # AURA AI OS
 
+[![CI](https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system/actions/workflows/ci.yml/badge.svg)](https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system/actions/workflows/ci.yml) [![CodeQL](https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system/actions/workflows/codeql.yml/badge.svg)](https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system/actions/workflows/codeql.yml)
+
 AURA AI OS is a broker-agnostic, multi-market AI trading operating system. It combines deterministic financial controls, concurrent specialist agents, optional multiple AI models, strategy research/evolution, causal testing, paper/demo execution, durable accounting and fail-closed production governance in one system.
 
 > **Current release class:** production-deployable **paper/demo research service candidate**. Real-money production remains intentionally gated by broker-origin forward evidence, immutable strategy approval and explicit human authorization.
@@ -445,18 +447,25 @@ Even a passing release manifest is insufficient without the existing human strat
 Normal CI validates:
 
 - Python 3.11 and 3.12
-- dependency consistency
-- compile smoke
-- Ruff
-- full pytest suite
+- dependency consistency and compile smoke
+- governance evidence regeneration/drift checks
+- Ruff and full pytest suite
 - production public-paper preflight
 - Python distribution build
+- Next.js typecheck and production build
+- real Linux runtime smoke: Redis + nine-service fleet + backend + Next production proxy
+- fail-closed MT5 route behavior when no Windows terminal exists
+- Windows MetaTrader5 package import
+- PowerShell launcher syntax/environment-loader smoke
+- Windows backend process boot
 - Docker production image build
 
 CodeQL scans Python on push/PR and weekly. Dependabot monitors pip and GitHub Actions dependencies.
 
 ## Documentation
 
+- `docs/REPOSITORY_GUIDE.md` — canonical launchers, source layout and runtime ports
+- `docs/DASHBOARD_DESIGN_RESEARCH_2026-09-19.md` — dashboard UX research and license boundaries
 - `docs/PRODUCTION_READINESS.md` — deployment, canary and release runbook
 - `docs/IMPLEMENTATION_STATUS.md` — current implemented/remaining status
 - `docs/MULTI_AGENT_CONSTITUTION.md` — permanent AI/authority contract
