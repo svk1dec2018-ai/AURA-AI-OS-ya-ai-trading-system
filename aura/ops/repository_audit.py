@@ -34,6 +34,7 @@ _PHASE_BY_PACKAGE = {
     "domain": 1,
     "evolution": 7,
     "execution": 4,
+    "fleet": 12,
     "forecast": 7,
     "interface": 13,
     "knowledge": 8,
