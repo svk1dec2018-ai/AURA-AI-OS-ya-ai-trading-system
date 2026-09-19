@@ -214,3 +214,20 @@ button:disabled{opacity:.5;cursor:not-allowed}
   .terminal-right{grid-template-columns:1fr}
   .terminal-chart-card .live-chart{height:390px}
 }
+
+.fleet-service-grid,.provider-matrix{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fleet-service-card,.provider-matrix article{border:1px solid rgba(148,163,184,.10);background:#08131f;padding:10px}
+.fleet-service-card header,.provider-matrix article header{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.fleet-service-card small,.provider-matrix small{display:block;color:#61758b;font-size:6.5px;text-transform:uppercase;letter-spacing:.09em}
+.fleet-service-card b,.provider-matrix b{display:block;font-size:8.5px;margin-top:2px}
+.fleet-service-card header>span{font-size:7px;color:#687f97}
+.fleet-service-card p,.provider-matrix p{margin:7px 0 0;color:#74889e;font-size:6.9px;line-height:1.45;overflow-wrap:anywhere}
+.authority{margin-top:8px;padding-top:7px;border-top:1px solid rgba(148,163,184,.07);font-size:6.2px;color:#5f758c;font-weight:900;letter-spacing:.06em}
+.authority.financial{color:#e8b45f}
+.provider-matrix article header>span{font-size:6.2px;font-weight:900;border:1px solid #24364a;padding:4px 6px}
+.provider-matrix article header>span.configured{color:var(--green);border-color:rgba(43,214,156,.22)}
+.provider-matrix article header>span.gated{color:#d2a55d;border-color:rgba(210,165,93,.22)}
+.provider-flags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.provider-flags span{font-size:6.3px;color:#8396aa;border:1px solid rgba(148,163,184,.09);padding:4px 6px}
+.provider-matrix code{display:block;margin-top:8px;font-size:6.2px;color:#657d95;overflow-wrap:anywhere}
+@media(max-width:780px){.fleet-service-grid,.provider-matrix{grid-template-columns:1fr}}
