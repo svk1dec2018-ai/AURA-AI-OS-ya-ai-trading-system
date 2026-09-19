@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from decimal import Decimal
-from threading import RLock
 from typing import Any
 
 from aura.data.mt5_demo import OfficialMT5Gateway
+from aura.data.mt5_session import MT5_SESSION_LOCK
 from aura.domain.models import Side
 from aura.execution.mt5_protected_demo import (
     ProtectedMT5DemoBroker,
@@ -13,14 +13,11 @@ from aura.execution.mt5_protected_demo import (
     _protected_prices,
 )
 
-_MT5_WEB_LOCK = RLock()
-
-
 def mt5_demo_preflight(*, max_symbols: int = 200, query: str = "") -> dict[str, Any]:
     # The MetaTrader5 Python bridge is process-global. Serialize complete
     # connect/use/shutdown sessions so concurrent web requests cannot shut down
     # each other's terminal connection.
-    with _MT5_WEB_LOCK:
+    with MT5_SESSION_LOCK:
         return _mt5_demo_preflight_unlocked(max_symbols=max_symbols, query=query)
 
 
