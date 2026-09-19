@@ -71,18 +71,19 @@ class FleetProcessSupervisor:
                 continue
 
             code = managed.process.poll()
-            if code is not None and not self._stopping:
-                if (
-                    service.restartable
-                    and managed.restart_count < self.max_restarts
-                ):
-                    restart_count = managed.restart_count + 1
-                    managed.log_handle.close()
-                    if self.restart_delay_seconds:
-                        time.sleep(self.restart_delay_seconds)
-                    managed = self._spawn(service, restart_count=restart_count)
-                    self._processes[service.service_id] = managed
-                    code = None
+            if (
+                code is not None
+                and not self._stopping
+                and service.restartable
+                and managed.restart_count < self.max_restarts
+            ):
+                restart_count = managed.restart_count + 1
+                managed.log_handle.close()
+                if self.restart_delay_seconds:
+                    time.sleep(self.restart_delay_seconds)
+                managed = self._spawn(service, restart_count=restart_count)
+                self._processes[service.service_id] = managed
+                code = None
 
             snapshots.append(
                 {
