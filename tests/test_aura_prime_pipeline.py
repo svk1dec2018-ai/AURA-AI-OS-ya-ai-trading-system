@@ -6,7 +6,7 @@ from aura.fleet.bus import InMemoryEventBus
 from aura.fleet.events import FleetEvent, FleetEventKind
 from aura.fleet.manifest import AURA_FLEET, ServiceRole
 from aura.prime.features import extract_candle_features
-from aura.prime.ml_linear import LinearProbabilityArtifact
+from aura.prime.ml_linear import LinearProbabilityArtifact, SklearnLogisticTrainer
 from aura.prime.service_handlers import (
     FeatureRoleHandler,
     LinearModelRoleHandler,
@@ -123,3 +123,27 @@ def test_unconfigured_ml_and_financial_roles_report_not_business_ready() -> None
         await bus.close()
 
     asyncio.run(scenario())
+
+
+def test_sklearn_logistic_trainer_exports_portable_artifact() -> None:
+    import pytest
+
+    pytest.importorskip("sklearn")
+    rows = [
+        {"momentum": float(index - 20) / 20.0, "volatility": 0.1 + index / 1000.0}
+        for index in range(40)
+    ]
+    labels = [0 if index < 20 else 1 for index in range(40)]
+    artifact = SklearnLogisticTrainer().fit(
+        rows,
+        labels,
+        model_key="prime-logistic",
+        version="synthetic-v1",
+        training_data_fingerprint="b" * 64,
+        reliability=0.7,
+        calibration=0.7,
+    )
+    assert artifact.feature_names == ("momentum", "volatility")
+    assert len(artifact.coefficients) == 2
+    assert artifact.probability({"momentum": 0.9, "volatility": 0.13}) > 0.5
+    assert artifact.probability({"momentum": -0.9, "volatility": 0.11}) < 0.5
