@@ -8,6 +8,7 @@ from http.server import ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
 from aura.domain.models import Side
+from aura.fleet.status import distributed_fleet_status
 from aura.webapp import server as base
 from aura.webapp.charting import mt5_live_quote
 from aura.webapp.mt5_preflight import (
@@ -154,6 +155,9 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/api/diagnostics":
             self._json(CONTROLLER.diagnostics())
+            return
+        if parsed.path == "/api/fleet/status":
+            self._json(distributed_fleet_status())
             return
         if parsed.path == "/api/mt5/live":
             query = parse_qs(parsed.query)
