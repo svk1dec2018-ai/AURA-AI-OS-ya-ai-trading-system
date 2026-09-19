@@ -262,6 +262,35 @@ def build_report(root: Path, *, profile: str) -> DoctorReport:
             )
         )
 
+        if mt5_module and mt5_ok and platform.system() == "Windows":
+            try:
+                from aura.webapp.mt5_preflight import mt5_demo_preflight
+
+                preflight = mt5_demo_preflight(max_symbols=50)
+                broker_ready = (
+                    preflight.get("ok") is True
+                    and preflight.get("demo_verified") is True
+                    and int(preflight.get("tradable_symbol_count", 0)) > 0
+                    and preflight.get("market_clock_ok") is True
+                )
+                broker_detail = (
+                    "MT5 DEMO broker preflight verified with tradable symbols and safe market clock"
+                    if broker_ready
+                    else "MT5 DEMO broker preflight failed: "
+                    + str(preflight.get("error") or "account/market clock not ready")
+                )
+            except (OSError, RuntimeError, ValueError, TypeError, KeyError, AttributeError) as exc:
+                broker_ready = False
+                broker_detail = "MT5 DEMO broker preflight error: " + str(exc)
+            checks.append(
+                DoctorCheck(
+                    "mt5-demo-broker-preflight",
+                    broker_ready,
+                    True,
+                    broker_detail,
+                )
+            )
+
     if profile == "all-market":
         configured = tuple(
             key
