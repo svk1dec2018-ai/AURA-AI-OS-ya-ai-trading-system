@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import importlib
 import json
 import os
 
@@ -10,20 +11,32 @@ from .status import distributed_fleet_status
 
 
 async def _redis_check(url: str) -> dict[str, object]:
+    try:
+        redis_exceptions = importlib.import_module("redis.exceptions")
+    except ModuleNotFoundError as exc:
+        return {
+            "configured": False,
+            "reachable": False,
+            "error": f"ModuleNotFoundError: {exc}",
+        }
+
     bus = RedisStreamsEventBus(url)
+    error_types = (
+        OSError,
+        TimeoutError,
+        ConnectionError,
+        redis_exceptions.RedisError,
+    )
     try:
         return {"configured": True, "reachable": await bus.ping(), "error": None}
-    except Exception as exc:
+    except error_types as exc:
         return {
             "configured": True,
             "reachable": False,
             "error": f"{type(exc).__name__}: {exc}",
         }
     finally:
-        try:
-            await bus.close()
-        except Exception:
-            pass
+        await bus.close()
 
 
 def _parser() -> argparse.ArgumentParser:
