@@ -113,8 +113,7 @@ def test_cloud_provider_keys_are_not_reused_from_openai(
     monkeypatch.setenv(model_env, model)
     monkeypatch.delenv(key_env, raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "wrong-provider-key")
-    with pytest.raises(ValueError, match=key_env):
-        builder()
+    assert builder() == ()
 
 
 def test_optional_cloud_providers_are_disabled_when_model_lists_blank(monkeypatch) -> None:
@@ -124,6 +123,17 @@ def test_optional_cloud_providers_are_disabled_when_model_lists_blank(monkeypatc
         "AURA_GEMINI_MODELS",
     ):
         monkeypatch.setenv(name, "")
+    assert build_groq_providers_from_env() == ()
+    assert build_openrouter_providers_from_env() == ()
+    assert build_gemini_providers_from_env() == ()
+
+
+def test_default_model_lists_do_not_require_every_optional_key(monkeypatch) -> None:
+    monkeypatch.setenv("AURA_GROQ_MODELS", "openai/gpt-oss-20b")
+    monkeypatch.setenv("AURA_OPENROUTER_MODELS", "openrouter/free")
+    monkeypatch.setenv("AURA_GEMINI_MODELS", "gemini-3.8-flash")
+    for key in ("GROQ_API_KEY", "OPENROUTER_API_KEY", "GEMINI_API_KEY"):
+        monkeypatch.delenv(key, raising=False)
     assert build_groq_providers_from_env() == ()
     assert build_openrouter_providers_from_env() == ()
     assert build_gemini_providers_from_env() == ()
