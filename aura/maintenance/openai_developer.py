@@ -19,6 +19,9 @@ from aura.maintenance.models import (
     SystemObservation,
 )
 
+from aura.prime.developer_mandate import PRIME_DEVELOPER_MANDATE
+
+
 _SECRET_PATTERNS = (
     re.compile(r"\bsk-[A-Za-z0-9_-]{12,}\b"),
     re.compile(
@@ -102,15 +105,10 @@ class AIMaintenanceDeveloper:
         )
         response = await self.client.structured(
             system_prompt=(
-                "You are AURA's maintenance developer AI. Diagnose only the supplied "
-                "observation and source excerpts. Produce a minimal unified Git diff. "
-                "Modify only existing non-test source files; test and governance files are "
-                "host-controlled and immutable to this automated path. "
-                "Never request or expose secrets; never add deposit, withdrawal, fund-transfer, "
-                "risk-bypass, direct historical fill/trade/P&L rewrite, self-approval, direct "
-                "deployment, broker-order, or arbitrary shell capabilities. Preserve AURA's "
-                "risk engine and append-only accounting. Every patch requires sandbox tests and "
-                "owner approval. Emit only the strict schema."
+                PRIME_DEVELOPER_MANDATE
+                + "\n\nAutomated-path constraints: modify only existing non-test source "
+                "files; test and governance files are host-controlled and immutable to this "
+                "path. Emit only the strict requested schema."
             ),
             user_payload={
                 "observation": _sanitized_observation(observation),
