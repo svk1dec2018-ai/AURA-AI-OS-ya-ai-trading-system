@@ -37,7 +37,7 @@ function Ensure-PrimeExtras {
 
 function Invoke-PrimeDoctor {
     Import-AuraEnv -Path $EnvFile
-    & $VenvPython -m aura.ops.final_doctor --profile all-market --root $Root
+    & $VenvPython -m aura.ops.final_doctor --profile prime-local --root $Root
     $DoctorExit = $LASTEXITCODE
     & $VenvPython -m aura.prime.status
     $PrimeExit = $LASTEXITCODE
@@ -83,7 +83,16 @@ if ($Action -eq "Start") {
     if ($env:AURA_LIVE_TRADING_ENABLED -eq "I_UNDERSTAND_AND_APPROVE_LIVE_RISK") {
         throw "AURA Prime default start is paper/DEMO-safe. Clear live-risk acknowledgement first."
     }
-    Invoke-AuraScript "start_aura_production.ps1"
+    Write-Host "Starting AURA Prime local control plane..."
+    Invoke-AuraScript "start_aura2_dashboard.ps1"
+
+    if ($env:AURA_PRIME_DISTRIBUTED -eq "1") {
+        Write-Host "Distributed mode requested; starting Redis fleet..."
+        Invoke-AuraScript "start_aura_fleet.ps1"
+    } else {
+        Write-Host "Distributed Redis fleet: optional/off" -ForegroundColor DarkGray
+    }
+
     Invoke-PrimeDoctor
     Write-Host "AURA PRIME READY: http://127.0.0.1:3100" -ForegroundColor Green
     exit 0
@@ -106,7 +115,9 @@ if ($Action -eq "Configure") {
 }
 
 if ($Action -eq "Stop") {
-    Invoke-AuraScript "stop_aura_production.ps1"
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "stop_aura_fleet.ps1")
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "stop_aura2_dashboard.ps1")
+    Write-Host "AURA Prime stopped. MetaTrader 5 was left open." -ForegroundColor Green
     exit 0
 }
 
