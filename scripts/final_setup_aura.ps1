@@ -124,10 +124,39 @@ foreach ($Name in $TestEnvNames) {
 
 $PytestExit = 0
 try {
-    Write-Host "Refreshing generated repository-audit evidence..."
-    & $VenvPython -m aura.ops.repository_audit
-    if ($LASTEXITCODE -ne 0) { throw "Repository audit regeneration failed." }
+    Write-Host "Refreshing deterministic governance evidence (same sequence as CI)..."
+    $GovernanceWrites = @(
+        @("aura.ops.repository_audit"),
+        @("aura.ops.core_contracts", "--write"),
+        @("aura.ops.state_engine_gate", "--write"),
+        @("aura.ops.risk_engine_gate", "--write"),
+        @("aura.ops.broker_conformance_gate", "--write"),
+        @("aura.ops.market_data_gate", "--write"),
+        @("aura.ops.backtest_gate", "--write"),
+        @("aura.ops.strategy_research_gate", "--write"),
+        @("aura.ops.knowledge_rag_gate", "--write"),
+        @("aura.ops.multi_agent_gate", "--write"),
+        @("aura.ops.ceo_decision_gate", "--write"),
+        @("aura.ops.broker_evidence_readiness", "--write"),
+        @("aura.ops.paper_trading_gate", "--write"),
+        @("aura.ops.operator_interface_gate", "--write"),
+        @("aura.ops.end_to_end_gate", "--write")
+    )
 
+    foreach ($GateCommand in $GovernanceWrites) {
+        $Module = $GateCommand[0]
+        $GateArgs = @()
+        if ($GateCommand.Count -gt 1) {
+            $GateArgs = $GateCommand[1..($GateCommand.Count - 1)]
+        }
+        Write-Host ("  -> " + $Module + " " + ($GateArgs -join " "))
+        & $VenvPython -m $Module @GateArgs
+        if ($LASTEXITCODE -ne 0) {
+            throw ("Governance evidence regeneration failed: " + $Module)
+        }
+    }
+
+    Write-Host "Verifying regenerated repository-audit evidence..."
     & $VenvPython -m aura.ops.repository_audit --check
     if ($LASTEXITCODE -ne 0) { throw "Repository audit verification failed." }
 

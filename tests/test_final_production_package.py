@@ -66,6 +66,9 @@ def test_final_production_launchers_and_env_loader_exist() -> None:
     assert "AURA_FREE_AI_PRESET" in setup
     assert "Running hermetic AURA test suite" in setup
     assert "aura.ops.repository_audit --check" in setup
+    assert "aura.ops.core_contracts" in setup
+    assert "aura.ops.end_to_end_gate" in setup
+    assert "same sequence as CI" in setup
 
     local_ai = (root / "scripts" / "install_free_unlimited_ai.ps1").read_text(
         encoding="utf-8"
