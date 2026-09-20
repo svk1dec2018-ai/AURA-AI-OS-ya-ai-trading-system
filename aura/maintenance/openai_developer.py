@@ -19,7 +19,6 @@ from aura.maintenance.models import (
     SystemObservation,
 )
 
-
 _SECRET_PATTERNS = (
     re.compile(r"\bsk-[A-Za-z0-9_-]{12,}\b"),
     re.compile(
