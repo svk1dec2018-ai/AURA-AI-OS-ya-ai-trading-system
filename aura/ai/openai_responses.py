@@ -16,8 +16,17 @@ JsonTransport = Callable[
     Awaitable[dict[str, Any]],
 ]
 
-_OFFICIAL_RESPONSES_URL = "https://api.openai.com/v1/responses"
-_MODEL_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,119}$")
+_PROVIDER_RESPONSES_URLS = {
+    "openai": "https://api.openai.com/v1/responses",
+    "groq": "https://api.groq.com/openai/v1/responses",
+    "openrouter": "https://openrouter.ai/api/v1/responses",
+}
+_PROVIDER_KEY_ENVS = {
+    "openai": "OPENAI_API_KEY",
+    "groq": "GROQ_API_KEY",
+    "openrouter": "OPENROUTER_API_KEY",
+}
+_MODEL_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$")
 
 
 class OpenAIResponsesError(RuntimeError):
@@ -49,9 +58,9 @@ class OpenAIResponsesClient:
     """Minimal async Responses API client for strict structured output.
 
     Credentials are accepted only through the process environment (or an explicit
-    constructor argument supplied by the host). The endpoint is intentionally fixed
-    to OpenAI's HTTPS API so an environment change cannot exfiltrate the key to an
-    arbitrary host. AURA never persists the key, request Authorization header, raw
+    constructor argument supplied by the host). Provider endpoints are selected from
+    a hard-coded allowlist (OpenAI, Groq, or OpenRouter), so an environment change cannot
+    redirect credentials to an arbitrary host. AURA never persists the key, request Authorization header, raw
     hidden reasoning, or provider response body.
     """
 
@@ -62,27 +71,34 @@ class OpenAIResponsesClient:
         model_id: str = "gpt-5.4-mini",
         *,
         api_key: str | None = None,
+        provider_id: str = "openai",
         timeout_seconds: float = 90.0,
         transport: JsonTransport | None = None,
         request_limiter: asyncio.Semaphore | None = None,
     ) -> None:
         normalized_model = model_id.strip()
         if _MODEL_ID_PATTERN.fullmatch(normalized_model) is None:
-            raise ValueError("invalid OpenAI model_id")
+            raise ValueError("invalid Responses API model_id")
         if timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be positive")
-        resolved_key = api_key if api_key is not None else os.getenv("OPENAI_API_KEY", "")
+        normalized_provider = provider_id.strip().lower()
+        if normalized_provider not in _PROVIDER_RESPONSES_URLS:
+            raise ValueError("unsupported Responses API provider")
+        key_env = _PROVIDER_KEY_ENVS[normalized_provider]
+        resolved_key = api_key if api_key is not None else os.getenv(key_env, "")
         if not resolved_key.strip():
-            raise ValueError("OPENAI_API_KEY is required for the OpenAI provider")
+            raise ValueError(f"{key_env} is required for the {normalized_provider} provider")
+        self.provider_id = normalized_provider
         self.model_id = normalized_model
         self.timeout_seconds = timeout_seconds
         self._api_key = resolved_key.strip()
         self._transport = transport or _default_json_transport
         self._request_limiter = request_limiter
+        self._responses_url = _PROVIDER_RESPONSES_URLS[normalized_provider]
 
     def __repr__(self) -> str:
         return (
-            f"OpenAIResponsesClient(model_id={self.model_id!r}, "
+            f"OpenAIResponsesClient(provider_id={self.provider_id!r}, model_id={self.model_id!r}, "
             f"timeout_seconds={self.timeout_seconds!r}, api_key=<redacted>)"
         )
 
@@ -120,15 +136,16 @@ class OpenAIResponsesClient:
                     "schema": dict(schema),
                 }
             },
-            "store": False,
         }
+        if self.provider_id == "openai":
+            payload["store"] = False
         headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",
         }
         if self._request_limiter is None:
             response = await self._transport(
-                _OFFICIAL_RESPONSES_URL,
+                self._responses_url,
                 payload,
                 headers,
                 self.timeout_seconds,
@@ -136,7 +153,7 @@ class OpenAIResponsesClient:
         else:
             async with self._request_limiter:
                 response = await self._transport(
-                    _OFFICIAL_RESPONSES_URL,
+                    self._responses_url,
                     payload,
                     headers,
                     self.timeout_seconds,

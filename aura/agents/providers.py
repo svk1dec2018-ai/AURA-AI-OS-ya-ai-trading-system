@@ -46,13 +46,38 @@ class ProviderBackedSpecialist(SpecialistAgent):
         provider: ReasoningProvider,
         role: AgentRole,
         agent_id: str | None = None,
+        fallback_providers: tuple[ReasoningProvider, ...] | list[ReasoningProvider] = (),
     ) -> None:
         self.provider = provider
         self.role = role
+        self.fallback_providers = tuple(
+            item
+            for item in fallback_providers
+            if not (
+                item.provider_id == provider.provider_id
+                and item.model_id == provider.model_id
+            )
+        )
         self.agent_id = agent_id or f"{provider.provider_id}:{provider.model_id}:{role.value}"
 
     async def analyze(self, context: AgentContext) -> AgentEvidence:
-        analysis = await self.provider.analyze(role=self.role, context=context)
+        providers = (self.provider, *self.fallback_providers)
+        failures: list[str] = []
+        selected: ReasoningProvider | None = None
+        analysis: ProviderAnalysis | None = None
+        for candidate in providers:
+            try:
+                analysis = await candidate.analyze(role=self.role, context=context)
+                selected = candidate
+                break
+            except (RuntimeError, TimeoutError, OSError, ValueError) as exc:
+                failures.append(
+                    f"{candidate.provider_id}:{candidate.model_id}:{type(exc).__name__}"
+                )
+        if analysis is None or selected is None:
+            raise RuntimeError(
+                "all configured reasoning providers failed: " + ", ".join(failures)
+            )
         return AgentEvidence(
             agent_id=self.agent_id,
             role=self.role,
@@ -63,8 +88,10 @@ class ProviderBackedSpecialist(SpecialistAgent):
             sources=analysis.sources,
             features={
                 **analysis.features,
-                "provider_id": self.provider.provider_id,
-                "model_id": self.provider.model_id,
+                "provider_id": selected.provider_id,
+                "model_id": selected.model_id,
+                "fallback_attempts": len(failures),
+                "fallback_failures": tuple(failures),
             },
             generated_at=context.candles[-1].close_time,
         )

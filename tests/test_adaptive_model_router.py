@@ -43,6 +43,11 @@ class _Provider(ReasoningProvider):
         )
 
 
+class _FailingProvider(_Provider):
+    async def analyze(self, *, role: AgentRole, context: AgentContext) -> ProviderAnalysis:
+        raise RuntimeError("simulated provider quota failure")
+
+
 def _context(*, correlation_id: str = "route-1") -> AgentContext:
     close_time = datetime(2026, 8, 18, 12, 0, tzinfo=UTC)
     candle = NormalizedCandle(
@@ -246,3 +251,43 @@ async def test_routed_specialist_exposes_selected_model_and_route_audit_features
     assert evidence.features["model_id"] in {"a", "b"}
     assert "router_score" in evidence.features
     assert "router_exploration_bonus" in evidence.features
+
+
+@pytest.mark.asyncio
+async def test_routed_specialist_falls_back_when_top_provider_fails() -> None:
+    tracker = AgentReliabilityTracker(prior_strength=2.0)
+    failing = _FailingProvider("fail-first")
+    backup = _Provider("backup")
+
+    reliable_history = _evidence(
+        agent_id="historical-fail-first",
+        model_id="fail-first",
+        role=AgentRole.TECHNICAL,
+        intent=SignalIntent.LONG,
+    )
+    _record_many(
+        tracker,
+        evidence=reliable_history,
+        correct=True,
+        count=40,
+        prefix="rank-fail-first",
+    )
+
+    router = AdaptiveModelRouter(
+        (failing, backup),
+        tracker,
+        exploration_strength=0.0,
+    )
+    specialist = RoutedProviderBackedSpecialist(
+        router=router,
+        role=AgentRole.TECHNICAL,
+    )
+
+    evidence = await specialist.analyze(_context(correlation_id="fallback-route"))
+
+    assert evidence.features["provider_id"] == "local"
+    assert evidence.features["model_id"] == "backup"
+    assert evidence.features["fallback_attempts"] == 1
+    assert evidence.features["fallback_failures"] == (
+        "local:fail-first:RuntimeError",
+    )
