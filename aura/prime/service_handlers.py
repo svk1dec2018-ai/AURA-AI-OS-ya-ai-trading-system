@@ -41,7 +41,7 @@ class FeatureRoleHandler:
             return
         candles = event.payload.get("candles")
         if not isinstance(candles, list):
-            raise ValueError("market.candle event requires candles list")
+            raise TypeError("market.candle event requires candles list")
         symbol = str(event.symbol or event.payload.get("symbol") or "").strip()
         timeframe = str(event.payload.get("timeframe") or "").strip()
         if not symbol or not timeframe:
@@ -81,7 +81,7 @@ class LinearModelRoleHandler:
             return
         features = event.payload.get("features")
         if not isinstance(features, dict):
-            raise ValueError("features.vector event requires features object")
+            raise TypeError("features.vector event requires features object")
         vote = self.model.vote({str(key): float(value) for key, value in features.items()})
         output = FleetEvent(
             kind=FleetEventKind.ML_VOTE,
