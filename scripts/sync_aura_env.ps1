@@ -1,10 +1,9 @@
-$ErrorActionPreference = "Stop"
-
 param(
     [string]$TemplatePath = ".env.example",
     [string]$LocalPath = ".env.local"
 )
 
+$ErrorActionPreference = "Stop"
 $TemplatePath = (Resolve-Path $TemplatePath).Path
 
 if (-not (Test-Path $LocalPath)) {
