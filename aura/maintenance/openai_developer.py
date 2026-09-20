@@ -18,7 +18,6 @@ from aura.maintenance.models import (
     RepairPlan,
     SystemObservation,
 )
-from aura.prime.developer_mandate import PRIME_DEVELOPER_MANDATE
 
 
 _SECRET_PATTERNS = (
@@ -92,6 +91,8 @@ class AIMaintenanceDeveloper:
         base_commit: str,
         relevant_files: Mapping[str, str],
     ) -> CodeChangeProposal:
+        from aura.prime.developer_mandate import PRIME_DEVELOPER_MANDATE
+
         self.policy.require(AuthorityRole.MAINTENANCE_AI, AuthorityAction.DIAGNOSE_SYSTEM)
         self.policy.require(
             AuthorityRole.MAINTENANCE_AI,
