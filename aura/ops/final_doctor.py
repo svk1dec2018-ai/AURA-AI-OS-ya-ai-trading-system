@@ -217,24 +217,27 @@ def build_report(root: Path, *, profile: str) -> DoctorReport:
                 ),
             )
         )
+    if profile in {"running", "mt5-demo", "all-market", "prime-local"}:
+        backend_ok = _http_ok("http://127.0.0.1:8766/api/health")
+        dashboard_ok = _http_ok("http://127.0.0.1:3100")
         checks.append(
             DoctorCheck(
                 "backend-running",
-                _http_ok("http://127.0.0.1:8766/api/health"),
+                backend_ok,
                 True,
-                "AURA backend healthy" if _http_ok("http://127.0.0.1:8766/api/health") else "AURA backend unavailable",
+                "AURA backend healthy" if backend_ok else "AURA backend unavailable",
             )
         )
         checks.append(
             DoctorCheck(
                 "dashboard-running",
-                _http_ok("http://127.0.0.1:3100"),
+                dashboard_ok,
                 True,
-                "AURA dashboard reachable" if _http_ok("http://127.0.0.1:3100") else "AURA dashboard unavailable",
+                "AURA dashboard reachable" if dashboard_ok else "AURA dashboard unavailable",
             )
         )
 
-    if profile in {"mt5-demo", "all-market"}:
+    if profile in {"mt5-demo", "all-market", "prime-local"}:
         mt5_module = _module_present("MetaTrader5")
         checks.append(
             DoctorCheck(
@@ -291,7 +294,7 @@ def build_report(root: Path, *, profile: str) -> DoctorReport:
                 )
             )
 
-    if profile == "all-market":
+    if profile in {"all-market", "prime-local"}:
         configured = tuple(
             key
             for key, spec in MARKET_PROVIDERS.items()
@@ -342,7 +345,15 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Final AURA production-readiness doctor")
     parser.add_argument(
         "--profile",
-        choices=("repository", "install", "running", "mt5-demo", "all-market", "live"),
+        choices=(
+            "repository",
+            "install",
+            "running",
+            "mt5-demo",
+            "all-market",
+            "prime-local",
+            "live",
+        ),
         default="running",
     )
     parser.add_argument("--root", type=Path, default=Path.cwd())
