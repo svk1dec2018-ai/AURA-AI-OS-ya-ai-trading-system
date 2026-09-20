@@ -92,7 +92,7 @@ def build_gemini_providers_from_env() -> tuple[GeminiReasoningProvider, ...]:
         return ()
     api_key = os.getenv("GEMINI_API_KEY", "")
     if not api_key.strip():
-        raise ValueError("AURA_GEMINI_MODELS requires GEMINI_API_KEY")
+        return ()
     timeout = float(os.getenv("AURA_GEMINI_TIMEOUT_SECONDS", "90"))
     max_concurrency = _positive_int_env("AURA_GEMINI_MAX_CONCURRENCY", default=2)
     limiter = asyncio.Semaphore(max_concurrency)
@@ -130,7 +130,7 @@ def _build_provider_group(
         return ()
     api_key = os.getenv(key_env, "")
     if not api_key.strip():
-        raise ValueError(f"{model_env} requires {key_env}")
+        return ()
     timeout = float(os.getenv(timeout_env, "90"))
     max_concurrency = _positive_int_env(concurrency_env, default=2)
     limiter = asyncio.Semaphore(max_concurrency)
