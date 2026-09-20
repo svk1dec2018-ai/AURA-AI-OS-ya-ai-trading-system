@@ -210,3 +210,59 @@ async def test_broker_rejection_is_journaled_without_stopping_runtime(
     follow_up = await runtime.on_batch([_candle("X", 1, "101", "102")])
     assert follow_up.close_time_iso.endswith("+00:00")
     await runtime.stop()
+
+
+@pytest.mark.asyncio
+async def test_multi_market_allocation_sizes_against_broker_minimum_stop(
+    tmp_path: Path,
+) -> None:
+    risk = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_risk_per_trade_pct=Decimal(1),
+            max_gross_exposure_pct=Decimal(100),
+            max_symbol_exposure_pct=Decimal(100),
+        )
+    )
+    agents = [
+        AlwaysLongAgent("htf", AgentRole.HTF_BIAS),
+        AlwaysLongAgent("technical", AgentRole.TECHNICAL),
+        AlwaysLongAgent("volume", AgentRole.VOLUME_VWAP),
+    ]
+    scanner = MultiMarketIntelligenceScanner(
+        orchestrator=MultiAgentOrchestrator(agents, timeout_seconds=1),
+        ceo=CEOAggregator(min_agents=3, min_distinct_roles=3),
+        data_quality_gate=CandleQualityGate(
+            DataQualityPolicy(
+                expected_interval=timedelta(minutes=1),
+                max_staleness=timedelta(days=36500),
+            )
+        ),
+    )
+    allocator = PortfolioRiskCoordinator(
+        DecisionPipeline(EmaCrossStrategy(fast=2, slow=3), risk),
+        default_protective_stop_bps=Decimal(35),
+    )
+    runtime = MultiMarketPaperCoordinator(
+        scanner=scanner,
+        allocator=allocator,
+        broker=PaperBroker(),
+        ledger=PortfolioLedger(Decimal(10000)),
+        financial_journal=FinancialEventJournal(
+            JsonlWriteAheadLog(tmp_path / "risk-financial.wal", fsync=False)
+        ),
+        agent_audit_journal=AgentAuditJournal(
+            JsonlWriteAheadLog(tmp_path / "risk-agent.wal", fsync=False)
+        ),
+        risk_engine=risk,
+        starting_cash=Decimal(10000),
+        default_requested_quantity=Decimal(1000),
+        metadata_provider=lambda _candle, _history, _decision_time: {
+            "execution_quality": {"broker_min_stop_bps": 100.0}
+        },
+    )
+    await runtime.start()
+    step = await runtime.on_batch([_candle("X", 0, "100", "100")])
+    assert len(step.submitted_orders) == 1
+    assert step.submitted_orders[0].order.quantity == Decimal(100)
+    await runtime.stop()
