@@ -138,12 +138,12 @@ class SklearnLogisticTrainer:
 def load_training_rows(path: Path) -> tuple[list[dict[str, float]], list[int]]:
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, list):
-        raise ValueError("training payload must be a list")
+        raise TypeError("training payload must be a list")
     rows: list[dict[str, float]] = []
     labels: list[int] = []
     for item in payload:
         if not isinstance(item, dict) or not isinstance(item.get("features"), dict):
-            raise ValueError("training item requires features object")
+            raise TypeError("training item requires features object")
         rows.append({str(k): float(v) for k, v in item["features"].items()})
         labels.append(int(item["label"]))
     return rows, labels
