@@ -44,6 +44,32 @@ type PrimeStatus = {
   hard_boundaries: Record<string, boolean>;
 };
 
+type PublicQuoteItem = {
+  provider: string;
+  native_symbol: string;
+  symbol: string;
+  market: string;
+  available: boolean;
+  stale: boolean;
+  age_seconds?: number;
+  last?: number;
+  bid?: number | null;
+  ask?: number | null;
+  observed_at?: string;
+  trust_score?: number;
+};
+
+type PublicQuoteSnapshot = {
+  ok: boolean;
+  mode: string;
+  running: boolean;
+  generated_at: string;
+  items: PublicQuoteItem[];
+  available_count: number;
+  fresh_count: number;
+  execution_authority: boolean;
+};
+
 type FleetStatus = {
   ok?: boolean;
   event_transport?: string;
@@ -100,6 +126,7 @@ export default function PrimeControlRoom() {
   const [fleet, setFleet] = useState<FleetStatus | null>(null);
   const [live, setLive] = useState<MT5LiveSnapshot | null>(null);
   const [liveError, setLiveError] = useState("");
+  const [publicQuotes, setPublicQuotes] = useState<PublicQuoteSnapshot | null>(null);
   const [selectedSymbol, setSelectedSymbol] = useState("XAUUSD");
   const [events, setEvents] = useState<JsonMap[]>([]);
   const [streamState, setStreamState] = useState("OFFLINE");
@@ -142,6 +169,21 @@ export default function PrimeControlRoom() {
     refreshControlPlane();
     const timer = window.setInterval(refreshControlPlane, 5000);
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function refreshPublicQuotes() {
+      const result = await tryGetJson<PublicQuoteSnapshot>("/api/prime/quotes");
+      if (!active) return;
+      if (result.ok) setPublicQuotes(result.data);
+    }
+    refreshPublicQuotes();
+    const timer = window.setInterval(refreshPublicQuotes, 1200);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+    };
   }, []);
 
   useEffect(() => {
@@ -365,6 +407,46 @@ export default function PrimeControlRoom() {
                       </span>
                     </button>
                   )) : <Empty text={liveError || "Waiting for MT5 market watch..."} />}
+                </div>
+              </Panel>
+
+              <Panel
+                title="PUBLIC CRYPTO"
+                badge={
+                  publicQuotes?.running
+                    ? (publicQuotes.fresh_count || 0) + " FRESH"
+                    : "CONNECTING"
+                }
+              >
+                <div className={styles.watchlist}>
+                  {(publicQuotes?.items || []).map((item) => (
+                    <div
+                      key={item.provider + ":" + item.native_symbol}
+                      className={styles.watchRow}
+                    >
+                      <span>
+                        <b>{item.native_symbol}</b>
+                        <small>{item.provider.replace("_PUBLIC", "")}</small>
+                      </span>
+                      <span>
+                        <strong>
+                          {item.available && typeof item.last === "number"
+                            ? item.last.toLocaleString(undefined, { maximumFractionDigits: 6 })
+                            : "—"}
+                        </strong>
+                        <small className={
+                          item.available && !item.stale ? styles.positive : styles.negative
+                        }>
+                          {!item.available
+                            ? "WAIT"
+                            : item.stale
+                              ? "STALE"
+                              : (item.age_seconds?.toFixed(1) || "0.0") + "s"}
+                        </small>
+                      </span>
+                    </div>
+                  ))}
+                  {!publicQuotes ? <Empty text="Starting key-free crypto feeds..." /> : null}
                 </div>
               </Panel>
 
