@@ -6,6 +6,7 @@ from typing import Any
 
 from aura.ops.phase_gates import phase_is_pass, validate_phase_gate_ledger
 
+from .ai_readiness import ai_provider_matrix
 from .providers import provider_matrix
 
 
@@ -46,6 +47,7 @@ def prime_status(repository_root: Path | None = None) -> dict[str, Any]:
         "phase_state": phase_state,
         "optional_capabilities": optional,
         "providers": list(provider_matrix()),
+        "ai_providers": list(ai_provider_matrix()),
         "hard_boundaries": {
             "ai_execution_authority": False,
             "model_execution_authority": False,
