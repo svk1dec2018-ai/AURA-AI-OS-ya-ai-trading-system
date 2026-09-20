@@ -56,7 +56,7 @@ class GeminiOpenAIChatClient:
 
     def __repr__(self) -> str:
         return (
-            f"GeminiOpenAIChatClient(model_id={self.model_id!r}, "
+            f"{type(self).__name__}(model_id={self.model_id!r}, "
             f"timeout_seconds={self.timeout_seconds!r}, api_key=<redacted>)"
         )
 
@@ -207,15 +207,15 @@ def _sync_json_post(
             body = response.read().decode("utf-8")
     except HTTPError as exc:
         raise OpenAIResponsesError(
-            f"Gemini OpenAI-compatible API returned HTTP {exc.code}",
+            f"OpenAI-compatible chat API returned HTTP {exc.code}",
             status_code=exc.code,
         ) from exc
     except URLError as exc:
-        raise OpenAIResponsesError("Gemini OpenAI-compatible API transport failed") from exc
+        raise OpenAIResponsesError("OpenAI-compatible chat API transport failed") from exc
     try:
         decoded = json.loads(body)
     except json.JSONDecodeError as exc:
-        raise OpenAIResponsesError("Gemini OpenAI-compatible API returned invalid JSON") from exc
+        raise OpenAIResponsesError("OpenAI-compatible chat API returned invalid JSON") from exc
     if not isinstance(decoded, dict):
-        raise OpenAIResponsesError("Gemini OpenAI-compatible API returned a non-object payload")
+        raise OpenAIResponsesError("OpenAI-compatible chat API returned a non-object payload")
     return decoded
