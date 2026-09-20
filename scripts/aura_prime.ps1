@@ -98,10 +98,10 @@ if ($Action -eq "Doctor") {
 }
 
 if ($Action -eq "Configure") {
-    if (-not (Test-Path $EnvFile)) {
-        Copy-Item (Join-Path $Root ".env.example") $EnvFile
+    & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "aura_prime_configure.ps1") -EnvPath $EnvFile
+    if ($LASTEXITCODE -ne 0) {
+        throw "AURA Prime credential wizard failed."
     }
-    Start-Process notepad.exe $EnvFile
     exit 0
 }
 
