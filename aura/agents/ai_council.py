@@ -8,6 +8,11 @@ from aura.agents.adaptive_model_router import (
     RoutedProviderBackedSpecialist,
 )
 from aura.agents.base import SpecialistAgent
+from aura.agents.compatible_cloud_providers import (
+    build_gemini_providers_from_env,
+    build_groq_providers_from_env,
+    build_openrouter_providers_from_env,
+)
 from aura.agents.models import AgentRole
 from aura.agents.nvidia_provider import build_nvidia_providers_from_env
 from aura.agents.ollama_provider import build_ollama_providers_from_env
@@ -145,12 +150,15 @@ def build_env_ai_council_from_env(
     *,
     reliability_tracker: AgentReliabilityTracker | None = None,
 ) -> tuple[SpecialistAgent, ...]:
-    """Load local Ollama plus optional OpenAI/NVIDIA models into one advisory council."""
+    """Load local Ollama plus optional OpenAI/NVIDIA/Groq/OpenRouter/Gemini models."""
 
     providers: tuple[ReasoningProvider, ...] = (
         *build_ollama_providers_from_env(),
         *build_openai_providers_from_env(),
         *build_nvidia_providers_from_env(),
+        *build_groq_providers_from_env(),
+        *build_openrouter_providers_from_env(),
+        *build_gemini_providers_from_env(),
     )
     if not providers:
         return ()
