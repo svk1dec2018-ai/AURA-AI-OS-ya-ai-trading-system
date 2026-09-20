@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlparse
 from aura.domain.models import Side
 from aura.fleet.status import distributed_fleet_status
 from aura.fleet.streaming import DEFAULT_SSE_STREAMS, RedisFleetSSE
+from aura.prime.market_hub import PrimePublicQuoteHub
 from aura.prime.status import prime_status
 from aura.webapp import server as base
 from aura.webapp.charting import mt5_live_quote
@@ -146,6 +147,7 @@ class AuraWebControllerV3(base.AuraWebController):
         }
 
 
+PUBLIC_QUOTE_HUB = PrimePublicQuoteHub()
 CONTROLLER = AuraWebControllerV3()
 base.CONTROLLER = CONTROLLER
 atexit.register(CONTROLLER.shutdown)
@@ -164,6 +166,9 @@ class AuraRequestHandlerV3(base.AuraRequestHandler):
             return
         if parsed.path == "/api/prime/status":
             self._json(prime_status())
+            return
+        if parsed.path == "/api/prime/quotes":
+            self._json(PUBLIC_QUOTE_HUB.snapshot())
             return
         if parsed.path == "/api/fleet/events":
             query = parse_qs(parsed.query)
@@ -323,6 +328,7 @@ def main() -> int:
     if args.host not in {"127.0.0.1", "localhost"}:
         raise SystemExit("Remote binding is disabled in the local-first AURA PWA release")
     server = ThreadingHTTPServer(("127.0.0.1", args.port), AuraRequestHandlerV3)
+    PUBLIC_QUOTE_HUB.start_background()
     url = f"http://127.0.0.1:{args.port}"
     print(f"AURA AI OS owner command center: {url}")
     print("Release: AURA AI OS 0.2 / protected MT5 DEMO production candidate")
@@ -372,6 +378,7 @@ def main() -> int:
         pass
     finally:
         recovery_stop.set()
+        PUBLIC_QUOTE_HUB.stop()
         server.server_close()
         CONTROLLER.shutdown()
     return 0
