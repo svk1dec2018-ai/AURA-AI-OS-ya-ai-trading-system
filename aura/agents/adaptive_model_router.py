@@ -173,12 +173,32 @@ class RoutedProviderBackedSpecialist(SpecialistAgent):
         )
 
     async def analyze(self, context: AgentContext) -> AgentEvidence:
-        route = self.router.select(
-            role=self.role,
-            context=context,
-            opinion_slot=self.opinion_slot,
-        )
-        analysis = await route.provider.analyze(role=self.role, context=context)
+        ranked = self.router.rank(role=self.role, context=context)
+        if not ranked:
+            raise RuntimeError("adaptive model router returned no providers")
+
+        start = self.opinion_slot % len(ranked)
+        ordered = (*ranked[start:], *ranked[:start])
+        failures: list[str] = []
+        selected: ModelRouteDecision | None = None
+        analysis = None
+
+        for route in ordered:
+            try:
+                analysis = await route.provider.analyze(role=self.role, context=context)
+                selected = route
+                break
+            except (RuntimeError, TimeoutError, OSError, ValueError) as exc:
+                failures.append(
+                    f"{route.provider.provider_id}:{route.provider.model_id}:"
+                    f"{type(exc).__name__}"
+                )
+
+        if analysis is None or selected is None:
+            raise RuntimeError(
+                "all routed reasoning providers failed: " + ", ".join(failures)
+            )
+
         return AgentEvidence(
             agent_id=self.agent_id,
             role=self.role,
@@ -189,15 +209,17 @@ class RoutedProviderBackedSpecialist(SpecialistAgent):
             sources=analysis.sources,
             features={
                 **analysis.features,
-                "provider_id": route.provider.provider_id,
-                "model_id": route.provider.model_id,
-                "router_market": route.market,
-                "router_regime": route.regime,
-                "router_samples": route.samples,
-                "router_posterior_reliability": route.posterior_reliability,
-                "router_exploration_bonus": route.exploration_bonus,
-                "router_score": route.score,
+                "provider_id": selected.provider.provider_id,
+                "model_id": selected.provider.model_id,
+                "router_market": selected.market,
+                "router_regime": selected.regime,
+                "router_samples": selected.samples,
+                "router_posterior_reliability": selected.posterior_reliability,
+                "router_exploration_bonus": selected.exploration_bonus,
+                "router_score": selected.score,
                 "router_opinion_slot": self.opinion_slot,
+                "fallback_attempts": len(failures),
+                "fallback_failures": tuple(failures),
             },
             generated_at=context.candles[-1].close_time,
         )
