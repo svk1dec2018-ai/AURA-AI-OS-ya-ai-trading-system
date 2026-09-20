@@ -8148,9 +8148,9 @@
     },
     {
       "asset_class": "automation_entrypoint",
-      "bytes": 6648,
+      "bytes": 7887,
       "path": "scripts/final_setup_aura.ps1",
-      "sha256": "de1ac75d5fa467addd4edcc4f86924da1be6f830733345d793f9d5efcfce99d2"
+      "sha256": "6627142cfae32cf04f4a16f6bb84b478944dd96cfa330e21b2fdbaf745372e6e"
     },
     {
       "asset_class": "python",
@@ -8664,9 +8664,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 3326,
+      "bytes": 3461,
       "path": "tests/test_final_production_package.py",
-      "sha256": "838016361f28ec230dbe151498241a42b1393025f9a3ba66656f4ef0cf7d509a"
+      "sha256": "32400fdcd67c158e414352afcbbe76e0a23ec4e51c8609c6d6e6415f18021ddf"
     },
     {
       "asset_class": "python",
@@ -19323,7 +19323,7 @@
       "internal_dependencies": [
         "aura/ops/final_doctor.py"
       ],
-      "lines": 88,
+      "lines": 91,
       "module": "tests.test_final_production_package",
       "parsed": true,
       "path": "tests/test_final_production_package.py",
@@ -19332,7 +19332,7 @@
       ],
       "primary_phase": 15,
       "role": "test",
-      "sha256": "838016361f28ec230dbe151498241a42b1393025f9a3ba66656f4ef0cf7d509a",
+      "sha256": "32400fdcd67c158e414352afcbbe76e0a23ec4e51c8609c6d6e6415f18021ddf",
       "standard_library_dependencies": [
         "pathlib"
       ],
@@ -21924,7 +21924,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "81030d97157d1514aa2ce7cb212f195fa677c02343e3e67373fe8792d21e840f",
+  "repository_tree_sha256": "794778a581c6aac932be4f4a5a4515465345e3ee6c329636e6ffda414d9b4e95",
   "schema_version": 1,
   "scope": {
     "excluded": [
