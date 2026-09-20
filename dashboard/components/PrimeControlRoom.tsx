@@ -21,6 +21,18 @@ type PrimeProvider = {
   notes: string[];
 };
 
+type PrimeAIProvider = {
+  provider_id: string;
+  display_name: string;
+  configured: boolean;
+  free_first: boolean;
+  local: boolean;
+  host?: string;
+  missing_env: string[];
+  execution_authority: boolean;
+  notes: string[];
+};
+
 type PrimeStatus = {
   ok: boolean;
   architecture: string;
@@ -28,6 +40,7 @@ type PrimeStatus = {
   live_money_eligible: boolean;
   optional_capabilities: Record<string, boolean>;
   providers: PrimeProvider[];
+  ai_providers: PrimeAIProvider[];
   hard_boundaries: Record<string, boolean>;
 };
 
@@ -504,6 +517,26 @@ export default function PrimeControlRoom() {
             </Panel>
             <Panel title="MODEL STACK" badge="OPTIONAL / FREE-FIRST">
               <CapabilityGrid values={prime?.optional_capabilities || {}} />
+            </Panel>
+            <Panel title="AI PROVIDERS" badge="NO EXECUTION AUTHORITY">
+              <div className={styles.providerGrid}>
+                {(prime?.ai_providers || []).map((provider) => (
+                  <article key={provider.provider_id}>
+                    <header>
+                      <b>{provider.display_name}</b>
+                      <span>{provider.configured ? "READY" : "CONFIG NEEDED"}</span>
+                    </header>
+                    <p>
+                      {provider.local ? "LOCAL" : "REMOTE"} · {provider.free_first ? "FREE-FIRST" : "OPTIONAL PAID"}
+                      {provider.host ? " · " + provider.host : ""}
+                    </p>
+                    <footer>
+                      <span>{provider.missing_env.length ? provider.missing_env.join(", ") : "NO MISSING ENV"}</span>
+                      <span>ADVISORY ONLY</span>
+                    </footer>
+                  </article>
+                ))}
+              </div>
             </Panel>
             <Panel title="LATEST DECISION TRACE" badge="POINT-IN-TIME">
               <pre className={styles.code}>{JSON.stringify(decision || {}, null, 2)}</pre>
