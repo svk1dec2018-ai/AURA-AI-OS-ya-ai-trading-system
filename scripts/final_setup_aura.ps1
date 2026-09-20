@@ -83,6 +83,8 @@ if (-not (Test-Path $EnvFile)) {
 } else {
     Write-Host ".env.local already exists; existing values were preserved."
 }
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "sync_aura_env.ps1") -TemplatePath (Join-Path $Root ".env.example") -LocalPath $EnvFile
+if ($LASTEXITCODE -ne 0) { throw "AURA env sync failed." }
 Import-AuraEnv -Path $EnvFile
 
 Write-Host "Installing dashboard packages..."
@@ -114,7 +116,15 @@ $TestEnvNames = @(
     "AURA_MAINTENANCE_OLLAMA_MODEL",
     "OPENAI_API_KEY",
     "AURA_OPENAI_MODELS",
-    "AURA_MAINTENANCE_OPENAI_MODEL"
+    "AURA_MAINTENANCE_OPENAI_MODEL",
+    "NVIDIA_API_KEY",
+    "AURA_NVIDIA_MODELS",
+    "GROQ_API_KEY",
+    "AURA_GROQ_MODELS",
+    "OPENROUTER_API_KEY",
+    "AURA_OPENROUTER_MODELS",
+    "GEMINI_API_KEY",
+    "AURA_GEMINI_MODELS"
 )
 $SavedTestEnv = @{}
 foreach ($Name in $TestEnvNames) {
