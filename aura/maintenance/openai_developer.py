@@ -18,7 +18,6 @@ from aura.maintenance.models import (
     RepairPlan,
     SystemObservation,
 )
-
 from aura.prime.developer_mandate import PRIME_DEVELOPER_MANDATE
 
 
