@@ -43,6 +43,7 @@ distributed = [
 analytics = [
   "duckdb>=1.1,<2",
   "polars>=1,<2",
+  "pytz>=2025.2",
 ]
 ml = [
   "numpy>=1.26,<3",
