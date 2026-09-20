@@ -19,13 +19,17 @@ JsonTransport = Callable[
 _GEMINI_CHAT_URL = (
     "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
 )
+_NVIDIA_CHAT_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 _MODEL_ID_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,159}$")
 
 
 class GeminiOpenAIChatClient:
-    """Minimal Gemini OpenAI-compatible Chat Completions structured-output client."""
+    """Minimal fixed-endpoint OpenAI-compatible chat structured-output client."""
 
     provider_id = "gemini"
+    key_env = "GEMINI_API_KEY"
+    chat_url = _GEMINI_CHAT_URL
+    strict_json_schema = True
 
     def __init__(
         self,
@@ -41,9 +45,9 @@ class GeminiOpenAIChatClient:
             raise ValueError("invalid Gemini model_id")
         if timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be positive")
-        resolved_key = api_key if api_key is not None else os.getenv("GEMINI_API_KEY", "")
+        resolved_key = api_key if api_key is not None else os.getenv(self.key_env, "")
         if not resolved_key.strip():
-            raise ValueError("GEMINI_API_KEY is required for the gemini provider")
+            raise ValueError(f"{self.key_env} is required for the {self.provider_id} provider")
         self.model_id = normalized_model
         self.timeout_seconds = timeout_seconds
         self._api_key = resolved_key.strip()
@@ -68,10 +72,28 @@ class GeminiOpenAIChatClient:
             raise ValueError("system_prompt is required")
         if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", schema_name):
             raise ValueError("schema_name must be a safe lowercase identifier")
+        effective_system_prompt = system_prompt
+        response_format: dict[str, Any]
+        if self.strict_json_schema:
+            response_format = {
+                "type": "json_schema",
+                "json_schema": {
+                    "name": schema_name,
+                    "strict": True,
+                    "schema": dict(schema),
+                },
+            }
+        else:
+            response_format = {"type": "json_object"}
+            effective_system_prompt = (
+                system_prompt
+                + "\nReturn only a JSON object matching this schema exactly: "
+                + json.dumps(dict(schema), separators=(",", ":"), default=str)
+            )
         payload = {
             "model": self.model_id,
             "messages": [
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": effective_system_prompt},
                 {
                     "role": "user",
                     "content": json.dumps(
@@ -82,14 +104,7 @@ class GeminiOpenAIChatClient:
                     ),
                 },
             ],
-            "response_format": {
-                "type": "json_schema",
-                "json_schema": {
-                    "name": schema_name,
-                    "strict": True,
-                    "schema": dict(schema),
-                },
-            },
+            "response_format": response_format,
         }
         headers = {
             "Authorization": f"Bearer {self._api_key}",
@@ -97,7 +112,7 @@ class GeminiOpenAIChatClient:
         }
         if self._request_limiter is None:
             response = await self._transport(
-                _GEMINI_CHAT_URL,
+                self.chat_url,
                 payload,
                 headers,
                 self.timeout_seconds,
@@ -105,7 +120,7 @@ class GeminiOpenAIChatClient:
         else:
             async with self._request_limiter:
                 response = await self._transport(
-                    _GEMINI_CHAT_URL,
+                    self.chat_url,
                     payload,
                     headers,
                     self.timeout_seconds,
@@ -114,12 +129,16 @@ class GeminiOpenAIChatClient:
         try:
             parsed = json.loads(output_text)
         except json.JSONDecodeError as exc:
-            raise OpenAIResponsesError("Gemini returned invalid structured JSON") from exc
+            raise OpenAIResponsesError(
+                f"{self.provider_id} returned invalid structured JSON"
+            ) from exc
         if not isinstance(parsed, dict):
-            raise OpenAIResponsesError("Gemini structured output must be a JSON object")
+            raise OpenAIResponsesError(
+                f"{self.provider_id} structured output must be a JSON object"
+            )
         response_id = response.get("id")
         if not isinstance(response_id, str) or not response_id.strip():
-            response_id = "gemini-chat"
+            response_id = f"{self.provider_id}-chat"
         returned_model = response.get("model")
         return StructuredResponse(
             response_id=response_id,
@@ -128,19 +147,31 @@ class GeminiOpenAIChatClient:
         )
 
 
+
+class NvidiaOpenAIChatClient(GeminiOpenAIChatClient):
+    """NVIDIA NIM hosted chat client using the fixed integrate.api.nvidia.com endpoint."""
+
+    provider_id = "nvidia"
+    key_env = "NVIDIA_API_KEY"
+    chat_url = _NVIDIA_CHAT_URL
+    strict_json_schema = False
+
+
 def _extract_chat_content(response: Mapping[str, Any]) -> str:
     choices = response.get("choices", [])
     if not isinstance(choices, list) or not choices:
-        raise OpenAIResponsesError("Gemini response has no choices")
+        raise OpenAIResponsesError("OpenAI-compatible response has no choices")
     choice = choices[0]
     if not isinstance(choice, dict):
-        raise OpenAIResponsesError("Gemini response choice is invalid")
+        raise OpenAIResponsesError("OpenAI-compatible response choice is invalid")
     message = choice.get("message", {})
     if not isinstance(message, dict):
-        raise OpenAIResponsesError("Gemini response message is invalid")
+        raise OpenAIResponsesError("OpenAI-compatible response message is invalid")
     content = message.get("content")
     if not isinstance(content, str) or not content.strip():
-        raise OpenAIResponsesError("Gemini response has no structured output text")
+        raise OpenAIResponsesError(
+            "OpenAI-compatible response has no structured output text"
+        )
     return content
 
 
