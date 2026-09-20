@@ -12,27 +12,49 @@ type View =
   | "brain" | "debate" | "risk" | "performance" | "research" | "learning"
   | "news" | "journal" | "studio" | "capabilities" | "fleet" | "system" | "owner";
 
-const NAV: Array<[View, string, string]> = [
-  ["overview", "Overview", "OV"],
-  ["markets", "Markets", "MK"],
-  ["charts", "Live Charts", "CH"],
-  ["opportunities", "Opportunities", "OP"],
-  ["trading", "Trading Desk", "TR"],
-  ["portfolio", "Portfolio", "PF"],
-  ["brain", "AI Brain", "AI"],
-  ["debate", "Agent Debate", "DB"],
-  ["risk", "Risk Center", "RK"],
-  ["performance", "Performance", "PA"],
-  ["research", "Research Lab", "RL"],
-  ["learning", "Learning", "EV"],
-  ["news", "News / Macro", "NW"],
-  ["journal", "Trade Journal", "TJ"],
-  ["studio", "Strategy Studio", "ST"],
-  ["capabilities", "All Features", "AZ"],
-  ["fleet", "Distributed Fleet", "FL"],
-  ["system", "System Health", "HL"],
-  ["owner", "Owner / JARVIS", "JR"],
+const NAV_GROUPS: Array<{ label: string; items: Array<[View, string, string]> }> = [
+  {
+    label: "Trading",
+    items: [
+      ["overview", "Terminal", "TM"],
+      ["markets", "Markets", "MK"],
+      ["charts", "Charts", "CH"],
+      ["opportunities", "Opportunities", "OP"],
+      ["trading", "Execution", "EX"],
+      ["portfolio", "Portfolio", "PF"],
+    ],
+  },
+  {
+    label: "Intelligence",
+    items: [
+      ["brain", "AI Brain", "AI"],
+      ["debate", "Agent Debate", "DB"],
+      ["risk", "Risk Center", "RK"],
+      ["performance", "Performance", "PA"],
+      ["news", "News / Macro", "NW"],
+    ],
+  },
+  {
+    label: "Research",
+    items: [
+      ["research", "Research Lab", "RL"],
+      ["learning", "Learning", "EV"],
+      ["journal", "Trade Journal", "TJ"],
+      ["studio", "Strategy Studio", "ST"],
+    ],
+  },
+  {
+    label: "Operations",
+    items: [
+      ["capabilities", "Capabilities", "AZ"],
+      ["fleet", "Distributed Fleet", "FL"],
+      ["system", "System Health", "HL"],
+      ["owner", "Owner / AURA", "JR"],
+    ],
+  },
 ];
+
+const NAV = NAV_GROUPS.flatMap((group) => group.items);
 
 function num(value: any, fallback = 0) {
   const parsed = Number(value);
@@ -79,6 +101,7 @@ export default function AuraControlRoom() {
   ]);
   const [ownerToken, setOwnerToken] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
+  const [lastSync, setLastSync] = useState<Date | null>(null);
 
   async function refresh() {
     const [healthResult, workspaceResult, readinessResult, algoResult, fleetResult] = await Promise.all([
@@ -107,6 +130,9 @@ export default function AuraControlRoom() {
       research: algoResult.ok
         ? { ok: true, detail: "Research catalog loaded" }
         : { ok: false, detail: "error" in algoResult ? algoResult.error : "Research catalog unavailable" },
+      fleet: fleetResult.ok
+        ? { ok: Boolean(fleetResult.data.ok), detail: fleetResult.data.ok ? "Fleet manifest ready" : "Fleet manifest degraded" }
+        : { ok: false, detail: "error" in fleetResult ? fleetResult.error : "Fleet unavailable" },
     };
     setServiceState(nextState);
 
@@ -119,6 +145,7 @@ export default function AuraControlRoom() {
       .filter(([key, value]) => key !== "mt5" && !value.ok)
       .map(([key, value]) => key.toUpperCase() + ": " + value.detail);
     setError(hardErrors.join(" | "));
+    setLastSync(new Date());
   }
 
   useEffect(() => {
@@ -251,14 +278,19 @@ export default function AuraControlRoom() {
           <span className={runtime.runtime_running ? "pulse good" : "pulse"} />
         </div>
         <nav>
-          {NAV.map(([id, label, icon]) => (
-            <button
-              key={id}
-              className={view === id ? "nav active" : "nav"}
-              onClick={() => setView(id)}
-            >
-              <span className="nav-icon">{icon}</span><span>{label}</span>
-            </button>
+          {NAV_GROUPS.map((group) => (
+            <div className="nav-group" key={group.label}>
+              <div className="nav-group-label">{group.label}</div>
+              {group.items.map(([id, label, icon]) => (
+                <button
+                  key={id}
+                  className={view === id ? "nav active" : "nav"}
+                  onClick={() => setView(id)}
+                >
+                  <span className="nav-icon">{icon}</span><span>{label}</span>
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="sidebar-bottom">
@@ -275,11 +307,17 @@ export default function AuraControlRoom() {
             <h1>{pageName}</h1>
           </div>
           <div className="top-actions">
+            <span className={serviceState.backend?.ok ? "chip good" : "chip bad"}>
+              CORE {serviceState.backend?.ok ? "ONLINE" : "CHECK"}
+            </span>
             <span className={liveMt5?.terminal?.connected ? "chip good" : "chip"}>
               MT5 {liveMt5?.terminal?.connected ? "LIVE" : "WAITING"}
             </span>
             <span className={runtime.runtime_running ? "chip good" : "chip"}>
               ENGINE {runtime.runtime_running ? "RUNNING" : "STOPPED"}
+            </span>
+            <span className="chip sync-chip">
+              SYNC {lastSync ? lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "—"}
             </span>
             <button className="jarvis-button" onClick={() => setJarvisOpen(true)}>✦ AURA</button>
           </div>
@@ -289,8 +327,15 @@ export default function AuraControlRoom() {
           <ServiceStrip state={serviceState} />
           {error ? (
             <div className="alert error">
-              <b>AURA service problem:</b> {error}
-              <div className="alert-help">Backend/MT5 failure no longer blanks the whole dashboard. Open System Health for the exact failing service.</div>
+              <div>
+                <b>AURA service problem</b>
+                <span>{error}</span>
+                <div className="alert-help">The terminal stays available in degraded mode. Use System Health to see the exact dependency.</div>
+              </div>
+              <div className="alert-actions">
+                <button onClick={() => setView("system")}>System Health</button>
+                <button onClick={() => refresh()}>Retry now</button>
+              </div>
             </div>
           ) : null}
 
@@ -587,10 +632,11 @@ export default function AuraControlRoom() {
 
 function ServiceStrip({ state }: { state: Record<string, { ok: boolean; detail: string }> }) {
   const items = [
-    ["Backend", state.backend],
+    ["Core API", state.backend],
     ["Workspace", state.workspace],
     ["MT5", state.mt5],
     ["Research", state.research],
+    ["Fleet", state.fleet],
   ] as const;
   return (
     <div className="service-strip">

@@ -222,8 +222,14 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert "MARKET WATCH" in live_terminal
     assert "Trade Journal" in shell
     assert "Strategy Studio" in shell
-    assert "All Features" in shell
+    assert "Capabilities" in shell
     assert "Distributed Fleet" in shell
+    assert "NAV_GROUPS" in shell
+    assert "Trading" in shell
+    assert "Intelligence" in shell
+    assert "Operations" in shell
+    assert "System Health" in shell
+    assert "Charts by TradingView" in chart
     assert "/api/fleet/status" in shell
     assert "All-market provider matrix" in shell
     assert "/api/journal" in advanced

@@ -249,10 +249,20 @@ export default function MarketChart() {
           <div ref={containerRef} className="live-chart" />
           {last ? (
             <div className="chart-footer">
-              <span>O {last.open}</span><span>H {last.high}</span>
-              <span>L {last.low}</span><span>C {last.close}</span>
-              <span>RSI {last.rsi14?.toFixed(1) ?? "—"}</span>
-              <span>ATR {last.atr14?.toFixed(2) ?? "—"}</span>
+              <div className="ohlc-strip">
+                <span>O {last.open}</span><span>H {last.high}</span>
+                <span>L {last.low}</span><span>C {last.close}</span>
+                <span>RSI {last.rsi14?.toFixed(1) ?? "—"}</span>
+                <span>ATR {last.atr14?.toFixed(2) ?? "—"}</span>
+              </div>
+              <a
+                className="tradingview-attribution"
+                href="https://www.tradingview.com/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Charts by TradingView
+              </a>
             </div>
           ) : null}
         </>

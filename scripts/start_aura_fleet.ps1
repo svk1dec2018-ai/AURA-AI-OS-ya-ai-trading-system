@@ -5,11 +5,11 @@ $VenvPython = Join-Path $Root ".venv\Scripts\python.exe"
 $Runtime = Join-Path $Root "runtime\fleet"
 $SupervisorPid = Join-Path $Runtime "supervisor.pid"
 $RedisName = "aura-redis"
-$RedisUrl = if ($env:AURA_REDIS_URL) { $env:AURA_REDIS_URL } else { "redis://127.0.0.1:6379/0" }
 
 Set-Location $Root
 . (Join-Path $PSScriptRoot "aura_env.ps1")
 Import-AuraEnv -Path (Join-Path $Root ".env.local")
+$RedisUrl = if ($env:AURA_REDIS_URL) { $env:AURA_REDIS_URL } else { "redis://127.0.0.1:6379/0" }
 New-Item -ItemType Directory -Force -Path $Runtime | Out-Null
 
 Write-Host ""
@@ -27,8 +27,31 @@ if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "Docker Desktop is required for the one-click Redis fleet. Install Docker Desktop, open it, then run START_AURA_FLEET.cmd again."
 }
 
-& docker info *> $null
-if ($LASTEXITCODE -ne 0) { throw "Docker is installed but the Docker engine is not running. Open Docker Desktop and wait until it is ready." }
+function Test-DockerReady {
+    & docker info *> $null
+    return $LASTEXITCODE -eq 0
+}
+
+if (-not (Test-DockerReady)) {
+    $DockerDesktopCandidates = @(
+        (Join-Path $env:ProgramFiles "Docker\Docker\Docker Desktop.exe"),
+        (Join-Path ${env:ProgramFiles(x86)} "Docker\Docker\Docker Desktop.exe"),
+        (Join-Path $env:LOCALAPPDATA "Docker\Docker Desktop.exe")
+    ) | Where-Object { $_ -and (Test-Path $_) }
+
+    if ($DockerDesktopCandidates.Count -gt 0) {
+        Write-Host "Docker engine is offline. Starting Docker Desktop..." -ForegroundColor Yellow
+        Start-Process -FilePath $DockerDesktopCandidates[0] | Out-Null
+        for ($i = 0; $i -lt 120; $i++) {
+            if (Test-DockerReady) { break }
+            Start-Sleep -Seconds 1
+        }
+    }
+}
+
+if (-not (Test-DockerReady)) {
+    throw "Docker Desktop is installed but the engine did not become ready. Open Docker Desktop once, wait for Engine Running, then retry."
+}
 
 $Exists = (& docker ps -a --filter "name=^/$RedisName$" --format "{{.Names}}")
 if ($Exists -eq $RedisName) {

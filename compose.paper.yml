@@ -16,7 +16,7 @@ services:
       - /app/runtime/free_public_autonomy
     environment:
       AURA_OLLAMA_URL: ${AURA_OLLAMA_URL:-http://host.docker.internal:11434}
-      AURA_FREE_AI_PRESET: ${AURA_FREE_AI_PRESET:-balanced5}
+      AURA_FREE_AI_PRESET: ${AURA_FREE_AI_PRESET:-off}
       AURA_OLLAMA_MODELS: ${AURA_OLLAMA_MODELS:-}
       AURA_OLLAMA_THINK: "false"
       AURA_OLLAMA_TIMEOUT_SECONDS: ${AURA_OLLAMA_TIMEOUT_SECONDS:-120}
