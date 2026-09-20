@@ -8,10 +8,10 @@ import signal
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-from .bus import RedisStreamsEventBus
-from .manifest import AURA_FLEET, FleetService
 from aura.prime.service_handlers import build_prime_role_handler
 
+from .bus import RedisStreamsEventBus
+from .manifest import AURA_FLEET, FleetService
 from .worker import FleetWorker
 
 
