@@ -40,8 +40,42 @@ class PortfolioRiskCoordinator:
 
     strategy_id = "aura.multi_market.ceo.v1"
 
-    def __init__(self, decision_pipeline: DecisionPipeline) -> None:
+    def __init__(
+        self,
+        decision_pipeline: DecisionPipeline,
+        *,
+        default_protective_stop_bps: Decimal | None = None,
+    ) -> None:
+        if default_protective_stop_bps is not None and default_protective_stop_bps <= 0:
+            raise ValueError("default_protective_stop_bps must be positive")
         self.decision_pipeline = decision_pipeline
+        self.default_protective_stop_bps = default_protective_stop_bps
+
+
+    def _protective_stop_price(
+        self,
+        candidate: ScanCandidate,
+        signal: StrategySignal,
+    ) -> Decimal | None:
+        if self.default_protective_stop_bps is None:
+            return None
+        stop_bps = self.default_protective_stop_bps
+        quality = candidate.context.metadata.get("execution_quality")
+        if isinstance(quality, dict):
+            raw_broker_min = quality.get("broker_min_stop_bps")
+            if raw_broker_min is not None:
+                try:
+                    broker_min = Decimal(str(raw_broker_min))
+                except (ArithmeticError, ValueError):
+                    broker_min = Decimal(0)
+                if broker_min > stop_bps:
+                    stop_bps = broker_min
+        distance = signal.reference_price * stop_bps / Decimal(10000)
+        if signal.intent.value == "LONG":
+            return signal.reference_price - distance
+        if signal.intent.value == "SHORT":
+            return signal.reference_price + distance
+        return None
 
     def allocate(
         self,
@@ -88,6 +122,7 @@ class PortfolioRiskCoordinator:
                 generated_at=candidate.context.created_at,
                 reason=candidate.memo.rationale,
             )
+            protective_stop_price = self._protective_stop_price(candidate, signal)
             decision = self.decision_pipeline.evaluate_signal(
                 signal=signal,
                 portfolio=adjusted_portfolio,
@@ -95,6 +130,7 @@ class PortfolioRiskCoordinator:
                 venue=candidate.context.candles[-1].venue,
                 requested_quantity=requested_quantity,
                 current_position_quantity=positions.get(candidate.context.symbol, Decimal(0)),
+                protective_stop_price=protective_stop_price,
             )
             if decision is not None and decision.order is not None:
                 multiplier = self.decision_pipeline.risk_engine.notional_multiplier(
