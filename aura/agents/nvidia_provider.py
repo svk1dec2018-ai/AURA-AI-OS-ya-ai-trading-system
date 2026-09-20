@@ -4,11 +4,11 @@ import asyncio
 import os
 
 from aura.agents.openai_provider import OpenAIReasoningProvider
-from aura.ai.openai_responses import OpenAIResponsesClient
+from aura.ai.openai_chat_compatible import NvidiaOpenAIChatClient
 
 
 class NvidiaReasoningProvider(OpenAIReasoningProvider):
-    """NVIDIA NIM advisory specialist using NVIDIA's fixed Responses endpoint."""
+    """NVIDIA NIM advisory specialist using NVIDIA's fixed chat endpoint."""
 
     provider_id = "nvidia"
 
@@ -16,16 +16,15 @@ class NvidiaReasoningProvider(OpenAIReasoningProvider):
         self,
         model_id: str = "openai/gpt-oss-20b",
         *,
-        client: OpenAIResponsesClient | None = None,
+        client: NvidiaOpenAIChatClient | None = None,
         api_key: str | None = None,
         timeout_seconds: float = 90.0,
         request_limiter: asyncio.Semaphore | None = None,
         max_candles: int = 80,
     ) -> None:
-        effective_client = client or OpenAIResponsesClient(
+        effective_client = client or NvidiaOpenAIChatClient(
             model_id,
             api_key=api_key,
-            provider_id="nvidia",
             timeout_seconds=timeout_seconds,
             request_limiter=request_limiter,
         )
