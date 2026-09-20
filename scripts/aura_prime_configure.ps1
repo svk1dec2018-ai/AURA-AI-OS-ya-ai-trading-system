@@ -21,7 +21,7 @@ function ConvertFrom-Secure([Security.SecureString]$Value) {
 }
 
 function Set-AuraEnv([string]$Name, [string]$Value) {
-    if ($Value.Contains([char]0) -or $Value.Contains("\`r") -or $Value.Contains("\`n")) {
+    if ($Value.Contains([char]0) -or $Value.Contains("`r") -or $Value.Contains("`n")) {
         throw ("AURA env value for " + $Name + " must be a single line")
     }
     $Lines = @(Get-Content -LiteralPath $EnvPath -ErrorAction Stop)
