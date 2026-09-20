@@ -18,13 +18,11 @@ JsonTransport = Callable[
 
 _PROVIDER_RESPONSES_URLS = {
     "openai": "https://api.openai.com/v1/responses",
-    "nvidia": "https://integrate.api.nvidia.com/v1/responses",
     "groq": "https://api.groq.com/openai/v1/responses",
     "openrouter": "https://openrouter.ai/api/v1/responses",
 }
 _PROVIDER_KEY_ENVS = {
     "openai": "OPENAI_API_KEY",
-    "nvidia": "NVIDIA_API_KEY",
     "groq": "GROQ_API_KEY",
     "openrouter": "OPENROUTER_API_KEY",
 }
@@ -61,7 +59,7 @@ class OpenAIResponsesClient:
 
     Credentials are accepted only through the process environment (or an explicit
     constructor argument supplied by the host). Provider endpoints are selected from
-    a hard-coded allowlist (OpenAI, NVIDIA NIM, Groq, or OpenRouter), so an environment change cannot
+    a hard-coded allowlist (OpenAI, Groq, or OpenRouter), so an environment change cannot
     redirect credentials to an arbitrary host. AURA never persists the key, request Authorization header, raw
     hidden reasoning, or provider response body.
     """
