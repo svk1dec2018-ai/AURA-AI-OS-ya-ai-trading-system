@@ -44,7 +44,7 @@ def build_nvidia_providers_from_env() -> tuple[NvidiaReasoningProvider, ...]:
         return ()
     api_key = os.getenv("NVIDIA_API_KEY", "")
     if not api_key.strip():
-        raise ValueError("AURA_NVIDIA_MODELS requires NVIDIA_API_KEY")
+        return ()
     timeout = float(os.getenv("AURA_NVIDIA_TIMEOUT_SECONDS", "90"))
     max_concurrency = _positive_int_env("AURA_NVIDIA_MAX_CONCURRENCY", default=2)
     limiter = asyncio.Semaphore(max_concurrency)

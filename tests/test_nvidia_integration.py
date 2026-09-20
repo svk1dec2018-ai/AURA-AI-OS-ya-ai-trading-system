@@ -47,12 +47,11 @@ async def test_nvidia_chat_client_uses_fixed_nvidia_endpoint() -> None:
     assert response.output == {"status": "ok"}
 
 
-def test_nvidia_models_require_separate_nvidia_key(monkeypatch) -> None:
+def test_nvidia_models_do_not_reuse_openai_key(monkeypatch) -> None:
     monkeypatch.setenv("AURA_NVIDIA_MODELS", "openai/gpt-oss-20b")
     monkeypatch.delenv("NVIDIA_API_KEY", raising=False)
     monkeypatch.setenv("OPENAI_API_KEY", "different-provider-value")
-    with pytest.raises(ValueError, match="NVIDIA_API_KEY"):
-        build_nvidia_providers_from_env()
+    assert build_nvidia_providers_from_env() == ()
 
 
 def test_nvidia_model_builds_without_openai_key(monkeypatch) -> None:
