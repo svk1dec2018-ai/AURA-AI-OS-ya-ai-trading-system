@@ -24,9 +24,9 @@ def test_public_quote_hub_is_truthful_about_missing_and_fresh_quotes() -> None:
         QuoteObservation(
             provider="TEST",
             symbol="BTC-USD",
-            last=Decimal("65000"),
-            bid=Decimal("64999"),
-            ask=Decimal("65001"),
+            last=Decimal(65000),
+            bid=Decimal(64999),
+            ask=Decimal(65001),
             observed_at=now - timedelta(seconds=2),
             received_at=now - timedelta(seconds=1),
             trust_score=1.0,
@@ -52,14 +52,14 @@ def test_public_quote_hub_drops_out_of_order_updates() -> None:
     newer = QuoteObservation(
         provider="TEST",
         symbol="BTC-USD",
-        last=Decimal("65000"),
+        last=Decimal(65000),
         observed_at=now,
         received_at=now,
     )
     older = QuoteObservation(
         provider="TEST",
         symbol="BTC-USD",
-        last=Decimal("64000"),
+        last=Decimal(64000),
         observed_at=now - timedelta(seconds=5),
         received_at=now,
     )
@@ -79,7 +79,7 @@ def test_public_quote_hub_marks_stale_without_faking_replacement() -> None:
         QuoteObservation(
             provider="TEST",
             symbol="BTC-USD",
-            last=Decimal("65000"),
+            last=Decimal(65000),
             observed_at=now - timedelta(seconds=10),
             received_at=now - timedelta(seconds=9),
         )
