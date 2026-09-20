@@ -363,6 +363,78 @@
         "to": "aura/ai/openai_responses.py"
       },
       {
+        "from": "aura/aura2/__init__.py",
+        "to": "aura/__init__.py"
+      },
+      {
+        "from": "aura/aura2/cli.py",
+        "to": "aura/aura2/opensource_registry.py"
+      },
+      {
+        "from": "aura/aura2/external_artifact.py",
+        "to": "aura/aura2/opensource_registry.py"
+      },
+      {
+        "from": "aura/aura2/external_artifact.py",
+        "to": "aura/aura2/research_gateway.py"
+      },
+      {
+        "from": "aura/aura2/feature_bridge.py",
+        "to": "aura/aura2/mtf_consensus.py"
+      },
+      {
+        "from": "aura/aura2/feature_bridge.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
+        "from": "aura/aura2/intake_cli.py",
+        "to": "aura/aura2/external_artifact.py"
+      },
+      {
+        "from": "aura/aura2/research_gateway.py",
+        "to": "aura/aura2/opensource_registry.py"
+      },
+      {
+        "from": "aura/aura2/scanner_bridge.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/aura2/scanner_bridge.py",
+        "to": "aura/aura2/feature_bridge.py"
+      },
+      {
+        "from": "aura/aura2/scanner_bridge.py",
+        "to": "aura/aura2/mtf_consensus.py"
+      },
+      {
+        "from": "aura/aura2/scanner_bridge.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
+        "from": "aura/aura2/sidecar.py",
+        "to": "aura/aura2/external_artifact.py"
+      },
+      {
+        "from": "aura/aura2/sidecar.py",
+        "to": "aura/aura2/opensource_registry.py"
+      },
+      {
+        "from": "aura/aura2/sidecar.py",
+        "to": "aura/aura2/research_gateway.py"
+      },
+      {
+        "from": "aura/aura2/specialist.py",
+        "to": "aura/agents/base.py"
+      },
+      {
+        "from": "aura/aura2/specialist.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "aura/aura2/specialist.py",
+        "to": "aura/domain/models.py"
+      },
+      {
         "from": "aura/backtest/engine.py",
         "to": "aura/core/pipeline.py"
       },
@@ -696,6 +768,10 @@
       },
       {
         "from": "aura/evolution/brain_policy.py",
+        "to": "aura/agents/base.py"
+      },
+      {
+        "from": "aura/evolution/brain_policy.py",
         "to": "aura/agents/deliberation.py"
       },
       {
@@ -965,6 +1041,58 @@
       {
         "from": "aura/execution/state.py",
         "to": "aura/domain/models.py"
+      },
+      {
+        "from": "aura/fleet/__init__.py",
+        "to": "aura/__init__.py"
+      },
+      {
+        "from": "aura/fleet/bus.py",
+        "to": "aura/fleet/events.py"
+      },
+      {
+        "from": "aura/fleet/cli.py",
+        "to": "aura/fleet/bus.py"
+      },
+      {
+        "from": "aura/fleet/cli.py",
+        "to": "aura/fleet/status.py"
+      },
+      {
+        "from": "aura/fleet/process_supervisor.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "aura/fleet/service_runner.py",
+        "to": "aura/fleet/bus.py"
+      },
+      {
+        "from": "aura/fleet/service_runner.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "aura/fleet/service_runner.py",
+        "to": "aura/fleet/worker.py"
+      },
+      {
+        "from": "aura/fleet/status.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "aura/fleet/status.py",
+        "to": "aura/fleet/providers.py"
+      },
+      {
+        "from": "aura/fleet/worker.py",
+        "to": "aura/fleet/bus.py"
+      },
+      {
+        "from": "aura/fleet/worker.py",
+        "to": "aura/fleet/events.py"
+      },
+      {
+        "from": "aura/fleet/worker.py",
+        "to": "aura/fleet/manifest.py"
       },
       {
         "from": "aura/forecast/baselines.py",
@@ -1489,6 +1617,22 @@
       {
         "from": "aura/ops/end_to_end_gate.py",
         "to": "aura/persistence/wal.py"
+      },
+      {
+        "from": "aura/ops/final_doctor.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "aura/ops/final_doctor.py",
+        "to": "aura/fleet/providers.py"
+      },
+      {
+        "from": "aura/ops/final_doctor.py",
+        "to": "aura/ops/phase_gates.py"
+      },
+      {
+        "from": "aura/ops/final_doctor.py",
+        "to": "aura/webapp/mt5_preflight.py"
       },
       {
         "from": "aura/ops/knowledge_rag_gate.py",
@@ -2492,6 +2636,14 @@
       },
       {
         "from": "aura/runtime/mt5_learning_daemon.py",
+        "to": "aura/aura2/scanner_bridge.py"
+      },
+      {
+        "from": "aura/runtime/mt5_learning_daemon.py",
+        "to": "aura/aura2/specialist.py"
+      },
+      {
+        "from": "aura/runtime/mt5_learning_daemon.py",
         "to": "aura/data/intelligence_service.py"
       },
       {
@@ -2784,11 +2936,19 @@
       },
       {
         "from": "aura/webapp/charting.py",
+        "to": "aura/data/mt5_session.py"
+      },
+      {
+        "from": "aura/webapp/charting.py",
         "to": "aura/domain/models.py"
       },
       {
         "from": "aura/webapp/mt5_preflight.py",
         "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/webapp/mt5_preflight.py",
+        "to": "aura/data/mt5_session.py"
       },
       {
         "from": "aura/webapp/mt5_preflight.py",
@@ -2884,7 +3044,19 @@
       },
       {
         "from": "aura/webapp/server_v3.py",
+        "to": "aura/fleet/status.py"
+      },
+      {
+        "from": "aura/webapp/server_v3.py",
+        "to": "aura/fleet/streaming.py"
+      },
+      {
+        "from": "aura/webapp/server_v3.py",
         "to": "aura/webapp/__init__.py"
+      },
+      {
+        "from": "aura/webapp/server_v3.py",
+        "to": "aura/webapp/charting.py"
       },
       {
         "from": "aura/webapp/server_v3.py",
@@ -3309,6 +3481,134 @@
       {
         "from": "tests/test_angel_one_adapter.py",
         "to": "aura/execution/demo_guard.py"
+      },
+      {
+        "from": "tests/test_aura2_external_research.py",
+        "to": "aura/aura2/external_artifact.py"
+      },
+      {
+        "from": "tests/test_aura2_external_research.py",
+        "to": "aura/aura2/sidecar.py"
+      },
+      {
+        "from": "tests/test_aura2_feature_bridge.py",
+        "to": "aura/aura2/feature_bridge.py"
+      },
+      {
+        "from": "tests/test_aura2_feature_bridge.py",
+        "to": "aura/aura2/mtf_consensus.py"
+      },
+      {
+        "from": "tests/test_aura2_feature_bridge.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
+        "from": "tests/test_aura2_fusion.py",
+        "to": "aura/aura2/learning.py"
+      },
+      {
+        "from": "tests/test_aura2_fusion.py",
+        "to": "aura/aura2/mtf_consensus.py"
+      },
+      {
+        "from": "tests/test_aura2_fusion.py",
+        "to": "aura/aura2/opensource_registry.py"
+      },
+      {
+        "from": "tests/test_aura2_fusion.py",
+        "to": "aura/aura2/research_gateway.py"
+      },
+      {
+        "from": "tests/test_aura2_mt5_runtime_wiring.py",
+        "to": "aura/__init__.py"
+      },
+      {
+        "from": "tests/test_aura2_mt5_runtime_wiring.py",
+        "to": "aura/aura2/scanner_bridge.py"
+      },
+      {
+        "from": "tests/test_aura2_mt5_runtime_wiring.py",
+        "to": "aura/aura2/specialist.py"
+      },
+      {
+        "from": "tests/test_aura2_mt5_runtime_wiring.py",
+        "to": "aura/runtime/mt5_learning_daemon.py"
+      },
+      {
+        "from": "tests/test_aura2_next_dashboard.py",
+        "to": "aura/webapp/__init__.py"
+      },
+      {
+        "from": "tests/test_aura2_next_dashboard.py",
+        "to": "aura/webapp/charting.py"
+      },
+      {
+        "from": "tests/test_aura2_next_dashboard.py",
+        "to": "aura/webapp/mt5_preflight.py"
+      },
+      {
+        "from": "tests/test_aura2_next_dashboard.py",
+        "to": "aura/webapp/server_v3.py"
+      },
+      {
+        "from": "tests/test_aura2_scanner_bridge.py",
+        "to": "aura/agents/models.py"
+      },
+      {
+        "from": "tests/test_aura2_scanner_bridge.py",
+        "to": "aura/aura2/scanner_bridge.py"
+      },
+      {
+        "from": "tests/test_aura2_scanner_bridge.py",
+        "to": "aura/aura2/specialist.py"
+      },
+      {
+        "from": "tests/test_aura2_scanner_bridge.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "tests/test_aura2_scanner_bridge.py",
+        "to": "aura/strategy/features.py"
+      },
+      {
+        "from": "tests/test_aura_fleet.py",
+        "to": "aura/fleet/bus.py"
+      },
+      {
+        "from": "tests/test_aura_fleet.py",
+        "to": "aura/fleet/events.py"
+      },
+      {
+        "from": "tests/test_aura_fleet.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "tests/test_aura_fleet.py",
+        "to": "aura/fleet/providers.py"
+      },
+      {
+        "from": "tests/test_aura_fleet.py",
+        "to": "aura/fleet/status.py"
+      },
+      {
+        "from": "tests/test_aura_fleet_runtime.py",
+        "to": "aura/fleet/bus.py"
+      },
+      {
+        "from": "tests/test_aura_fleet_runtime.py",
+        "to": "aura/fleet/events.py"
+      },
+      {
+        "from": "tests/test_aura_fleet_runtime.py",
+        "to": "aura/fleet/manifest.py"
+      },
+      {
+        "from": "tests/test_aura_fleet_runtime.py",
+        "to": "aura/fleet/streaming.py"
+      },
+      {
+        "from": "tests/test_aura_fleet_runtime.py",
+        "to": "aura/fleet/worker.py"
       },
       {
         "from": "tests/test_aura_readiness.py",
@@ -3965,6 +4265,10 @@
       {
         "from": "tests/test_external_specialists.py",
         "to": "aura/knowledge/firewall.py"
+      },
+      {
+        "from": "tests/test_final_production_package.py",
+        "to": "aura/ops/final_doctor.py"
       },
       {
         "from": "tests/test_financial_corrections.py",
@@ -5167,6 +5471,7 @@
       "random",
       "re",
       "shutil",
+      "signal",
       "socket",
       "statistics",
       "struct",
@@ -5197,11 +5502,27 @@
   "entrypoints": [
     {
       "kind": "shell-launcher",
+      "path": "AURA_PRODUCTION_DOCTOR.cmd"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "CHECK_MT5_XAUUSD_DEMO.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "CONFIGURE_AURA.cmd"
     },
     {
       "kind": "container-entrypoint",
       "path": "Dockerfile"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "FINAL_SETUP_AURA.cmd"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "INSTALL_FREE_UNLIMITED_AI.cmd"
     },
     {
       "kind": "shell-launcher",
@@ -5221,11 +5542,19 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "START_AURA2.cmd"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "START_AURA_AI_OS.cmd"
     },
     {
       "kind": "shell-launcher",
       "path": "START_AURA_APP.cmd"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "START_AURA_FLEET.cmd"
     },
     {
       "kind": "shell-launcher",
@@ -5237,11 +5566,47 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "START_AURA_PRODUCTION.cmd"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "STOP_AURA2.cmd"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "STOP_AURA_FLEET.cmd"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "STOP_AURA_PRODUCTION.cmd"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "TRADE_MT5_DEMO.ps1"
     },
     {
       "kind": "python-main",
       "path": "aura/ai/free_ai_cli.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/aura2/cli.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/aura2/intake_cli.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/fleet/cli.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/fleet/process_supervisor.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/fleet/service_runner.py"
     },
     {
       "kind": "python-main",
@@ -5282,6 +5647,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/end_to_end_gate.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/final_doctor.py"
     },
     {
       "kind": "python-main",
@@ -5412,6 +5781,22 @@
       "path": "examples/send_telegram_test_alert.py"
     },
     {
+      "kind": "console-script:aura-final-doctor",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura-fleet",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura-fleet-service",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura-fleet-supervisor",
+      "path": "pyproject.toml"
+    },
+    {
       "kind": "console-script:aura-free-ai",
       "path": "pyproject.toml"
     },
@@ -5426,6 +5811,22 @@
     {
       "kind": "console-script:aura-owner-app",
       "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura2-doctor",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "console-script:aura2-intake",
+      "path": "pyproject.toml"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/aura_env.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/final_setup_aura.ps1"
     },
     {
       "kind": "python-main",
@@ -5445,7 +5846,35 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "scripts/install_free_unlimited_ai.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/start_aura2_dashboard.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/start_aura_fleet.ps1"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "scripts/start_aura_ollama.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/start_aura_production.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/stop_aura2_dashboard.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/stop_aura_fleet.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "scripts/stop_aura_production.ps1"
     }
   ],
   "files": [
@@ -5457,9 +5886,9 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 2800,
+      "bytes": 3346,
       "path": ".env.example",
-      "sha256": "9f5f856d817e2f51919dd369457cb6b16a490106f8c2c0a76704cecbe3751e75"
+      "sha256": "a3543a59e9e7479b7c9d06be6a2c5b10218d24811b750e8bebf772843e6275ad"
     },
     {
       "asset_class": "repository_asset",
@@ -5475,9 +5904,9 @@
     },
     {
       "asset_class": "ci_or_repository_policy",
-      "bytes": 3882,
+      "bytes": 4537,
       "path": ".github/workflows/ci.yml",
-      "sha256": "7f00052b66938d188b8e534b8764096517342806548a8ab4fb4644c1d375fbd7"
+      "sha256": "a3e250a15690ea7d21d0a209dcf377276d138ff8243d064fbd173319b3fd6b6a"
     },
     {
       "asset_class": "ci_or_repository_policy",
@@ -5487,15 +5916,21 @@
     },
     {
       "asset_class": "repository_configuration",
-      "bytes": 183,
+      "bytes": 240,
       "path": ".gitignore",
-      "sha256": "2d32fd99b3bee007be0d4f94254233c901329f49b0a11ec472fa30ea27f92422"
+      "sha256": "0718db3fc22a4ced93ce2e4746a27fece24210272256fd70194ba5f7f2975c1e"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
       "bytes": 9177,
       "path": "AURA_AUTOPILOT_PROMPT.md",
       "sha256": "6dc8e2c21ba07d3989a93a8d91803c4b63a4174efb529eecd0f2a6be05b476bf"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 254,
+      "path": "AURA_PRODUCTION_DOCTOR.cmd",
+      "sha256": "6d0815fd619573ea001e851007118886688cb9629a5b8b7b8bc5cec54f4f0fd6"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -5510,16 +5945,34 @@
       "sha256": "c9c5ddf8e27d06124c89f267c554412d9d169e2e7a61df545e0da01106f03b56"
     },
     {
+      "asset_class": "automation_entrypoint",
+      "bytes": 127,
+      "path": "CONFIGURE_AURA.cmd",
+      "sha256": "cdce1ff82be0608849d89b9571f28188853ad7edb07a125204d4f7820b60ead2"
+    },
+    {
       "asset_class": "container_configuration",
       "bytes": 609,
       "path": "Dockerfile",
       "sha256": "6361ec8d9372663c3fcb87943cbe88aeec1fef51ece0232e63edba5ba495a9ae"
     },
     {
+      "asset_class": "automation_entrypoint",
+      "bytes": 209,
+      "path": "FINAL_SETUP_AURA.cmd",
+      "sha256": "a1dca94b39c716b1ed94e7153725b59760b3c3f3cf188dd0657f81e993a030bd"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 221,
+      "path": "INSTALL_FREE_UNLIMITED_AI.cmd",
+      "sha256": "872a425de8df1bb02275977354f145c3f1a561a3661f121cb856e262eed4280b"
+    },
+    {
       "asset_class": "documentation_or_validation_evidence",
-      "bytes": 15384,
+      "bytes": 17541,
       "path": "README.md",
-      "sha256": "80a25b08e129a249764187d10f9039ed6a1f570fa932bf8e6a42679c6afd3a09"
+      "sha256": "9148eb4dae4d66ce72392f4b4363ce5d4a69b1265439b1a815640baf119815c5"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -5553,6 +6006,12 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 212,
+      "path": "START_AURA2.cmd",
+      "sha256": "999ec3f9d0a0e5e4916206055152b1bd33d7f88f95e6f3a5241e303540a8bcbc"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 4421,
       "path": "START_AURA_AI_OS.cmd",
       "sha256": "99679da3d2ffa09b21018413225a5eb95835414f94e13de9b7e9884454f8d1ad"
@@ -5565,6 +6024,12 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 211,
+      "path": "START_AURA_FLEET.cmd",
+      "sha256": "e708fa691486fe5b9f81890e34f4af6d3a5c43681fed4f1ee2fabbbd327126ab"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 2207,
       "path": "START_AURA_FRESH_MT5.cmd",
       "sha256": "b5aaad8d92ce2bdff66f3a1096254b5665f138ad953e42ce60dd00b27307b8bd"
@@ -5574,6 +6039,36 @@
       "bytes": 646,
       "path": "START_AURA_OLLAMA.cmd",
       "sha256": "ba9daffcad589e4cd1d37edcf96569ad8ccf4d8435f4e35d4148ac31cf964de4"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 219,
+      "path": "START_AURA_PRODUCTION.cmd",
+      "sha256": "f5b4192c75879cb22901523200bf75e4c0f2252fbde4d1eee86704297260d328"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 146,
+      "path": "STOP_AURA2.cmd",
+      "sha256": "f3b67340a9cd00f232df01ba9cbf8a4d9146a15502adb4e2893c340459c70873"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 141,
+      "path": "STOP_AURA_FLEET.cmd",
+      "sha256": "874375b04561275afff5a1f26f7a28727791f112229b7feb1b4e6c067fea87b3"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 146,
+      "path": "STOP_AURA_PRODUCTION.cmd",
+      "sha256": "5bff92447802ab11b27c447ee60f6f861a56c1deb77d7acfa39a4bcc13554cf9"
+    },
+    {
+      "asset_class": "documentation_or_validation_evidence",
+      "bytes": 922,
+      "path": "THIRD_PARTY_NOTICES_AURA2.md",
+      "sha256": "b62fd324fb3d8960243b4536b341eb84d9d90666b4e5bf7d772fca0e24f02b3b"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -5736,6 +6231,78 @@
       "bytes": 8722,
       "path": "aura/ai/openai_responses.py",
       "sha256": "a429bac1816964545434eb26347aac50810afdbb8b129c829b88b8c87dd06842"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1110,
+      "path": "aura/aura2/__init__.py",
+      "sha256": "aa3a5f54078710ffb6404b6dd3dc065e9967bd8fd81b6052434e6d1a00336368"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 913,
+      "path": "aura/aura2/cli.py",
+      "sha256": "25682a2219616c2702e3ead7c259da4e5c85b1bddf1ef420db0ea911a34241ac"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 2692,
+      "path": "aura/aura2/external_artifact.py",
+      "sha256": "fe0c3e3dec1a9496a19db4a281bd3313bffbdc1f9e64b19d548c151d3305207c"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3611,
+      "path": "aura/aura2/feature_bridge.py",
+      "sha256": "0967aad960244ec77a883cc3c39eec46efe9ffd6c14aedf24c99617985ab1de1"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1449,
+      "path": "aura/aura2/intake_cli.py",
+      "sha256": "c220d55697bdfbe0b0fc4fa9a8ef7410a03c13ab09cd4556ccfd111bbd41f15f"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3687,
+      "path": "aura/aura2/learning.py",
+      "sha256": "403786aa9d17a9bb5474ea41ce5d8ba6593c5bc5fd180ddd1911c654a8f6c0c3"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4369,
+      "path": "aura/aura2/mtf_consensus.py",
+      "sha256": "c85ab4808c0801deb413bf7e8308a12a956bc555e9f3c9dfc852fe90a108e033"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3185,
+      "path": "aura/aura2/opensource_registry.py",
+      "sha256": "921d99de7a38b71c3cd911ea2a274a50057b4a7b8201c09c9e9f15b97159be5c"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 2575,
+      "path": "aura/aura2/research_gateway.py",
+      "sha256": "6f73985ca73894c7d1497eb73ef1a93c8f785e4765355f965c40e5bb7b86cee8"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4374,
+      "path": "aura/aura2/scanner_bridge.py",
+      "sha256": "dec4e41f5215274809bb7406af3b55c21f02289cfda5b80e6050eca356ee53a1"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4911,
+      "path": "aura/aura2/sidecar.py",
+      "sha256": "46c7cc927d883b26be1e2a9520160d096d9fe70baefae5768a8502f54739054d"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3138,
+      "path": "aura/aura2/specialist.py",
+      "sha256": "24101dc47c0604a9043e6252998c0de7add701ad63e01dc8f546fd7000c13553"
     },
     {
       "asset_class": "python",
@@ -5937,6 +6504,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 306,
+      "path": "aura/data/mt5_session.py",
+      "sha256": "e8719f4474587f05689af30fa2ab76f387f8ebfc5858ffaf3d8877cd4f77833c"
+    },
+    {
+      "asset_class": "python",
       "bytes": 1469,
       "path": "aura/data/normalization.py",
       "sha256": "439d9d121aee90526c7f14e9704d673c49543d977b810dd026baa94652959efb"
@@ -6015,9 +6588,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 5464,
+      "bytes": 5596,
       "path": "aura/evolution/brain_policy.py",
-      "sha256": "b2dcecaa0b3312d3f8f61aa0846ba335850e78851e7bf8e4925e031aa003e457"
+      "sha256": "8d15af1fc796a35f3cfe70e9d7fa7a26f2e2332a413e09b68b155086583b58fc"
     },
     {
       "asset_class": "python",
@@ -6144,6 +6717,72 @@
       "bytes": 3870,
       "path": "aura/execution/state.py",
       "sha256": "a0948b98417588117e76a26fbec2f2bdbca66719dd61c69d38679c468bedac0c"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 501,
+      "path": "aura/fleet/__init__.py",
+      "sha256": "e8a03c11d71211a2f2e6d87222dc898718fd6e476d4de49c4fa5e67e5f14ebc4"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 6132,
+      "path": "aura/fleet/bus.py",
+      "sha256": "10e5747bc67f14f4ebbb3bdc2cbad6d084c9385db86b4658c711433d86c9d908"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1606,
+      "path": "aura/fleet/cli.py",
+      "sha256": "b108374f927a9d2b23bbdc63345dfc50abde6842304ef2f5e8fe4764c7f6d9cb"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1626,
+      "path": "aura/fleet/events.py",
+      "sha256": "55f8610063e091b1062f5abf0f36d5fd90ff7a1e22042ddc701deca0e44b7721"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3640,
+      "path": "aura/fleet/manifest.py",
+      "sha256": "387a41e0000461a76935c33457c244c75657d25033c604ecf1cab2025f56518a"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 6533,
+      "path": "aura/fleet/process_supervisor.py",
+      "sha256": "16bc73fc1f1574d888581e8977c9e2ab91b6bcb0c070faa3f05f75b85db9b796"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4150,
+      "path": "aura/fleet/providers.py",
+      "sha256": "b07bdba27b93f0dd0fb53047b8c13a6b3fc2c94a3a0c03dcdd4224f42b0f7512"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3338,
+      "path": "aura/fleet/service_runner.py",
+      "sha256": "3e2cf99b8e9ef4779ffebd9de69db614e154612b5cd0ae3d7e22f2e62eb17bb5"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1118,
+      "path": "aura/fleet/status.py",
+      "sha256": "5df98f813ce389e528f6a92d9be3d99ae78f5b1dd0e436eabba9ba82cd2bce4b"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3612,
+      "path": "aura/fleet/streaming.py",
+      "sha256": "1ef48536f19c40b668c91b071c31048df463ef0a8c9ddde789f78cfe27324d53"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4230,
+      "path": "aura/fleet/worker.py",
+      "sha256": "93861c07298892acfbbc93c240ab632ea56c0089fcef68eb7595dc74213ea1ed"
     },
     {
       "asset_class": "python",
@@ -6405,6 +7044,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 12302,
+      "path": "aura/ops/final_doctor.py",
+      "sha256": "e8cfaa3ecdbc4fec5188e9e7fce726ae6ad680b7f2ab41d3d836c10fcd5d6bc2"
+    },
+    {
+      "asset_class": "python",
       "bytes": 2498,
       "path": "aura/ops/health.py",
       "sha256": "53e8aebd54d9db37c663f58b72c0685b54f70338c130aff7ec157bdf8cd408ed"
@@ -6483,9 +7128,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 31250,
+      "bytes": 31283,
       "path": "aura/ops/repository_audit.py",
-      "sha256": "366ada8c41b5c5cff060508b784d6a9f6bbbf3b1f41f44acdde005da3fac0c46"
+      "sha256": "6747c23ce2b0dae2c6135c538c12c02bdc67e0152c4777b9dcd549e52fac2537"
     },
     {
       "asset_class": "python",
@@ -6753,9 +7398,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 15192,
+      "bytes": 15799,
       "path": "aura/runtime/mt5_learning_daemon.py",
-      "sha256": "ac0d36ae600c9799a79c95612e9476cade8b81427c6ee07838308ba4745062b7"
+      "sha256": "7ef1539a4360d2df2ef49061486026b238f5ad17eb1e36c1798d5d64690e0de2"
     },
     {
       "asset_class": "python",
@@ -6831,15 +7476,15 @@
     },
     {
       "asset_class": "python",
-      "bytes": 9739,
+      "bytes": 12715,
       "path": "aura/webapp/charting.py",
-      "sha256": "0d0577cf9863a1b25eae4d1473b2601b238695b9905f1811ca46bab3e52eba1f"
+      "sha256": "40a451141f145b10362c7705dd36eb603f6aeff38acfc4763538069b9812283c"
     },
     {
       "asset_class": "python",
-      "bytes": 15506,
+      "bytes": 24060,
       "path": "aura/webapp/mt5_preflight.py",
-      "sha256": "65ffc8aa575f2eae68d9ee2ba3e2cd2e48289015f6bfb661cdc3589bc2a734c0"
+      "sha256": "d1eb97fd762b3f7d5ac1c964628e71fc0a34986d58b28408a1d0b69e495622a2"
     },
     {
       "asset_class": "python",
@@ -6879,9 +7524,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 10835,
+      "bytes": 16058,
       "path": "aura/webapp/server_v3.py",
-      "sha256": "ad493683da9e853616508a29127de2f925742c4ab0b3279b528f28accf5fa196"
+      "sha256": "f761d5107a021f20749c61e4199d97e716d064deb76f3534d66c9591503b0fd8"
     },
     {
       "asset_class": "repository_asset",
@@ -6957,6 +7602,108 @@
     },
     {
       "asset_class": "documentation_or_validation_evidence",
+      "bytes": 831,
+      "path": "dashboard/README.md",
+      "sha256": "c9bf6347a1af5af64d780d1009777ad77496a9fede27716cbf3f80983417bb43"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 30878,
+      "path": "dashboard/app/globals.css",
+      "sha256": "3e000d5359727e17dba324adeac24bf47b15622b373cbc25454b405b6307fdbb"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 390,
+      "path": "dashboard/app/layout.tsx",
+      "sha256": "5269f134e949317c7a0a7ba989a42c07e84e266541e59d6dd57c9f63ee67a027"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 437,
+      "path": "dashboard/app/manifest.ts",
+      "sha256": "ba40a15589ba829d3d5a277840518b96990fbcda41620b356e73756b2a3f7149"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 131,
+      "path": "dashboard/app/page.tsx",
+      "sha256": "415fb9f18bf1ab0281411b7ddf31c1722b55fa12ad57ae60a2346b0daea5d157"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 9434,
+      "path": "dashboard/components/AdvancedTools.tsx",
+      "sha256": "54bf0dacb9e1295598edf13a5a8e8e82e9cb48e3eac25f86ee0ada4a5633bcc1"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 32401,
+      "path": "dashboard/components/AuraControlRoom.tsx",
+      "sha256": "e574943d279fb4b4999de8db313bfef2b5605a7ea30715025a3374178bd4afd0"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 11369,
+      "path": "dashboard/components/LiveTradingTerminal.tsx",
+      "sha256": "0cfa27426546f74c6c6411819231c5ea627879b64177ba53758c8a3d65619e93"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 8287,
+      "path": "dashboard/components/MarketChart.tsx",
+      "sha256": "17738d103ed1bd243ec13c1d88581099b78ad8f19980bc078496f66dcdf33dc2"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 1700,
+      "path": "dashboard/lib/api.ts",
+      "sha256": "1d5306e51fd4b7536b7d13f3a7db5b7d7bc055268f0d788c6ef1e3af6bf1f696"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 2807,
+      "path": "dashboard/lib/types.ts",
+      "sha256": "ead313b2bdd00a2f7d8579561976581650e526b192bed824617d60bb9362c6e2"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 288,
+      "path": "dashboard/next-env.d.ts",
+      "sha256": "1862ac4bbbc5192d4bf562161df66ea547ed3e67173100656ab606ae9797db2b"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 305,
+      "path": "dashboard/next.config.mjs",
+      "sha256": "8f1640bc65005906881140ea03efbdc665513e0e0cb87da5bf668fe74e546030"
+    },
+    {
+      "asset_class": "configuration_or_structured_evidence",
+      "bytes": 34936,
+      "path": "dashboard/package-lock.json",
+      "sha256": "87b0b8a41e5c797ea0e141dca6e190a723e605fe93fc681cf8e714dfadf41b6e"
+    },
+    {
+      "asset_class": "configuration_or_structured_evidence",
+      "bytes": 561,
+      "path": "dashboard/package.json",
+      "sha256": "68af592787a37335a64abe2c6831f403b0c9794b375b9eafdc6e0805333373ef"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 431,
+      "path": "dashboard/public/aura.svg",
+      "sha256": "63d7c8014dd96fa70b6e419c12d1e6fcfb6f252b57d9e682948b4790cfd85701"
+    },
+    {
+      "asset_class": "configuration_or_structured_evidence",
+      "bytes": 641,
+      "path": "dashboard/tsconfig.json",
+      "sha256": "34226e2eca200383069779529b18e0e53dfc36025b32393d329e9c205253aabb"
+    },
+    {
+      "asset_class": "documentation_or_validation_evidence",
       "bytes": 8294,
       "path": "decision_lineage_validation.txt",
       "sha256": "a2795c9a48a648cea8a23db0c01d0c8af59853f69469c64da976fb33dc769e93"
@@ -6972,6 +7719,30 @@
       "bytes": 8557,
       "path": "docs/ARCHITECTURE.md",
       "sha256": "2d71c76e82557669d810746aad66f9dab92ad9f168e6a8f8fd703c1336f92a43"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 5122,
+      "path": "docs/AURA2_BEGINNER_SETUP.md",
+      "sha256": "622384d35636f23b69e17a5b02e3e5abeb3deba6d617d5e40f38a051c4f21a38"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 2402,
+      "path": "docs/AURA2_OPEN_SOURCE_FUSION.md",
+      "sha256": "4d5b4d58ca0929010143c33a9174375528688094929a23a7cf92cf932ec9bf6c"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 1668,
+      "path": "docs/AURA2_SIDECAR_PROTOCOL.md",
+      "sha256": "1ad5d48d22db6a9e124065aeda5e191f7f156c271e7b15d22cca3cdc5827ad9a"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 4749,
+      "path": "docs/AURA_DISTRIBUTED_FLEET.md",
+      "sha256": "0b42fb6620409a69e183840348aeecf229d7d6e6ff39e0077806d1e4030e5837"
     },
     {
       "asset_class": "documentation",
@@ -7071,9 +7842,27 @@
     },
     {
       "asset_class": "documentation",
+      "bytes": 3248,
+      "path": "docs/FINAL_PRODUCTION_REVIEW_2026-09-19.md",
+      "sha256": "99a24e4595016dba24f481cd7df9701ad52aa5ea2ea1b2827ac76b728e75680a"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 5315,
+      "path": "docs/FINAL_WINDOWS_PRODUCTION_SETUP.md",
+      "sha256": "1e435b0b4d27f5073b0e3f073a794433a315e0a23da539385bf1a6cf7e2bc775"
+    },
+    {
+      "asset_class": "documentation",
       "bytes": 1984,
       "path": "docs/FORWARD_OUTCOME_RECOVERY.md",
       "sha256": "6a3c4270d2d65c2e9c0069223e161e198adfda176488f18da49c29eae8b09f1f"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 1663,
+      "path": "docs/FREE_AI_POLICY.md",
+      "sha256": "920aaa94b7e0c889d7e7e375385767e5bdf00bbbb61d35c5bf5678ec9cc4bcfd"
     },
     {
       "asset_class": "documentation",
@@ -7347,9 +8136,21 @@
     },
     {
       "asset_class": "configuration_or_structured_evidence",
-      "bytes": 1020,
+      "bytes": 1335,
       "path": "pyproject.toml",
-      "sha256": "8b5d81bb87c1af7ee65a0bf4aea224d43096cc7fa039648189c3be82b83079e9"
+      "sha256": "59f5a9ecb5056631a4bd5c800c187689517a1a90ea0b315be1fdbec32cc7841c"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 895,
+      "path": "scripts/aura_env.ps1",
+      "sha256": "bfdf15ed18bfa03d581d7ac7a17010d38e296fddb3d8f9b7fc2569aa902f36f5"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 6648,
+      "path": "scripts/final_setup_aura.ps1",
+      "sha256": "de1ac75d5fa467addd4edcc4f86924da1be6f830733345d793f9d5efcfce99d2"
     },
     {
       "asset_class": "python",
@@ -7377,9 +8178,51 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 3831,
+      "path": "scripts/install_free_unlimited_ai.ps1",
+      "sha256": "a6c8398f5b520692876bfdba08b30061f765151796674a8e6c1a3f07fbdcc42d"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 8403,
+      "path": "scripts/start_aura2_dashboard.ps1",
+      "sha256": "35fbb909bf86de3261ef9d422208c628671f5f860b9a69fbf2ddfb9f22688b51"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 3943,
+      "path": "scripts/start_aura_fleet.ps1",
+      "sha256": "80c592f376494ba9f4071086cc8b7a47222578b0444d98e7640020cb221ba3c6"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 5807,
       "path": "scripts/start_aura_ollama.ps1",
       "sha256": "04cadf4ebc1ce0829e2c962449593f34445cfb14eb91f4494f8f7726edb52985"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 1550,
+      "path": "scripts/start_aura_production.ps1",
+      "sha256": "240528e9abc9cc9c7dc6bd455af6c50fc34be39e7baf8e1129fc3f0ad6b90903"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 688,
+      "path": "scripts/stop_aura2_dashboard.ps1",
+      "sha256": "8e0da6172c219e4bfeb2988b6a713df7a534347782414f38c172d1826b7a5b70"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 894,
+      "path": "scripts/stop_aura_fleet.ps1",
+      "sha256": "4665caf2755a9f6668b5145b44df1c89632f55dd035908d9078788164ccbf639"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 427,
+      "path": "scripts/stop_aura_production.ps1",
+      "sha256": "d38c340de1b778917de4425877cb857634627704468940e400c907e86337fc47"
     },
     {
       "asset_class": "documentation_or_validation_evidence",
@@ -7431,9 +8274,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 5653,
+      "bytes": 5675,
       "path": "tests/test_agent_team.py",
-      "sha256": "62cfbb5a5ad6a41cc52cebbd57f1f286ec8110fc0283cf6c252ae7eef2b86287"
+      "sha256": "3e2257a2da83d524c818ab382cdda77ceb49f33ef9873ca1526d52f43ab9dee7"
     },
     {
       "asset_class": "python",
@@ -7455,6 +8298,54 @@
     },
     {
       "asset_class": "python",
+      "bytes": 4329,
+      "path": "tests/test_aura2_external_research.py",
+      "sha256": "fbd3f451ea01d2b7cc70d878782e9b0c631e5e41edfd091ce8397cca69b16123"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 2336,
+      "path": "tests/test_aura2_feature_bridge.py",
+      "sha256": "b53f1f6a68bdd329985a275a39ddcb3b60c8a9143b0bb4ab4cb1def92abe8ce5"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4353,
+      "path": "tests/test_aura2_fusion.py",
+      "sha256": "39e2c05366acdd1bf73cdfbbedacd2c8ccede0ec769ffd0c7eb5e39a8337e058"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 363,
+      "path": "tests/test_aura2_mt5_runtime_wiring.py",
+      "sha256": "d25bc9a90058d7d1d166016498d02fb81c24616c9792f0d1a09a664c0ed12e85"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 8329,
+      "path": "tests/test_aura2_next_dashboard.py",
+      "sha256": "33addd18bcdeddd46aec423718a726e6d042d0f94d78b569a49ddbb258497921"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 4173,
+      "path": "tests/test_aura2_scanner_bridge.py",
+      "sha256": "d22d3dc2fbab5999f183afbf866f55cf05b119eaa897c9a2343588f93072bdd5"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3781,
+      "path": "tests/test_aura_fleet.py",
+      "sha256": "77172c909ce2c5daf513e8c3aab623ebcb27d179dbea64e20edf21fcf3d38860"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3284,
+      "path": "tests/test_aura_fleet_runtime.py",
+      "sha256": "270157b970f40b68b71a312df82a36cc2799d80f1758b6e19f23eda44c9e7618"
+    },
+    {
+      "asset_class": "python",
       "bytes": 3187,
       "path": "tests/test_aura_readiness.py",
       "sha256": "893fc2634645da251d7971e77635cc70a67d8bf604821ed2d4fd32a88e847d5b"
@@ -7467,9 +8358,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 9478,
+      "bytes": 10869,
       "path": "tests/test_aura_webapp_v3.py",
-      "sha256": "10b8472d22f82b6c523d049166739e7a1fe2054de6d54445212860dc6cb06a7d"
+      "sha256": "e59868d0f55715107a6868765a28c0338cf8a27c2bf0515e0e98a30c32fe4fed"
     },
     {
       "asset_class": "python",
@@ -7677,9 +8568,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 2813,
+      "bytes": 2807,
       "path": "tests/test_deployment_assets.py",
-      "sha256": "09e31a8d20bde46a23bd31222628ab35a7b2c13407dda0118322c2f191dc5b10"
+      "sha256": "28be7f4fe638487bf9878fe4619f7c45a7498c37290aab55fd3417234d0a105a"
     },
     {
       "asset_class": "python",
@@ -7770,6 +8661,12 @@
       "bytes": 7108,
       "path": "tests/test_external_specialists.py",
       "sha256": "9279c8d6f2f6f1f1a91d30e434919908602a9ff3c09e4dc87ab1a12378ae5a3a"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3326,
+      "path": "tests/test_final_production_package.py",
+      "sha256": "838016361f28ec230dbe151498241a42b1393025f9a3ba66656f4ef0cf7d509a"
     },
     {
       "asset_class": "python",
@@ -8061,9 +8958,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6597,
+      "bytes": 6650,
       "path": "tests/test_openai_integration.py",
-      "sha256": "630cbd8101034aa543adca955d09b12397d1642bef69944b8da06a3cafd126f3"
+      "sha256": "e6355b928cc48eedecdc64f502bf0d3dd0130b5abaa002674367f100fdebb5fd"
     },
     {
       "asset_class": "python",
@@ -8390,6 +9287,18 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
+        "line": 110,
+        "path": "aura/fleet/process_supervisor.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "suppressed-exception",
+        "line": 83,
+        "path": "aura/fleet/service_runner.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "suppressed-exception",
         "line": 30,
         "path": "aura/persistence/atomic.py"
       },
@@ -8408,7 +9317,13 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 239,
+        "line": 271,
+        "path": "aura/webapp/server_v3.py"
+      },
+      {
+        "classification": "review-required",
+        "kind": "suppressed-exception",
+        "line": 368,
         "path": "aura/webapp/server_v3.py"
       },
       {
@@ -8444,13 +9359,19 @@
     ],
     "source_modules_without_direct_test_import": [
       "aura/agents/advisory_specialists.py",
+      "aura/aura2/cli.py",
+      "aura/aura2/intake_cli.py",
       "aura/backtest/scheduler.py",
       "aura/data/dhan_option_chain_client.py",
       "aura/data/intelligence_bridge.py",
       "aura/data/kraken.py",
+      "aura/data/mt5_session.py",
       "aura/data/normalization.py",
       "aura/execution/fill_model.py",
       "aura/execution/mt5_protected_demo.py",
+      "aura/fleet/cli.py",
+      "aura/fleet/process_supervisor.py",
+      "aura/fleet/service_runner.py",
       "aura/observability/logging.py",
       "aura/ops/end_to_end_gate.py",
       "aura/ops/mt5_all_market_runner.py",
@@ -8461,7 +9382,6 @@
       "aura/runtime/learning_scanner.py",
       "aura/runtime/mt5_autonomous_demo.py",
       "aura/runtime/mt5_demo_execution_daemon.py",
-      "aura/runtime/mt5_learning_daemon.py",
       "aura/webapp/catalog.py",
       "aura/webapp/operator_assistant.py",
       "aura/webapp/read_models.py",
@@ -8477,6 +9397,7 @@
     {
       "component": "package",
       "direct_test_files": [
+        "tests/test_aura2_mt5_runtime_wiring.py",
         "tests/test_free_intelligence.py"
       ],
       "internal_dependencies": [],
@@ -8770,6 +9691,7 @@
         "tests/test_agent_service.py",
         "tests/test_agent_team.py",
         "tests/test_agents.py",
+        "tests/test_aura2_scanner_bridge.py",
         "tests/test_brain_policy.py",
         "tests/test_ceo_decision_trace.py",
         "tests/test_context_enrichment.py",
@@ -9280,6 +10202,309 @@
       "third_party_dependencies": [
         "pydantic"
       ]
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/__init__.py"
+      ],
+      "lines": 37,
+      "module": "aura.aura2",
+      "parsed": true,
+      "path": "aura/aura2/__init__.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "package_marker",
+      "sha256": "aa3a5f54078710ffb6404b6dd3dc065e9967bd8fd81b6052434e6d1a00336368",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/aura2/opensource_registry.py"
+      ],
+      "lines": 33,
+      "module": "aura.aura2.cli",
+      "parsed": true,
+      "path": "aura/aura2/cli.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "25682a2219616c2702e3ead7c259da4e5c85b1bddf1ef420db0ea911a34241ac",
+      "standard_library_dependencies": [
+        "__future__",
+        "json"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_external_research.py"
+      ],
+      "internal_dependencies": [
+        "aura/aura2/opensource_registry.py",
+        "aura/aura2/research_gateway.py"
+      ],
+      "lines": 78,
+      "module": "aura.aura2.external_artifact",
+      "parsed": true,
+      "path": "aura/aura2/external_artifact.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "fe0c3e3dec1a9496a19db4a281bd3313bffbdc1f9e64b19d548c151d3305207c",
+      "standard_library_dependencies": [
+        "__future__",
+        "hashlib",
+        "json",
+        "typing"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_feature_bridge.py"
+      ],
+      "internal_dependencies": [
+        "aura/aura2/mtf_consensus.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 101,
+      "module": "aura.aura2.feature_bridge",
+      "parsed": true,
+      "path": "aura/aura2/feature_bridge.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "0967aad960244ec77a883cc3c39eec46efe9ffd6c14aedf24c99617985ab1de1",
+      "standard_library_dependencies": [
+        "__future__",
+        "statistics"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/aura2/external_artifact.py"
+      ],
+      "lines": 44,
+      "module": "aura.aura2.intake_cli",
+      "parsed": true,
+      "path": "aura/aura2/intake_cli.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "c220d55697bdfbe0b0fc4fa9a8ef7410a03c13ab09cd4556ccfd111bbd41f15f",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_fusion.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 111,
+      "module": "aura.aura2.learning",
+      "parsed": true,
+      "path": "aura/aura2/learning.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "403786aa9d17a9bb5474ea41ce5d8ba6593c5bc5fd180ddd1911c654a8f6c0c3",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_feature_bridge.py",
+        "tests/test_aura2_fusion.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 147,
+      "module": "aura.aura2.mtf_consensus",
+      "parsed": true,
+      "path": "aura/aura2/mtf_consensus.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "c85ab4808c0801deb413bf7e8308a12a956bc555e9f3c9dfc852fe90a108e033",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "enum",
+        "statistics"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_fusion.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 94,
+      "module": "aura.aura2.opensource_registry",
+      "parsed": true,
+      "path": "aura/aura2/opensource_registry.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "921d99de7a38b71c3cd911ea2a274a50057b4a7b8201c09c9e9f15b97159be5c",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "enum"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_fusion.py"
+      ],
+      "internal_dependencies": [
+        "aura/aura2/opensource_registry.py"
+      ],
+      "lines": 73,
+      "module": "aura.aura2.research_gateway",
+      "parsed": true,
+      "path": "aura/aura2/research_gateway.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "6f73985ca73894c7d1497eb73ef1a93c8f785e4765355f965c40e5bb7b86cee8",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_mt5_runtime_wiring.py",
+        "tests/test_aura2_scanner_bridge.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/aura2/feature_bridge.py",
+        "aura/aura2/mtf_consensus.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 121,
+      "module": "aura.aura2.scanner_bridge",
+      "parsed": true,
+      "path": "aura/aura2/scanner_bridge.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "dec4e41f5215274809bb7406af3b55c21f02289cfda5b80e6050eca356ee53a1",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections",
+        "datetime",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_external_research.py"
+      ],
+      "internal_dependencies": [
+        "aura/aura2/external_artifact.py",
+        "aura/aura2/opensource_registry.py",
+        "aura/aura2/research_gateway.py"
+      ],
+      "lines": 147,
+      "module": "aura.aura2.sidecar",
+      "parsed": true,
+      "path": "aura/aura2/sidecar.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "46c7cc927d883b26be1e2a9520160d096d9fe70baefae5768a8502f54739054d",
+      "standard_library_dependencies": [
+        "__future__",
+        "dataclasses",
+        "json",
+        "os",
+        "pathlib",
+        "subprocess",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "aura2",
+      "direct_test_files": [
+        "tests/test_aura2_mt5_runtime_wiring.py",
+        "tests/test_aura2_scanner_bridge.py"
+      ],
+      "internal_dependencies": [
+        "aura/agents/base.py",
+        "aura/agents/models.py",
+        "aura/domain/models.py"
+      ],
+      "lines": 88,
+      "module": "aura.aura2.specialist",
+      "parsed": true,
+      "path": "aura/aura2/specialist.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "source",
+      "sha256": "24101dc47c0604a9043e6252998c0de7add701ad63e01dc8f546fd7000c13553",
+      "standard_library_dependencies": [
+        "__future__"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "backtest",
@@ -10252,6 +11477,26 @@
     {
       "component": "data",
       "direct_test_files": [],
+      "internal_dependencies": [],
+      "lines": 8,
+      "module": "aura.data.mt5_session",
+      "parsed": true,
+      "path": "aura/data/mt5_session.py",
+      "phase_coverage": [
+        5
+      ],
+      "primary_phase": 5,
+      "role": "source",
+      "sha256": "e8719f4474587f05689af30fa2ab76f387f8ebfc5858ffaf3d8877cd4f77833c",
+      "standard_library_dependencies": [
+        "__future__",
+        "threading"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "data",
+      "direct_test_files": [],
       "internal_dependencies": [
         "aura/domain/models.py"
       ],
@@ -10540,6 +11785,7 @@
         "tests/test_agent_team.py",
         "tests/test_agents.py",
         "tests/test_angel_one_adapter.py",
+        "tests/test_aura2_scanner_bridge.py",
         "tests/test_aura_webapp.py",
         "tests/test_aura_webapp_v3.py",
         "tests/test_autonomous_strategy_lab.py",
@@ -10716,6 +11962,7 @@
       ],
       "internal_dependencies": [
         "aura/agents/advisory_specialists.py",
+        "aura/agents/base.py",
         "aura/agents/deliberation.py",
         "aura/agents/models.py",
         "aura/agents/reliability.py",
@@ -10724,7 +11971,7 @@
         "aura/evolution/core.py",
         "aura/knowledge/firewall.py"
       ],
-      "lines": 155,
+      "lines": 158,
       "module": "aura.evolution.brain_policy",
       "parsed": true,
       "path": "aura/evolution/brain_policy.py",
@@ -10733,7 +11980,7 @@
       ],
       "primary_phase": 7,
       "role": "source",
-      "sha256": "b2dcecaa0b3312d3f8f61aa0846ba335850e78851e7bf8e4925e031aa003e457",
+      "sha256": "8d15af1fc796a35f3cfe70e9d7fa7a26f2e2332a413e09b68b155086583b58fc",
       "standard_library_dependencies": [
         "__future__",
         "decimal"
@@ -11421,6 +12668,298 @@
         "__future__",
         "dataclasses",
         "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/__init__.py"
+      ],
+      "lines": 19,
+      "module": "aura.fleet",
+      "parsed": true,
+      "path": "aura/fleet/__init__.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "package_marker",
+      "sha256": "e8a03c11d71211a2f2e6d87222dc898718fd6e476d4de49c4fa5e67e5f14ebc4",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet.py",
+        "tests/test_aura_fleet_runtime.py"
+      ],
+      "internal_dependencies": [
+        "aura/fleet/events.py"
+      ],
+      "lines": 198,
+      "module": "aura.fleet.bus",
+      "parsed": true,
+      "path": "aura/fleet/bus.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "10e5747bc67f14f4ebbb3bdc2cbad6d084c9385db86b4658c711433d86c9d908",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "collections",
+        "dataclasses",
+        "importlib",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/fleet/bus.py",
+        "aura/fleet/status.py"
+      ],
+      "lines": 60,
+      "module": "aura.fleet.cli",
+      "parsed": true,
+      "path": "aura/fleet/cli.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "b108374f927a9d2b23bbdc63345dfc50abde6842304ef2f5e8fe4764c7f6d9cb",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "importlib",
+        "json",
+        "os"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet.py",
+        "tests/test_aura_fleet_runtime.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 45,
+      "module": "aura.fleet.events",
+      "parsed": true,
+      "path": "aura/fleet/events.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "55f8610063e091b1062f5abf0f36d5fd90ff7a1e22042ddc701deca0e44b7721",
+      "standard_library_dependencies": [
+        "__future__",
+        "datetime",
+        "enum",
+        "typing",
+        "uuid"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet.py",
+        "tests/test_aura_fleet_runtime.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 125,
+      "module": "aura.fleet.manifest",
+      "parsed": true,
+      "path": "aura/fleet/manifest.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "387a41e0000461a76935c33457c244c75657d25033c604ecf1cab2025f56518a",
+      "standard_library_dependencies": [
+        "__future__",
+        "enum"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/fleet/manifest.py"
+      ],
+      "lines": 203,
+      "module": "aura.fleet.process_supervisor",
+      "parsed": true,
+      "path": "aura/fleet/process_supervisor.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "16bc73fc1f1574d888581e8977c9e2ab91b6bcb0c070faa3f05f75b85db9b796",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "dataclasses",
+        "json",
+        "os",
+        "pathlib",
+        "subprocess",
+        "sys",
+        "time",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 121,
+      "module": "aura.fleet.providers",
+      "parsed": true,
+      "path": "aura/fleet/providers.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "b07bdba27b93f0dd0fb53047b8c13a6b3fc2c94a3a0c03dcdd4224f42b0f7512",
+      "standard_library_dependencies": [
+        "__future__",
+        "enum",
+        "os"
+      ],
+      "third_party_dependencies": [
+        "pydantic"
+      ]
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/fleet/bus.py",
+        "aura/fleet/manifest.py",
+        "aura/fleet/worker.py"
+      ],
+      "lines": 112,
+      "module": "aura.fleet.service_runner",
+      "parsed": true,
+      "path": "aura/fleet/service_runner.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "3e2cf99b8e9ef4779ffebd9de69db614e154612b5cd0ae3d7e22f2e62eb17bb5",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "asyncio",
+        "http",
+        "json",
+        "os",
+        "signal",
+        "threading"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet.py"
+      ],
+      "internal_dependencies": [
+        "aura/fleet/manifest.py",
+        "aura/fleet/providers.py"
+      ],
+      "lines": 32,
+      "module": "aura.fleet.status",
+      "parsed": true,
+      "path": "aura/fleet/status.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "5df98f813ce389e528f6a92d9be3d99ae78f5b1dd0e436eabba9ba82cd2bce4b",
+      "standard_library_dependencies": [
+        "__future__",
+        "os",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet_runtime.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 116,
+      "module": "aura.fleet.streaming",
+      "parsed": true,
+      "path": "aura/fleet/streaming.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "1ef48536f19c40b668c91b071c31048df463ef0a8c9ddde789f78cfe27324d53",
+      "standard_library_dependencies": [
+        "__future__",
+        "json",
+        "time",
+        "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "fleet",
+      "direct_test_files": [
+        "tests/test_aura_fleet_runtime.py"
+      ],
+      "internal_dependencies": [
+        "aura/fleet/bus.py",
+        "aura/fleet/events.py",
+        "aura/fleet/manifest.py"
+      ],
+      "lines": 124,
+      "module": "aura.fleet.worker",
+      "parsed": true,
+      "path": "aura/fleet/worker.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "source",
+      "sha256": "93861c07298892acfbbc93c240ab632ea56c0089fcef68eb7595dc74213ea1ed",
+      "standard_library_dependencies": [
+        "__future__",
+        "asyncio",
+        "collections",
+        "datetime",
+        "typing"
       ],
       "third_party_dependencies": []
     },
@@ -12750,6 +14289,43 @@
     {
       "component": "ops",
       "direct_test_files": [
+        "tests/test_final_production_package.py"
+      ],
+      "internal_dependencies": [
+        "aura/fleet/manifest.py",
+        "aura/fleet/providers.py",
+        "aura/ops/phase_gates.py",
+        "aura/webapp/mt5_preflight.py"
+      ],
+      "lines": 375,
+      "module": "aura.ops.final_doctor",
+      "parsed": true,
+      "path": "aura/ops/final_doctor.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "e8cfaa3ecdbc4fec5188e9e7fce726ae6ad680b7f2ab41d3d836c10fcd5d6bc2",
+      "standard_library_dependencies": [
+        "__future__",
+        "argparse",
+        "dataclasses",
+        "importlib",
+        "json",
+        "os",
+        "pathlib",
+        "platform",
+        "shutil",
+        "socket",
+        "sys",
+        "urllib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [
         "tests/test_maintenance_authority.py",
         "tests/test_production_ops.py"
       ],
@@ -13207,7 +14783,7 @@
       "internal_dependencies": [
         "aura/ops/phase_gates.py"
       ],
-      "lines": 826,
+      "lines": 828,
       "module": "aura.ops.repository_audit",
       "parsed": true,
       "path": "aura/ops/repository_audit.py",
@@ -13216,7 +14792,7 @@
       ],
       "primary_phase": 0,
       "role": "source",
-      "sha256": "366ada8c41b5c5cff060508b784d6a9f6bbbf3b1f41f44acdde005da3fac0c46",
+      "sha256": "6747c23ce2b0dae2c6135c538c12c02bdc67e0152c4777b9dcd549e52fac2537",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -14646,9 +16222,13 @@
     },
     {
       "component": "runtime",
-      "direct_test_files": [],
+      "direct_test_files": [
+        "tests/test_aura2_mt5_runtime_wiring.py"
+      ],
       "internal_dependencies": [
         "aura/agents/reliability.py",
+        "aura/aura2/scanner_bridge.py",
+        "aura/aura2/specialist.py",
         "aura/data/intelligence_service.py",
         "aura/data/quality.py",
         "aura/evolution/brain_online.py",
@@ -14665,7 +16245,7 @@
         "aura/runtime/mt5_paper_daemon.py",
         "aura/runtime/scanner.py"
       ],
-      "lines": 367,
+      "lines": 381,
       "module": "aura.runtime.mt5_learning_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_learning_daemon.py",
@@ -14674,7 +16254,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "ac0d36ae600c9799a79c95612e9476cade8b81427c6ee07838308ba4745062b7",
+      "sha256": "7ef1539a4360d2df2ef49061486026b238f5ad17eb1e36c1798d5d64690e0de2",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -14989,6 +16569,8 @@
     {
       "component": "strategy",
       "direct_test_files": [
+        "tests/test_aura2_feature_bridge.py",
+        "tests/test_aura2_scanner_bridge.py",
         "tests/test_unified_features.py"
       ],
       "internal_dependencies": [
@@ -15016,6 +16598,7 @@
     {
       "component": "webapp",
       "direct_test_files": [
+        "tests/test_aura2_next_dashboard.py",
         "tests/test_aura_webapp.py",
         "tests/test_aura_webapp_v3.py",
         "tests/test_mt5_execution_readiness.py",
@@ -15059,13 +16642,15 @@
     {
       "component": "webapp",
       "direct_test_files": [
+        "tests/test_aura2_next_dashboard.py",
         "tests/test_aura_webapp.py"
       ],
       "internal_dependencies": [
         "aura/data/mt5_demo.py",
+        "aura/data/mt5_session.py",
         "aura/domain/models.py"
       ],
-      "lines": 282,
+      "lines": 357,
       "module": "aura.webapp.charting",
       "parsed": true,
       "path": "aura/webapp/charting.py",
@@ -15074,7 +16659,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "0d0577cf9863a1b25eae4d1473b2601b238695b9905f1811ca46bab3e52eba1f",
+      "sha256": "40a451141f145b10362c7705dd36eb603f6aeff38acfc4763538069b9812283c",
       "standard_library_dependencies": [
         "__future__",
         "collections",
@@ -15088,15 +16673,17 @@
     {
       "component": "webapp",
       "direct_test_files": [
+        "tests/test_aura2_next_dashboard.py",
         "tests/test_mt5_execution_readiness.py",
         "tests/test_mt5_symbol_search.py"
       ],
       "internal_dependencies": [
         "aura/data/mt5_demo.py",
+        "aura/data/mt5_session.py",
         "aura/domain/models.py",
         "aura/execution/mt5_protected_demo.py"
       ],
-      "lines": 391,
+      "lines": 579,
       "module": "aura.webapp.mt5_preflight",
       "parsed": true,
       "path": "aura/webapp/mt5_preflight.py",
@@ -15105,12 +16692,11 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "65ffc8aa575f2eae68d9ee2ba3e2cd2e48289015f6bfb661cdc3589bc2a734c0",
+      "sha256": "d1eb97fd762b3f7d5ac1c964628e71fc0a34986d58b28408a1d0b69e495622a2",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
         "decimal",
-        "threading",
         "typing"
       ],
       "third_party_dependencies": []
@@ -15293,17 +16879,21 @@
     {
       "component": "webapp",
       "direct_test_files": [
+        "tests/test_aura2_next_dashboard.py",
         "tests/test_aura_webapp_v3.py"
       ],
       "internal_dependencies": [
         "aura/domain/models.py",
+        "aura/fleet/status.py",
+        "aura/fleet/streaming.py",
         "aura/webapp/__init__.py",
+        "aura/webapp/charting.py",
         "aura/webapp/mt5_preflight.py",
         "aura/webapp/readiness.py",
         "aura/webapp/security.py",
         "aura/webapp/server.py"
       ],
-      "lines": 248,
+      "lines": 377,
       "module": "aura.webapp.server_v3",
       "parsed": true,
       "path": "aura/webapp/server_v3.py",
@@ -15312,12 +16902,14 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "ad493683da9e853616508a29127de2f925742c4ab0b3279b528f28accf5fa196",
+      "sha256": "f761d5107a021f20749c61e4199d97e716d064deb76f3534d66c9591503b0fd8",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
         "atexit",
         "http",
+        "json",
+        "os",
         "threading",
         "urllib",
         "webbrowser"
@@ -16018,7 +17610,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "62cfbb5a5ad6a41cc52cebbd57f1f286ec8110fc0283cf6c252ae7eef2b86287",
+      "sha256": "3e2257a2da83d524c818ab382cdda77ceb49f33ef9873ca1526d52f43ab9dee7",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -16117,6 +17709,217 @@
       "component": "validation",
       "direct_test_files": [],
       "internal_dependencies": [
+        "aura/aura2/external_artifact.py",
+        "aura/aura2/sidecar.py"
+      ],
+      "lines": 130,
+      "module": "tests.test_aura2_external_research",
+      "parsed": true,
+      "path": "tests/test_aura2_external_research.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "fbd3f451ea01d2b7cc70d878782e9b0c631e5e41edfd091ce8397cca69b16123",
+      "standard_library_dependencies": [
+        "json",
+        "sys"
+      ],
+      "third_party_dependencies": [
+        "pydantic",
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/aura2/feature_bridge.py",
+        "aura/aura2/mtf_consensus.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 76,
+      "module": "tests.test_aura2_feature_bridge",
+      "parsed": true,
+      "path": "tests/test_aura2_feature_bridge.py",
+      "phase_coverage": [
+        7,
+        9
+      ],
+      "primary_phase": 7,
+      "role": "test",
+      "sha256": "b53f1f6a68bdd329985a275a39ddcb3b60c8a9143b0bb4ab4cb1def92abe8ce5",
+      "standard_library_dependencies": [
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/aura2/learning.py",
+        "aura/aura2/mtf_consensus.py",
+        "aura/aura2/opensource_registry.py",
+        "aura/aura2/research_gateway.py"
+      ],
+      "lines": 121,
+      "module": "tests.test_aura2_fusion",
+      "parsed": true,
+      "path": "tests/test_aura2_fusion.py",
+      "phase_coverage": [
+        9
+      ],
+      "primary_phase": 9,
+      "role": "test",
+      "sha256": "39e2c05366acdd1bf73cdfbbedacd2c8ccede0ec769ffd0c7eb5e39a8337e058",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/__init__.py",
+        "aura/aura2/scanner_bridge.py",
+        "aura/aura2/specialist.py",
+        "aura/runtime/mt5_learning_daemon.py"
+      ],
+      "lines": 8,
+      "module": "tests.test_aura2_mt5_runtime_wiring",
+      "parsed": true,
+      "path": "tests/test_aura2_mt5_runtime_wiring.py",
+      "phase_coverage": [
+        0,
+        9,
+        12
+      ],
+      "primary_phase": 0,
+      "role": "test",
+      "sha256": "d25bc9a90058d7d1d166016498d02fb81c24616c9792f0d1a09a664c0ed12e85",
+      "standard_library_dependencies": [],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/webapp/__init__.py",
+        "aura/webapp/charting.py",
+        "aura/webapp/mt5_preflight.py",
+        "aura/webapp/server_v3.py"
+      ],
+      "lines": 239,
+      "module": "tests.test_aura2_next_dashboard",
+      "parsed": true,
+      "path": "tests/test_aura2_next_dashboard.py",
+      "phase_coverage": [
+        13
+      ],
+      "primary_phase": 13,
+      "role": "test",
+      "sha256": "33addd18bcdeddd46aec423718a726e6d042d0f94d78b569a49ddbb258497921",
+      "standard_library_dependencies": [
+        "pathlib",
+        "types"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/agents/models.py",
+        "aura/aura2/scanner_bridge.py",
+        "aura/aura2/specialist.py",
+        "aura/domain/models.py",
+        "aura/strategy/features.py"
+      ],
+      "lines": 128,
+      "module": "tests.test_aura2_scanner_bridge",
+      "parsed": true,
+      "path": "tests/test_aura2_scanner_bridge.py",
+      "phase_coverage": [
+        1,
+        7,
+        9
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "d22d3dc2fbab5999f183afbf866f55cf05b119eaa897c9a2343588f93072bdd5",
+      "standard_library_dependencies": [
+        "asyncio",
+        "datetime",
+        "decimal"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/fleet/bus.py",
+        "aura/fleet/events.py",
+        "aura/fleet/manifest.py",
+        "aura/fleet/providers.py",
+        "aura/fleet/status.py"
+      ],
+      "lines": 112,
+      "module": "tests.test_aura_fleet",
+      "parsed": true,
+      "path": "tests/test_aura_fleet.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "test",
+      "sha256": "77172c909ce2c5daf513e8c3aab623ebcb27d179dbea64e20edf21fcf3d38860",
+      "standard_library_dependencies": [
+        "asyncio",
+        "datetime"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/fleet/bus.py",
+        "aura/fleet/events.py",
+        "aura/fleet/manifest.py",
+        "aura/fleet/streaming.py",
+        "aura/fleet/worker.py"
+      ],
+      "lines": 98,
+      "module": "tests.test_aura_fleet_runtime",
+      "parsed": true,
+      "path": "tests/test_aura_fleet_runtime.py",
+      "phase_coverage": [
+        12
+      ],
+      "primary_phase": 12,
+      "role": "test",
+      "sha256": "270157b970f40b68b71a312df82a36cc2799d80f1758b6e19f23eda44c9e7618",
+      "standard_library_dependencies": [
+        "asyncio",
+        "datetime",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
         "aura/webapp/readiness.py"
       ],
       "lines": 99,
@@ -16174,7 +17977,7 @@
         "aura/webapp/server.py",
         "aura/webapp/server_v3.py"
       ],
-      "lines": 248,
+      "lines": 287,
       "module": "tests.test_aura_webapp_v3",
       "parsed": true,
       "path": "tests/test_aura_webapp_v3.py",
@@ -16184,7 +17987,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "10b8472d22f82b6c523d049166739e7a1fe2054de6d54445212860dc6cb06a7d",
+      "sha256": "e59868d0f55715107a6868765a28c0338cf8a27c2bf0515e0e98a30c32fe4fed",
       "standard_library_dependencies": [
         "pathlib"
       ],
@@ -17104,7 +18907,7 @@
       ],
       "primary_phase": 0,
       "role": "test",
-      "sha256": "09e31a8d20bde46a23bd31222628ab35a7b2c13407dda0118322c2f191dc5b10",
+      "sha256": "28be7f4fe638487bf9878fe4619f7c45a7498c37290aab55fd3417234d0a105a",
       "standard_library_dependencies": [
         "__future__",
         "pathlib"
@@ -17513,6 +19316,27 @@
       "third_party_dependencies": [
         "pytest"
       ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/ops/final_doctor.py"
+      ],
+      "lines": 88,
+      "module": "tests.test_final_production_package",
+      "parsed": true,
+      "path": "tests/test_final_production_package.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "test",
+      "sha256": "838016361f28ec230dbe151498241a42b1393025f9a3ba66656f4ef0cf7d509a",
+      "standard_library_dependencies": [
+        "pathlib"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "validation",
@@ -18816,7 +20640,7 @@
         "aura/domain/models.py",
         "aura/knowledge/firewall.py"
       ],
-      "lines": 184,
+      "lines": 185,
       "module": "tests.test_openai_integration",
       "parsed": true,
       "path": "tests/test_openai_integration.py",
@@ -18827,7 +20651,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "630cbd8101034aa543adca955d09b12397d1642bef69944b8da06a3cafd126f3",
+      "sha256": "e6355b928cc48eedecdc64f502bf0d3dd0130b5abaa002674367f100fdebb5fd",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -20100,7 +21924,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "9913bbc3ddb56ff6b008575726cf1eddc015010b1ab81dbdf0dd547b1afd3468",
+  "repository_tree_sha256": "81030d97157d1514aa2ce7cb212f195fa677c02343e3e67373fe8792d21e840f",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -20136,6 +21960,12 @@
       "kind": "abstract-contract",
       "line": 37,
       "path": "aura/agents/providers.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 15,
+      "path": "aura/aura2/scanner_bridge.py"
     },
     {
       "classification": "intentional",
@@ -20433,6 +22263,36 @@
     },
     {
       "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 14,
+      "path": "aura/fleet/bus.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 23,
+      "path": "aura/fleet/bus.py"
+    },
+    {
+      "classification": "intentional",
+      "kind": "protocol-contract",
+      "line": 25,
+      "path": "aura/fleet/bus.py"
+    },
+    {
+      "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 110,
+      "path": "aura/fleet/process_supervisor.py"
+    },
+    {
+      "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 83,
+      "path": "aura/fleet/service_runner.py"
+    },
+    {
+      "classification": "intentional",
       "kind": "abstract-contract",
       "line": 30,
       "path": "aura/forecast/providers.py"
@@ -20668,7 +22528,13 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 239,
+      "line": 271,
+      "path": "aura/webapp/server_v3.py"
+    },
+    {
+      "classification": "review-required",
+      "kind": "suppressed-exception",
+      "line": 368,
       "path": "aura/webapp/server_v3.py"
     },
     {
@@ -20703,15 +22569,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 186,
-    "entrypoints": 63,
+    "directly_tested_source_modules": 204,
+    "entrypoints": 94,
     "parse_errors": 0,
-    "python_modules": 395,
-    "repository_files": 484,
-    "source_modules": 209,
-    "static_test_functions": 663,
-    "stub_candidates": 98,
-    "test_modules": 160,
+    "python_modules": 429,
+    "repository_files": 562,
+    "source_modules": 232,
+    "static_test_functions": 702,
+    "stub_candidates": 105,
+    "test_modules": 169,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
