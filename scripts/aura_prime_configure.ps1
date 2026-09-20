@@ -20,14 +20,12 @@ function ConvertFrom-Secure([Security.SecureString]$Value) {
     }
 }
 
-function Escape-EnvValue([string]$Value) {
-    $escaped = $Value.Replace("\", "\\").Replace('"', '\"')
-    return '"' + $escaped + '"'
-}
-
 function Set-AuraEnv([string]$Name, [string]$Value) {
+    if ($Value.Contains([char]0) -or $Value.Contains("\`r") -or $Value.Contains("\`n")) {
+        throw ("AURA env value for " + $Name + " must be a single line")
+    }
     $Lines = @(Get-Content -LiteralPath $EnvPath -ErrorAction Stop)
-    $Replacement = $Name + "=" + (Escape-EnvValue $Value)
+    $Replacement = $Name + "=" + $Value
     $Found = $false
     for ($i = 0; $i -lt $Lines.Count; $i++) {
         if ($Lines[$i] -match ("^" + [regex]::Escape($Name) + "=")) {
