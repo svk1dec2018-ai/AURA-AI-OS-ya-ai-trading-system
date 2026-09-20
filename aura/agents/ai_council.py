@@ -89,10 +89,16 @@ def build_ollama_ai_council(
     agents: list[SpecialistAgent] = []
     for role_index, role in enumerate(effective.roles):
         for opinion_index in range(effective.opinions_per_role):
-            provider = models[(role_index + opinion_index) % len(models)]
+            primary_index = (role_index + opinion_index) % len(models)
+            provider = models[primary_index]
+            fallback_providers = (
+                *models[primary_index + 1 :],
+                *models[:primary_index],
+            )
             agents.append(
                 ProviderBackedSpecialist(
                     provider=provider,
+                    fallback_providers=fallback_providers,
                     role=role,
                     agent_id=(
                         f"ai-council:{provider.provider_id}:{provider.model_id}:"
