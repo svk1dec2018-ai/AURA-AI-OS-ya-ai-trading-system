@@ -56,9 +56,9 @@ class OpenAIResponsesClient:
     """Minimal async Responses API client for strict structured output.
 
     Credentials are accepted only through the process environment (or an explicit
-    constructor argument supplied by the host). The endpoint is intentionally fixed
-    to OpenAI's HTTPS API so an environment change cannot exfiltrate the key to an
-    arbitrary host. AURA never persists the key, request Authorization header, raw
+    constructor argument supplied by the host). Provider endpoints are selected from
+    a hard-coded allowlist (OpenAI or NVIDIA NIM), so an environment change cannot
+    redirect credentials to an arbitrary host. AURA never persists the key, request Authorization header, raw
     hidden reasoning, or provider response body.
     """
 
@@ -76,7 +76,7 @@ class OpenAIResponsesClient:
     ) -> None:
         normalized_model = model_id.strip()
         if _MODEL_ID_PATTERN.fullmatch(normalized_model) is None:
-            raise ValueError("invalid OpenAI model_id")
+            raise ValueError("invalid Responses API model_id")
         if timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be positive")
         normalized_provider = provider_id.strip().lower()
