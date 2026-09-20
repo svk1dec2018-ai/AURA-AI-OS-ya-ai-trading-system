@@ -138,8 +138,9 @@ class OpenAIResponsesClient:
                     "schema": dict(schema),
                 }
             },
-            "store": False,
         }
+        if self.provider_id == "openai":
+            payload["store"] = False
         headers = {
             "Authorization": f"Bearer {self._api_key}",
             "Content-Type": "application/json",
