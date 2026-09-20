@@ -4,6 +4,7 @@ import asyncio
 import os
 
 from aura.agents.openai_provider import OpenAIReasoningProvider
+from aura.ai.openai_chat_compatible import GeminiOpenAIChatClient
 from aura.ai.openai_responses import OpenAIResponsesClient
 
 
@@ -46,6 +47,33 @@ class OpenRouterReasoningProvider(_CompatibleReasoningProvider):
     responses_provider_id = "openrouter"
 
 
+class GeminiReasoningProvider(OpenAIReasoningProvider):
+    provider_id = "gemini"
+
+    def __init__(
+        self,
+        model_id: str,
+        *,
+        api_key: str | None = None,
+        timeout_seconds: float = 90.0,
+        request_limiter: asyncio.Semaphore | None = None,
+        max_candles: int = 80,
+    ) -> None:
+        client = GeminiOpenAIChatClient(
+            model_id,
+            api_key=api_key,
+            timeout_seconds=timeout_seconds,
+            request_limiter=request_limiter,
+        )
+        super().__init__(
+            model_id,
+            client=client,
+            timeout_seconds=timeout_seconds,
+            request_limiter=request_limiter,
+            max_candles=max_candles,
+        )
+
+
 def build_groq_providers_from_env() -> tuple[GroqReasoningProvider, ...]:
     return _build_provider_group(
         model_env="AURA_GROQ_MODELS",
@@ -55,6 +83,28 @@ def build_groq_providers_from_env() -> tuple[GroqReasoningProvider, ...]:
         provider_type=GroqReasoningProvider,
     )
 
+
+
+def build_gemini_providers_from_env() -> tuple[GeminiReasoningProvider, ...]:
+    raw = os.getenv("AURA_GEMINI_MODELS", "")
+    models = tuple(dict.fromkeys(item.strip() for item in raw.split(",") if item.strip()))
+    if not models:
+        return ()
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if not api_key.strip():
+        raise ValueError("AURA_GEMINI_MODELS requires GEMINI_API_KEY")
+    timeout = float(os.getenv("AURA_GEMINI_TIMEOUT_SECONDS", "90"))
+    max_concurrency = _positive_int_env("AURA_GEMINI_MAX_CONCURRENCY", default=2)
+    limiter = asyncio.Semaphore(max_concurrency)
+    return tuple(
+        GeminiReasoningProvider(
+            model,
+            api_key=api_key,
+            timeout_seconds=timeout,
+            request_limiter=limiter,
+        )
+        for model in models
+    )
 
 def build_openrouter_providers_from_env() -> tuple[OpenRouterReasoningProvider, ...]:
     return _build_provider_group(
