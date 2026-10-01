@@ -43,19 +43,26 @@ class RiskEngine:
         *,
         overlays: tuple[PreTradeRiskOverlay, ...] = (),
         notional_multipliers: dict[str, Decimal] | None = None,
+        loss_multipliers: dict[str, Decimal] | None = None,
         quantity_rules: dict[str, QuantityRule] | None = None,
     ) -> None:
         self.limits = limits
         self.overlays = overlays
         self.notional_multipliers = dict(notional_multipliers or {})
+        self.loss_multipliers = dict(loss_multipliers or {})
         self.quantity_rules = dict(quantity_rules or {})
         if any(value <= 0 for value in self.notional_multipliers.values()):
             raise ValueError("risk notional multipliers must be positive")
+        if any(value <= 0 for value in self.loss_multipliers.values()):
+            raise ValueError("risk loss multipliers must be positive")
         self.kill_switch = False
         self.kill_switch_reason = ""
 
     def notional_multiplier(self, symbol: str) -> Decimal:
         return self.notional_multipliers.get(symbol, Decimal(1))
+
+    def loss_multiplier(self, symbol: str) -> Decimal:
+        return self.loss_multipliers.get(symbol, self.notional_multiplier(symbol))
 
     def engage_kill_switch(self, reason: str) -> None:
         self.kill_switch = True
@@ -215,7 +222,7 @@ class RiskEngine:
                 )
             loss_per_unit = (
                 abs(reference_price - protective_stop_price)
-                * self.notional_multiplier(order.symbol)
+                * self.loss_multiplier(order.symbol)
             )
             risk_budget = (
                 portfolio.equity

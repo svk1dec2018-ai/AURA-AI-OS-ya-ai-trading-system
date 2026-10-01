@@ -25,10 +25,10 @@ function lineData(candles: ChartSnapshot["candles"], key: keyof ChartSnapshot["c
     .map((item) => ({ time: unix(item.open_time), value: Number(item[key]) }));
 }
 
-export default function MarketChart() {
+export default function MarketChart({ externalSymbol }: { externalSymbol?: string } = {}) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const [symbol, setSymbol] = useState("XAUUSD");
+  const [symbol, setSymbol] = useState(externalSymbol || "XAUUSD");
   const [timeframe, setTimeframe] = useState("5m");
   const [snapshot, setSnapshot] = useState<ChartSnapshot | null>(null);
   const [quote, setQuote] = useState<LiveQuote | null>(null);
@@ -36,6 +36,10 @@ export default function MarketChart() {
   const [quoteError, setQuoteError] = useState("");
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    if (externalSymbol?.trim()) setSymbol(externalSymbol.trim().toUpperCase());
+  }, [externalSymbol]);
 
   useEffect(() => {
     let cancelled = false;

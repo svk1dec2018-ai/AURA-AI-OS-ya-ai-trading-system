@@ -141,3 +141,44 @@ def test_invalid_risk_limit_configuration_is_rejected() -> None:
         RiskLimits(max_daily_loss_pct=Decimal(-1))
     with pytest.raises(ValueError, match="max_risk_per_trade_pct"):
         RiskLimits(max_risk_per_trade_pct=Decimal(0))
+
+
+def test_stop_risk_uses_loss_multiplier_not_margin_exposure_multiplier() -> None:
+    engine = RiskEngine(
+        RiskLimits(
+            max_order_notional_pct=Decimal(100),
+            max_risk_per_trade_pct=Decimal(1),
+        ),
+        notional_multipliers={"X": Decimal(10)},
+        loss_multipliers={"X": Decimal(100)},
+    )
+    order = OrderRequest(
+        symbol="X",
+        venue="TEST",
+        side=Side.BUY,
+        quantity=Decimal(100),
+    )
+    decision = engine.evaluate(
+        order,
+        Decimal(100),
+        snapshot(equity="100000"),
+        Decimal(100000),
+        protective_stop_price=Decimal(99),
+    )
+    assert decision.approved
+    assert decision.approved_quantity == Decimal(10)
+    assert (
+        decision.approved_quantity
+        * Decimal(1)
+        * engine.loss_multiplier("X")
+        == Decimal(1000)
+    )
+
+
+def test_loss_multiplier_defaults_to_exposure_multiplier() -> None:
+    engine = RiskEngine(
+        RiskLimits(),
+        notional_multipliers={"X": Decimal(25)},
+    )
+    assert engine.notional_multiplier("X") == Decimal(25)
+    assert engine.loss_multiplier("X") == Decimal(25)

@@ -59,11 +59,18 @@ async def build_mt5_autonomous_demo_daemon(
     before new decisions and live-money/fund-transfer capability is absent.
     """
 
+    effective_protection = protection or ProtectedMT5DemoConfig()
     effective = config or MT5AllMarketPaperConfig(
-        state_dir=Path("runtime/mt5_autonomous_demo")
+        state_dir=Path("runtime/mt5_autonomous_demo"),
+        protective_stop_bps=effective_protection.stop_bps,
     )
     if effective.state_dir == Path("runtime/mt5_all_market_paper"):
         effective = replace(effective, state_dir=Path("runtime/mt5_autonomous_demo"))
+    if effective.protective_stop_bps != effective_protection.stop_bps:
+        effective = replace(
+            effective,
+            protective_stop_bps=effective_protection.stop_bps,
+        )
 
     daemon = await build_mt5_self_evolving_paper_daemon(
         effective,
@@ -95,7 +102,7 @@ async def build_mt5_autonomous_demo_daemon(
             recovered.kill_switch_reason or "restored financial kill switch"
         )
 
-    broker = ProtectedMT5DemoBroker(original.gateway, config=protection)
+    broker = ProtectedMT5DemoBroker(original.gateway, config=effective_protection)
     broker.restore_orders(state.request for state in recovered.orders.values())
     coordinator.broker = broker
 

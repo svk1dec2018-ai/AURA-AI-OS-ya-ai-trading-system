@@ -1,5 +1,5 @@
-import AuraControlRoom from "../components/AuraControlRoom";
+import PrimeControlRoom from "../components/PrimeControlRoom";
 
 export default function HomePage() {
-  return <AuraControlRoom />;
+  return <PrimeControlRoom />;
 }

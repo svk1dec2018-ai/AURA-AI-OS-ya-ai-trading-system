@@ -223,6 +223,20 @@ class MT5DemoPollingSource:
             return
         midpoint = (bid + ask) / Decimal(2)
         spread_bps = float((ask - bid) / midpoint * Decimal(10000))
+        broker_min_stop_bps = 0.0
+        try:
+            raw_info = self.gateway.symbol_info(symbol)
+        except Exception:  # noqa: BLE001 - broker stop metadata may remain unavailable
+            raw_info = None
+        if raw_info is not None:
+            info = _asdict(raw_info)
+            point = Decimal(str(info.get("point", 0)))
+            stop_level = max(int(info.get("trade_stops_level", 0)), 1) + 2
+            if point > 0 and midpoint > 0:
+                broker_distance = point * Decimal(stop_level)
+                broker_min_stop_bps = float(
+                    broker_distance / midpoint * Decimal(10000)
+                )
         observed_at = _tick_timestamp(source)
         self._execution_quality[symbol] = {
             "source_id": f"mt5:{symbol}:bid-ask",
@@ -231,6 +245,7 @@ class MT5DemoPollingSource:
             "estimated_slippage_bps": spread_bps / 2.0,
             "top_of_book_notional": 0.0,
             "trust_score": 1.0,
+            "broker_min_stop_bps": broker_min_stop_bps,
         }
 
 

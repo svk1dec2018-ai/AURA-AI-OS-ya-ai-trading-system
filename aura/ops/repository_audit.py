@@ -48,6 +48,7 @@ _PHASE_BY_PACKAGE = {
     "options": 5,
     "persistence": 2,
     "portfolio": 2,
+    "prime": 14,
     "research": 7,
     "risk": 3,
     "runtime": 12,

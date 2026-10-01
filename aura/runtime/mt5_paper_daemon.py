@@ -116,6 +116,8 @@ class MT5AllMarketPaperConfig:
     paper_fee_bps: Decimal = Decimal(0)
     paper_slippage_bps: Decimal = Decimal(1)
     max_order_notional_pct: Decimal = Decimal(1)
+    max_risk_per_trade_pct: Decimal = Decimal("0.50")
+    protective_stop_bps: Decimal = Decimal(35)
     max_gross_exposure_pct: Decimal = Decimal(25)
     max_symbol_exposure_pct: Decimal = Decimal(5)
     max_drawdown_pct: Decimal = Decimal(10)
@@ -137,6 +139,10 @@ class MT5AllMarketPaperConfig:
             raise ValueError("max_symbols must be positive when configured")
         if self.max_concurrent_contexts <= 0 or self.reconcile_every_batches <= 0:
             raise ValueError("concurrency/reconciliation cadence must be positive")
+        if not Decimal(0) < self.max_risk_per_trade_pct <= Decimal(100):
+            raise ValueError("max_risk_per_trade_pct must be in (0, 100]")
+        if self.protective_stop_bps <= 0:
+            raise ValueError("protective_stop_bps must be positive")
 
 
 @dataclass(slots=True, frozen=True)
@@ -366,12 +372,14 @@ async def build_mt5_all_market_paper_daemon(
         risk_engine = RiskEngine(
             RiskLimits(
                 max_order_notional_pct=config.max_order_notional_pct,
+                max_risk_per_trade_pct=config.max_risk_per_trade_pct,
                 max_gross_exposure_pct=config.max_gross_exposure_pct,
                 max_symbol_exposure_pct=config.max_symbol_exposure_pct,
                 max_drawdown_pct=config.max_drawdown_pct,
                 max_daily_loss_pct=config.max_daily_loss_pct,
             ),
             notional_multipliers=risk_exposure_multipliers,
+            loss_multipliers=contract_multipliers,
             quantity_rules=quantity_rules,
         )
 
@@ -405,7 +413,8 @@ async def build_mt5_all_market_paper_daemon(
             max_concurrent_contexts=config.max_concurrent_contexts,
         )
         allocator = PortfolioRiskCoordinator(
-            DecisionPipeline(EmaCrossStrategy(fast=8, slow=21), risk_engine)
+            DecisionPipeline(EmaCrossStrategy(fast=8, slow=21), risk_engine),
+            default_protective_stop_bps=config.protective_stop_bps,
         )
         broker = PaperBroker(
             PaperExecutionConfig(

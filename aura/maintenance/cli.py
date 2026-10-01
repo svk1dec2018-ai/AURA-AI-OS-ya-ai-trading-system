@@ -13,6 +13,7 @@ from typing import Any
 
 from aura.ai.free_models import configured_ollama_model_ids, parse_ollama_keep_alive
 from aura.ai.ollama_structured import OllamaStructuredClient
+from aura.ai.openai_compatible import OpenAICompatibleStructuredClient
 from aura.ai.openai_responses import OpenAIResponsesClient
 from aura.maintenance.authority import AuthorityRole, DevelopmentAuthorityPolicy
 from aura.maintenance.change_control import (
@@ -34,6 +35,10 @@ _DEFAULT_CHANGE_JOURNAL = Path("runtime/maintenance/change_registry.jsonl")
 _DEFAULT_CORRECTION_JOURNAL = Path("runtime/maintenance/financial_corrections.jsonl")
 _LOCAL_MAINTENANCE_CONFIG_NAMES = {
     "AURA_FREE_AI_PRESET",
+    "AURA_COMPAT_TIMEOUT_SECONDS",
+    "AURA_COMPAT_MODEL",
+    "AURA_COMPAT_API_KEY",
+    "AURA_COMPAT_BASE_URL",
     "AURA_MAINTENANCE_AI_PROVIDER",
     "AURA_MAINTENANCE_OLLAMA_MODEL",
     "AURA_MAINTENANCE_OPENAI_MODEL",
@@ -72,7 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     propose.add_argument("--source", action="append", required=True)
     propose.add_argument(
         "--provider",
-        choices=("auto", "ollama", "openai"),
+        choices=("auto", "ollama", "compatible", "openai"),
         default=os.getenv("AURA_MAINTENANCE_AI_PROVIDER", "auto"),
     )
     propose.add_argument(
@@ -294,6 +299,21 @@ def _maintenance_client(
                 os.getenv("AURA_OLLAMA_KEEP_ALIVE", "0")
             ),
         )
+    if provider == "compatible":
+        base_url = os.getenv("AURA_COMPAT_BASE_URL", "").strip()
+        model_id = (
+            args.model
+            or os.getenv("AURA_COMPAT_MODEL", "").strip()
+            or "auto/best-coding"
+        )
+        if not base_url:
+            raise ValueError("AURA_COMPAT_BASE_URL is required for compatible provider")
+        return OpenAICompatibleStructuredClient(
+            model_id,
+            base_url=base_url,
+            api_key=os.getenv("AURA_COMPAT_API_KEY", ""),
+            timeout_seconds=float(os.getenv("AURA_COMPAT_TIMEOUT_SECONDS", "120")),
+        )
     _load_local_openai_key(root)
     model_id = (
         args.model
@@ -304,18 +324,25 @@ def _maintenance_client(
 
 
 def _resolve_maintenance_provider(requested: str, root: Path) -> str:
-    if requested not in {"auto", "ollama", "openai"}:
-        raise ValueError("AURA_MAINTENANCE_AI_PROVIDER must be auto, ollama or openai")
+    if requested not in {"auto", "ollama", "compatible", "openai"}:
+        raise ValueError(
+            "AURA_MAINTENANCE_AI_PROVIDER must be auto, ollama, compatible or openai"
+        )
     if requested != "auto":
         return requested
     if configured_ollama_model_ids():
         return "ollama"
+    if (
+        os.getenv("AURA_COMPAT_BASE_URL", "").strip()
+        and os.getenv("AURA_COMPAT_MODEL", "").strip()
+    ):
+        return "compatible"
     _load_local_openai_key(root)
     if os.getenv("OPENAI_API_KEY", "").strip():
         return "openai"
     raise ValueError(
-        "no maintenance AI is configured; select the balanced5 Ollama preset "
-        "or provide an OpenAI API key"
+        "no maintenance AI is configured; select the balanced5 Ollama preset, "
+        "configure a compatible OmniRoute/OpenRouter gateway, or provide an OpenAI API key"
     )
 
 

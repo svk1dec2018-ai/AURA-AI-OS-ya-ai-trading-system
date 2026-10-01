@@ -41,6 +41,7 @@ class DecisionPipeline:
         current_position_quantity: Decimal = Decimal(0),
         position_average_price: Decimal = Decimal(0),
         bars_in_position: int = 0,
+        protective_stop_price: Decimal | None = None,
     ) -> DecisionResult | None:
         if not history:
             return None
@@ -65,6 +66,7 @@ class DecisionPipeline:
             venue=venue,
             requested_quantity=requested_quantity,
             current_position_quantity=current_position_quantity,
+            protective_stop_price=protective_stop_price,
         )
 
     def evaluate_signal(
@@ -76,6 +78,7 @@ class DecisionPipeline:
         venue: str,
         requested_quantity: Decimal,
         current_position_quantity: Decimal = Decimal(0),
+        protective_stop_price: Decimal | None = None,
     ) -> DecisionResult | None:
         """Evaluate governed entry or exit intent through one RiskEngine.
 
@@ -122,6 +125,7 @@ class DecisionPipeline:
             portfolio=portfolio,
             day_start_equity=day_start_equity,
             current_position_quantity=current_position_quantity,
+            protective_stop_price=protective_stop_price,
         )
         if not decision.approved:
             return DecisionResult(signal=signal, risk=decision, order=None)
