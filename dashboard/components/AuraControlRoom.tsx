@@ -40,6 +40,7 @@ function num(value: any, fallback = 0) {
 }
 
 function pct(value: any) {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = num(value, NaN);
   if (!Number.isFinite(parsed)) return "—";
   const normalized = parsed <= 1 ? parsed * 100 : parsed;
@@ -47,6 +48,7 @@ function pct(value: any) {
 }
 
 function money(value: any, currency = "") {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = num(value, NaN);
   if (!Number.isFinite(parsed)) return "—";
   const formatted = parsed.toLocaleString(undefined, { maximumFractionDigits: 2 });
@@ -196,7 +198,7 @@ export default function AuraControlRoom() {
 
   const stats = useMemo(() => ({
     equity: status.equity ?? status.portfolio?.equity ?? baseline.starting_balance,
-    pnl: status.realized_pnl ?? status.pnl ?? 0,
+    pnl: status.realized_pnl ?? status.pnl,
     drawdown: status.drawdown_pct ?? status.max_drawdown_pct,
     opportunities: status.opportunities ?? status.counters?.opportunities ?? decisions.length,
     orders: status.submitted_orders ?? status.counters?.submitted_orders ?? 0,
@@ -254,6 +256,8 @@ export default function AuraControlRoom() {
           {NAV.map(([id, label, icon]) => (
             <button
               key={id}
+              aria-label={label}
+              title={label}
               className={view === id ? "nav active" : "nav"}
               onClick={() => setView(id)}
             >
@@ -570,7 +574,7 @@ export default function AuraControlRoom() {
         <aside className="jarvis">
           <div className="jarvis-head">
             <div><b>✦ AURA</b><span>Owner intelligence assistant</span></div>
-            <button onClick={() => setJarvisOpen(false)}>×</button>
+            <button aria-label="Close AURA assistant" onClick={() => setJarvisOpen(false)}>×</button>
           </div>
           <div className="chat">
             {messages.map((message, index) => <div key={index} className={"bubble " + message.role}>{message.text}</div>)}

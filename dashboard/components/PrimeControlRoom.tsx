@@ -337,7 +337,12 @@ export default function PrimeControlRoom() {
     recognition.onend = () => setListening(false);
     recognition.onerror = () => setListening(false);
     setListening(true);
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      setListening(false);
+      setMessages((items) => items.concat({role: "aura", text: "Voice could not start. Check microphone permission or use a text command."}));
+    }
   }
 
   return (
@@ -727,7 +732,7 @@ export default function PrimeControlRoom() {
             <header>
               <div className={styles.jarvisHeaderOrb}><i /><span /></div>
               <div><b>AURA / JARVIS</b><small>Owner intelligence · advisory commands · financial actions governed</small></div>
-              <button onClick={() => setJarvisOpen(false)}>×</button>
+              <button aria-label="Close AURA assistant" onClick={() => setJarvisOpen(false)}>×</button>
             </header>
             <div className={styles.chat}>
               {messages.map((message, index) => (

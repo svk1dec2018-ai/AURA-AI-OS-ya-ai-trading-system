@@ -576,8 +576,12 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Cache-Control", "no-store")
         self._security_headers()
         self.send_header("Content-Length", str(len(raw)))
-        self.end_headers()
-        self.wfile.write(raw)
+        try:
+            self.end_headers()
+            self.wfile.write(raw)
+        except (BrokenPipeError, ConnectionResetError):
+            # Navigating away can cancel an in-flight polling response.
+            self.close_connection = True
 
     def _body_json(self) -> dict[str, Any]:
         length = int(self.headers.get("Content-Length", "0") or 0)
@@ -664,6 +668,9 @@ class AuraRequestHandler(BaseHTTPRequestHandler):
                     "owner_auth_required": owner_auth_required(),
                 }
             )
+            return
+        if path.startswith("/api/"):
+            self._json({"ok": False, "error": "not found"}, HTTPStatus.NOT_FOUND)
             return
         self._serve_static(path)
 

@@ -1,7 +1,7 @@
 {
   "verification_date": "2026-10-09",
   "release_class": "local-paper-demo-candidate",
-  "code_sha256": "23b39bd3a3cb16a8dbb83bf35e15dd9026c9165725485f4528d1ade717a440c6",
+  "code_sha256": "86c76a9c7cc58174224e727465dc2fa3bb575efe57dd7e482f7be3a8523d8f34",
   "python": "3.12.14",
   "node": "v24.19.0",
   "python_tests": {
@@ -10,15 +10,15 @@
     "failures": "0",
     "skipped": "0",
     "tests": "775",
-    "time": "21.021",
-    "timestamp": "2026-10-09T15:15:01.008323+00:00",
+    "time": "21.557",
+    "timestamp": "2026-10-09T15:35:37.059880+00:00",
     "hostname": "a294d775a299"
   },
   "ruff": "PASS",
   "dashboard_typecheck": "PASS",
   "dashboard_build": "PASS",
   "browser_smoke_tests": {
-    "passed": 4,
+    "passed": 11,
     "failed": 0,
     "real_local_endpoints": true,
     "mock_broker_fills": false
@@ -36,7 +36,7 @@
     "state": "PUBLISHED_RELEASE_BRANCH",
     "repository": "svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system",
     "branch": "release/aura-prime-strategy-brain-2026-10-09",
-    "validated_snapshot_commit": "6a73bf93e31e9c0ed8c2c0858e826e1e2ec239a9",
+    "validated_snapshot_commit": "5936fbde70742bdaa89c6bd15bc459e6c08154d7",
     "migration_target": "svk1dec2018-ai/aura-prime",
     "migration_target_write_access": "403 Resource not accessible by integration"
   },
@@ -52,5 +52,14 @@
     "minimum_family_agreement": 0.6,
     "performance_verified": false,
     "owner_arena_branch_inspected": "04a92492e5341a4cecb882717c8e254d402313ab"
+  },
+  "full_feature_audit": {
+    "report": "docs/FULL_FEATURE_AUDIT_2026-10-09.md",
+    "synthetic_backtest_runs": 294,
+    "actual_market_backtests": 14,
+    "actual_market": "BTC-USD 1h",
+    "actual_closed_bars": 299,
+    "all_features_active": false,
+    "unrestricted_production_ready": false
   }
 }

@@ -204,6 +204,7 @@ export default function MarketChart({ externalSymbol }: { externalSymbol?: strin
       <div className="chart-toolbar">
         <div className="symbol-control">
           <input
+            aria-label="Chart symbol"
             value={symbol}
             onChange={(event) => setSymbol(event.target.value.toUpperCase())}
           />

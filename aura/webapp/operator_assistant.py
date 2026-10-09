@@ -37,6 +37,7 @@ def answer_owner_query(
     latest = status.get("latest") or {}
     counters = status.get("counters") or {}
     safety = runtime.get("safety") or {}
+    kill_locked = bool(runtime.get("app_kill_locked") or status.get("risk_kill_switch"))
     brain = learning.get("status") or {}
     decision_items = decisions.get("items") or []
     intelligence_items = intelligence.get("items") or []
@@ -83,13 +84,13 @@ def answer_owner_query(
             answer=(
                 f"Drawdown: {latest.get('drawdown_pct', '—')}; gross exposure: "
                 f"{latest.get('gross_exposure', '—')}; risk kill switch: "
-                f"{'ENGAGED' if status.get('risk_kill_switch') else 'clear'}. "
+                f"{'ENGAGED' if kill_locked else 'clear'}. "
                 "Independent RiskEngine remains final financial authority."
             ),
             payload={
                 "drawdown_pct": latest.get("drawdown_pct"),
                 "gross_exposure": latest.get("gross_exposure"),
-                "kill_switch": status.get("risk_kill_switch", False),
+                "kill_switch": kill_locked,
                 "kill_switch_reason": status.get("risk_kill_switch_reason"),
             },
         )

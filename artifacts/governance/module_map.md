@@ -5,8 +5,8 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 609
-- Python modules: 462
+- Repository files: 613
+- Python modules: 464
 - Source modules: 255
 - Test modules: 178
 - Static test functions: 758
@@ -21,11 +21,11 @@ It inventories the repository; it does not certify later implementation phases.
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 6 |
 | `container_configuration` | 2 |
-| `documentation` | 46 |
+| `documentation` | 47 |
 | `documentation_or_validation_evidence` | 21 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 462 |
-| `repository_asset` | 29 |
+| `python` | 464 |
+| `repository_asset` | 30 |
 | `repository_configuration` | 2 |
 
 ## Python components
@@ -59,7 +59,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `persistence` | 5 |
 | `portfolio` | 3 |
 | `prime` | 15 |
-| `repository_tooling` | 1 |
+| `repository_tooling` | 3 |
 | `research` | 18 |
 | `risk` | 4 |
 | `runtime` | 19 |
@@ -460,6 +460,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `examples/run_public_command_center.py` | entrypoint | examples | 12 | 0 | 6 |
 | `examples/run_public_crypto_live.py` | entrypoint | examples | 5 | 0 | 1 |
 | `examples/send_telegram_test_alert.py` | entrypoint | examples | 13 | 0 | 1 |
+| `scripts/audit/real_market_backtests.py` | tooling | repository_tooling | 0 | 0 | 6 |
+| `scripts/audit/synthetic_backtest_matrix.py` | tooling | repository_tooling | 0 | 0 | 7 |
 | `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 0 | 6 |

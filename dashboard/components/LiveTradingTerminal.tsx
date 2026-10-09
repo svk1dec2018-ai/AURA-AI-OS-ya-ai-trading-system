@@ -9,6 +9,7 @@ function n(value: unknown): number {
 }
 
 function cash(value: unknown, currency = ""): string {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return "—";
   return (currency ? currency + " " : "") +
@@ -16,6 +17,7 @@ function cash(value: unknown, currency = ""): string {
 }
 
 function pct(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return "—";
   const normalized = parsed <= 1 ? parsed * 100 : parsed;
@@ -99,8 +101,8 @@ export default function LiveTradingTerminal({
         />
         <AccountCell label="FREE MARGIN" value={cash(live?.account.margin_free, currency)} />
         <AccountCell label="MARGIN LEVEL" value={live?.account.margin_level ? n(live.account.margin_level).toFixed(1) + "%" : "—"} />
-        <AccountCell label="OPEN POSITIONS" value={String(live?.position_count ?? 0)} />
-        <AccountCell label="PENDING ORDERS" value={String(live?.order_count ?? 0)} />
+        <AccountCell label="OPEN POSITIONS" value={live ? String(live.position_count) : "—"} />
+        <AccountCell label="PENDING ORDERS" value={live ? String(live.order_count) : "—"} />
         <AccountCell
           label="RISK STATE"
           value={riskLocked ? "LOCKED" : readiness?.mt5_runtime_ready ? "READY" : "CHECK"}
@@ -213,7 +215,7 @@ export default function LiveTradingTerminal({
                       {cash(position.profit, currency)}
                     </td>
                   </tr>
-                )) : <tr><td colSpan={8} className="terminal-empty">No open MT5 positions.</td></tr>}
+                )) : <tr><td colSpan={8} className="terminal-empty">{live ? "No open MT5 positions." : "Broker positions unavailable while MT5 is offline."}</td></tr>}
               </tbody>
             </table>
           </div>
@@ -226,7 +228,7 @@ export default function LiveTradingTerminal({
           <div className="execution-status-grid">
             <StatusItem label="MT5 connection" value={mt5Connected ? "CONNECTED" : "OFFLINE"} good={mt5Connected} />
             <StatusItem label="Trading runtime" value={runtimeRunning ? "RUNNING" : "STOPPED"} good={runtimeRunning} />
-            <StatusItem label="API trading" value={live?.terminal?.tradeapi_disabled ? "DISABLED" : "AVAILABLE"} good={!live?.terminal?.tradeapi_disabled} />
+            <StatusItem label="API trading" value={!mt5Connected ? "UNKNOWN" : live?.terminal?.tradeapi_disabled ? "DISABLED" : "AVAILABLE"} good={mt5Connected && !live?.terminal?.tradeapi_disabled} />
             <StatusItem label="Real money" value="LOCKED" good={false} />
           </div>
           {orders.length ? <div className="pending-order-note">{orders.length} pending MT5 order(s) detected.</div> : null}

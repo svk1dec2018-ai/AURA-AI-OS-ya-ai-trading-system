@@ -3435,6 +3435,58 @@
         "to": "aura/interface/alerts.py"
       },
       {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/backtest/engine.py"
+      },
+      {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/core/pipeline.py"
+      },
+      {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/data/public_history.py"
+      },
+      {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/research/blueprint_compiler.py"
+      },
+      {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/research/strategy_catalog.py"
+      },
+      {
+        "from": "scripts/audit/real_market_backtests.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/backtest/engine.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/core/pipeline.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/data/public_history.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/domain/models.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/research/blueprint_compiler.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/research/strategy_catalog.py"
+      },
+      {
+        "from": "scripts/audit/synthetic_backtest_matrix.py",
+        "to": "aura/risk/engine.py"
+      },
+      {
         "from": "tests/test_adaptive_model_router.py",
         "to": "aura/agents/adaptive_model_router.py"
       },
@@ -7979,9 +8031,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 8499,
+      "bytes": 8543,
       "path": "aura/webapp/operator_assistant.py",
-      "sha256": "9b91cfbc80b3fd4bfcef0cc979fdf71a23bfd4bbb89aa9d6fe5a3eb81ae1cd50"
+      "sha256": "fc78f39ea1c2c916b2e01f6d95d71f59dd5086eacf8fdb2751cca9af4f29c12a"
     },
     {
       "asset_class": "python",
@@ -8009,9 +8061,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 30166,
+      "bytes": 30494,
       "path": "aura/webapp/server.py",
-      "sha256": "0c94b3d4bf74aa7e9b9ae6509d348a0d99e19a00b2465d786beee58beb04f954"
+      "sha256": "2faa76135cd1b9e8f46513b032b9dca1f33c87906b1017e8ece0c4e691364e63"
     },
     {
       "asset_class": "python",
@@ -8129,27 +8181,27 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 10613,
+      "bytes": 10631,
       "path": "dashboard/components/AdvancedTools.tsx",
-      "sha256": "7108334bd3d794efa342b7b70ae010168bd29881527f6ab99666f369ade33d2b"
+      "sha256": "3858ff94ca629910dc521adf07298bb6ab62ad035422f0bb87f7666ce3c14da3"
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 32401,
+      "bytes": 32641,
       "path": "dashboard/components/AuraControlRoom.tsx",
-      "sha256": "e574943d279fb4b4999de8db313bfef2b5605a7ea30715025a3374178bd4afd0"
+      "sha256": "22c0e4314d5454f6d0c0bd6100152ec83540390677f76a59002db2b01039a347"
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 11369,
+      "bytes": 11647,
       "path": "dashboard/components/LiveTradingTerminal.tsx",
-      "sha256": "0cfa27426546f74c6c6411819231c5ea627879b64177ba53758c8a3d65619e93"
+      "sha256": "749dd79634becb57a79d8c0327daba39165b0447e482e138fe24b4d4c6f49a6c"
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 8772,
+      "bytes": 8810,
       "path": "dashboard/components/MarketChart.tsx",
-      "sha256": "63a98e9b260fd380e04fac07c878f85a1e4ac0135d47166dc7e9390d82b5c673"
+      "sha256": "3ea00039e62df9d20eeaa865061e64c040677f6b532e4b5e991e4a52eaf86e02"
     },
     {
       "asset_class": "repository_asset",
@@ -8159,9 +8211,15 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 33176,
+      "bytes": 33412,
       "path": "dashboard/components/PrimeControlRoom.tsx",
-      "sha256": "a045c972499609fd2b8579081717bd2c4aed1a0377a7ad2be3e6c43cfb3960d2"
+      "sha256": "760bcc5a36520840b26a2868883ff761e2706d1418eb78787001a89ac1c367d8"
+    },
+    {
+      "asset_class": "repository_asset",
+      "bytes": 8078,
+      "path": "dashboard/e2e/full-feature-audit.spec.ts",
+      "sha256": "2e4c870b93a0a7d2ddac8ee4d05f1b8b5a6fe1df01c2accd932f0b2055fc1fab"
     },
     {
       "asset_class": "repository_asset",
@@ -8402,6 +8460,12 @@
       "bytes": 1663,
       "path": "docs/FREE_AI_POLICY.md",
       "sha256": "920aaa94b7e0c889d7e7e375385767e5bdf00bbbb61d35c5bf5678ec9cc4bcfd"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 4998,
+      "path": "docs/FULL_FEATURE_AUDIT_2026-10-09.md",
+      "sha256": "7a82da6206c523fedb2af1b1a950c90e9167304be89b482f01190e34e70c3323"
     },
     {
       "asset_class": "documentation",
@@ -8690,6 +8754,18 @@
       "bytes": 1646,
       "path": "pyproject.toml",
       "sha256": "8d24588c6e6a6f7a0e743c0ac1e14f7e402269f401984607dca6f84ed52185e5"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 2444,
+      "path": "scripts/audit/real_market_backtests.py",
+      "sha256": "b229e030ca679e43bc67f09f8ddd0d12cd1f7e5426b3c76705c5a2b0c37c97ae"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3713,
+      "path": "scripts/audit/synthetic_backtest_matrix.py",
+      "sha256": "61bb07277a9ae74c6f301883a053f218dd919f21acdedd5fe8a64fc68f7742d1"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -9928,7 +10004,7 @@
       {
         "classification": "review-required",
         "kind": "suppressed-exception",
-        "line": 769,
+        "line": 776,
         "path": "aura/webapp/server.py"
       },
       {
@@ -17978,7 +18054,7 @@
       "internal_dependencies": [
         "aura/interface/command_center.py"
       ],
-      "lines": 196,
+      "lines": 197,
       "module": "aura.webapp.operator_assistant",
       "parsed": true,
       "path": "aura/webapp/operator_assistant.py",
@@ -17987,7 +18063,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "9b91cfbc80b3fd4bfcef0cc979fdf71a23bfd4bbb89aa9d6fe5a3eb81ae1cd50",
+      "sha256": "fc78f39ea1c2c916b2e01f6d95d71f59dd5086eacf8fdb2751cca9af4f29c12a",
       "standard_library_dependencies": [
         "__future__",
         "typing"
@@ -18118,7 +18194,7 @@
         "aura/webapp/research_runner.py",
         "aura/webapp/security.py"
       ],
-      "lines": 777,
+      "lines": 784,
       "module": "aura.webapp.server",
       "parsed": true,
       "path": "aura/webapp/server.py",
@@ -18127,7 +18203,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "0c94b3d4bf74aa7e9b9ae6509d348a0d99e19a00b2465d786beee58beb04f954",
+      "sha256": "2faa76135cd1b9e8f46513b032b9dca1f33c87906b1017e8ece0c4e691364e63",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -18642,6 +18718,67 @@
       "sha256": "6dbd3983d371fc9a8caf0c7477b6de4d5b5eda05254496b0598bc6067d0cdd15",
       "standard_library_dependencies": [
         "asyncio",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "repository_tooling",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/data/public_history.py",
+        "aura/research/blueprint_compiler.py",
+        "aura/research/strategy_catalog.py",
+        "aura/risk/engine.py"
+      ],
+      "lines": 66,
+      "module": "scripts.audit.real_market_backtests",
+      "parsed": true,
+      "path": "scripts/audit/real_market_backtests.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "tooling",
+      "sha256": "b229e030ca679e43bc67f09f8ddd0d12cd1f7e5426b3c76705c5a2b0c37c97ae",
+      "standard_library_dependencies": [
+        "asyncio",
+        "decimal",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "repository_tooling",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/backtest/engine.py",
+        "aura/core/pipeline.py",
+        "aura/data/public_history.py",
+        "aura/domain/models.py",
+        "aura/research/blueprint_compiler.py",
+        "aura/research/strategy_catalog.py",
+        "aura/risk/engine.py"
+      ],
+      "lines": 110,
+      "module": "scripts.audit.synthetic_backtest_matrix",
+      "parsed": true,
+      "path": "scripts/audit/synthetic_backtest_matrix.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "tooling",
+      "sha256": "61bb07277a9ae74c6f301883a053f218dd919f21acdedd5fe8a64fc68f7742d1",
+      "standard_library_dependencies": [
+        "asyncio",
+        "datetime",
+        "decimal",
+        "json",
+        "math",
         "pathlib"
       ],
       "third_party_dependencies": []
@@ -23445,7 +23582,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "1266a865c1dc18b7668d91d6f3fd3b0c08bd7e47b5767a316749833fc58c95a8",
+  "repository_tree_sha256": "1fcde68f9b1c7e819167f98421c609fedf9fc2a128cbffaa3a31dcc2d4f02f6c",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -24055,7 +24192,7 @@
     {
       "classification": "review-required",
       "kind": "suppressed-exception",
-      "line": 769,
+      "line": 776,
       "path": "aura/webapp/server.py"
     },
     {
@@ -24105,8 +24242,8 @@
     "directly_tested_source_modules": 225,
     "entrypoints": 101,
     "parse_errors": 0,
-    "python_modules": 462,
-    "repository_files": 609,
+    "python_modules": 464,
+    "repository_files": 613,
     "source_modules": 255,
     "static_test_functions": 758,
     "stub_candidates": 107,

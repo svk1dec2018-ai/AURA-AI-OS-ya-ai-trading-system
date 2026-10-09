@@ -33,7 +33,7 @@ export function ExecutionPreview() {
       <div className="tool-title"><b>Protected DEMO order preview</b><span>NO SEND</span></div>
       <form className="tool-form" onSubmit={run}>
         <label>Symbol<input value={symbol} onChange={(e) => setSymbol(e.target.value.toUpperCase())} /></label>
-        <label>Side<select value={side} onChange={(e) => setSide(e.target.value)}><option>BUY</option><option>SELL</option></select></label>
+        <label>Side<select aria-label="Side" value={side} onChange={(e) => setSide(e.target.value)}><option>BUY</option><option>SELL</option></select></label>
         <button className="primary" disabled={busy}>{busy ? "Checking..." : "Check broker acceptance"}</button>
       </form>
       {error ? <div className="tool-error">{error}</div> : null}
