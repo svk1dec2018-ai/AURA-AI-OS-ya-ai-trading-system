@@ -58,10 +58,12 @@ class PrimeModelEnsemble:
 
     def decide(self, votes: tuple[ModelVote, ...]) -> EnsembleDecision:
         eligible = tuple(
-            vote
-            for vote in votes
-            if self.allow_research_only or not vote.research_only
+            vote for vote in votes if self.allow_research_only or not vote.research_only
         )
+        model_keys = tuple(vote.model_key for vote in eligible)
+        if len(model_keys) != len(set(model_keys)):
+            raise ValueError("ensemble model keys must be unique")
+        eligible = tuple(vote for vote in eligible if vote.reliability * vote.calibration > 0)
         model_keys = tuple(vote.model_key for vote in eligible)
         if len(eligible) < self.min_models:
             return EnsembleDecision(
@@ -82,7 +84,7 @@ class PrimeModelEnsemble:
         }
         total_weight = 0.0
         for vote in eligible:
-            weight = max(1e-12, vote.reliability * vote.calibration)
+            weight = vote.reliability * vote.calibration
             scores[vote.intent] += weight * vote.confidence
             total_weight += weight
 
@@ -102,10 +104,9 @@ class PrimeModelEnsemble:
         short_score = scores[SignalIntent.SHORT] / total_weight
         flat_score = scores[SignalIntent.FLAT] / total_weight
         directional_margin = abs(long_score - short_score)
-        if directional_margin < self.min_directional_margin:
+        if directional_margin <= 0 or directional_margin < self.min_directional_margin:
             conflict_reason = (
-                f"directional margin {directional_margin:.4f} < "
-                f"{self.min_directional_margin:.4f}"
+                f"directional margin {directional_margin:.4f} < {self.min_directional_margin:.4f}"
             )
             return EnsembleDecision(
                 intent=SignalIntent.FLAT,
@@ -118,6 +119,17 @@ class PrimeModelEnsemble:
                 reasons=(conflict_reason,),
             )
 
+        if flat_score >= max(long_score, short_score):
+            return EnsembleDecision(
+                intent=SignalIntent.FLAT,
+                confidence=flat_score,
+                quality=VoteQuality.READY,
+                participating_models=model_keys,
+                long_score=long_score,
+                short_score=short_score,
+                flat_score=flat_score,
+                reasons=("abstention score dominates directional evidence",),
+            )
         intent = SignalIntent.LONG if long_score > short_score else SignalIntent.SHORT
         return EnsembleDecision(
             intent=intent,

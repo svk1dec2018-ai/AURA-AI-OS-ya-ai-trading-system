@@ -217,7 +217,7 @@ def build_report(root: Path, *, profile: str) -> DoctorReport:
                 ),
             )
         )
-    if profile in {"running", "mt5-demo", "all-market", "prime-local"}:
+    if profile in {"running", "mt5-demo", "all-market", "prime-local", "prime-ui"}:
         backend_ok = _http_ok("http://127.0.0.1:8766/api/health")
         dashboard_ok = _http_ok("http://127.0.0.1:3100")
         checks.append(
@@ -352,6 +352,7 @@ def _parser() -> argparse.ArgumentParser:
             "mt5-demo",
             "all-market",
             "prime-local",
+            "prime-ui",
             "live",
         ),
         default="running",

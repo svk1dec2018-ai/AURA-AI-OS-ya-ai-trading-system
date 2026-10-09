@@ -37,11 +37,21 @@ class RedisFleetSSE:
                 raise RuntimeError(
                     "Fleet streaming requires AURA distributed dependencies"
                 ) from exc
-            self._client = redis.from_url(self.url, decode_responses=True)
+            self._client = redis.from_url(
+                self.url, decode_responses=True, socket_connect_timeout=1, socket_timeout=6
+            )
         return self._client
 
     def ping(self) -> bool:
-        return bool(self.client.ping())
+        return bool(self._call("ping"))
+
+    def _call(self, method: str, *args: typing.Any, **kwargs: typing.Any) -> typing.Any:
+        try:
+            return getattr(self.client, method)(*args, **kwargs)
+        except Exception as exc:
+            if type(exc).__module__.startswith("redis."):
+                raise RuntimeError("Fleet Redis connection unavailable") from exc
+            raise
 
     def close(self) -> None:
         if self._client is not None:
@@ -67,7 +77,8 @@ class RedisFleetSSE:
         }
         deadline = time.monotonic() + duration_seconds
         while time.monotonic() < deadline:
-            rows = self.client.xread(
+            rows = self._call(
+                "xread",
                 cursors,
                 block=block_ms,
                 count=100,

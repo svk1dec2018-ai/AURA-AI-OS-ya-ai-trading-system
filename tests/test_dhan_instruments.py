@@ -1,3 +1,4 @@
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from aura.data.dhan_instruments import DhanExchangeSegment, DhanInstrumentMaster
@@ -59,7 +60,7 @@ def test_dhan_primary_plan_keeps_index_context_without_trading_it() -> None:
             max_primary_cash_symbols=1,
             max_primary_futures=1,
         )
-    ).primary_plan(instruments)
+    ).primary_plan(instruments, as_of=datetime(2026, 8, 1, tzinfo=UTC))
     assert [item.asset_class for item in plan.streamed] == [
         AssetClass.INDEX,
         AssetClass.CASH_EQUITY,

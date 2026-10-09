@@ -16,7 +16,7 @@ async function parseResponse(response: Response, url: string) {
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data?.ok === false) {
     const detail = data?.error || data?.detail || "Request failed";
-    throw new ApiError(url + " → " + response.status + ": " + detail, response.status, url, data);
+    throw new ApiError(String(detail), response.status, url, data);
   }
   return data;
 }

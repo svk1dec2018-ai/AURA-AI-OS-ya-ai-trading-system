@@ -97,6 +97,7 @@ function numberValue(value: unknown): number {
 }
 
 function money(value: unknown, currency = ""): string {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return "—";
   return (currency ? currency + " " : "") +
@@ -104,6 +105,7 @@ function money(value: unknown, currency = ""): string {
 }
 
 function confidence(value: unknown): string {
+  if (value === null || value === undefined || value === "") return "—";
   const parsed = Number(value);
   if (!Number.isFinite(parsed)) return "—";
   const normalized = parsed <= 1 ? parsed * 100 : parsed;
@@ -137,11 +139,13 @@ export default function PrimeControlRoom() {
   const [messages, setMessages] = useState<Array<{ role: "owner" | "aura"; text: string }>>([
     {
       role: "aura",
-      text: "AURA Prime online. Ask about live MT5, risk, positions, agents, providers or system health.",
+      text: "Ask about MT5, risk, positions, agents, providers or system health. Connection status is shown in the dashboard.",
     },
   ]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [ownerToken, setOwnerToken] = useState("");
+  const [tokenSaved, setTokenSaved] = useState(false);
 
   async function refreshControlPlane() {
     const [workspaceResult, readinessResult, primeResult, fleetResult] = await Promise.all([
@@ -455,7 +459,7 @@ export default function PrimeControlRoom() {
                 <Metric label="Equity" value={account.equity} />
                 <Metric label="Floating P&L" value={account.pnl} accent={numberValue(live?.account?.profit) >= 0} />
                 <Metric label="Free Margin" value={account.freeMargin} />
-                <Metric label="Leverage" value={"1:" + (live?.account?.leverage || "—")} />
+                <Metric label="Leverage" value={live?.account?.leverage ? "1:" + live.account.leverage : "—"} />
               </Panel>
 
               <Panel title="PROVIDERS" badge="TRUTH MATRIX">
@@ -606,7 +610,7 @@ export default function PrimeControlRoom() {
                   <article key={provider.provider_id}>
                     <header>
                       <b>{provider.display_name}</b>
-                      <span>{provider.configured ? "READY" : "CONFIG NEEDED"}</span>
+                      <span>{provider.configured ? "CONFIGURED" : "CONFIG NEEDED"}</span>
                     </header>
                     <p>
                       {provider.local ? "LOCAL" : "REMOTE"} · {provider.free_first ? "FREE-FIRST" : "OPTIONAL PAID"}
@@ -661,6 +665,7 @@ export default function PrimeControlRoom() {
               </div>
             </Panel>
             <Panel title="RESEARCH RULES" badge="CHAMPION / CHALLENGER">
+              <p><a href="/workstation">Open full workstation: strategies, backtests, journal, learning and diagnostics →</a></p>
               <div className={styles.timeline}>
                 {["Hypothesis", "Causal Backtest", "Walk-forward", "Monte Carlo", "Shadow", "Paper / DEMO", "Human Approval", "Smallest Canary"].map((item, index) => (
                   <div key={item}><i>{index + 1}</i><span>{item}</span></div>
@@ -676,12 +681,27 @@ export default function PrimeControlRoom() {
               <div className={styles.serviceGrid}>
                 {(fleet?.services || []).map((service) => (
                   <article key={service.service_id}>
-                    <i className={statusClass(streamState === "LIVE")} />
+                    <i className={styles.bad} />
                     <div><b>{service.service_id}</b><span>{service.role} · :{service.port}</span></div>
-                    <small>{service.financial_authority ? "FINANCIAL AUTHORITY" : "NO FINANCIAL AUTHORITY"}</small>
+                    <small>DECLARED SERVICE · HEALTH NOT VERIFIED</small>
                   </article>
                 ))}
               </div>
+            </Panel>
+            <Panel title="OWNER ACCESS" badge="LOCAL SESSION">
+              <form onSubmit={(event) => {
+                event.preventDefault();
+                if (ownerToken.trim()) sessionStorage.setItem("aura-owner-token", ownerToken.trim());
+                else sessionStorage.removeItem("aura-owner-token");
+                setOwnerToken("");
+                setTokenSaved(true);
+              }}>
+                <label htmlFor="owner-token">Owner token (if enabled in .env.local)</label>
+                <input id="owner-token" type="password" autoComplete="off" value={ownerToken}
+                  onChange={(event) => { setOwnerToken(event.target.value); setTokenSaved(false); }} />
+                <button type="submit">Save for this session</button>
+                {tokenSaved ? <p>Session updated. Broker/API keys belong in CONFIGURE_AURA.cmd.</p> : null}
+              </form>
             </Panel>
             <Panel title="LIVE EVENT STREAM" badge={String(events.length)}>
               <div className={styles.eventFeed}>

@@ -29,7 +29,7 @@ def ai_provider_matrix() -> tuple[dict[str, object], ...]:
 
     openai_configured = bool(os.getenv("OPENAI_API_KEY", "").strip())
 
-    return (
+    rows = (
         {
             "provider_id": "ollama",
             "display_name": "Ollama Local",
@@ -68,6 +68,25 @@ def ai_provider_matrix() -> tuple[dict[str, object], ...]:
             "execution_authority": False,
             "notes": ["Optional; AURA Prime does not require paid OpenAI."],
         },
+    )
+    cloud_groups = (
+        ("nvidia", "NVIDIA NIM", "NVIDIA_API_KEY", "AURA_NVIDIA_MODELS"),
+        ("groq", "Groq", "GROQ_API_KEY", "AURA_GROQ_MODELS"),
+        ("openrouter", "OpenRouter Free", "OPENROUTER_API_KEY", "AURA_OPENROUTER_MODELS"),
+        ("gemini", "Google Gemini", "GEMINI_API_KEY", "AURA_GEMINI_MODELS"),
+    )
+    return rows + tuple(
+        {
+            "provider_id": provider,
+            "display_name": display,
+            "configured": bool(os.getenv(key, "").strip() and os.getenv(models, "").strip()),
+            "free_first": True,
+            "local": False,
+            "missing_env": [name for name in (key, models) if not os.getenv(name, "").strip()],
+            "execution_authority": False,
+            "notes": ["Configuration is not connection verification; free-tier quotas apply."],
+        }
+        for provider, display, key, models in cloud_groups
     )
 
 

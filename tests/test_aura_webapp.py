@@ -37,7 +37,7 @@ def test_strategy_templates_compile_as_research(tmp_path, monkeypatch):
     monkeypatch.setattr(server, "ALGO_DIR", tmp_path / "candidates")
     controller = server.AuraWebController(state_dir=tmp_path / "state")
     templates = controller.algo_options()["templates"]
-    assert len(templates) == 5
+    assert len(templates) == 14
     for template in templates:
         result = controller.build_algo_candidate(template)
         assert result["algorithm"]["compilable"]

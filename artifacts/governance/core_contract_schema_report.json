@@ -5,7 +5,7 @@
     {
       "additional_properties": false,
       "entity": "candle",
-      "json_schema_sha256": "1fbfdf10a375f54e1645d905e25af9c3ff75debba41879215571922a289fe6a7",
+      "json_schema_sha256": "932a825a99d0bf9e4ae1bf1c6e6db040be50aa493c896ee2f1826b4bba7dd096",
       "model": "aura.domain.models.NormalizedCandle",
       "required_fields": [
         "close",
@@ -22,7 +22,7 @@
     {
       "additional_properties": false,
       "entity": "fill",
-      "json_schema_sha256": "4792fa6ee437bfc0a5146e6f0adee7c89eb0e50d7b978cb6e2ece7e14b15ad9a",
+      "json_schema_sha256": "40f573b1e99ac24d73817e001ac926a7347cc04b51742a7d8c3bfceb9bd95ec6",
       "model": "aura.domain.models.Fill",
       "required_fields": [
         "fill_id",
@@ -36,7 +36,7 @@
     {
       "additional_properties": false,
       "entity": "order",
-      "json_schema_sha256": "78198c3995b5253439f45eea7768c9643670f353a4660c62253c314c55b92b52",
+      "json_schema_sha256": "a39708efbe216c88497e3ef90e76324353d2186c9ec1c5edd61e6ef7fce8aebe",
       "model": "aura.domain.models.OrderRequest",
       "required_fields": [
         "quantity",
@@ -48,7 +48,7 @@
     {
       "additional_properties": false,
       "entity": "portfolio",
-      "json_schema_sha256": "c2d316149c7c3bac493d561ec09191789d230cd3fac387154db023154bf26e75",
+      "json_schema_sha256": "984971f0894056b2fa27348fb916d57d035928d5e2d4d3b94d0aeb346c31b46b",
       "model": "aura.domain.models.PortfolioSnapshot",
       "required_fields": [
         "cash",
@@ -64,7 +64,7 @@
     {
       "additional_properties": false,
       "entity": "position",
-      "json_schema_sha256": "1e00535a169fe20daae813d5fb81eb774a7edbe7550c9a60bd7702b9ff01c54d",
+      "json_schema_sha256": "f18dfe011f9128f81fc173c97f6a4a41ef17c27a93290c3ba7d34c3b0bf46626",
       "model": "aura.portfolio.ledger.Position",
       "required_fields": [
         "symbol"
@@ -73,7 +73,7 @@
     {
       "additional_properties": false,
       "entity": "tick",
-      "json_schema_sha256": "5f02da46184e753a251d0f0bc4d251254316bddaab6ee9efa708a1cdd244d288",
+      "json_schema_sha256": "a488fe36e30b5ad9df54272fabf89abc3c11ceca052a684f093466e5d6e4ad56",
       "model": "aura.domain.models.Tick",
       "required_fields": [
         "price",

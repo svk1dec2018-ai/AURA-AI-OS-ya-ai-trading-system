@@ -25,6 +25,7 @@ from aura.research.blueprint_compiler import (
     BlueprintCompilationError,
     compile_blueprint,
 )
+from aura.research.strategy_catalog import STRATEGY_SETUPS
 from aura.research.strategy_factory import AutonomousStrategyFactory
 from aura.webapp.catalog import capability_catalog
 from aura.webapp.charting import SUPPORTED_TIMEFRAMES, mt5_chart_snapshot
@@ -57,14 +58,6 @@ VALIDATION_PIPELINE = (
     "regime_validation",
     "paper_demo_forward",
     "human_approval",
-)
-
-STRATEGY_TEMPLATES = (
-    ("EMA momentum", "Trend continuation; vulnerable to sideways whipsaws.", "ema_trend", "rsi_state"),
-    ("MACD momentum", "Momentum continuation; late entries are possible after sharp moves.", "macd_momentum", "regime"),
-    ("Bollinger reversion", "Range reversion; sustained trends can invalidate the setup.", "bollinger_reversion", "rsi_state"),
-    ("Keltner breakout", "Volatility breakout; false breakouts require cost-aware validation.", "keltner_breakout", "relative_volume"),
-    ("Liquidity sweep", "Reversal after a candle-derived sweep; not an order-book liquidity model.", "liquidity_sweep", "premium_discount"),
 )
 
 
@@ -311,20 +304,15 @@ class AuraWebController:
             "entries": [item.value for item in EXECUTABLE_ENTRY_PRIMITIVES],
             "confirmations": [item.value for item in EXECUTABLE_CONFIRMATION_PRIMITIVES],
             "exits": [item.value for item in EXECUTABLE_EXIT_PRIMITIVES],
-            "templates": [
-                {
-                    "name": name,
-                    "thesis": thesis,
-                    "markets": ["XAUUSD", "BTCUSD", "USOIL", "EURUSD"],
-                    "timeframes": ["5m", "15m", "1h"],
-                    "entries": [entry],
-                    "confirmations": [confirmation],
-                    "exits": ["atr_stop", "risk_reward_target", "time_stop"],
-                    "stage": "RESEARCH",
-                    "performance_verified": False,
-                }
-                for name, thesis, entry, confirmation in STRATEGY_TEMPLATES
-            ],
+            "templates": [setup.owner_template() for setup in STRATEGY_SETUPS],
+            "brain": {
+                "strategy_desk": "causal_family_consensus",
+                "family_quorum": 2,
+                "minimum_family_agreement": 0.60,
+                "execution_authority": False,
+                "research_only": True,
+                "confidence_is_win_probability": False,
+            },
             "validation_pipeline": list(VALIDATION_PIPELINE),
             "constraints": {
                 "portfolio_risk_parameters_allowed": False,
@@ -391,6 +379,14 @@ class AuraWebController:
             exits=exits,
             candidate_index=0,
             design_tag=f"owner:{_slug(name)}",
+        )
+        blueprint = blueprint.model_copy(
+            update={
+                "parameters": {
+                    **blueprint.parameters,
+                    "minimum_confirmations": len(confirmations),
+                }
+            }
         )
         strategy = factory.register_blueprint(blueprint, candidate_index=0)
 

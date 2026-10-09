@@ -1,0 +1,54 @@
+{
+  "verification_date": "2026-10-09",
+  "release_class": "local-paper-demo-candidate",
+  "code_sha256": "23b39bd3a3cb16a8dbb83bf35e15dd9026c9165725485f4528d1ade717a440c6",
+  "python": "3.12.14",
+  "node": "v24.19.0",
+  "python_tests": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "775",
+    "time": "21.021",
+    "timestamp": "2026-10-09T15:15:01.008323+00:00",
+    "hostname": "a294d775a299"
+  },
+  "ruff": "PASS",
+  "dashboard_typecheck": "PASS",
+  "dashboard_build": "PASS",
+  "browser_smoke_tests": {
+    "passed": 4,
+    "failed": 0,
+    "real_local_endpoints": true,
+    "mock_broker_fills": false
+  },
+  "http_smoke": {
+    "backend_and_dashboard_proxy": "PASS",
+    "unconfigured_demo_start": "BLOCKED_AS_EXPECTED",
+    "prime_ui_doctor": "PASS"
+  },
+  "credentials": "ALL_TEMPLATE_CREDENTIALS_BLANK",
+  "windows_mt5_broker_runtime": "NOT_VERIFIED_EXTERNAL_TERMINAL_REQUIRED",
+  "cloud_authenticated_calls": "NOT_VERIFIED_KEYS_ABSENT",
+  "real_money_eligible": false,
+  "github_publication": {
+    "state": "BLOCKED",
+    "target": "svk1dec2018-ai/aura-prime",
+    "error": "403 Resource not accessible by integration",
+    "fallback_state": "PENDING_NEW_BRANCH_IN_ORIGINAL_AURA_REPOSITORY"
+  },
+  "known_scope_limits": [
+    "Authenticated execution across all brokers is not implemented/certified equally.",
+    "Several optional Redis service roles remain passive.",
+    "No trained live-approved ML artifact is supplied.",
+    "Real-money phases 11 and 15 require broker-origin evidence."
+  ],
+  "strategy_brain": {
+    "research_templates": 14,
+    "family_quorum": 2,
+    "minimum_family_agreement": 0.6,
+    "performance_verified": false,
+    "owner_arena_branch_inspected": "04a92492e5341a4cecb882717c8e254d402313ab"
+  }
+}

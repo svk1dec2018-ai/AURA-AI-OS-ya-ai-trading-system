@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import argparse
 import ast
+import fnmatch
 import hashlib
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -344,18 +346,59 @@ def check_repository_audit(root: Path) -> tuple[str, ...]:
 
 
 def _repository_paths(root: Path) -> list[PurePosixPath]:
-    result = subprocess.run(
-        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
-        cwd=root,
-        check=True,
-        capture_output=True,
-    )
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=root,
+            check=True,
+            capture_output=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return _archive_paths(root)
     paths = {PurePosixPath(item.decode()) for item in result.stdout.split(b"\0") if item}
     return sorted(
         path
         for path in paths
         if not _is_audit_excluded(path) and (root / path).is_file()
     )
+
+
+def _archive_paths(root: Path) -> list[PurePosixPath]:
+    """Audit an extracted source ZIP without ingesting private/runtime files."""
+    ignore_file = root / ".gitignore"
+    rules = ignore_file.read_text().splitlines() if ignore_file.is_file() else []
+
+    def ignored(path: PurePosixPath, *, directory: bool = False) -> bool:
+        if ".git" in path.parts:
+            return True
+        matched = False
+        for raw in rules:
+            rule = raw.strip()
+            if not rule or rule.startswith("#"):
+                continue
+            negate = rule.startswith("!")
+            pattern = rule[1:] if negate else rule
+            anchored = pattern.startswith("/")
+            directory_rule = pattern.endswith("/")
+            pattern = pattern.strip("/")
+            if directory_rule and not directory:
+                continue
+            target = path.as_posix() if anchored or "/" in pattern else path.name
+            if fnmatch.fnmatchcase(target, pattern):
+                matched = not negate
+        return matched
+
+    paths: list[PurePosixPath] = []
+    for current, directories, files in os.walk(root):
+        relative = PurePosixPath(Path(current).relative_to(root).as_posix())
+        directories[:] = [
+            name for name in directories if not ignored(relative / name, directory=True)
+        ]
+        for name in files:
+            path = relative / name
+            if not ignored(path) and not _is_audit_excluded(path):
+                paths.append(path)
+    return sorted(paths)
 
 
 def _is_audit_excluded(path: PurePosixPath) -> bool:

@@ -128,9 +128,7 @@ class CEOAggregator:
         if not 0 <= min_directional_margin <= 1:
             raise ValueError("min_directional_margin must be between 0 and 1")
         if any(
-            not isinstance(role, AgentRole)
-            or not math.isfinite(weight)
-            or weight <= 0
+            not isinstance(role, AgentRole) or not math.isfinite(weight) or weight <= 0
             for role, weight in (role_weights or {}).items()
         ):
             raise ValueError("CEO role weights must be finite positive values")
@@ -151,15 +149,10 @@ class CEOAggregator:
         )
         distinct_roles = {item.role for item in evidence}
         quorum_met = (
-            len(evidence) >= self.min_agents
-            and len(distinct_roles) >= self.min_distinct_roles
+            len(evidence) >= self.min_agents and len(distinct_roles) >= self.min_distinct_roles
         )
         market = reliability_market_key(context) if context is not None else "unknown"
-        regime = (
-            reliability_regime_key(round_result, context)
-            if context is not None
-            else "unknown"
-        )
+        regime = reliability_regime_key(round_result, context) if context is not None else "unknown"
         scores: dict[SignalIntent, float] = defaultdict(float)
         directional_agents: dict[SignalIntent, list[str]] = defaultdict(list)
         neutral_agents: list[str] = []
@@ -176,12 +169,7 @@ class CEOAggregator:
                     regime=regime,
                 )
             reliability_weights.append(reliability_weight)
-            effective_score = (
-                item.confidence
-                * source_trust
-                * role_weight
-                * reliability_weight
-            )
+            effective_score = item.confidence * source_trust * role_weight * reliability_weight
             contribution = EvidenceContribution(
                 agent_id=item.agent_id,
                 role=item.role,
@@ -206,14 +194,10 @@ class CEOAggregator:
         short_score = scores[SignalIntent.SHORT]
         directional_total = long_score + short_score
         directional_margin = (
-            abs(long_score - short_score) / directional_total
-            if directional_total > 0
-            else 0.0
+            abs(long_score - short_score) / directional_total if directional_total > 0 else 0.0
         )
         risk_flags = self._risk_flags(evidence)
-        failure_agents = tuple(
-            sorted(failure.agent_id for failure in round_result.failures)
-        )
+        failure_agents = tuple(sorted(failure.agent_id for failure in round_result.failures))
 
         def decision(
             *,
@@ -281,10 +265,9 @@ class CEOAggregator:
         if self.reliability_tracker is not None and context is not None:
             average_weight = sum(reliability_weights) / len(reliability_weights)
             reliability_note = (
-                f", market={market}, regime={regime}, "
-                f"avg_reliability_weight={average_weight:.3f}"
+                f", market={market}, regime={regime}, avg_reliability_weight={average_weight:.3f}"
             )
-        if directional_margin < self.min_directional_margin:
+        if directional_margin <= 0 or directional_margin < self.min_directional_margin:
             return decision(
                 intent=SignalIntent.FLAT,
                 confidence=directional_margin,
@@ -307,9 +290,12 @@ class CEOAggregator:
 
         intent = SignalIntent.LONG if long_score > short_score else SignalIntent.SHORT
         opposing = SignalIntent.SHORT if intent == SignalIntent.LONG else SignalIntent.LONG
+        supporting = [item for item in contributions if item.intent == intent]
+        support_weight = sum(item.role_weight * item.reliability_weight for item in supporting)
+        evidence_strength = sum(item.effective_score for item in supporting) / support_weight
         return decision(
             intent=intent,
-            confidence=min(directional_margin, 1.0),
+            confidence=min(directional_margin, evidence_strength, 1.0),
             supporting_agents=tuple(sorted(directional_agents[intent])),
             opposing_agents=tuple(sorted(directional_agents[opposing])),
             abstaining_agents=tuple(sorted(neutral_agents)),
@@ -352,13 +338,9 @@ class CEOAggregator:
             "thresholds": {
                 "min_agents": self.min_agents,
                 "min_distinct_roles": self.min_distinct_roles,
-                "min_directional_margin": self._stable_float(
-                    self.min_directional_margin
-                ),
+                "min_directional_margin": self._stable_float(self.min_directional_margin),
             },
-            "contributions": [
-                item.model_dump(mode="json") for item in contributions
-            ],
+            "contributions": [item.model_dump(mode="json") for item in contributions],
             "failure_agents": list(failure_agents),
         }
         evidence_fingerprint = self._fingerprint(trace_inputs)

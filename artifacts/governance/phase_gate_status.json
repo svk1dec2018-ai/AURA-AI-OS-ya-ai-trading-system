@@ -1,5 +1,5 @@
 {
-  "ledger_sha256": "7ef73a655ab67cdfa56c726e04627684c3c5a03e4298b2b8aad87d27b8bc6696",
+  "ledger_sha256": "070df6e14cea039dc54493d9c3fc31610efa5ecf6603b7c766397c129250769c",
   "policy": "AURA dependency-aware mandatory phase gates 0-15",
   "records": [
     {
@@ -8,17 +8,17 @@
         {
           "output": "module_map.md",
           "path": "artifacts/governance/module_map.md",
-          "sha256": "27cfb3540673cfa1cb084bc505e2297515e95e14ea7e6adefc20f04d29fe5ede"
+          "sha256": "ccb2abb283940b200957057c5f4f92d636361df1669ac2493e6ad66640f5f48a"
         },
         {
           "output": "repo_audit.json",
           "path": "artifacts/governance/repo_audit.json",
-          "sha256": "43eff4d99fcb1339531aaa0ac2fb33cb9ac1256d41100a971f1d82c7c22b53f2"
+          "sha256": "82dd551444e404189d214ae8aaaf3ac2708d109dfd9208ab1f4d274fff7271ed"
         },
         {
           "output": "test_inventory.json",
           "path": "artifacts/governance/test_inventory.json",
-          "sha256": "a2e4d05d3fc85f4da3f819d6d2184ee8d08000317b49a1bea596611ff77c3a0c"
+          "sha256": "94b12b9e3a503955b4b522ad61f39006a7eb867f68d6df94911b002c666379d1"
         }
       ],
       "phase": 0,
@@ -35,7 +35,7 @@
         {
           "output": "Schema test report",
           "path": "artifacts/governance/core_contract_schema_report.json",
-          "sha256": "bad5623b9eb5f3ec1696887631900d412b27e953e71aee3b94b21effa47d405d"
+          "sha256": "3a9add8b2c208efa1ad9c1e738a3458d768782888b31bcbc8413d2834e1db70d"
         }
       ],
       "phase": 1,
@@ -81,7 +81,7 @@
         {
           "output": "Adapter conformance report",
           "path": "artifacts/governance/broker_adapter_conformance_report.json",
-          "sha256": "3c5796385234a3dc8e1001d8a2735bf57f74db775f2efdd34ce9685191d6de1c"
+          "sha256": "0041618b5d65c16412b3999f2bec2fda3a6ccc82d4dc065cc13761a3341a367f"
         }
       ],
       "phase": 4,
@@ -151,7 +151,7 @@
         {
           "output": "Agent consistency report",
           "path": "artifacts/governance/agent_consistency_report.json",
-          "sha256": "22aab0cea91beac83cc2db0667e287c67ce153f05adb5b17460bff1bcb0b59f7"
+          "sha256": "a3ea6d63ed7fae5b01c6a06ff51749270548c786daab47933055912e6df2e1e2"
         }
       ],
       "phase": 9,

@@ -25,7 +25,7 @@ function Ensure-PrimeExtras {
         throw "AURA Python environment is missing."
     }
     Write-Host "Installing/verifying AURA Prime free local analytics + ML + observability..."
-    & $VenvPython -m pip install --disable-pip-version-check -e ".[dev,distributed,mt5,analytics,ml,observability]"
+    & $VenvPython -m pip install --disable-pip-version-check -e ".[dev,mt5,analytics,observability]"
     if ($LASTEXITCODE -ne 0) {
         throw "AURA Prime optional stack installation failed."
     }
@@ -35,9 +35,9 @@ function Ensure-PrimeExtras {
     }
 }
 
-function Invoke-PrimeDoctor {
+function Invoke-PrimeDoctor([string]$Profile = "prime-local") {
     Import-AuraEnv -Path $EnvFile
-    & $VenvPython -m aura.ops.final_doctor --profile prime-local --root $Root
+    & $VenvPython -m aura.ops.final_doctor --profile $Profile --root $Root
     $DoctorExit = $LASTEXITCODE
     & $VenvPython -m aura.prime.status
     $PrimeExit = $LASTEXITCODE
@@ -52,7 +52,7 @@ if ($Action -eq "Setup") {
 
     Write-Host "Rebuilding dashboard after Prime upgrade..."
     Push-Location $Dashboard
-    & npm.cmd install --no-audit --no-fund
+    & npm.cmd ci --no-audit --no-fund
     if ($LASTEXITCODE -ne 0) {
         Pop-Location
         throw "Dashboard dependency install failed."
@@ -71,7 +71,7 @@ if ($Action -eq "Setup") {
 
     Write-Host ""
     Write-Host "AURA PRIME SETUP VERIFIED" -ForegroundColor Green
-    Write-Host "Configure .env.local, open Docker Desktop + MT5 DEMO, then choose Start."
+    Write-Host "Configure .env.local, open MT5 DEMO, then choose Start. Docker/ML extras are optional."
     exit 0
 }
 
@@ -93,8 +93,9 @@ if ($Action -eq "Start") {
         Write-Host "Distributed Redis fleet: optional/off" -ForegroundColor DarkGray
     }
 
-    Invoke-PrimeDoctor
+    Invoke-PrimeDoctor "prime-ui"
     Write-Host "AURA PRIME READY: http://127.0.0.1:3100" -ForegroundColor Green
+    Write-Host "Dashboard is ready. DEMO trading still requires a connected DEMO account and broker checks."
     exit 0
 }
 
@@ -149,7 +150,7 @@ if ($Action -eq "Repair") {
     if ($LASTEXITCODE -ne 0) {
         Write-Host "Repairing dashboard dependencies/build cache..." -ForegroundColor Yellow
         Remove-Item ".next" -Recurse -Force -ErrorAction SilentlyContinue
-        & npm.cmd install --no-audit --no-fund
+        & npm.cmd ci --no-audit --no-fund
         if ($LASTEXITCODE -ne 0) {
             Pop-Location
             throw "Dashboard dependency repair failed."
@@ -163,7 +164,7 @@ if ($Action -eq "Repair") {
     }
     Pop-Location
 
-    if (Get-Command docker -ErrorAction SilentlyContinue) {
+    if ($env:AURA_PRIME_DISTRIBUTED -eq "1" -and (Get-Command docker -ErrorAction SilentlyContinue)) {
         & docker info *> $null
         if ($LASTEXITCODE -eq 0) {
             $RedisRunning = (& docker ps --filter "name=^/aura-redis$" --format "{{.Names}}")
@@ -174,8 +175,8 @@ if ($Action -eq "Repair") {
         } else {
             Write-Warning "Docker Desktop is installed but not running."
         }
-    } else {
-        Write-Warning "Docker Desktop is missing. Choose Setup to install prerequisites."
+    } elseif ($env:AURA_PRIME_DISTRIBUTED -eq "1") {
+        Write-Warning "Distributed mode requested; Docker Desktop is missing."
     }
 
     Write-Host "Running credential-free code health probe..."
@@ -189,6 +190,9 @@ if ($Action -eq "Repair") {
 
     Write-Host "Running Prime status after repairs..."
     & $VenvPython -m aura.prime.status
+    if ($LASTEXITCODE -ne 0 -or $ProbeExit -ne 0) {
+        throw "Repair checks did not pass. Review the diagnostics above."
+    }
     Write-Host ""
     Write-Host "SAFE AUTO-REPAIR COMPLETE" -ForegroundColor Green
     exit 0

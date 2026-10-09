@@ -12,6 +12,7 @@ from aura.agents.models import (
     EvidenceSourceType,
 )
 from aura.domain.models import SignalIntent
+from aura.strategy.desk import CausalStrategyDesk
 
 
 def _market_source(context: AgentContext, suffix: str) -> EvidenceSource:
@@ -58,6 +59,7 @@ class TechnicalSpecialist(SpecialistAgent):
         self.fast_ema = fast_ema
         self.slow_ema = slow_ema
         self.rsi_period = rsi_period
+        self.strategy_desk = CausalStrategyDesk()
 
     async def analyze(self, context: AgentContext) -> AgentEvidence:
         closes = [candle.close for candle in context.candles]
@@ -89,14 +91,40 @@ class TechnicalSpecialist(SpecialistAgent):
             intent = SignalIntent.FLAT
             thesis = f"technical evidence is mixed; RSI {rsi:.2f}"
 
+        desk = self.strategy_desk.evaluate(context.candles)
+        flags: tuple[str, ...] = ()
+        if (
+            desk.intent != SignalIntent.FLAT
+            and intent != SignalIntent.FLAT
+            and desk.intent != intent
+        ):
+            intent, confidence = SignalIntent.FLAT, 0.0
+            flags = ("strategy_desk_conflict",)
+            thesis += "; causal strategy families oppose EMA/RSI; abstaining"
         return AgentEvidence(
             agent_id=self.agent_id,
             role=self.role,
             intent=intent,
             confidence=confidence,
             thesis=thesis,
+            risk_flags=flags,
             sources=(_market_source(context, "technical"),),
-            features={"fast_ema": str(fast), "slow_ema": str(slow), "rsi": str(rsi)},
+            features={
+                "fast_ema": str(fast),
+                "slow_ema": str(slow),
+                "rsi": str(rsi),
+                "strategy_desk": {
+                    "intent": desk.intent.value,
+                    "regime": desk.regime,
+                    "agreement": desk.agreement,
+                    "active_setups": desk.active_setups,
+                    "supporting_families": desk.supporting_families,
+                    "conflicting_families": desk.conflicting_families,
+                    "reason": desk.reason,
+                    "research_only": True,
+                    "execution_authority": False,
+                },
+            },
             generated_at=context.candles[-1].close_time,
         )
 
@@ -107,7 +135,9 @@ class SmcIctStructureSpecialist(SpecialistAgent):
     agent_id = "deterministic:smc_ict:v1"
     role = AgentRole.SMC_ICT
 
-    def __init__(self, *, lookback: int = 5, displacement_multiple: Decimal = Decimal("1.5")) -> None:
+    def __init__(
+        self, *, lookback: int = 5, displacement_multiple: Decimal = Decimal("1.5")
+    ) -> None:
         if lookback < 3 or displacement_multiple <= 0:
             raise ValueError("invalid SMC/ICT specialist settings")
         self.lookback = lookback
@@ -131,9 +161,9 @@ class SmcIctStructureSpecialist(SpecialistAgent):
         prior = candles[-(self.lookback + 1) : -1]
         prior_low = min(candle.low for candle in prior)
         prior_high = max(candle.high for candle in prior)
-        average_body = sum((abs(candle.close - candle.open) for candle in prior), Decimal(0)) / Decimal(
-            len(prior)
-        )
+        average_body = sum(
+            (abs(candle.close - candle.open) for candle in prior), Decimal(0)
+        ) / Decimal(len(prior))
         latest_body = abs(latest.close - latest.open)
         displaced = average_body > 0 and latest_body >= average_body * self.displacement_multiple
         swept_low = latest.low < prior_low and latest.close > prior_low
@@ -207,7 +237,10 @@ class VolumeVwapSpecialist(SpecialistAgent):
             )
 
         typical_notional = sum(
-            (((candle.high + candle.low + candle.close) / Decimal(3)) * candle.volume for candle in candles),
+            (
+                ((candle.high + candle.low + candle.close) / Decimal(3)) * candle.volume
+                for candle in candles
+            ),
             Decimal(0),
         )
         vwap = typical_notional / total_volume
@@ -229,7 +262,9 @@ class VolumeVwapSpecialist(SpecialistAgent):
             thesis = "VWAP direction lacks sufficient participation confirmation"
 
         distance = abs(latest.close - vwap) / latest.close
-        confidence = min(float(distance * Decimal(50) + min(relative_volume, Decimal(2)) / Decimal(4)), 1.0)
+        confidence = min(
+            float(distance * Decimal(50) + min(relative_volume, Decimal(2)) / Decimal(4)), 1.0
+        )
         if intent == SignalIntent.FLAT:
             confidence = 0.0
         return AgentEvidence(

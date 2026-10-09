@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "AURA Prime — AI Trading OS",
   description: "Local-first multi-market AI trading control room with governed execution.",
   applicationName: "AURA Prime",
+  manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {

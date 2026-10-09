@@ -52,6 +52,9 @@ export default function MarketChart({ externalSymbol }: { externalSymbol?: strin
         const data = await getJson<ChartSnapshot>(url);
         if (!cancelled) {
           setSnapshot(data);
+          if (data.symbol && data.symbol.toUpperCase() !== symbol.toUpperCase()) {
+            setSymbol(data.symbol.toUpperCase());
+          }
           setError("");
         }
       } catch (exc) {
@@ -80,6 +83,9 @@ export default function MarketChart({ externalSymbol }: { externalSymbol?: strin
         );
         if (!cancelled) {
           setQuote(data);
+          if (data.symbol && data.symbol.toUpperCase() !== symbol.toUpperCase()) {
+            setSymbol(data.symbol.toUpperCase());
+          }
           setQuoteError("");
         }
       } catch (exc) {

@@ -7,6 +7,12 @@ from itertools import pairwise
 from aura.domain.models import NormalizedCandle, SignalIntent, StrategySignal
 from aura.research.strategy_factory import ExitPrimitive, StrategyBlueprint, StrategyPrimitive
 from aura.strategy.base import Strategy, StrategyRuntimeContext
+from aura.strategy.causal_indicators import (
+    choppiness,
+    donchian_vote,
+    order_block_retest_vote,
+    supertrend_vote,
+)
 from aura.strategy.ema import _ema
 
 
@@ -15,6 +21,11 @@ class BlueprintCompilationError(ValueError):
 
 
 EXECUTABLE_ENTRY_PRIMITIVES = (
+    StrategyPrimitive.SUPERTREND,
+    StrategyPrimitive.DONCHIAN_BREAKOUT,
+    StrategyPrimitive.PIVOT_SUPPORT_RESISTANCE,
+    StrategyPrimitive.RSI_REVERSION,
+    StrategyPrimitive.ORDER_BLOCK,
     StrategyPrimitive.EMA_TREND,
     StrategyPrimitive.MACD_MOMENTUM,
     StrategyPrimitive.BOLLINGER_REVERSION,
@@ -26,6 +37,9 @@ EXECUTABLE_ENTRY_PRIMITIVES = (
 )
 
 EXECUTABLE_CONFIRMATION_PRIMITIVES = (
+    StrategyPrimitive.DIVERGENCE,
+    StrategyPrimitive.CHOP_FILTER,
+    StrategyPrimitive.RANGE_FILTER,
     StrategyPrimitive.RSI_STATE,
     StrategyPrimitive.ATR_VOLATILITY,
     StrategyPrimitive.RELATIVE_VOLUME,
@@ -73,14 +87,16 @@ class CompiledBlueprintStrategy(Strategy):
     ) -> StrategySignal | None:
         if len(history) < self.warmup_bars:
             return None
-        recent = history[-self.warmup_bars :]
+        recent = history
         latest = history[-1]
         if any(not item.closed for item in recent):
             return None
         if any(
-            item.symbol != latest.symbol or item.timeframe != latest.timeframe
-            for item in recent
+            item.symbol != latest.symbol or item.timeframe != latest.timeframe for item in recent
         ):
+            return None
+
+        if any(current.open_time < prior.close_time for prior, current in pairwise(recent)):
             return None
 
         if runtime.current_position_quantity != 0:
@@ -117,12 +133,21 @@ class CompiledBlueprintStrategy(Strategy):
             return None
 
         confirmation_votes = {
-            primitive.value: self._primitive_vote(primitive, history)
+            primitive.value: self._confirmation_vote(primitive, history, direction)
             for primitive in self.blueprint.confirmations
         }
-        aligned_confirmations = sum(
-            value == direction for value in confirmation_votes.values()
-        )
+        hard_gates = {
+            StrategyPrimitive.REGIME,
+            StrategyPrimitive.CHOP_FILTER,
+            StrategyPrimitive.RANGE_FILTER,
+        }
+        if any(
+            confirmation_votes[item.value] != direction
+            for item in self.blueprint.confirmations
+            if item in hard_gates
+        ):
+            return None
+        aligned_confirmations = sum(value == direction for value in confirmation_votes.values())
         required_confirmations = min(
             len(confirmation_votes),
             int(self.blueprint.parameters.get("minimum_confirmations", 1)),
@@ -131,9 +156,7 @@ class CompiledBlueprintStrategy(Strategy):
             return None
 
         confirmation_strength = (
-            aligned_confirmations / len(confirmation_votes)
-            if confirmation_votes
-            else 1.0
+            aligned_confirmations / len(confirmation_votes) if confirmation_votes else 1.0
         )
         confidence = min(
             0.99,
@@ -147,10 +170,23 @@ class CompiledBlueprintStrategy(Strategy):
             reference_price=latest.close,
             generated_at=latest.close_time,
             reason=(
-                f"compiled blueprint entries={entry_votes}; "
-                f"confirmations={confirmation_votes}"
+                f"compiled blueprint entries={entry_votes}; confirmations={confirmation_votes}"
             ),
         )
+
+    def _confirmation_vote(self, primitive, history, direction: int) -> int:
+        if primitive in {StrategyPrimitive.CHOP_FILTER, StrategyPrimitive.RANGE_FILTER}:
+            value = choppiness(history, period=14)
+            if value is None:
+                return 0
+            params = self.blueprint.parameters
+            allowed = (
+                value <= float(params.get("max_choppiness", 55.0))
+                if primitive == StrategyPrimitive.CHOP_FILTER
+                else value >= float(params.get("min_choppiness", 55.0))
+            )
+            return direction if allowed else 0
+        return self._primitive_vote(primitive, history)
 
     def _primitive_vote(
         self,
@@ -160,6 +196,39 @@ class CompiledBlueprintStrategy(Strategy):
         params = self.blueprint.parameters
         closes = [item.close for item in history]
         latest = history[-1]
+
+        if primitive == StrategyPrimitive.SUPERTREND:
+            return supertrend_vote(
+                history,
+                period=int(params.get("supertrend_period", 10)),
+                multiple=Decimal(str(params.get("supertrend_multiple", 3))),
+            )
+        if primitive == StrategyPrimitive.DONCHIAN_BREAKOUT:
+            return donchian_vote(history, lookback=int(params.get("structure_lookback", 20)))
+        if primitive == StrategyPrimitive.ORDER_BLOCK:
+            return order_block_retest_vote(
+                history,
+                lookback=int(params.get("structure_lookback", 13)),
+                max_age=int(params.get("order_block_max_age", 21)),
+            )
+        if primitive == StrategyPrimitive.PIVOT_SUPPORT_RESISTANCE:
+            prior = history[-2]
+            pivot = (prior.high + prior.low + prior.close) / Decimal(3)
+            support, resistance = 2 * pivot - prior.high, 2 * pivot - prior.low
+            if latest.low <= support and latest.close > support and latest.close > latest.open:
+                return 1
+            if (
+                latest.high >= resistance
+                and latest.close < resistance
+                and latest.close < latest.open
+            ):
+                return -1
+            return 0
+        if primitive == StrategyPrimitive.DIVERGENCE:
+            return _confirmed_rsi_divergence(history, period=int(params.get("rsi_period", 14)))
+        if primitive == StrategyPrimitive.RSI_REVERSION:
+            rsi = _rsi(closes, int(params.get("rsi_period", 14)))
+            return 1 if rsi <= 30 else -1 if rsi >= 70 else 0
 
         if primitive == StrategyPrimitive.EMA_TREND:
             fast = int(params.get("ema_fast", 8))
@@ -306,9 +375,7 @@ class CompiledBlueprintStrategy(Strategy):
             if exit_primitive == ExitPrimitive.ATR_STOP and atr > 0:
                 multiple = Decimal(str(params.get("atr_stop_multiple", 1.5)))
                 stop = entry - atr * multiple if is_long else entry + atr * multiple
-                if (is_long and latest.close <= stop) or (
-                    not is_long and latest.close >= stop
-                ):
+                if (is_long and latest.close <= stop) or (not is_long and latest.close >= stop):
                     return f"atr_stop@{stop}"
 
             elif exit_primitive == ExitPrimitive.STRUCTURE_STOP:
@@ -320,9 +387,7 @@ class CompiledBlueprintStrategy(Strategy):
                         if is_long
                         else max(item.high for item in prior)
                     )
-                    if (is_long and latest.close <= stop) or (
-                        not is_long and latest.close >= stop
-                    ):
+                    if (is_long and latest.close <= stop) or (not is_long and latest.close >= stop):
                         return f"structure_stop@{stop}"
 
             elif exit_primitive == ExitPrimitive.RISK_REWARD_TARGET and atr > 0:
@@ -334,9 +399,7 @@ class CompiledBlueprintStrategy(Strategy):
                     if is_long
                     else entry - risk_distance * reward_multiple
                 )
-                if (is_long and latest.close >= target) or (
-                    not is_long and latest.close <= target
-                ):
+                if (is_long and latest.close >= target) or (not is_long and latest.close <= target):
                     return f"risk_reward_target@{target}"
 
             elif exit_primitive == ExitPrimitive.ATR_TRAILING and atr > 0:
@@ -355,9 +418,7 @@ class CompiledBlueprintStrategy(Strategy):
 
             elif exit_primitive == ExitPrimitive.VWAP_EXIT:
                 vwap = _session_vwap(history)
-                if (is_long and latest.close < vwap) or (
-                    not is_long and latest.close > vwap
-                ):
+                if (is_long and latest.close < vwap) or (not is_long and latest.close > vwap):
                     return f"vwap_exit@{vwap}"
 
             elif exit_primitive == ExitPrimitive.TIME_STOP:
@@ -413,6 +474,8 @@ def _warmup_bars(blueprint: StrategyBlueprint) -> int:
         "rsi_period",
         "atr_period",
         "structure_lookback",
+        "supertrend_period",
+        "order_block_max_age",
     ):
         value = params.get(key)
         if isinstance(value, (int, float)):
@@ -488,3 +551,38 @@ def _session_vwap(history: Sequence[NormalizedCandle]) -> Decimal:
 
 def _sign(value: Decimal) -> int:
     return 1 if value > 0 else -1 if value < 0 else 0
+
+
+def _confirmed_rsi_divergence(history: Sequence[NormalizedCandle], *, period: int) -> int:
+    """Compare RSI at confirmed price pivots; emit on confirmation, not pivot time.
+
+    Two right-hand candles confirm each pivot. All are already in the input
+    prefix, and only a pivot newly confirmed by the latest bar can emit a vote.
+    This delays the setup rather than rewriting an earlier signal.
+    """
+    lows: list[int] = []
+    highs: list[int] = []
+    closes = [c.close for c in history]
+    for index in range(max(period, len(history) - 60), len(history) - 2):
+        window = history[index - 2 : index + 3]
+        if (
+            history[index].low == min(c.low for c in window)
+            and sum(c.low == history[index].low for c in window) == 1
+        ):
+            lows.append(index)
+        if (
+            history[index].high == max(c.high for c in window)
+            and sum(c.high == history[index].high for c in window) == 1
+        ):
+            highs.append(index)
+    votes: set[int] = set()
+    for pivots, direction in ((lows, 1), (highs, -1)):
+        if len(pivots) < 2 or pivots[-1] != len(history) - 3:
+            continue
+        prior, latest = pivots[-2:]
+        old_rsi, new_rsi = _rsi(closes[: prior + 1], period), _rsi(closes[: latest + 1], period)
+        if direction > 0 and history[latest].low < history[prior].low and new_rsi > old_rsi:
+            votes.add(1)
+        elif direction < 0 and history[latest].high > history[prior].high and new_rsi < old_rsi:
+            votes.add(-1)
+    return next(iter(votes)) if len(votes) == 1 else 0

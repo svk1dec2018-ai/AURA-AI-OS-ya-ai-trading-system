@@ -229,9 +229,10 @@ def test_next_dashboard_and_beginner_launchers_exist() -> None:
     assert "/api/journal" in advanced
     assert "/api/backtest/run" in advanced
     assert "/api/mt5/execution-check" in advanced
-    assert "AURA_BACKEND_URL=http://127.0.0.1:8766" in launcher
+    assert '$env:AURA_BACKEND_URL = "http://127.0.0.1:8766"' in launcher
     assert "npm.cmd run build" in launcher
-    assert "npm.cmd run start" in launcher
+    assert '"node_modules\\next\\dist\\bin\\next"' in launcher
+    assert '"start","-H","127.0.0.1","-p","3100"' in launcher
     assert "npm.cmd run dev" not in launcher
     assert "Test-AuraHealth" in launcher
     assert "Stop-StaleDashboardListener" in launcher

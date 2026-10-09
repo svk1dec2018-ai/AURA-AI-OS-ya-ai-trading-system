@@ -113,6 +113,9 @@ while ($true) {
     Write-Host " [7] OANDA practice"
     Write-Host " [8] OpenRouter direct / compatible cloud"
     Write-Host " [9] Telegram alerts"
+    Write-Host " [G] Groq free-tier AI"
+    Write-Host " [N] NVIDIA NIM AI"
+    Write-Host " [M] Google Gemini AI"
     Write-Host " [F] Optional FRED + Alpha Vantage"
     Write-Host " [Q] Done"
     Write-Host ""
@@ -168,6 +171,9 @@ while ($true) {
             Set-AuraEnv "AURA_TELEGRAM_BOT_TOKEN" (Read-Secret "Telegram bot token")
             Set-AuraEnv "AURA_TELEGRAM_CHAT_ID" (Read-Required "Telegram chat ID")
         }
+        "G" { Set-AuraEnv "GROQ_API_KEY" (Read-Secret "Groq API key") }
+        "N" { Set-AuraEnv "NVIDIA_API_KEY" (Read-Secret "NVIDIA API key") }
+        "M" { Set-AuraEnv "GEMINI_API_KEY" (Read-Secret "Gemini API key") }
         "F" {
             $Fred = Read-Host "FRED API key (blank to skip)"
             if ($Fred.Trim()) { Set-AuraEnv "AURA_FRED_API_KEY" $Fred.Trim() }

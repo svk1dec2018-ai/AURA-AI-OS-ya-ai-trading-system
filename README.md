@@ -6,50 +6,24 @@ AURA AI OS is a broker-agnostic, multi-market AI trading operating system. It co
 
 See `docs/PRODUCTION_READINESS.md` for deployment and release procedures and `docs/IMPLEMENTATION_STATUS.md` for the current code-level status.
 
-## Final Windows production setup — recommended
+## Windows start — AURA Prime
 
-For the complete distributed paper/demo stack, use the canonical workflow:
+Use **AURA_PRIME.cmd** as the single entry point:
 
-1. `FINAL_SETUP_AURA.cmd`
-2. Optional unlimited local AI: `INSTALL_FREE_UNLIMITED_AI.cmd`
-3. `CONFIGURE_AURA.cmd`
-4. Open Docker Desktop + MetaTrader 5 DEMO
-5. `START_AURA_PRODUCTION.cmd`
-6. `AURA_PRODUCTION_DOCTOR.cmd`
+1. Choose **1 — Setup** once. Python 3.11/3.12 and Node 20.9+ are required; the setup can install missing prerequisites through winget.
+2. Choose **5 — Configure private credentials**. MT5 requires a **DEMO login, password and server**, not an API key. Add optional Groq/OpenRouter/NVIDIA/Gemini/Telegram credentials only for services you use.
+3. Open MetaTrader 5 and connect to your DEMO account.
+4. Choose **2 — Start**. The dashboard opens at **http://127.0.0.1:3100**. It can open before credentials are configured.
+5. Choose **3 — Doctor** to check broker readiness, then click **START DEMO** in the dashboard. Missing credentials, an offline terminal or a real account block execution.
+6. Choose **6 — Stop** when finished.
 
-Local Ollama is the default unmetered AI path. Cloud free tiers remain optional because they publish quotas/rate limits.
+Docker/Redis and the optional ML research packages are **not required for the default local workflow**. No paid OpenAI key is required. Free cloud services have provider quotas.
 
-Stop everything with `STOP_AURA_PRODUCTION.cmd`.
+The cockpit includes a link to **/workstation** for the existing strategy factory, causal backtests, journal, portfolio, learning and diagnostics. Research backtests requiring MT5 candles remain unavailable until that external feed is connected.
 
-This flow installs/verifies Python, MT5 bridge, Redis/distributed dependencies, dashboard packages and production builds; loads only the gitignored `.env.local`; starts Redis + the nine-service fleet + backend/dashboard; and runs a strict all-market doctor including a real read-only MT5 DEMO broker preflight.
+The [causal strategy desk upgrade](docs/STRATEGY_BRAIN_UPGRADE.md) adds fourteen executable research setups, family-based advisory consensus, strict range/chop gates and evidence-strength confidence. Strategy Studio supports a chosen broker symbol and timeframe.
 
-Expected final state before external broker evidence:
-
-```text
-Software production ready: YES
-Live-money eligible: NO
-```
-
-That is intentional. Live-money authority remains gated by broker-origin Phase 11/15 evidence and explicit human authorization.
-
-See `docs/FINAL_WINDOWS_PRODUCTION_SETUP.md` and `docs/FINAL_PRODUCTION_REVIEW_2026-09-19.md`.
-
-## AURA 2 premium dashboard — easiest Windows start
-
-For the beginner-friendly MT5 DEMO workflow:
-
-1. Open MetaTrader 5 and log in to a **DEMO** account.
-2. Keep MT5 open and connected.
-3. In this repository folder, double-click `START_AURA2.cmd`.
-4. On the first run, the launcher can install/setup the required Python/Node dependencies.
-5. AURA opens the premium dashboard at `http://127.0.0.1:3100`.
-6. Verify **System Health**, **Live Charts** and **Risk Center**.
-7. Click **Start AURA DEMO** only after MT5 readiness is green.
-8. Stop the trading runtime from the dashboard, then double-click `STOP_AURA2.cmd`.
-
-The Python/MT5 backend stays local on `127.0.0.1:8766`. The dashboard uses real MT5 DEMO closed candles for decisions plus a read-only live bid/ask quote for visual updates. Real-money, fund transfer and withdrawal remain locked.
-
-See [docs/AURA2_BEGINNER_SETUP.md](docs/AURA2_BEGINNER_SETUP.md) for the complete no-coding setup and troubleshooting guide.
+See [the current handoff](docs/KEY_READY_HANDOFF.md) for verified checks, credentials and remaining blockers. Historical documents describe earlier releases and are not evidence that every market has working auto execution.
 
 ## Non-negotiable authority chain
 

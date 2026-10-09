@@ -68,8 +68,7 @@ class PortfolioRiskCoordinator:
                     broker_min = Decimal(str(raw_broker_min))
                 except (ArithmeticError, ValueError):
                     broker_min = Decimal(0)
-                if broker_min > stop_bps:
-                    stop_bps = broker_min
+                stop_bps = max(stop_bps, broker_min)
         distance = signal.reference_price * stop_bps / Decimal(10000)
         if signal.intent.value == "LONG":
             return signal.reference_price - distance

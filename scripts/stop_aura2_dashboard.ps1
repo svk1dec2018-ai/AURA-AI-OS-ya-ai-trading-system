@@ -8,8 +8,13 @@ foreach ($name in @("dashboard","backend")) {
     if (Test-Path $pidFile) {
         $savedPid = Get-Content $pidFile | Select-Object -First 1
         if ($savedPid -match "^[0-9]+$") {
-            Write-Host ("Stopping AURA 2 " + $name + " process tree PID " + $savedPid)
-            taskkill /PID $savedPid /T /F | Out-Null
+            $process = Get-CimInstance Win32_Process -Filter ("ProcessId=" + $savedPid) -ErrorAction SilentlyContinue
+            if ($process -and [string]$process.CommandLine -match [regex]::Escape($Root)) {
+                Write-Host ("Stopping AURA " + $name + " process tree PID " + $savedPid)
+                taskkill /PID $savedPid /T /F | Out-Null
+            } else {
+                Write-Warning ("Skipping unverified/stale PID " + $savedPid)
+            }
         }
         Remove-Item $pidFile -Force -ErrorAction SilentlyContinue
     }

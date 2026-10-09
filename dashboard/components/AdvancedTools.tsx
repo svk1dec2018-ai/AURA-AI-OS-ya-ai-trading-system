@@ -102,6 +102,9 @@ export function ResearchStudio() {
   const [backtest, setBacktest] = useState<JsonMap | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [symbol, setSymbol] = useState("XAUUSD");
+  const [timeframe, setTimeframe] = useState("5m");
+  const [bars, setBars] = useState(1000);
 
   async function refresh() {
     try {
@@ -122,7 +125,7 @@ export function ResearchStudio() {
   async function buildTemplate(template: any) {
     setBusy(true);
     try {
-      const payload = { ...template, name: template.name + " AURA2" };
+      const payload = { ...template, name: template.name + " AURA Prime", markets: [symbol.trim().toUpperCase()], timeframes: [timeframe] };
       const built = await postJson<JsonMap>("/api/algo/build", payload);
       setMessage("Candidate built: " + built.candidate_id + " · " + built.stage);
       await refresh();
@@ -138,9 +141,9 @@ export function ResearchStudio() {
     try {
       const result = await postJson<JsonMap>("/api/backtest/run", {
         candidate_id: selected,
-        symbol: "XAUUSD",
-        timeframe: "5m",
-        bars: 1000,
+        symbol: symbol.trim().toUpperCase(),
+        timeframe,
+        bars,
       });
       setBacktest(result);
       setMessage("Causal backtest completed. Candidate remains research-only.");
@@ -153,14 +156,20 @@ export function ResearchStudio() {
   return (
     <div className="studio">
       <div className="studio-banner">
-        <b>Strategy Factory + causal backtest</b>
+        <b>Strategy Factory + causal backtest · {templates.length} setups</b>
         <span>Research only · no risk/broker authority · no automatic live deployment</span>
+      </div>
+      <p className="tool-copy">The advisory desk groups setups by family and requires agreement from at least two families. Agreement measures votes; performance still requires validation.</p>
+      <div className="tool-form">
+        <label>Research symbol<input aria-label="Research symbol" value={symbol} onChange={(e) => setSymbol(e.target.value.toUpperCase())} /></label>
+        <label>Research timeframe<select aria-label="Research timeframe" value={timeframe} onChange={(e) => setTimeframe(e.target.value)}>{["1m", "5m", "15m", "30m", "1h", "4h", "1d"].map(tf => <option key={tf}>{tf}</option>)}</select></label>
+        <label>Closed bars<input aria-label="Closed bars" type="number" min={100} max={20000} value={bars} onChange={(e) => setBars(Number(e.target.value))} /></label>
       </div>
       <div className="template-grid">
         {templates.map((template: any) => (
-          <button key={template.name} className="template-card" disabled={busy} onClick={() => buildTemplate(template)}>
+          <button key={template.name} className="template-card" disabled={busy || !symbol.trim()} onClick={() => buildTemplate(template)}>
             <b>{template.name}</b><span>{template.thesis}</span>
-            <small>{(template.entries || []).join(", ")} · {(template.confirmations || []).join(", ")}</small>
+            <small>{template.family} · {(template.entries || []).join(", ")} · {(template.confirmations || []).join(", ")}</small>
           </button>
         ))}
       </div>
@@ -171,7 +180,7 @@ export function ResearchStudio() {
             {candidates.map((item) => <option key={item.candidate_id} value={item.candidate_id}>{item.owner_name || item.candidate_id}</option>)}
           </select>
         </label>
-        <button className="primary" disabled={busy || !selected} onClick={runBacktest}>{busy ? "Working..." : "Run XAUUSD M5 causal backtest"}</button>
+        <button className="primary" disabled={busy || !selected || !symbol.trim() || !Number.isInteger(bars) || bars < 100 || bars > 20000} onClick={runBacktest}>{busy ? "Working..." : `Run ${symbol} ${timeframe} causal backtest`}</button>
       </div>
       {message ? <div className="safety-note">{message}</div> : null}
       {backtest ? (

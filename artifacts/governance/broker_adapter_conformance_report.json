@@ -51,7 +51,7 @@
   ],
   "credential_backed_validation_claimed": false,
   "decision": "PASS",
-  "deterministic_fingerprint": "349da68b40858b1807cf0cef31dcc1c03134f0339c43046209473301e39589dd",
+  "deterministic_fingerprint": "2507656607f7a689a6b00ec02edc543338b2725db817b962b0d542647ec60754",
   "external_order_execution_claimed": false,
   "live_money_enabled": false,
   "mock_broker_contract_probe": {
@@ -72,6 +72,6 @@
   "strategy_isolation": {
     "broker_specific_logic_detected": false,
     "forbidden_imports": [],
-    "strategy_modules_scanned": 3
+    "strategy_modules_scanned": 5
   }
 }

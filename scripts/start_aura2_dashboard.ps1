@@ -40,7 +40,7 @@ function Stop-StaleDashboardListener {
         try {
             $process = Get-CimInstance Win32_Process -Filter ("ProcessId=" + $ownerPid)
             $command = [string]$process.CommandLine
-            if ($command -match "next|node|npm") {
+            if ($command -match [regex]::Escape($Root) -and $command -match "next|node|npm") {
                 Write-Host ("Stopping stale AURA dashboard listener PID " + $ownerPid + " on port 3100...") -ForegroundColor Yellow
                 taskkill /PID $ownerPid /T /F | Out-Null
             }
@@ -104,10 +104,12 @@ if ($SitePackages -and (Test-Path $SitePackages)) {
         }
 }
 
-Write-Host "Installing/updating AURA backend and official MT5 bridge..."
-& $VenvPython -m pip install --disable-pip-version-check --upgrade pip
-& $VenvPython -m pip install --disable-pip-version-check -e ".[mt5]"
-if ($LASTEXITCODE -ne 0) { throw "AURA Python package setup failed." }
+& $VenvPython -c "import aura, MetaTrader5" *> $null
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Installing AURA backend and official MT5 bridge..."
+    & $VenvPython -m pip install --disable-pip-version-check -e ".[mt5]"
+    if ($LASTEXITCODE -ne 0) { throw "AURA Python package setup failed." }
+}
 & $VenvPython -c "import MetaTrader5; print('MetaTrader5 bridge ready')"
 if ($LASTEXITCODE -ne 0) { throw "MetaTrader5 Python bridge could not be imported." }
 
@@ -127,19 +129,31 @@ if ($NodeMajor -lt 20) { throw "Node.js 20 or newer is required." }
 if (-not (Test-Path (Join-Path $Dashboard "node_modules\next"))) {
     Write-Host "Installing AURA 2 dashboard packages. This happens on the first run..."
     Push-Location $Dashboard
-    & npm.cmd install --no-audit --no-fund
+    & npm.cmd ci --no-audit --no-fund
     $NpmExit = $LASTEXITCODE
     Pop-Location
     if ($NpmExit -ne 0) { throw "Dashboard npm install failed." }
 }
 
 $env:AURA_BACKEND_URL = "http://127.0.0.1:8766"
-Write-Host "Building current AURA 2 dashboard for production..."
-Push-Location $Dashboard
-& npm.cmd run build
-$BuildExit = $LASTEXITCODE
-Pop-Location
-if ($BuildExit -ne 0) { throw "AURA 2 dashboard production build failed." }
+$BuildMarker = Join-Path $Dashboard ".next\BUILD_ID"
+$NeedsBuild = -not (Test-Path $BuildMarker)
+if (-not $NeedsBuild) {
+    $BuiltAt = (Get-Item $BuildMarker).LastWriteTimeUtc
+    $SourceFiles = @(
+        Get-ChildItem (Join-Path $Dashboard "app"),(Join-Path $Dashboard "components"),(Join-Path $Dashboard "lib"),(Join-Path $Dashboard "public") -File -Recurse
+        Get-Item (Join-Path $Dashboard "package.json"),(Join-Path $Dashboard "package-lock.json"),(Join-Path $Dashboard "next.config.mjs")
+    )
+    $NeedsBuild = @($SourceFiles | Where-Object { $_.LastWriteTimeUtc -gt $BuiltAt }).Count -gt 0
+}
+if ($NeedsBuild) {
+    Write-Host "Building current AURA dashboard for production..."
+    Push-Location $Dashboard
+    & npm.cmd run build
+    $BuildExit = $LASTEXITCODE
+    Pop-Location
+    if ($BuildExit -ne 0) { throw "AURA dashboard production build failed." }
+}
 
 if (-not (Test-Url "http://127.0.0.1:8766/api/health")) {
     Write-Host "Starting AURA backend on http://127.0.0.1:8766 ..."
@@ -170,7 +184,8 @@ if ($DashboardRootOk -and -not $DashboardProxyOk) {
 
 if (-not $DashboardRootOk) {
     Write-Host "Starting premium production dashboard on http://127.0.0.1:3100 ..."
-    $dash = Start-Process -FilePath "cmd.exe" -ArgumentList @("/c","set AURA_BACKEND_URL=http://127.0.0.1:8766&& npm.cmd run start") -WorkingDirectory $Dashboard -RedirectStandardOutput (Join-Path $Runtime "dashboard.out.log") -RedirectStandardError (Join-Path $Runtime "dashboard.err.log") -PassThru
+    $NextCli = Join-Path $Dashboard "node_modules\next\dist\bin\next"
+    $dash = Start-Process -FilePath (Get-Command node).Source -ArgumentList @(('"' + $NextCli + '"'),"start","-H","127.0.0.1","-p","3100") -WorkingDirectory $Dashboard -RedirectStandardOutput (Join-Path $Runtime "dashboard.out.log") -RedirectStandardError (Join-Path $Runtime "dashboard.err.log") -PassThru
     Set-Content -Path (Join-Path $Runtime "dashboard.pid") -Value $dash.Id
 
     for ($i = 0; $i -lt 80; $i++) {

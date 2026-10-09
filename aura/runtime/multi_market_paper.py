@@ -4,6 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
+from itertools import pairwise
 from typing import Any, Protocol
 
 from aura.agents.audit import AgentAuditJournal
@@ -172,7 +173,7 @@ class MultiMarketPaperCoordinator:
             ordered = sorted(valid, key=lambda item: item.close_time)
             if any(
                 right.close_time <= left.close_time
-                for left, right in zip(ordered, ordered[1:], strict=False)
+                for left, right in pairwise(ordered)
             ):
                 raise ValueError(f"seed history is not strictly increasing: {symbol}/{timeframe}")
             self._histories[key] = ordered[-self.max_history_bars :]
@@ -303,7 +304,8 @@ class MultiMarketPaperCoordinator:
             self.financial_journal.record_order_created(order, correlation_id=correlation_id)
             try:
                 broker_order_id = await self.broker.submit_order(order)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
+                # Connector-specific failures must leave an auditable rejection for this order.
                 self.financial_journal.record_order_rejected(
                     order.order_id,
                     correlation_id=correlation_id,

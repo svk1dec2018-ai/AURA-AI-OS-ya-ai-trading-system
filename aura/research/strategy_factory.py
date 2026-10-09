@@ -15,6 +15,10 @@ from aura.research.lifecycle import StrategyStage, StrategyVersion
 class StrategyPrimitive(str, Enum):
     EMA_TREND = "ema_trend"
     RSI_STATE = "rsi_state"
+    RSI_REVERSION = "rsi_reversion"
+    DONCHIAN_BREAKOUT = "donchian_breakout"
+    CHOP_FILTER = "chop_filter"
+    RANGE_FILTER = "range_filter"
     MACD_MOMENTUM = "macd_momentum"
     BOLLINGER_REVERSION = "bollinger_reversion"
     KELTNER_BREAKOUT = "keltner_breakout"
@@ -153,6 +157,9 @@ class AutonomousStrategyFactory:
         StrategyPrimitive.BOLLINGER_REVERSION,
         StrategyPrimitive.KELTNER_BREAKOUT,
         StrategyPrimitive.SUPERTREND,
+        StrategyPrimitive.DONCHIAN_BREAKOUT,
+        StrategyPrimitive.PIVOT_SUPPORT_RESISTANCE,
+        StrategyPrimitive.RSI_REVERSION,
         StrategyPrimitive.VWAP,
         StrategyPrimitive.LIQUIDITY_SWEEP,
         StrategyPrimitive.BOS_CHOCH,
@@ -173,6 +180,8 @@ class AutonomousStrategyFactory:
         StrategyPrimitive.SESSION_CONTEXT,
         StrategyPrimitive.HTF_BIAS,
         StrategyPrimitive.REGIME,
+        StrategyPrimitive.CHOP_FILTER,
+        StrategyPrimitive.RANGE_FILTER,
         StrategyPrimitive.OPTIONS_PCR,
         StrategyPrimitive.OPTIONS_GREEKS,
         StrategyPrimitive.MACRO_NEWS,
@@ -221,9 +230,13 @@ class AutonomousStrategyFactory:
         )
         exit_count = rng.randint(1, min(self.policy.max_exit_primitives, len(self._EXIT_POOL)))
 
-        entries = tuple(sorted(rng.sample(self._ENTRY_POOL, entry_count), key=lambda item: item.value))
+        entries = tuple(
+            sorted(rng.sample(self._ENTRY_POOL, entry_count), key=lambda item: item.value)
+        )
         confirmations = tuple(
-            sorted(rng.sample(self._CONFIRMATION_POOL, confirmation_count), key=lambda item: item.value)
+            sorted(
+                rng.sample(self._CONFIRMATION_POOL, confirmation_count), key=lambda item: item.value
+            )
         )
         exits = tuple(sorted(rng.sample(self._EXIT_POOL, exit_count), key=lambda item: item.value))
         return self.propose_from_components(
@@ -307,7 +320,9 @@ class AutonomousStrategyFactory:
         try:
             return self._blueprints[strategy.content_hash]
         except KeyError as exc:
-            raise KeyError(f"unknown generated strategy blueprint: {strategy.content_hash}") from exc
+            raise KeyError(
+                f"unknown generated strategy blueprint: {strategy.content_hash}"
+            ) from exc
 
     def _validate_components(
         self,
@@ -359,7 +374,7 @@ class AutonomousStrategyFactory:
             params.update(
                 {"ema_fast": fast, "ema_slow": slow, "ema_trend": rng.choice((50, 100, 200))}
             )
-        if StrategyPrimitive.RSI_STATE in components:
+        if components & {StrategyPrimitive.RSI_STATE, StrategyPrimitive.RSI_REVERSION}:
             params.update(
                 {
                     "rsi_period": rng.choice((7, 9, 14, 21)),
@@ -399,8 +414,19 @@ class AutonomousStrategyFactory:
             )
         if StrategyPrimitive.RELATIVE_VOLUME in components:
             params["relative_volume_min"] = rng.choice((1.0, 1.2, 1.5, 2.0))
-        if StrategyPrimitive.LIQUIDITY_SWEEP in components or StrategyPrimitive.BOS_CHOCH in components:
+        if components & {
+            StrategyPrimitive.LIQUIDITY_SWEEP,
+            StrategyPrimitive.BOS_CHOCH,
+            StrategyPrimitive.ORDER_BLOCK,
+            StrategyPrimitive.DONCHIAN_BREAKOUT,
+        }:
             params["structure_lookback"] = rng.choice((5, 8, 13, 21, 34))
+        if StrategyPrimitive.ORDER_BLOCK in components:
+            params["order_block_max_age"] = rng.choice((13, 21, 34))
+        if StrategyPrimitive.CHOP_FILTER in components:
+            params["max_choppiness"] = rng.choice((50.0, 55.0, 61.8))
+        if StrategyPrimitive.RANGE_FILTER in components:
+            params["min_choppiness"] = rng.choice((50.0, 55.0, 61.8))
         if StrategyPrimitive.FAIR_VALUE_GAP in components:
             params["fvg_min_atr_fraction"] = rng.choice((0.1, 0.2, 0.3, 0.5))
         if StrategyPrimitive.FORECAST_ENSEMBLE in components:

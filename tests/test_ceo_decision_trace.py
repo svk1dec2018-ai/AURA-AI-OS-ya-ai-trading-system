@@ -105,10 +105,7 @@ def test_ceo_trace_explains_fail_closed_no_trade() -> None:
     assert memo.intent == SignalIntent.FLAT
     assert memo.quorum_met is True
     assert memo.decision_trace is not None
-    assert (
-        memo.decision_trace.reason_code
-        == DecisionReasonCode.DIRECTIONAL_DISAGREEMENT
-    )
+    assert memo.decision_trace.reason_code == DecisionReasonCode.DIRECTIONAL_DISAGREEMENT
     assert set(memo.opposing_agents) == {"technical", "macro"}
     assert "directional disagreement" in memo.rationale
 
@@ -118,3 +115,26 @@ def test_ceo_rejects_invalid_role_weights() -> None:
         CEOAggregator(role_weights={AgentRole.TECHNICAL: 0.0})
     with pytest.raises(ValueError, match="finite positive"):
         CEOAggregator(role_weights={AgentRole.TECHNICAL: float("nan")})
+
+
+def test_ceo_does_not_inflate_weak_unanimous_evidence_to_certainty() -> None:
+    evidence = (
+        _evidence("technical", AgentRole.TECHNICAL, SignalIntent.LONG, 0.1, 1.0),
+        _evidence("volume", AgentRole.VOLUME_VWAP, SignalIntent.LONG, 0.1, 1.0),
+        _evidence("macro", AgentRole.MACRO_SENTIMENT, SignalIntent.LONG, 0.1, 1.0),
+    )
+    memo = CEOAggregator().synthesize(_round(evidence))
+    assert memo.intent == SignalIntent.LONG
+    assert memo.confidence == pytest.approx(0.1)
+    assert memo.decision_trace.directional_margin == 1.0
+
+
+def test_ceo_abstains_on_tie_even_when_margin_threshold_is_zero() -> None:
+    evidence = (
+        _evidence("technical", AgentRole.TECHNICAL, SignalIntent.LONG, 0.8, 1.0),
+        _evidence("macro", AgentRole.MACRO_SENTIMENT, SignalIntent.SHORT, 0.8, 1.0),
+    )
+    memo = CEOAggregator(min_agents=2, min_distinct_roles=2, min_directional_margin=0).synthesize(
+        _round(evidence)
+    )
+    assert memo.intent == SignalIntent.FLAT

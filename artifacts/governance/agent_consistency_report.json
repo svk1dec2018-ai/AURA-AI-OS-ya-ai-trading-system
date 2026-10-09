@@ -13,7 +13,7 @@
   },
   "consistency": {
     "evidence_packets_per_round": 10,
-    "first_round_hash": "149dbd876bc3b8eeeaf2c3e79784113c77f40edf605138701d11f9e685a44b4f",
+    "first_round_hash": "95f7f3f92ed8f5a952b7db894c5f8b23b94bc86d4790d2d3167116428abb79af",
     "probes": {
       "all_roles_present": true,
       "free_form_output_blocked": true,
@@ -22,10 +22,10 @@
       "registry_complete": true,
       "registry_is_advisory_only": true
     },
-    "second_round_hash": "149dbd876bc3b8eeeaf2c3e79784113c77f40edf605138701d11f9e685a44b4f"
+    "second_round_hash": "95f7f3f92ed8f5a952b7db894c5f8b23b94bc86d4790d2d3167116428abb79af"
   },
   "decision": "PASS",
-  "deterministic_fingerprint": "f5a777d2c334a54a093a902c3d38b4990e247ff1da7989db027b6d4dc95ef0f0",
+  "deterministic_fingerprint": "da8ee1c73472d1d9a3b11e6942881cc4de25f3a4d6d6bea334c47eff14eac6e5",
   "fixture_type": "deterministic_internal_multi_agent_fixture",
   "phase": 9,
   "schema_version": 1,

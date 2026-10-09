@@ -15,7 +15,7 @@ function Import-AuraEnv {
 
         $match = [regex]::Match($line, "^[A-Za-z_][A-Za-z0-9_]*=(.*)$")
         if (-not $match.Success) {
-            throw ("Invalid AURA env line: " + $line)
+            throw "Invalid AURA env assignment. Check .env.local formatting; values are hidden."
         }
 
         $name = $line.Substring(0, $line.IndexOf("="))

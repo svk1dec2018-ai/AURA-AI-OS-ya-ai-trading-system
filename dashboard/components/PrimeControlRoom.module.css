@@ -58,6 +58,10 @@
   background:linear-gradient(180deg,rgba(14,28,43,.9),rgba(8,19,31,.9))}
 .panel>header b{font-size:7px;letter-spacing:.11em}.panel>header span{font-size:6px;color:#6c8499;border:1px solid rgba(117,166,196,.12);padding:3px 5px}
 .panelBody{min-width:0}
+.panelBody{overflow-wrap:anywhere}
+.panelBody form{display:grid;gap:10px;padding:16px;font-size:12px}
+.panelBody form input{min-width:0;width:100%;padding:10px;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+.panelBody form button{padding:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer}
 
 .watchlist{display:grid}.watchRow,.watchActive{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;
   border:0;border-bottom:1px solid rgba(117,166,196,.07);background:transparent;color:#b8c8d7;padding:8px 9px;text-align:left;cursor:pointer}
@@ -145,6 +149,12 @@
   .jarvisCore{height:160px}.pageGrid{grid-template-columns:1fr}.pageGrid>.panel:nth-child(3){grid-column:auto}
 }
 @media(max-width:760px){
+  .centerColumn{order:0}.leftColumn{order:1}.rightColumn{order:2}
+  .panel>header b{font-size:11px}.panel>header span{font-size:9px}
+  .metric span,.metric b,.watchRow b,.watchActive b,.watchRow strong,.watchActive strong{font-size:12px}
+  .watchRow small,.watchActive small,.providerMini span,.providerMini small{font-size:10px}
+  .providerMini span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .verdict>span,.verdict p,.microcopy,.empty{font-size:12px}
   .rail{width:58px;padding:9px 5px}.main{margin-left:58px}.logo{width:40px;height:40px}.navButton small,.navActive small{display:none}
   .navButton,.navActive{height:44px}.identity small{display:none}.topbar{height:auto;min-height:58px;padding:8px 10px}.statusLine{gap:4px}.commandButton kbd{display:none}
   .tradeLayout{grid-template-columns:1fr}.leftColumn{grid-template-columns:repeat(2,minmax(0,1fr))}.leftColumn>.panel:last-child{grid-column:1/-1}

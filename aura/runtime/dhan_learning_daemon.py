@@ -14,10 +14,6 @@ from aura.agents.risk_policy import AgentRiskPolicy
 from aura.core.pipeline import DecisionPipeline
 from aura.data.dhan_deep_service import DhanDeepMetadataService
 from aura.data.dhan_history import DhanIntradayHistoryClient, resample_india_session_candles
-from aura.data.dhan_option_context import (
-    DhanOptionContextService,
-    DhanOptionTargetResolver,
-)
 from aura.data.dhan_instruments import DhanInstrumentMasterDownloader
 from aura.data.dhan_live_ticker import (
     DhanLiveCandleSource,
@@ -26,10 +22,13 @@ from aura.data.dhan_live_ticker import (
     build_ticker_subscriptions,
     load_dhan_live_credentials_from_env,
 )
+from aura.data.dhan_option_context import (
+    DhanOptionContextService,
+    DhanOptionTargetResolver,
+)
 from aura.data.dhan_universe_planner import DhanUniversePlanner, DhanUniversePolicy
 from aura.data.intelligence_service import LiveIntelligenceService
 from aura.data.quality import MultiTimeframeCandleQualityGate
-from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.evolution.brain_online import (
     BrainPaperChampionManager,
     BrainPaperPromotionPolicy,
@@ -46,6 +45,7 @@ from aura.evolution.opportunity_audit import (
     OpportunityAuditStore,
 )
 from aura.evolution.shadow_outcomes import ShadowDecisionOutcomeRecorder, ShadowOutcomePolicy
+from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.knowledge.firewall import KnowledgeFirewall
 from aura.markets.universe import AssetClass, CanonicalInstrument
 from aura.persistence.recovery import FinancialEventJournal
@@ -210,7 +210,8 @@ class DhanSelfEvolvingPaperDaemon:
                 step = await self.coordinator.on_batch(batch)
                 scanner = self.coordinator.scanner
                 if not isinstance(scanner, LearningBrainPolicyScanner):
-                    raise RuntimeError("Dhan learning scanner was replaced unexpectedly")
+                    # This reports corrupted runtime state rather than a caller's argument type.
+                    raise RuntimeError("Dhan learning scanner was replaced unexpectedly")  # noqa: TRY004
                 self.recorder.register_scan(scanner.last_raw_scan)
                 self.opportunity_auditor.register_scan(scanner.last_raw_scan)
 

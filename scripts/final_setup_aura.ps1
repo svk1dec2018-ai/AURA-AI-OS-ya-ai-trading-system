@@ -1,3 +1,4 @@
+param([switch]$Distributed)
 $ErrorActionPreference = "Stop"
 
 $Root = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
@@ -26,6 +27,11 @@ if (-not (Test-Path $VenvPython)) {
             }
         }
     }
+}
+
+if (-not (Test-Path $VenvPython) -and (Get-Command python -ErrorAction SilentlyContinue)) {
+    & python -c "import sys; raise SystemExit(0 if sys.version_info >= (3,11) else 1)" 2>$null
+    if ($LASTEXITCODE -eq 0) { & python -m venv $VenvDir }
 }
 
 if (-not (Test-Path $VenvPython)) {
@@ -67,7 +73,7 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
 $NodeMajor = [int](& node -p "process.versions.node.split('.')[0]")
 if ($NodeMajor -lt 20) { throw "Node.js 20 or newer is required." }
 
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+if ($Distributed -and -not (Get-Command docker -ErrorAction SilentlyContinue)) {
     if (Get-Command winget -ErrorAction SilentlyContinue) {
         Write-Host "Docker Desktop is not installed. Installing Docker Desktop..." -ForegroundColor Yellow
         winget install --id Docker.DockerDesktop -e --source winget --accept-package-agreements --accept-source-agreements
@@ -83,11 +89,13 @@ if (-not (Test-Path $EnvFile)) {
 } else {
     Write-Host ".env.local already exists; existing values were preserved."
 }
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot "sync_aura_env.ps1") -TemplatePath (Join-Path $Root ".env.example") -LocalPath $EnvFile
+if ($LASTEXITCODE -ne 0) { throw "AURA env sync failed." }
 Import-AuraEnv -Path $EnvFile
 
 Write-Host "Installing dashboard packages..."
 Push-Location $Dashboard
-& npm.cmd install --no-audit --no-fund
+& npm.cmd ci --no-audit --no-fund
 if ($LASTEXITCODE -ne 0) { Pop-Location; throw "Dashboard npm install failed." }
 & npm.cmd run build
 $DashboardBuild = $LASTEXITCODE
@@ -104,6 +112,10 @@ if ($LASTEXITCODE -ne 0) { throw "Ruff failed." }
 # Otherwise pytest can accidentally call Ollama/OpenAI and time out or become
 # non-deterministic. Save the values, clear them for verification, then restore.
 $TestEnvNames = @(
+    "AURA_COMPAT_BASE_URL",
+    "AURA_COMPAT_MODEL",
+    "AURA_COMPAT_API_KEY",
+    "AURA_COMPAT_TIMEOUT_SECONDS",
     "AURA_FREE_AI_PRESET",
     "AURA_OLLAMA_MODELS",
     "AURA_OLLAMA_URL",
@@ -114,7 +126,15 @@ $TestEnvNames = @(
     "AURA_MAINTENANCE_OLLAMA_MODEL",
     "OPENAI_API_KEY",
     "AURA_OPENAI_MODELS",
-    "AURA_MAINTENANCE_OPENAI_MODEL"
+    "AURA_MAINTENANCE_OPENAI_MODEL",
+    "NVIDIA_API_KEY",
+    "AURA_NVIDIA_MODELS",
+    "GROQ_API_KEY",
+    "AURA_GROQ_MODELS",
+    "OPENROUTER_API_KEY",
+    "AURA_OPENROUTER_MODELS",
+    "GEMINI_API_KEY",
+    "AURA_GEMINI_MODELS"
 )
 $SavedTestEnv = @{}
 foreach ($Name in $TestEnvNames) {
@@ -125,8 +145,8 @@ foreach ($Name in $TestEnvNames) {
 $PytestExit = 0
 try {
     Write-Host "Refreshing generated repository-audit evidence..."
-    & $VenvPython -m aura.ops.repository_audit
-    if ($LASTEXITCODE -ne 0) { throw "Repository audit regeneration failed." }
+    & $VenvPython -m aura.ops.refresh_software_evidence
+    if ($LASTEXITCODE -ne 0) { throw "Software evidence regeneration failed." }
 
     & $VenvPython -m aura.ops.repository_audit --check
     if ($LASTEXITCODE -ne 0) { throw "Repository audit verification failed." }
@@ -144,14 +164,14 @@ if ($PytestExit -ne 0) { throw "AURA tests failed." }
 & $VenvPython -m build
 if ($LASTEXITCODE -ne 0) { throw "Python distribution build failed." }
 
-& $VenvPython -m aura.ops.final_doctor --profile install --root $Root
+& $VenvPython -m aura.ops.final_doctor --profile repository --root $Root
 if ($LASTEXITCODE -ne 0) {
-    Write-Warning "Core setup completed, but production doctor found a missing prerequisite."
+    throw "Software doctor failed. Setup is not complete."
 }
 
 Write-Host ""
 Write-Host "AURA FINAL SETUP COMPLETE" -ForegroundColor Green
 Write-Host "1. Double-click CONFIGURE_AURA.cmd and fill only the providers you use."
 Write-Host "2. Keep AURA_LIVE_TRADING_ENABLED blank."
-Write-Host "3. Open Docker Desktop and MetaTrader 5 DEMO."
-Write-Host "4. Double-click START_AURA_PRODUCTION.cmd."
+Write-Host "3. Open MetaTrader 5 and log into your DEMO account."
+Write-Host "4. Open AURA_PRIME.cmd and choose Start. Docker is optional."
