@@ -33,10 +33,12 @@
   "cloud_authenticated_calls": "NOT_VERIFIED_KEYS_ABSENT",
   "real_money_eligible": false,
   "github_publication": {
-    "state": "BLOCKED",
-    "target": "svk1dec2018-ai/aura-prime",
-    "error": "403 Resource not accessible by integration",
-    "fallback_state": "PENDING_NEW_BRANCH_IN_ORIGINAL_AURA_REPOSITORY"
+    "state": "PUBLISHED_RELEASE_BRANCH",
+    "repository": "svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system",
+    "branch": "release/aura-prime-strategy-brain-2026-10-09",
+    "validated_snapshot_commit": "6a73bf93e31e9c0ed8c2c0858e826e1e2ec239a9",
+    "migration_target": "svk1dec2018-ai/aura-prime",
+    "migration_target_write_access": "403 Resource not accessible by integration"
   },
   "known_scope_limits": [
     "Authenticated execution across all brokers is not implemented/certified equally.",

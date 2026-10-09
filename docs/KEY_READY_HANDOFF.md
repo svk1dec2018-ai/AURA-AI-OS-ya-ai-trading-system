@@ -82,7 +82,9 @@ This release is an improved local DEMO candidate; it must not be described as
 
 ## GitHub publication blocker
 
-The connected app can read the source repository, but the target `aura-prime`
+The complete updated release is published on [the original AURA release branch](https://github.com/svk1dec2018-ai/AURA-AI-OS-ya-ai-trading-system/tree/release/aura-prime-strategy-brain-2026-10-09). This includes the causal strategy desk and fourteen research setups, validated with 775 Python tests and four browser tests.
+
+The target `aura-prime`
 write request returned **403: Resource not accessible by integration**.
 Its GitHub app installation uses **selected repositories**.
 
@@ -91,8 +93,8 @@ Open `https://github.com/settings/installations/154236705`, select the
 is repository access configuration; do not share a GitHub token in chat.
 GitHub account suspension status was not established by this permission error.
 
-After access is fixed, the migration and corrections can be published as a
-reviewable commit/PR and GitHub Actions can validate Windows smoke checks.
+After target access is fixed, this release can also be migrated to `aura-prime`.
+The original repository release branch is already available.
 
 ## Troubleshooting
 
