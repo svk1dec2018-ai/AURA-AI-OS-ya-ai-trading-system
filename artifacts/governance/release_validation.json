@@ -1,7 +1,7 @@
 {
-  "verification_date": "2026-10-09",
+  "verification_date": "2026-10-10",
   "release_class": "local-paper-demo-candidate",
-  "code_sha256": "86c76a9c7cc58174224e727465dc2fa3bb575efe57dd7e482f7be3a8523d8f34",
+  "code_sha256": "6d83fecea8b55264fd671cea605bf537f7ffc850b8cb9f511774b349323a19b0",
   "python": "3.12.14",
   "node": "v24.19.0",
   "python_tests": {
@@ -9,16 +9,16 @@
     "errors": "0",
     "failures": "0",
     "skipped": "0",
-    "tests": "775",
-    "time": "21.557",
-    "timestamp": "2026-10-09T15:35:37.059880+00:00",
-    "hostname": "a294d775a299"
+    "tests": "785",
+    "time": "24.072",
+    "timestamp": "2026-10-10T19:57:46.783474+05:30",
+    "hostname": "d22f65682d33"
   },
   "ruff": "PASS",
   "dashboard_typecheck": "PASS",
   "dashboard_build": "PASS",
   "browser_smoke_tests": {
-    "passed": 11,
+    "passed": 12,
     "failed": 0,
     "real_local_endpoints": true,
     "mock_broker_fills": false
@@ -61,5 +61,14 @@
     "actual_closed_bars": 299,
     "all_features_active": false,
     "unrestricted_production_ready": false
+  },
+  "mt5_all_market_update": {
+    "all_scope_zero_removes_selection_cap": true,
+    "priority_families": 20,
+    "exact_broker_symbols_preserved": true,
+    "entry_discovery_excludes_close_only": true,
+    "inventory_orders_sent": false,
+    "windows_broker_execution_verified": false,
+    "guide": "docs/MT5_ALL_MARKET_SETUP.md"
   }
 }

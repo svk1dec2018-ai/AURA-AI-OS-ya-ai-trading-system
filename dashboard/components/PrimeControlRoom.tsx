@@ -122,6 +122,7 @@ function statusClass(value: boolean): string {
 
 export default function PrimeControlRoom() {
   const [view, setView] = useState<View>("trade");
+  const [scanLimit, setScanLimit] = useState(25);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [readiness, setReadiness] = useState<JsonMap | null>(null);
   const [prime, setPrime] = useState<PrimeStatus | null>(null);
@@ -566,12 +567,12 @@ export default function PrimeControlRoom() {
                 </div>
               </Panel>
 
-              <Panel title="EXECUTION" badge="OWNER">
+              <Panel title="EXECUTION" badge="OWNER"><label>MT5 scan scope <select aria-label="MT5 scan scope" value={scanLimit} onChange={(event) => setScanLimit(Number(event.target.value))}><option value={25}>Priority 25</option><option value={100}>Priority 100</option><option value={250}>Priority 250</option><option value={0}>All broker entry-eligible symbols</option></select></label>
                 <div className={styles.actions}>
                   <button
                     disabled={busy}
                     className={styles.start}
-                    onClick={() => runtimeAction("/api/start", { max_symbols: 25, max_batches: 0 })}
+                    onClick={() => runtimeAction("/api/start", { max_symbols: scanLimit, max_batches: 0 })}
                   >
                     START DEMO
                   </button>

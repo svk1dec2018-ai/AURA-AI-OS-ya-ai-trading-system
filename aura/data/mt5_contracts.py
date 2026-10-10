@@ -108,7 +108,7 @@ class MT5UniverseDiscovery:
                     min_quantity=metadata.volume_min,
                     quantity_step=metadata.volume_step,
                     max_quantity=metadata.volume_max,
-                    tradable=metadata.trade_mode != 0,
+                    tradable=metadata.trade_mode in (1, 2, 4),
                     market_data_enabled=True,
                 )
             )
@@ -156,7 +156,7 @@ def classify_mt5_asset(metadata: MT5SymbolMetadata) -> AssetClass:
     # Some brokers place metals, energy and crypto CFDs below a Forex tree.
     if any(token in text for token in ("metal", "gold", "silver", "xau", "xag")):
         return AssetClass.METAL
-    if any(token in text for token in ("energy", "oil", "gas")):
+    if any(token in text for token in ("energy", "oil", "gas", "xtiusd", "xbrusd", "xngusd", "wti", "brent")):
         return AssetClass.ENERGY
     if any(token in text for token in ("crypto", "bitcoin", "ethereum", "btc", "eth")):
         return AssetClass.CRYPTO_CFD

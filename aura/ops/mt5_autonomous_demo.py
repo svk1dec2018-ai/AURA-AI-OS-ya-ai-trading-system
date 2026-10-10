@@ -51,7 +51,7 @@ def _parser() -> argparse.ArgumentParser:
             "live MT5 data and send only approved orders to a verified MT5 DEMO account."
         )
     )
-    parser.add_argument("--max-symbols", type=int, default=10)
+    parser.add_argument("--max-symbols", type=int, default=10, help="0 = all entry-eligible broker symbols")
     parser.add_argument("--max-batches", type=int, default=100, help="0 runs continuously")
     parser.add_argument("--state-dir", default="runtime/mt5_autonomous_demo")
     parser.add_argument("--max-order-notional-pct", type=Decimal, default=Decimal("0.50"))
@@ -68,7 +68,7 @@ def _parser() -> argparse.ArgumentParser:
 async def _run(args: argparse.Namespace) -> dict[str, object]:
     config = MT5AllMarketPaperConfig(
         state_dir=Path(args.state_dir),
-        max_symbols=args.max_symbols,
+        max_symbols=args.max_symbols or None,
         max_order_notional_pct=args.max_order_notional_pct,
         max_gross_exposure_pct=args.max_gross_exposure_pct,
         max_symbol_exposure_pct=args.max_symbol_exposure_pct,

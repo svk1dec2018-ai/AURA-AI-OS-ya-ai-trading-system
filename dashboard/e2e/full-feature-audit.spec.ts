@@ -130,3 +130,20 @@ test('capability search and every state filter reflect the actual catalog', asyn
     await expect(page.locator('.cap-cards article')).toHaveCount(items.filter((item: any) => state === 'all' || item.status === state).length);
   }
 });
+
+test('all-market scan scope reaches backend without bypassing demo preflight', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Live Desk/ }).first().click();
+  await page.getByLabel('MT5 scan scope').selectOption('0');
+  const submitted = page.waitForRequest(r => r.url().endsWith('/api/start') && r.method() === 'POST');
+  const response = page.waitForResponse(r => r.url().endsWith('/api/start'));
+  await page.getByRole('button', { name: 'START DEMO', exact: true }).click();
+  expect((await submitted).postDataJSON().max_symbols).toBe(0);
+  expect((await response).status()).toBe(400);
+  await page.goto('/workstation');
+  await page.getByRole('button', { name: /Trading Desk/ }).click();
+  await page.getByLabel('MT5 scan scope').selectOption('100');
+  const workstation = page.waitForRequest(r => r.url().endsWith('/api/start') && r.method() === 'POST');
+  await page.getByRole('button', { name: 'Start continuous DEMO' }).click();
+  expect((await workstation).postDataJSON().max_symbols).toBe(100);
+});

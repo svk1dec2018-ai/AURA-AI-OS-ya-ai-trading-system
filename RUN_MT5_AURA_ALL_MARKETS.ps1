@@ -1,4 +1,8 @@
 $ErrorActionPreference = "Stop"
+$Root = $PSScriptRoot
+Set-Location $Root
+$Python = Join-Path $Root ".venv\Scripts\python.exe"
+if (-not (Test-Path $Python)) { throw "Run AURA_PRIME.cmd option 1 Setup first." }
 
 function Read-OptionalPositiveInt {
     param(
@@ -54,7 +58,7 @@ try {
     Write-Host ""
     Write-Host "Starting AURA with the MT5 account currently logged in to the terminal..."
     Write-Host "AURA will stop if the active account is not DEMO or MT5 is disconnected."
-    & python @arguments
+    & $Python @arguments
     exit $LASTEXITCODE
 }
 finally {

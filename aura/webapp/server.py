@@ -189,8 +189,8 @@ class AuraWebController:
         )
 
     def start(self, *, max_symbols: int = 25, max_batches: int = 100) -> dict[str, Any]:
-        if not 1 <= max_symbols <= 1000:
-            raise ValueError("max_symbols must be between 1 and 1000")
+        if not 0 <= max_symbols <= 1000:
+            raise ValueError("max_symbols must be 0 (all) or between 1 and 1000")
         if not 0 <= max_batches <= 1_000_000:
             raise ValueError("max_batches must be between 0 (continuous) and 1000000")
         with self._lock:

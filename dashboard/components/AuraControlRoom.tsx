@@ -61,6 +61,7 @@ function latestDecision(workspace: Workspace | null): Decision | null {
 
 export default function AuraControlRoom() {
   const [view, setView] = useState<View>("overview");
+  const [scanLimit, setScanLimit] = useState(25);
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [readiness, setReadiness] = useState<JsonMap | null>(null);
   const [liveMt5, setLiveMt5] = useState<MT5LiveSnapshot | null>(null);
@@ -306,7 +307,7 @@ export default function AuraControlRoom() {
               runtime={runtime}
               readiness={readiness}
               busy={actionBusy}
-              onStart={() => runtimeAction("/api/start", { max_symbols: 25, max_batches: 0 })}
+              onStart={() => runtimeAction("/api/start", { max_symbols: scanLimit, max_batches: 0 })}
               onStop={() => runtimeAction("/api/stop")}
               onKill={() => runtimeAction("/api/kill", { reason: "Emergency lock from AURA 2 live terminal" })}
             />
@@ -353,7 +354,7 @@ export default function AuraControlRoom() {
             <section className="grid two">
               <Panel title="Protected execution controls" badge="DEMO">
                 <div className="control-stack">
-                  <button className="primary" disabled={actionBusy} onClick={() => runtimeAction("/api/start", { max_symbols: 25, max_batches: 0 })}>Start continuous DEMO</button>
+                  <label>MT5 scan scope <select aria-label="MT5 scan scope" value={scanLimit} onChange={(event) => setScanLimit(Number(event.target.value))}><option value={25}>Priority 25</option><option value={100}>Priority 100</option><option value={250}>Priority 250</option><option value={0}>All broker entry-eligible symbols</option></select></label><button className="primary" disabled={actionBusy} onClick={() => runtimeAction("/api/start", { max_symbols: scanLimit, max_batches: 0 })}>Start continuous DEMO</button>
                   <button disabled={actionBusy} onClick={() => runtimeAction("/api/stop")}>Stop runtime</button>
                   <button className="danger" disabled={actionBusy} onClick={() => runtimeAction("/api/kill", { reason: "Owner emergency lock" })}>Emergency lock</button>
                 </div>

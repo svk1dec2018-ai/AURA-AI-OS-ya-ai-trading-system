@@ -5,26 +5,26 @@ It inventories the repository; it does not certify later implementation phases.
 
 **Phase 0: PASS**
 
-- Repository files: 613
-- Python modules: 464
-- Source modules: 255
-- Test modules: 178
-- Static test functions: 758
-- Entrypoints: 101
+- Repository files: 621
+- Python modules: 468
+- Source modules: 257
+- Test modules: 179
+- Static test functions: 764
+- Entrypoints: 106
 - Known stub/incomplete candidates: 107
 
 ## Repository structure
 
 | Asset class | Count |
 |---|---:|
-| `automation_entrypoint` | 37 |
+| `automation_entrypoint` | 40 |
 | `ci_or_repository_policy` | 2 |
 | `configuration_or_structured_evidence` | 6 |
 | `container_configuration` | 2 |
-| `documentation` | 47 |
+| `documentation` | 48 |
 | `documentation_or_validation_evidence` | 21 |
 | `knowledge_corpus_asset` | 2 |
-| `python` | 464 |
+| `python` | 468 |
 | `repository_asset` | 30 |
 | `repository_configuration` | 2 |
 
@@ -49,22 +49,22 @@ It inventories the repository; it does not certify later implementation phases.
 | `knowledge` | 3 |
 | `lineage` | 3 |
 | `maintenance` | 8 |
-| `markets` | 1 |
+| `markets` | 2 |
 | `memory` | 1 |
 | `models` | 5 |
 | `observability` | 1 |
-| `ops` | 29 |
+| `ops` | 30 |
 | `options` | 1 |
 | `package` | 1 |
 | `persistence` | 5 |
 | `portfolio` | 3 |
 | `prime` | 15 |
-| `repository_tooling` | 3 |
+| `repository_tooling` | 4 |
 | `research` | 18 |
 | `risk` | 4 |
 | `runtime` | 19 |
 | `strategy` | 5 |
-| `validation` | 178 |
+| `validation` | 179 |
 | `webapp` | 11 |
 
 ## Entrypoints
@@ -73,6 +73,7 @@ It inventories the repository; it does not certify later implementation phases.
 |---|---|
 | `AURA_PRIME.cmd` | shell-launcher |
 | `AURA_PRODUCTION_DOCTOR.cmd` | shell-launcher |
+| `CHECK_AURA_MARKETS.cmd` | shell-launcher |
 | `CHECK_MT5_XAUUSD_DEMO.ps1` | shell-launcher |
 | `CONFIGURE_AURA.cmd` | shell-launcher |
 | `Dockerfile` | container-entrypoint |
@@ -80,6 +81,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `INSTALL_FREE_UNLIMITED_AI.cmd` | shell-launcher |
 | `RUN_AURA_DEV_AUTOPILOT.cmd` | shell-launcher |
 | `RUN_AURA_DEV_AUTOPILOT.ps1` | shell-launcher |
+| `RUN_MT5_AURA_ALL_MARKETS.cmd` | shell-launcher |
 | `RUN_MT5_AURA_ALL_MARKETS.ps1` | shell-launcher |
 | `RUN_MT5_AURA_DEMO_AUTO.ps1` | shell-launcher |
 | `START_AURA2.cmd` | shell-launcher |
@@ -116,6 +118,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/mt5_autonomous_demo.py` | python-main |
 | `aura/ops/mt5_demo_readiness.py` | python-main |
 | `aura/ops/mt5_demo_trade.py` | python-main |
+| `aura/ops/mt5_market_inventory.py` | python-main |
 | `aura/ops/multi_agent_gate.py` | python-main |
 | `aura/ops/operator_interface_gate.py` | python-main |
 | `aura/ops/paper_trading_gate.py` | python-main |
@@ -158,6 +161,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts/aura_env.ps1` | shell-launcher |
 | `scripts/aura_prime.ps1` | shell-launcher |
 | `scripts/aura_prime_configure.ps1` | shell-launcher |
+| `scripts/check_aura_markets.ps1` | shell-launcher |
 | `scripts/final_setup_aura.ps1` | shell-launcher |
 | `scripts/generate_setup_pdf.py` | python-main |
 | `scripts/install_aura_pwa_task.ps1` | shell-launcher |
@@ -172,6 +176,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts/stop_aura_fleet.ps1` | shell-launcher |
 | `scripts/stop_aura_production.ps1` | shell-launcher |
 | `scripts/sync_aura_env.ps1` | shell-launcher |
+| `student_lab/train_research_model.py` | python-main |
 
 ## Python module classifications
 
@@ -250,7 +255,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/data/intelligence_service.py` | source | data | 5 | 1 | 1 |
 | `aura/data/kraken.py` | source | data | 5 | 0 | 1 |
 | `aura/data/live_plane.py` | source | data | 5 | 5 | 0 |
-| `aura/data/mt5_contracts.py` | source | data | 5 | 1 | 1 |
+| `aura/data/mt5_contracts.py` | source | data | 5 | 2 | 1 |
 | `aura/data/mt5_demo.py` | source | data | 5 | 5 | 3 |
 | `aura/data/mt5_polling.py` | source | data | 5 | 1 | 2 |
 | `aura/data/mt5_session.py` | source | data | 5 | 0 | 0 |
@@ -325,7 +330,8 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/maintenance/models.py` | source | maintenance | 15 | 3 | 0 |
 | `aura/maintenance/monitor.py` | source | maintenance | 15 | 1 | 4 |
 | `aura/maintenance/openai_developer.py` | source | maintenance | 15 | 1 | 4 |
-| `aura/markets/universe.py` | source | markets | 1 | 9 | 0 |
+| `aura/markets/mt5_profile.py` | source | markets | 1 | 1 | 0 |
+| `aura/markets/universe.py` | source | markets | 1 | 10 | 0 |
 | `aura/memory/cognitive.py` | source | memory | 9 | 2 | 0 |
 | `aura/models/cognitive_router.py` | source | models | 9 | 1 | 2 |
 | `aura/models/drift.py` | source | models | 9 | 1 | 1 |
@@ -351,6 +357,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/ops/mt5_autonomous_demo.py` | source | ops | 15 | 1 | 3 |
 | `aura/ops/mt5_demo_readiness.py` | source | ops | 15 | 1 | 2 |
 | `aura/ops/mt5_demo_trade.py` | source | ops | 15 | 1 | 1 |
+| `aura/ops/mt5_market_inventory.py` | source | ops | 15 | 0 | 3 |
 | `aura/ops/multi_agent_gate.py` | source | ops | 9 | 1 | 16 |
 | `aura/ops/operator_interface_gate.py` | source | ops | 15 | 0 | 17 |
 | `aura/ops/paper_trading_gate.py` | source | ops | 15 | 0 | 13 |
@@ -420,7 +427,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `aura/runtime/mt5_autonomous_demo.py` | source | runtime | 12 | 0 | 6 |
 | `aura/runtime/mt5_demo_execution_daemon.py` | source | runtime | 12 | 0 | 5 |
 | `aura/runtime/mt5_learning_daemon.py` | source | runtime | 12 | 1 | 18 |
-| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 20 |
+| `aura/runtime/mt5_paper_daemon.py` | source | runtime | 12 | 1 | 21 |
 | `aura/runtime/multi_market_paper.py` | source | runtime | 12 | 3 | 9 |
 | `aura/runtime/observable_public_council.py` | source | runtime | 12 | 1 | 3 |
 | `aura/runtime/opportunity_radar.py` | source | runtime | 12 | 2 | 3 |
@@ -463,6 +470,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `scripts/audit/real_market_backtests.py` | tooling | repository_tooling | 0 | 0 | 6 |
 | `scripts/audit/synthetic_backtest_matrix.py` | tooling | repository_tooling | 0 | 0 | 7 |
 | `scripts/generate_setup_pdf.py` | tooling | repository_tooling | 0 | 0 | 0 |
+| `student_lab/train_research_model.py` | tooling | repository_tooling | 0 | 0 | 2 |
 | `tests/test_adaptive_model_router.py` | test | validation | 1 | 0 | 5 |
 | `tests/test_agent_audit.py` | test | validation | 1 | 0 | 6 |
 | `tests/test_agent_registry.py` | test | validation | 1 | 0 | 4 |
@@ -576,6 +584,7 @@ It inventories the repository; it does not certify later implementation phases.
 | `tests/test_mt5_demo_runtime.py` | test | validation | 1 | 0 | 16 |
 | `tests/test_mt5_demo_trade.py` | test | validation | 15 | 0 | 1 |
 | `tests/test_mt5_execution_readiness.py` | test | validation | 5 | 0 | 3 |
+| `tests/test_mt5_market_profile.py` | test | validation | 1 | 0 | 3 |
 | `tests/test_mt5_runtime_state.py` | test | validation | 2 | 0 | 2 |
 | `tests/test_mt5_symbol_search.py` | test | validation | 13 | 0 | 2 |
 | `tests/test_multi_agent_gate.py` | test | validation | 0 | 0 | 2 |
@@ -662,6 +671,7 @@ Source modules with no direct test import are listed for review; this is not a c
 - `aura/observability/logging.py`
 - `aura/ops/end_to_end_gate.py`
 - `aura/ops/mt5_all_market_runner.py`
+- `aura/ops/mt5_market_inventory.py`
 - `aura/ops/operator_interface_gate.py`
 - `aura/ops/paper_trading_gate.py`
 - `aura/ops/refresh_software_evidence.py`

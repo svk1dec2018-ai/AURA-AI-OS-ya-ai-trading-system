@@ -19,6 +19,7 @@ from aura.data.mt5_polling import MT5DemoPollingSource, MT5PollingPolicy
 from aura.data.quality import MultiTimeframeCandleQualityGate
 from aura.execution.paper import PaperBroker, PaperExecutionConfig
 from aura.knowledge.firewall import KnowledgeFirewall
+from aura.markets.mt5_profile import market_priority
 from aura.persistence.atomic import atomic_write_json
 from aura.persistence.recovery import FinancialEventJournal
 from aura.persistence.wal import JsonlWriteAheadLog
@@ -31,45 +32,11 @@ from aura.runtime.multi_market_paper import MultiMarketPaperCoordinator
 from aura.runtime.scanner import MultiMarketIntelligenceScanner
 from aura.strategy.ema import EmaCrossStrategy
 
-PRIORITY_MT5_SYMBOLS = (
-    "XAUUSD",
-    "EURUSD",
-    "GBPUSD",
-    "USDJPY",
-    "AUDUSD",
-    "USDCAD",
-    "USDCHF",
-    "NZDUSD",
-    "XAGUSD",
-    "US30",
-    "BTCUSD",
-    "ETHUSD",
-    "USOIL",
-)
-
 
 def prioritize_mt5_universe(instruments):
-    """Keep all discovered symbols while placing liquid owner markets first."""
-    return tuple(
-        sorted(
-            instruments,
-            key=lambda item: (
-                *_owner_market_priority(item.venue_symbol),
-                item.venue_symbol,
-            ),
-        )
-    )
+    """Preserve every discovered contract; rank owner segment aliases first."""
+    return tuple(sorted(instruments, key=lambda item: (*market_priority(item.venue_symbol), item.venue_symbol)))
 
-
-def _owner_market_priority(symbol: str) -> tuple[int, int]:
-    """Rank canonical and broker-suffixed forms without dropping any symbol."""
-    upper = symbol.upper()
-    for index, canonical in enumerate(PRIORITY_MT5_SYMBOLS):
-        if upper == canonical:
-            return index, 0
-        if upper.startswith(canonical):
-            return index, len(upper) - len(canonical)
-    return len(PRIORITY_MT5_SYMBOLS), len(upper)
 
 
 def margin_adjusted_risk_multipliers(

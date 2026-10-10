@@ -36,11 +36,11 @@ def test_mt5_universe_prioritizes_owner_markets_before_alphabetical_symbols() ->
     ordered = prioritize_mt5_universe(instruments)
     assert tuple(item.venue_symbol for item in ordered) == (
         "XAUUSD",
+        "WTI",
+        "BTC",
         "EURUSD",
         "US30",
         "A",
-        "BTC",
-        "WTI",
     )
 
 
@@ -53,9 +53,9 @@ def test_mt5_universe_prioritizes_broker_suffixed_owner_markets() -> None:
     assert tuple(item.venue_symbol for item in ordered[:5]) == (
         "XAUUSDm",
         "XAUUSD247m",
-        "EURUSDm",
-        "BTCUSDm",
         "USOILm",
+        "BTCUSDm",
+        "EURUSDm",
     )
 
 

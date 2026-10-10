@@ -1815,6 +1815,18 @@
         "to": "aura/data/mt5_demo.py"
       },
       {
+        "from": "aura/ops/mt5_market_inventory.py",
+        "to": "aura/data/mt5_demo.py"
+      },
+      {
+        "from": "aura/ops/mt5_market_inventory.py",
+        "to": "aura/data/mt5_session.py"
+      },
+      {
+        "from": "aura/ops/mt5_market_inventory.py",
+        "to": "aura/markets/mt5_profile.py"
+      },
+      {
         "from": "aura/ops/multi_agent_gate.py",
         "to": "aura/agents/base.py"
       },
@@ -2872,6 +2884,10 @@
       },
       {
         "from": "aura/runtime/mt5_paper_daemon.py",
+        "to": "aura/markets/mt5_profile.py"
+      },
+      {
+        "from": "aura/runtime/mt5_paper_daemon.py",
         "to": "aura/persistence/atomic.py"
       },
       {
@@ -3485,6 +3501,14 @@
       {
         "from": "scripts/audit/synthetic_backtest_matrix.py",
         "to": "aura/risk/engine.py"
+      },
+      {
+        "from": "student_lab/train_research_model.py",
+        "to": "aura/prime/features.py"
+      },
+      {
+        "from": "student_lab/train_research_model.py",
+        "to": "aura/prime/ml_linear.py"
       },
       {
         "from": "tests/test_adaptive_model_router.py",
@@ -4987,6 +5011,18 @@
         "to": "aura/webapp/mt5_preflight.py"
       },
       {
+        "from": "tests/test_mt5_market_profile.py",
+        "to": "aura/data/mt5_contracts.py"
+      },
+      {
+        "from": "tests/test_mt5_market_profile.py",
+        "to": "aura/markets/mt5_profile.py"
+      },
+      {
+        "from": "tests/test_mt5_market_profile.py",
+        "to": "aura/markets/universe.py"
+      },
+      {
         "from": "tests/test_mt5_runtime_state.py",
         "to": "aura/ops/mt5_autonomous_demo.py"
       },
@@ -5875,6 +5911,10 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "CHECK_AURA_MARKETS.cmd"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "CHECK_MT5_XAUUSD_DEMO.ps1"
     },
     {
@@ -5900,6 +5940,10 @@
     {
       "kind": "shell-launcher",
       "path": "RUN_AURA_DEV_AUTOPILOT.ps1"
+    },
+    {
+      "kind": "shell-launcher",
+      "path": "RUN_MT5_AURA_ALL_MARKETS.cmd"
     },
     {
       "kind": "shell-launcher",
@@ -6044,6 +6088,10 @@
     {
       "kind": "python-main",
       "path": "aura/ops/mt5_demo_trade.py"
+    },
+    {
+      "kind": "python-main",
+      "path": "aura/ops/mt5_market_inventory.py"
     },
     {
       "kind": "python-main",
@@ -6215,6 +6263,10 @@
     },
     {
       "kind": "shell-launcher",
+      "path": "scripts/check_aura_markets.ps1"
+    },
+    {
+      "kind": "shell-launcher",
       "path": "scripts/final_setup_aura.ps1"
     },
     {
@@ -6268,6 +6320,10 @@
     {
       "kind": "shell-launcher",
       "path": "scripts/sync_aura_env.ps1"
+    },
+    {
+      "kind": "python-main",
+      "path": "student_lab/train_research_model.py"
     }
   ],
   "files": [
@@ -6333,6 +6389,12 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 129,
+      "path": "CHECK_AURA_MARKETS.cmd",
+      "sha256": "2a19079d598b23e1cb07bc9e6903dd517891620b88935f6d62a68649f2d33290"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 1792,
       "path": "CHECK_MT5_XAUUSD_DEMO.ps1",
       "sha256": "610f126b8244f9b2598a2bdaddbfd70857a6851a6b531c1f9e26a92ea6dc01f3"
@@ -6387,9 +6449,15 @@
     },
     {
       "asset_class": "automation_entrypoint",
-      "bytes": 2239,
+      "bytes": 127,
+      "path": "RUN_MT5_AURA_ALL_MARKETS.cmd",
+      "sha256": "884cef292473fc3e1d9bc5730f56843d094c039fe6b06fa09fb1b3e4ebc96447"
+    },
+    {
+      "asset_class": "automation_entrypoint",
+      "bytes": 2417,
       "path": "RUN_MT5_AURA_ALL_MARKETS.ps1",
-      "sha256": "e14e1af9b5829fd667408bb4d933e9356bf2d6369606c30cba4c02497b6f9356"
+      "sha256": "130fa88d798d1227cf8ea5e99761c837e23340d8ab7beac1e28b40054dcf253d"
     },
     {
       "asset_class": "automation_entrypoint",
@@ -6915,9 +6983,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 6581,
+      "bytes": 6635,
       "path": "aura/data/mt5_contracts.py",
-      "sha256": "8f8eced9a637cd9aaef7823ec76f91bd220a75ab7a2a70473f2920c61bdf6757"
+      "sha256": "b009169d2d4d26914b9d48f9e3c4de58c0b77145a26c3d0d721257f479c8e5e5"
     },
     {
       "asset_class": "python",
@@ -7365,6 +7433,12 @@
     },
     {
       "asset_class": "python",
+      "bytes": 3528,
+      "path": "aura/markets/mt5_profile.py",
+      "sha256": "3361f008a0ad59df19d30170162ed4d2e86933142b369c5b4857359bc27eb794"
+    },
+    {
+      "asset_class": "python",
       "bytes": 6310,
       "path": "aura/markets/universe.py",
       "sha256": "4675260a3181e3a9b635bbce672650ed8d339c9db911820ce6ddbc6c7b7a2c82"
@@ -7503,9 +7577,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 4919,
+      "bytes": 4973,
       "path": "aura/ops/mt5_autonomous_demo.py",
-      "sha256": "76572145f49e29f68d4d4ccfabaae9eee12e1cd7556a07956683d0d5e9767719"
+      "sha256": "4928a1dc350152c8ad39b7f474263bef9e1f7ee34830181406825ec3a1a0046f"
     },
     {
       "asset_class": "python",
@@ -7518,6 +7592,12 @@
       "bytes": 13079,
       "path": "aura/ops/mt5_demo_trade.py",
       "sha256": "c74a11a7fc9602ddf3c7f246622c8d5b81022b6fb1d61ea69377bb572498d997"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 1652,
+      "path": "aura/ops/mt5_market_inventory.py",
+      "sha256": "6ecd16046d449521c0d81017dacfb5fb001977479dc1d1b3cce90ebe44d85dbb"
     },
     {
       "asset_class": "python",
@@ -7935,9 +8015,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 18558,
+      "bytes": 17870,
       "path": "aura/runtime/mt5_paper_daemon.py",
-      "sha256": "a42e99eb9abe068e6c4cdc1a03e97c9c7673d83073945ba52c0f5fa831aad973"
+      "sha256": "89e332c81ea690b808dda4a86787c209d7cf703337ce980f7afe27cf0518843c"
     },
     {
       "asset_class": "python",
@@ -8061,9 +8141,9 @@
     },
     {
       "asset_class": "python",
-      "bytes": 30494,
+      "bytes": 30505,
       "path": "aura/webapp/server.py",
-      "sha256": "2faa76135cd1b9e8f46513b032b9dca1f33c87906b1017e8ece0c4e691364e63"
+      "sha256": "56e602110fa447f2cab9c26bcb3b8c530e31635c8275cb94b3dce6a67263359b"
     },
     {
       "asset_class": "python",
@@ -8187,9 +8267,9 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 32641,
+      "bytes": 33042,
       "path": "dashboard/components/AuraControlRoom.tsx",
-      "sha256": "22c0e4314d5454f6d0c0bd6100152ec83540390677f76a59002db2b01039a347"
+      "sha256": "74d0f73c3c41e3746f8678da9aeda69d7a67986e76d2780d504bf9d1ca02b1e4"
     },
     {
       "asset_class": "repository_asset",
@@ -8211,15 +8291,15 @@
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 33412,
+      "bytes": 33806,
       "path": "dashboard/components/PrimeControlRoom.tsx",
-      "sha256": "760bcc5a36520840b26a2868883ff761e2706d1418eb78787001a89ac1c367d8"
+      "sha256": "9fe738af228a54502ae61262f4d7421069eade20ead98fefa15e5d1f6232c4fd"
     },
     {
       "asset_class": "repository_asset",
-      "bytes": 8078,
+      "bytes": 9129,
       "path": "dashboard/e2e/full-feature-audit.spec.ts",
-      "sha256": "2e4c870b93a0a7d2ddac8ee4d05f1b8b5a6fe1df01c2accd932f0b2055fc1fab"
+      "sha256": "d4c26c044534677398b3d0538b330f2529e0dcc9b7667af653917f22b521d732"
     },
     {
       "asset_class": "repository_asset",
@@ -8490,6 +8570,12 @@
       "bytes": 7695,
       "path": "docs/LIVE_VALIDATION_POLICY.md",
       "sha256": "9cbabcb50d4597b23170ce21ad124df769bef89d5c108422a9bdac5d0b55b270"
+    },
+    {
+      "asset_class": "documentation",
+      "bytes": 2179,
+      "path": "docs/MT5_ALL_MARKET_SETUP.md",
+      "sha256": "9ac8d5347c35fa2ac7d9269493d455827f5eacc03a93df7e573ba825695be75d"
     },
     {
       "asset_class": "documentation",
@@ -8787,6 +8873,12 @@
     },
     {
       "asset_class": "automation_entrypoint",
+      "bytes": 672,
+      "path": "scripts/check_aura_markets.ps1",
+      "sha256": "daa6c4b1a943e36019fb96e4703cd903d127e5a455b07c1c6708d54e209d8818"
+    },
+    {
+      "asset_class": "automation_entrypoint",
       "bytes": 7478,
       "path": "scripts/final_setup_aura.ps1",
       "sha256": "8334efe4aad072238b5028decff6b0d60166da0c588b5e442207174a4d9fc6ae"
@@ -8880,6 +8972,12 @@
       "bytes": 404,
       "path": "strategy_lab_validation_v2.txt",
       "sha256": "b6e491ae6fcd833699973221de726039565b7c3c14bf37e15867a03a904eba71"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 3073,
+      "path": "student_lab/train_research_model.py",
+      "sha256": "2f96ea830602bd39ef06856960123cfe59f9510a339ed5edc57ed7cc1fa54705"
     },
     {
       "asset_class": "python",
@@ -9545,7 +9643,7 @@
       "asset_class": "python",
       "bytes": 11978,
       "path": "tests/test_mt5_demo_runtime.py",
-      "sha256": "8fe80cb4e8c5901e6ad97d4c01720dc08f4d37c50c580a2fbbeed124f23cd69e"
+      "sha256": "a7efb1abc116287e1802a81ec8faa9b69568c48fae37f0d08be3fb49a4f8e2f9"
     },
     {
       "asset_class": "python",
@@ -9558,6 +9656,12 @@
       "bytes": 4380,
       "path": "tests/test_mt5_execution_readiness.py",
       "sha256": "bec765b724af22e9f663b6dae795ef1c2ed5379eedb6d6619d825cb3658c95cb"
+    },
+    {
+      "asset_class": "python",
+      "bytes": 2626,
+      "path": "tests/test_mt5_market_profile.py",
+      "sha256": "af5580ca5d85f715158b0ea75646bd4cf8654145b11e9bd148df9a66fcca4ab2"
     },
     {
       "asset_class": "python",
@@ -10068,6 +10172,7 @@
       "aura/observability/logging.py",
       "aura/ops/end_to_end_gate.py",
       "aura/ops/mt5_all_market_runner.py",
+      "aura/ops/mt5_market_inventory.py",
       "aura/ops/operator_interface_gate.py",
       "aura/ops/paper_trading_gate.py",
       "aura/ops/refresh_software_evidence.py",
@@ -12226,7 +12331,8 @@
     {
       "component": "data",
       "direct_test_files": [
-        "tests/test_mt5_contracts.py"
+        "tests/test_mt5_contracts.py",
+        "tests/test_mt5_market_profile.py"
       ],
       "internal_dependencies": [
         "aura/markets/universe.py"
@@ -12240,7 +12346,7 @@
       ],
       "primary_phase": 5,
       "role": "source",
-      "sha256": "8f8eced9a637cd9aaef7823ec76f91bd220a75ab7a2a70473f2920c61bdf6757",
+      "sha256": "b009169d2d4d26914b9d48f9e3c4de58c0b77145a26c3d0d721257f479c8e5e5",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -14564,6 +14670,28 @@
     {
       "component": "markets",
       "direct_test_files": [
+        "tests/test_mt5_market_profile.py"
+      ],
+      "internal_dependencies": [],
+      "lines": 88,
+      "module": "aura.markets.mt5_profile",
+      "parsed": true,
+      "path": "aura/markets/mt5_profile.py",
+      "phase_coverage": [
+        1
+      ],
+      "primary_phase": 1,
+      "role": "source",
+      "sha256": "3361f008a0ad59df19d30170162ed4d2e86933142b369c5b4857359bc27eb794",
+      "standard_library_dependencies": [
+        "__future__",
+        "collections"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "markets",
+      "direct_test_files": [
         "tests/test_dhan_deep_service.py",
         "tests/test_dhan_history.py",
         "tests/test_dhan_instruments.py",
@@ -14571,6 +14699,7 @@
         "tests/test_dhan_radar.py",
         "tests/test_market_universe.py",
         "tests/test_mt5_contracts.py",
+        "tests/test_mt5_market_profile.py",
         "tests/test_option_intelligence.py",
         "tests/test_options_replay.py"
       ],
@@ -15329,7 +15458,7 @@
       ],
       "primary_phase": 15,
       "role": "source",
-      "sha256": "76572145f49e29f68d4d4ccfabaae9eee12e1cd7556a07956683d0d5e9767719",
+      "sha256": "4928a1dc350152c8ad39b7f474263bef9e1f7ee34830181406825ec3a1a0046f",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -15398,6 +15527,32 @@
         "json",
         "time",
         "typing"
+      ],
+      "third_party_dependencies": []
+    },
+    {
+      "component": "ops",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/data/mt5_demo.py",
+        "aura/data/mt5_session.py",
+        "aura/markets/mt5_profile.py"
+      ],
+      "lines": 42,
+      "module": "aura.ops.mt5_market_inventory",
+      "parsed": true,
+      "path": "aura/ops/mt5_market_inventory.py",
+      "phase_coverage": [
+        15
+      ],
+      "primary_phase": 15,
+      "role": "source",
+      "sha256": "6ecd16046d449521c0d81017dacfb5fb001977479dc1d1b3cce90ebe44d85dbb",
+      "standard_library_dependencies": [
+        "argparse",
+        "json",
+        "os",
+        "pathlib"
       ],
       "third_party_dependencies": []
     },
@@ -17568,6 +17723,7 @@
         "aura/data/quality.py",
         "aura/execution/paper.py",
         "aura/knowledge/firewall.py",
+        "aura/markets/mt5_profile.py",
         "aura/persistence/atomic.py",
         "aura/persistence/recovery.py",
         "aura/persistence/wal.py",
@@ -17580,7 +17736,7 @@
         "aura/runtime/scanner.py",
         "aura/strategy/ema.py"
       ],
-      "lines": 472,
+      "lines": 439,
       "module": "aura.runtime.mt5_paper_daemon",
       "parsed": true,
       "path": "aura/runtime/mt5_paper_daemon.py",
@@ -17589,7 +17745,7 @@
       ],
       "primary_phase": 12,
       "role": "source",
-      "sha256": "a42e99eb9abe068e6c4cdc1a03e97c9c7673d83073945ba52c0f5fa831aad973",
+      "sha256": "89e332c81ea690b808dda4a86787c209d7cf703337ce980f7afe27cf0518843c",
       "standard_library_dependencies": [
         "__future__",
         "dataclasses",
@@ -18203,7 +18359,7 @@
       ],
       "primary_phase": 13,
       "role": "source",
-      "sha256": "2faa76135cd1b9e8f46513b032b9dca1f33c87906b1017e8ece0c4e691364e63",
+      "sha256": "56e602110fa447f2cab9c26bcb3b8c530e31635c8275cb94b3dce6a67263359b",
       "standard_library_dependencies": [
         "__future__",
         "argparse",
@@ -18804,6 +18960,30 @@
       "third_party_dependencies": [
         "reportlab"
       ]
+    },
+    {
+      "component": "repository_tooling",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/prime/features.py",
+        "aura/prime/ml_linear.py"
+      ],
+      "lines": 74,
+      "module": "student_lab.train_research_model",
+      "parsed": true,
+      "path": "student_lab/train_research_model.py",
+      "phase_coverage": [
+        0
+      ],
+      "primary_phase": 0,
+      "role": "tooling",
+      "sha256": "2f96ea830602bd39ef06856960123cfe59f9510a339ed5edc57ed7cc1fa54705",
+      "standard_library_dependencies": [
+        "hashlib",
+        "json",
+        "pathlib"
+      ],
+      "third_party_dependencies": []
     },
     {
       "component": "validation",
@@ -21770,7 +21950,7 @@
       ],
       "primary_phase": 1,
       "role": "test",
-      "sha256": "8fe80cb4e8c5901e6ad97d4c01720dc08f4d37c50c580a2fbbeed124f23cd69e",
+      "sha256": "a7efb1abc116287e1802a81ec8faa9b69568c48fae37f0d08be3fb49a4f8e2f9",
       "standard_library_dependencies": [
         "__future__",
         "datetime",
@@ -21826,6 +22006,32 @@
       "primary_phase": 5,
       "role": "test",
       "sha256": "bec765b724af22e9f663b6dae795ef1c2ed5379eedb6d6619d825cb3658c95cb",
+      "standard_library_dependencies": [
+        "types"
+      ],
+      "third_party_dependencies": [
+        "pytest"
+      ]
+    },
+    {
+      "component": "validation",
+      "direct_test_files": [],
+      "internal_dependencies": [
+        "aura/data/mt5_contracts.py",
+        "aura/markets/mt5_profile.py",
+        "aura/markets/universe.py"
+      ],
+      "lines": 71,
+      "module": "tests.test_mt5_market_profile",
+      "parsed": true,
+      "path": "tests/test_mt5_market_profile.py",
+      "phase_coverage": [
+        1,
+        5
+      ],
+      "primary_phase": 1,
+      "role": "test",
+      "sha256": "af5580ca5d85f715158b0ea75646bd4cf8654145b11e9bd148df9a66fcca4ab2",
       "standard_library_dependencies": [
         "types"
       ],
@@ -23582,7 +23788,7 @@
       "third_party_dependencies": []
     }
   ],
-  "repository_tree_sha256": "1fcde68f9b1c7e819167f98421c609fedf9fc2a128cbffaa3a31dcc2d4f02f6c",
+  "repository_tree_sha256": "10b9fe9be1253cfa227d8e630ad7591ec86a49500c4cf79d024d2f766eef1eb5",
   "schema_version": 1,
   "scope": {
     "excluded": [
@@ -24239,15 +24445,15 @@
     }
   ],
   "summary": {
-    "directly_tested_source_modules": 225,
-    "entrypoints": 101,
+    "directly_tested_source_modules": 226,
+    "entrypoints": 106,
     "parse_errors": 0,
-    "python_modules": 464,
-    "repository_files": 613,
-    "source_modules": 255,
-    "static_test_functions": 758,
+    "python_modules": 468,
+    "repository_files": 621,
+    "source_modules": 257,
+    "static_test_functions": 764,
     "stub_candidates": 107,
-    "test_modules": 178,
+    "test_modules": 179,
     "unclassified_modules": 0,
     "unknown_assets": 0,
     "unresolved_internal_imports": 0
